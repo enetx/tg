@@ -1,0 +1,136 @@
+package main
+
+import (
+	"io"
+	"net/http"
+
+	. "github.com/enetx/g"
+	"github.com/enetx/tg"
+	"github.com/enetx/tg/types/updates"
+	// "github.com/valyala/fasthttp"
+)
+
+var bots = NewMap[String, *tg.Bot]()
+
+func main() {
+	domain := String("https://3b1d-134-19-179-195.ngrok-free.app")
+
+	register("111111111:AAA...A", domain)
+	register("222222222:BBB...B", domain)
+	register("333333333:CCC...C", domain)
+
+	Println("Listening on :8080")
+
+	if err := http.ListenAndServe(":8080", http.HandlerFunc(handler)); err != nil {
+		panic(err)
+	}
+
+	// if err := fasthttp.ListenAndServe(":8080", handler); err != nil {
+	// 	panic(err)
+	// }
+}
+
+func register(token, domain String) {
+	path := "/bot/" + token
+
+	bot := tg.NewBot(token)
+
+	bot.Webhook().
+		Domain(domain).
+		Path(path).
+		SecretToken(token.Hash().MD5()). // use md5 hash of the token as a valid secret
+		AllowedUpdates(updates.Message, updates.CallbackQuery).
+		DropPending(true).
+		MaxConnections(100).
+		Register()
+
+	bot.On.Message.Text(func(ctx *tg.Context) error {
+		return ctx.Message("Hi from bot: " + token.Hash().MD5()).Send().Err()
+	})
+
+	bots.Set(token, bot)
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.NotFound(w, r)
+		return
+	}
+
+	var (
+		path  String
+		token String
+	)
+
+	// /bot/<token>
+	String(r.URL.Path).Split("/").Exclude(String.Empty).Collect().Unpack(&path, &token)
+
+	if path.Ne("bot") {
+		http.NotFound(w, r)
+		return
+	}
+
+	bot := bots.Get(token)
+	if bot.IsNone() {
+		http.Error(w, "unknown bot", http.StatusNotFound)
+		return
+	}
+
+	if String(r.Header.Get("X-Telegram-Bot-Api-Secret-Token")).Ne(token.Hash().MD5()) {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "failed to read body", http.StatusBadRequest)
+		return
+	}
+
+	if err := bot.Some().HandleWebhook(body); err != nil {
+		http.Error(w, "invalid update: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+// func handler(ctx *fasthttp.RequestCtx) {
+// 	if !ctx.IsPost() {
+// 		ctx.SetStatusCode(fasthttp.StatusNotFound)
+// 		return
+// 	}
+//
+// 	var (
+// 		path  String
+// 		token String
+// 	)
+//
+// 	// /bot/<token>
+// 	String(ctx.Path()).Split("/").Exclude(String.Empty).Collect().Unpack(&path, &token)
+//
+// 	if path.Ne("bot") {
+// 		ctx.SetStatusCode(fasthttp.StatusNotFound)
+// 		return
+// 	}
+//
+// 	bot := bots.Get(token)
+// 	if bot.IsNone() {
+// 		ctx.SetStatusCode(fasthttp.StatusNotFound)
+// 		ctx.SetBodyString("unknown bot")
+// 		return
+// 	}
+//
+// 	if String(ctx.Request.Header.Peek("X-Telegram-Bot-Api-Secret-Token")).Ne(token.Hash().MD5()) {
+// 		ctx.SetStatusCode(fasthttp.StatusUnauthorized)
+// 		return
+// 	}
+//
+// 	if err := bot.Some().HandleWebhook(ctx.PostBody()); err != nil {
+// 		ctx.SetStatusCode(fasthttp.StatusBadRequest)
+// 		ctx.SetBodyString("invalid update: " + err.Error())
+// 		return
+// 	}
+//
+// 	ctx.SetStatusCode(fasthttp.StatusOK)
+// }
