@@ -7,7 +7,7 @@ import (
 
 func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	bot.On.Message.Dice(func(ctx *tg.Context) error {
 		return ctx.Dice().Send().Err()

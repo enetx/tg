@@ -14,7 +14,7 @@ type Product struct {
 
 func main() {
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	products := Slice[Product]{
 		{ID: 1, Title: "iPhone", Price: 999.99},

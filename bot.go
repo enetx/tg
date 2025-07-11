@@ -3,7 +3,9 @@ package tg
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"reflect"
+	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -13,7 +15,7 @@ import (
 )
 
 type Bot struct {
-	token       string
+	token       String
 	dispatcher  *ext.Dispatcher
 	updater     *ext.Updater
 	states      *MapSafe[int64, String]
@@ -23,24 +25,21 @@ type Bot struct {
 	Raw         *gotgbot.Bot
 }
 
-func NewBot[T ~string](token T) *Bot {
-	bot, err := gotgbot.NewBot(string(token), nil)
-	if err != nil {
-		panic("failed to create bot: " + err.Error())
+func NewBot[T ~string](token T) *BotBuilder {
+	return &BotBuilder{
+		token: String(token),
+		opts: &gotgbot.BotOpts{
+			BotClient: &gotgbot.BaseBotClient{
+				Client: http.Client{},
+				DefaultRequestOpts: &gotgbot.RequestOpts{
+					Timeout: 10 * time.Second,
+				},
+			},
+			RequestOpts: &gotgbot.RequestOpts{
+				Timeout: 10 * time.Second,
+			},
+		},
 	}
-
-	b := &Bot{
-		Raw:        bot,
-		token:      string(token),
-		dispatcher: ext.NewDispatcher(nil),
-		states:     NewMapSafe[int64, String](),
-		stateData:  NewMapSafe[int64, *MapSafe[String, any]](),
-	}
-
-	b.updater = ext.NewUpdater(b.dispatcher, nil)
-	b.On = newHandlers(b)
-
-	return b
 }
 
 func (b *Bot) Command(cmd String, fn Handler) *Command {
@@ -58,14 +57,6 @@ func (b *Bot) Command(cmd String, fn Handler) *Command {
 
 	return c
 }
-
-// func (b *Bot) Handlers(fns ...HandlerFunc) *Bot {
-// 	for _, fn := range fns {
-// 		b.Any(fn)
-// 	}
-//
-// 	return b
-// }
 
 func (b *Bot) Polling() *Polling {
 	return &Polling{

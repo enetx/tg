@@ -9,10 +9,10 @@ import (
 
 func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	bot.Command("start", func(ctx *tg.Context) error {
-		return ctx.Reply(Format("Welcome to <b>{}</b>", ctx.Bot.Std().Username)).HTML().Send().Err()
+		return ctx.Reply(Format("Welcome to <b>{}</b>", ctx.Bot.Raw.Username)).HTML().Send().Err()
 	})
 
 	bot.Command("doc", func(ctx *tg.Context) error {

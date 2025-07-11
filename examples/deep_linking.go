@@ -17,12 +17,12 @@ const (
 	UsingKeyboard  = "using-keyboard-here"
 	CallbackButton = "keyboard-callback-data"
 
-	furl = "https://t.me/{.Bot.Std.Username}?start={}"
+	furl = "https://t.me/{.Bot.Raw.Username}?start={}"
 )
 
 func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	bot.Command("start", func(ctx *tg.Context) error {
 		payload := ctx.Args().Last().UnwrapOrDefault()

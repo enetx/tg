@@ -12,7 +12,7 @@ import (
 
 func main() {
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	path := String("/bot/" + token)
 	secret := String("my-secret-token")

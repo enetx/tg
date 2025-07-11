@@ -271,10 +271,8 @@ func (ctx *Context) timers(
 	send func() Result[*gotgbot.Message],
 ) Result[*gotgbot.Message] {
 	if after.IsSome() {
-		delay := after.Some()
-
 		go func() {
-			<-time.After(delay)
+			<-time.After(after.Some())
 			msg := send()
 			if msg.IsOk() && deleteAfter.IsSome() {
 				ctx.Delete().MessageID(msg.Ok().MessageId).After(deleteAfter.Some()).Send()

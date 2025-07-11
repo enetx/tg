@@ -10,7 +10,7 @@ import (
 func main() {
 	// Read the bot token from the .env file
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	// Register a command handler for /start
 	bot.Command("start", func(ctx *tg.Context) error {

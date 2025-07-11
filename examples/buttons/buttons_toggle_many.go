@@ -9,7 +9,7 @@ import (
 
 func main() {
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	// Create the initial inline keyboard with two rows:
 	// - First row: a URL button linking to Google

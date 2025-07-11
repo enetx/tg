@@ -7,7 +7,7 @@ import (
 
 func main() {
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	// Handler for /start command — begins the conversation
 	bot.Command("start", func(ctx *tg.Context) error {

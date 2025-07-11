@@ -8,7 +8,7 @@ import (
 
 func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	// Middleware: restrict callbacks with "admin:" prefix to admins only
 	bot.Use(func(ctx *tg.Context) error {

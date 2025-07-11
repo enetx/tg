@@ -33,7 +33,7 @@ func main() {
 func register(token, domain String) {
 	path := "/bot/" + token
 
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	bot.Webhook().
 		Domain(domain).

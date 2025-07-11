@@ -9,7 +9,7 @@ import (
 
 func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	// Message
 	bot.On.Message.Text(func(ctx *tg.Context) error {

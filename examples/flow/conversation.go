@@ -17,7 +17,7 @@ const (
 
 func main() {
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	flow := tg.NewFlow(bot)
 
@@ -94,7 +94,7 @@ func handleSummary(ctx *tg.Context) error {
 
 	if location.IsSome() {
 		if loc, ok := location.Some().(*gotgbot.Location); ok {
-			ctx.Bot.Std().SendLocation(ctx.EffectiveChat.Id, loc.Latitude, loc.Longitude, nil)
+			ctx.Bot.Raw.SendLocation(ctx.EffectiveChat.Id, loc.Latitude, loc.Longitude, nil)
 		}
 	}
 

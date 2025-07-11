@@ -14,7 +14,7 @@ const (
 
 func main() {
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token)
+	bot := tg.NewBot(token).Build().Unwrap()
 
 	tg.NewFlow(bot).
 		Entry("start", stepColor).
