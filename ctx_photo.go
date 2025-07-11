@@ -14,8 +14,14 @@ type Photo struct {
 	opts        *gotgbot.SendPhotoOpts
 	file        *File
 	chatID      Option[int64]
+	after       Option[time.Duration]
 	deleteAfter Option[time.Duration]
 	err         error
+}
+
+func (p *Photo) After(duration time.Duration) *Photo {
+	p.after = Some(duration)
+	return p
 }
 
 func (p *Photo) DeleteAfter(duration time.Duration) *Photo {
@@ -77,12 +83,8 @@ func (p *Photo) Send() Result[*gotgbot.Message] {
 		defer p.file.Close()
 	}
 
-	chatID := p.chatID.UnwrapOr(p.ctx.EffectiveChat.Id)
-	msg := ResultOf(p.ctx.Bot.Raw.SendPhoto(chatID, p.doc, p.opts))
-
-	if msg.IsOk() && p.deleteAfter.IsSome() {
-		p.ctx.Delete().MessageID(msg.Ok().MessageId).After(p.deleteAfter.Some()).Send()
-	}
-
-	return msg
+	return p.ctx.timers(p.after, p.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := p.chatID.UnwrapOr(p.ctx.EffectiveChat.Id)
+		return ResultOf(p.ctx.Bot.Raw.SendPhoto(chatID, p.doc, p.opts))
+	})
 }

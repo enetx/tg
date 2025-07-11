@@ -10,11 +10,23 @@ import (
 )
 
 type Poll struct {
-	ctx      *Context
-	question String
-	chatID   Option[int64]
-	options  Slice[gotgbot.InputPollOption]
-	opts     *gotgbot.SendPollOpts
+	ctx         *Context
+	question    String
+	chatID      Option[int64]
+	options     Slice[gotgbot.InputPollOption]
+	after       Option[time.Duration]
+	deleteAfter Option[time.Duration]
+	opts        *gotgbot.SendPollOpts
+}
+
+func (p *Poll) After(duration time.Duration) *Poll {
+	p.after = Some(duration)
+	return p
+}
+
+func (p *Poll) DeleteAfter(duration time.Duration) *Poll {
+	p.deleteAfter = Some(duration)
+	return p
 }
 
 func (p *Poll) To(id int64) *Poll {
@@ -120,6 +132,8 @@ func (p *Poll) Timeout(duration time.Duration) *Poll {
 }
 
 func (p *Poll) Send() Result[*gotgbot.Message] {
-	chatID := p.chatID.UnwrapOr(p.ctx.EffectiveChat.Id)
-	return ResultOf(p.ctx.Bot.Raw.SendPoll(chatID, p.question.Std(), p.options, p.opts))
+	return p.ctx.timers(p.after, p.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := p.chatID.UnwrapOr(p.ctx.EffectiveChat.Id)
+		return ResultOf(p.ctx.Bot.Raw.SendPoll(chatID, p.question.Std(), p.options, p.opts))
+	})
 }

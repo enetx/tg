@@ -40,10 +40,21 @@ func (d *Delete) Send() Result[bool] {
 	messageID := d.messageID.UnwrapOr(d.ctx.EffectiveMessage.MessageId)
 
 	if d.after.IsSome() {
-		go func(ctx *Context, chatID, messageID int64, opts *gotgbot.DeleteMessageOpts, delay time.Duration) {
+		delay := d.after.Some()
+		d.after = None[time.Duration]()
+
+		bot := d.ctx.Bot
+
+		var opts *gotgbot.DeleteMessageOpts
+		if d.opts != nil {
+			ocp := *d.opts
+			opts = &ocp
+		}
+
+		go func(bot *Bot, chatID, messageID int64, opts *gotgbot.DeleteMessageOpts, delay time.Duration) {
 			<-time.After(delay)
-			ctx.Bot.Raw.DeleteMessage(chatID, messageID, opts)
-		}(d.ctx.Copy(), chatID, messageID, d.opts, d.after.Some())
+			bot.Raw.DeleteMessage(chatID, messageID, opts)
+		}(bot, chatID, messageID, opts, delay)
 
 		return Ok(true)
 	}

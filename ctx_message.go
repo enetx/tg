@@ -14,8 +14,14 @@ type Message struct {
 	ctx         *Context
 	text        String
 	chatID      Option[int64]
+	after       Option[time.Duration]
 	deleteAfter Option[time.Duration]
 	opts        *gotgbot.SendMessageOpts
+}
+
+func (m *Message) After(duration time.Duration) *Message {
+	m.after = Some(duration)
+	return m
 }
 
 func (m *Message) DeleteAfter(duration time.Duration) *Message {
@@ -84,12 +90,8 @@ func (m *Message) Preview(p *preview.Preview) *Message {
 }
 
 func (m *Message) Send() Result[*gotgbot.Message] {
-	chatID := m.chatID.UnwrapOr(m.ctx.EffectiveChat.Id)
-	msg := ResultOf(m.ctx.Bot.Raw.SendMessage(chatID, m.text.Std(), m.opts))
-
-	if msg.IsOk() && m.deleteAfter.IsSome() {
-		m.ctx.Delete().MessageID(msg.Ok().MessageId).After(m.deleteAfter.Some()).Send()
-	}
-
-	return msg
+	return m.ctx.timers(m.after, m.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := m.chatID.UnwrapOr(m.ctx.EffectiveChat.Id)
+		return ResultOf(m.ctx.Bot.Raw.SendMessage(chatID, m.text.Std(), m.opts))
+	})
 }

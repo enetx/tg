@@ -14,8 +14,14 @@ type Document struct {
 	opts        *gotgbot.SendDocumentOpts
 	file        *File
 	chatID      Option[int64]
+	after       Option[time.Duration]
 	deleteAfter Option[time.Duration]
 	err         error
+}
+
+func (d *Document) After(duration time.Duration) *Document {
+	d.after = Some(duration)
+	return d
 }
 
 func (d *Document) DeleteAfter(duration time.Duration) *Document {
@@ -82,12 +88,8 @@ func (d *Document) Send() Result[*gotgbot.Message] {
 		defer d.file.Close()
 	}
 
-	chatID := d.chatID.UnwrapOr(d.ctx.EffectiveChat.Id)
-	msg := ResultOf(d.ctx.Bot.Raw.SendDocument(chatID, d.doc, d.opts))
-
-	if msg.IsOk() && d.deleteAfter.IsSome() {
-		d.ctx.Delete().MessageID(msg.Ok().MessageId).After(d.deleteAfter.Some()).Send()
-	}
-
-	return msg
+	return d.ctx.timers(d.after, d.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := d.chatID.UnwrapOr(d.ctx.EffectiveChat.Id)
+		return ResultOf(d.ctx.Bot.Raw.SendDocument(chatID, d.doc, d.opts))
+	})
 }

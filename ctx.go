@@ -2,6 +2,7 @@ package tg
 
 import (
 	"errors"
+	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -40,11 +41,6 @@ func newCtx(bot *Bot, ctx *ext.Context) *Context {
 	}
 
 	return context
-}
-
-func (ctx *Context) Copy() *Context {
-	cp := *ctx
-	return &cp
 }
 
 func (ctx *Context) Poll(question String) *Poll {
@@ -267,4 +263,32 @@ func (ctx *Context) Delete() *Delete {
 		ctx:  ctx,
 		opts: new(gotgbot.DeleteMessageOpts),
 	}
+}
+
+func (ctx *Context) timers(
+	after Option[time.Duration],
+	deleteAfter Option[time.Duration],
+	send func() Result[*gotgbot.Message],
+) Result[*gotgbot.Message] {
+	if after.IsSome() {
+		delay := after.Some()
+
+		go func() {
+			<-time.After(delay)
+			msg := send()
+			if msg.IsOk() && deleteAfter.IsSome() {
+				ctx.Delete().MessageID(msg.Ok().MessageId).After(deleteAfter.Some()).Send()
+			}
+		}()
+
+		return Ok[*gotgbot.Message](nil)
+	}
+
+	msg := send()
+
+	if msg.IsOk() && deleteAfter.IsSome() {
+		ctx.Delete().MessageID(msg.Ok().MessageId).After(deleteAfter.Some()).Send()
+	}
+
+	return msg
 }

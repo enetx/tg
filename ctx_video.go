@@ -19,8 +19,14 @@ type Video struct {
 	removethumb bool
 	duration    Float
 	chatID      Option[int64]
+	after       Option[time.Duration]
 	deleteAfter Option[time.Duration]
 	err         error
+}
+
+func (v *Video) After(duration time.Duration) *Video {
+	v.after = Some(duration)
+	return v
 }
 
 func (v *Video) DeleteAfter(duration time.Duration) *Video {
@@ -205,12 +211,8 @@ func (v *Video) Send() Result[*gotgbot.Message] {
 		}()
 	}
 
-	chatID := v.chatID.UnwrapOr(v.ctx.EffectiveChat.Id)
-	msg := ResultOf(v.ctx.Bot.Raw.SendVideo(chatID, v.doc, v.opts))
-
-	if msg.IsOk() && v.deleteAfter.IsSome() {
-		v.ctx.Delete().MessageID(msg.Ok().MessageId).After(v.deleteAfter.Some()).Send()
-	}
-
-	return msg
+	return v.ctx.timers(v.after, v.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := v.chatID.UnwrapOr(v.ctx.EffectiveChat.Id)
+		return ResultOf(v.ctx.Bot.Raw.SendVideo(chatID, v.doc, v.opts))
+	})
 }

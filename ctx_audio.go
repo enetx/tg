@@ -15,8 +15,14 @@ type Audio struct {
 	file        *File
 	thumb       *File
 	chatID      Option[int64]
+	after       Option[time.Duration]
 	deleteAfter Option[time.Duration]
 	err         error
+}
+
+func (a *Audio) After(duration time.Duration) *Audio {
+	a.after = Some(duration)
+	return a
 }
 
 func (a *Audio) DeleteAfter(duration time.Duration) *Audio {
@@ -95,12 +101,8 @@ func (a *Audio) Send() Result[*gotgbot.Message] {
 		defer a.thumb.Close()
 	}
 
-	chatID := a.chatID.UnwrapOr(a.ctx.EffectiveChat.Id)
-	msg := ResultOf(a.ctx.Bot.Raw.SendAudio(chatID, a.doc, a.opts))
-
-	if msg.IsOk() && a.deleteAfter.IsSome() {
-		a.ctx.Delete().MessageID(msg.Ok().MessageId).After(a.deleteAfter.Some()).Send()
-	}
-
-	return msg
+	return a.ctx.timers(a.after, a.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := a.chatID.UnwrapOr(a.ctx.EffectiveChat.Id)
+		return ResultOf(a.ctx.Bot.Raw.SendAudio(chatID, a.doc, a.opts))
+	})
 }

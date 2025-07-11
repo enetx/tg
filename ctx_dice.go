@@ -12,8 +12,14 @@ import (
 type Dice struct {
 	ctx         *Context
 	chatID      Option[int64]
+	after       Option[time.Duration]
 	deleteAfter Option[time.Duration]
 	opts        *gotgbot.SendDiceOpts
+}
+
+func (d *Dice) After(duration time.Duration) *Dice {
+	d.after = Some(duration)
+	return d
 }
 
 func (d *Dice) DeleteAfter(duration time.Duration) *Dice {
@@ -87,12 +93,8 @@ func (d *Dice) To(chatID int64) *Dice {
 }
 
 func (d *Dice) Send() Result[*gotgbot.Message] {
-	chatID := d.chatID.UnwrapOr(d.ctx.EffectiveChat.Id)
-	msg := ResultOf(d.ctx.Bot.Raw.SendDice(chatID, d.opts))
-
-	if msg.IsOk() && d.deleteAfter.IsSome() {
-		d.ctx.Delete().MessageID(msg.Ok().MessageId).After(d.deleteAfter.Some()).Send()
-	}
-
-	return msg
+	return d.ctx.timers(d.after, d.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := d.chatID.UnwrapOr(d.ctx.EffectiveChat.Id)
+		return ResultOf(d.ctx.Bot.Raw.SendDice(chatID, d.opts))
+	})
 }
