@@ -18,8 +18,6 @@ type Bot struct {
 	token       String
 	dispatcher  *ext.Dispatcher
 	updater     *ext.Updater
-	states      *MapSafe[int64, String]
-	stateData   *MapSafe[int64, *MapSafe[String, any]]
 	middlewares Slice[Handler]
 	On          *Handlers
 	Raw         *gotgbot.Bot

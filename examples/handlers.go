@@ -95,7 +95,7 @@ func main() {
 		Left(func(ctx *tg.Context) error {
 			return ctx.Reply("User left").Send().Err()
 		}).
-		Kicked(func(ctx *tg.Context) error {
+		Banned(func(ctx *tg.Context) error {
 			return ctx.Reply("User was kicked").Send().Err()
 		}).
 		Unbanned(func(ctx *tg.Context) error {

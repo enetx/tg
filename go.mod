@@ -1,9 +1,10 @@
 module github.com/enetx/tg
 
-go 1.24
+go 1.24.5
 
 require (
 	github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.33
+	github.com/enetx/fsm v0.0.0-20250712195123-de757f9ceb4a
 	github.com/enetx/g v1.0.173
 )
 

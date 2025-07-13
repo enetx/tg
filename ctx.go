@@ -17,7 +17,6 @@ type Context struct {
 	EffectiveMessage *gotgbot.Message
 	EffectiveSender  *gotgbot.Sender
 	EffectiveUser    *gotgbot.User
-	State            *State
 	Update           *gotgbot.Update
 	Raw              *ext.Context
 }
@@ -32,12 +31,6 @@ func newCtx(bot *Bot, ctx *ext.Context) *Context {
 		Update:           ctx.Update,
 		Callback:         ctx.Update.CallbackQuery,
 		Raw:              ctx,
-	}
-
-	context.State = &State{
-		ctx:     context,
-		current: bot.states,
-		data:    bot.stateData,
 	}
 
 	return context

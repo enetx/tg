@@ -82,8 +82,6 @@ func (b *BotBuilder) Build() Result[*Bot] {
 		token:      b.token,
 		Raw:        raw,
 		dispatcher: ext.NewDispatcher(nil),
-		states:     NewMapSafe[int64, String](),
-		stateData:  NewMapSafe[int64, *MapSafe[String, any]](),
 	}
 
 	bot.updater = ext.NewUpdater(bot.dispatcher, nil)
