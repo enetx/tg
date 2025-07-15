@@ -4,22 +4,23 @@ import (
 	"time"
 
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 )
 
 func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
-	bot.Command("start", func(ctx *tg.Context) error {
-		return ctx.Reply(Format("Welcome to <b>{}</b>", ctx.Bot.Raw.Username)).HTML().Send().Err()
+	b.Command("start", func(ctx *ctx.Context) error {
+		return ctx.Reply(Format("Welcome to <b>{}</b>", ctx.Bot.Raw().Username)).HTML().Send().Err()
 	})
 
-	bot.Command("doc", func(ctx *tg.Context) error {
+	b.Command("doc", func(ctx *ctx.Context) error {
 		return ctx.Document("doc.pdf").Caption("pdf doc").Send().Err()
 	})
 
-	bot.Command("audio", func(ctx *tg.Context) error {
+	b.Command("audio", func(ctx *ctx.Context) error {
 		return ctx.Audio("audio.mp3").
 			Caption("some audio").
 			ReplyTo(ctx.EffectiveMessage.MessageId).
@@ -28,11 +29,11 @@ func main() {
 			Err()
 	})
 
-	bot.Command("photo", func(ctx *tg.Context) error {
+	b.Command("photo", func(ctx *ctx.Context) error {
 		return ctx.Photo("photo.png").Send().Err()
 	})
 
-	bot.Command("video", func(ctx *tg.Context) error {
+	b.Command("video", func(ctx *ctx.Context) error {
 		return ctx.Video("video.mp4").
 			Caption("Look at this cat").
 			Spoiler().
@@ -43,5 +44,5 @@ func main() {
 			Err()
 	})
 
-	bot.Polling().Start()
+	b.Polling().Start()
 }

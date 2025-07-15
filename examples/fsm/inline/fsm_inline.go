@@ -3,7 +3,8 @@ package main
 import (
 	"github.com/enetx/fsm"
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -21,8 +22,8 @@ var fsmStore = NewMapSafe[int64, *fsm.FSM]()
 func main() {
 	// Load the Telegram bot token from a local .env file.
 	token := NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	// Initialize the Telegram bot and its helper components.
-	bot := tg.NewBot(token).Build().Unwrap()
+	// Initialize the Telegram b and its helper components.
+	b := bot.New(token).Build().Unwrap()
 
 	// Define a master FSM template. Each new user will receive a clone of this template.
 	// This ensures a consistent workflow while maintaining separate states and data for each user.
@@ -33,9 +34,9 @@ func main() {
 		Transition(StateAnimal, "animal_selected", StateSummary)
 
 	// Step 1: Callback executed upon entering StateColor. It asks the user to select a color.
-	template.OnEnter(StateColor, func(ctx *fsm.Context) error {
-		// Retrieve the tg.Context that was stored in the FSM's Values by the /start handler.
-		tgctx := ctx.Values.Get("tgctx").Some().(*tg.Context)
+	template.OnEnter(StateColor, func(fctx *fsm.Context) error {
+		// Retrieve the ctx.Context that was stored in the FSM's Values by the /start handler.
+		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
 
 		// Send a message with an inline keyboard. Each button has a callback_data
 		// value prefixed with "color:" to be handled by the corresponding callback handler.
@@ -48,14 +49,14 @@ func main() {
 	})
 
 	// Step 2: Callback executed upon entering StateAnimal, after a color has been selected.
-	template.OnEnter(StateAnimal, func(ctx *fsm.Context) error {
-		// Retrieve the latest tg.Context.
-		tgctx := ctx.Values.Get("tgctx").Some().(*tg.Context)
+	template.OnEnter(StateAnimal, func(fctx *fsm.Context) error {
+		// Retrieve the latest ctx.Context.
+		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
 
 		// The selected color was passed as 'Input' from the color callback handler.
-		color := ctx.Input.(String)
+		color := fctx.Input.(String)
 		// Store the color in the FSM's persistent Data map for later use.
-		ctx.Data.Set("color", color)
+		fctx.Data.Set("color", color)
 
 		// Acknowledge the user's selection by editing the original message or sending a new one.
 		tgctx.Reply("✅ Color selected: " + color).Send()
@@ -70,16 +71,16 @@ func main() {
 	})
 
 	// Step 3: Callback executed upon entering StateSummary. This is the final step.
-	template.OnEnter(StateSummary, func(ctx *fsm.Context) error {
-		// Retrieve the latest tg.Context.
-		tgctx := ctx.Values.Get("tgctx").Some().(*tg.Context)
+	template.OnEnter(StateSummary, func(fctx *fsm.Context) error {
+		// Retrieve the latest ctx.Context.
+		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
 		// Crucial: Use defer to ensure the FSM instance is removed from the store after this
 		// function completes, freeing memory and allowing the user to /start again.
 		defer fsmStore.Delete(tgctx.EffectiveUser.Id)
 
 		// Retrieve all collected data: color from the Data map, and animal from the current Input.
-		color := ctx.Data.Get("color").UnwrapOr("unknown")
-		animal := ctx.Input.(String)
+		color := fctx.Data.Get("color").UnwrapOr("unknown")
+		animal := fctx.Input.(String)
 
 		// Acknowledge the final selection.
 		tgctx.Reply("✅ Animal selected: " + animal).Send()
@@ -89,7 +90,7 @@ func main() {
 	})
 
 	// Command handler for /start, which initializes or resets a user's workflow.
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		// Get or create an FSM instance for the user.
 		entry := fsmStore.Entry(ctx.EffectiveUser.Id)
 		entry.OrSetBy(template.Clone)
@@ -103,14 +104,14 @@ func main() {
 	})
 
 	// Command handler for /cancel to prematurely end the workflow.
-	bot.Command("cancel", func(ctx *tg.Context) error {
+	b.Command("cancel", func(ctx *ctx.Context) error {
 		fsmStore.Delete(ctx.EffectiveUser.Id)
 		return ctx.Reply("Cancelled.").RemoveKeyboard().Send().Err()
 	})
 
 	// Callback handler for buttons with data prefixed by "color:".
 	// This is only active when the user is expected to choose a color.
-	bot.On.Callback.Prefix("color:", func(ctx *tg.Context) error {
+	b.On.Callback.Prefix("color:", func(ctx *ctx.Context) error {
 		// Retrieve the user's FSM instance.
 		fsmOpt := fsmStore.Get(ctx.EffectiveUser.Id)
 		if fsmOpt.IsNone() {
@@ -130,7 +131,7 @@ func main() {
 
 	// Callback handler for buttons with data prefixed by "animal:".
 	// This is only active when the user is expected to choose an animal.
-	bot.On.Callback.Prefix("animal:", func(ctx *tg.Context) error {
+	b.On.Callback.Prefix("animal:", func(ctx *ctx.Context) error {
 		// Retrieve the user's FSM instance.
 		fsmOpt := fsmStore.Get(ctx.EffectiveUser.Id)
 		if fsmOpt.IsNone() {
@@ -150,7 +151,7 @@ func main() {
 	// A catch-all handler to clean up any unsupported user interactions.
 	// This helps prevent the bot from appearing unresponsive if the user types text
 	// when a button press is expected.
-	bot.On.Any(func(ctx *tg.Context) error {
+	b.On.Any(func(ctx *ctx.Context) error {
 		// If the update is a text message (not a callback), delete it.
 		if ctx.Callback == nil {
 			return ctx.Delete().Send().Err()
@@ -161,5 +162,5 @@ func main() {
 
 	// Start the bot's polling loop. DropPendingUpdates clears any old updates
 	// that might have accumulated while the bot was offline.
-	bot.Polling().DropPendingUpdates().Start()
+	b.Polling().DropPendingUpdates().Start()
 }

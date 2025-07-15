@@ -4,15 +4,16 @@ import (
 	"time"
 
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 )
 
 func main() {
 	// Read the bot token from the .env file
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		// Self-destruct message
 		ctx.Message("This message will self-destruct in 5 seconds.").
 			DeleteAfter(5 * time.Second).
@@ -22,5 +23,5 @@ func main() {
 		return ctx.Delete().Send().Err()
 	})
 
-	bot.Polling().DropPendingUpdates().Start()
+	b.Polling().DropPendingUpdates().Start()
 }

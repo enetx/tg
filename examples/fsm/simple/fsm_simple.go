@@ -3,7 +3,8 @@ package main
 import (
 	"github.com/enetx/fsm"
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 )
 
 // FSM state identifiers define the steps of the user data collection workflow.
@@ -20,8 +21,8 @@ var fsmStore = NewMapSafe[int64, *fsm.FSM]()
 func main() {
 	// Load the Telegram bot token from a local .env file.
 	token := NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	// Initialize the Telegram bot and its helper components.
-	bot := tg.NewBot(token).Build().Unwrap()
+	// Initialize the Telegram b and its helper components.
+	b := bot.New(token).Build().Unwrap()
 
 	// Define a master FSM template. Each new user will receive a clone of this template.
 	// This ensures a consistent workflow while maintaining separate states and data for each user.
@@ -32,38 +33,38 @@ func main() {
 		Transition(StateGetName, "next", StateSummary)
 
 	// Callback executed upon entering StateGetEmail. This is the first step of the workflow.
-	template.OnEnter(StateGetEmail, func(ctx *fsm.Context) error {
-		// Retrieve the tg.Context that was stored in the FSM's Values.
+	template.OnEnter(StateGetEmail, func(fctx *fsm.Context) error {
+		// Retrieve the ctx.Context that was stored in the FSM's Values.
 		// This happens inside the /start handler or the main message handler.
-		tgctx := ctx.Values.Get("tgctx").Some().(*tg.Context)
+		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
 
 		// Send a message to the user asking for their email.
 		return tgctx.Reply("Enter your email:").Send().Err()
 	})
 
 	// Callback executed upon entering StateGetName, after the user has provided their email.
-	template.OnEnter(StateGetName, func(ctx *fsm.Context) error {
+	template.OnEnter(StateGetName, func(fctx *fsm.Context) error {
 		// The user's email is retrieved from the input of the previous step.
-		email := ctx.Input.(string)
+		email := fctx.Input.(string)
 		// The email is stored in the FSM's persistent Data map for later use in the summary.
-		ctx.Data.Set("email", email)
+		fctx.Data.Set("email", email)
 
-		// Retrieve the latest tg.Context.
-		tgctx := ctx.Values.Get("tgctx").Some().(*tg.Context)
+		// Retrieve the latest ctx.Context.
+		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
 
 		// Send a message to the user asking for their name.
 		return tgctx.Reply("Enter your name:").Send().Err()
 	})
 
 	// Callback executed upon entering StateSummary. This is the final step.
-	template.OnEnter(StateSummary, func(ctx *fsm.Context) error {
+	template.OnEnter(StateSummary, func(fctx *fsm.Context) error {
 		// The user's name is retrieved from the input of the current step.
-		name := ctx.Input.(string)
+		name := fctx.Input.(string)
 		// The email was stored in a previous step and is retrieved from the FSM's Data map.
-		email := ctx.Data.Get("email").UnwrapOr("<no email>")
+		email := fctx.Data.Get("email").UnwrapOr("<no email>")
 
-		// Retrieve the latest tg.Context.
-		tgctx := ctx.Values.Get("tgctx").Some().(*tg.Context)
+		// Retrieve the latest ctx.Context.
+		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
 
 		// Crucial: Use defer to ensure the FSM instance is removed from the store after this
 		// function completes, freeing memory and allowing the user to /start again.
@@ -74,7 +75,7 @@ func main() {
 	})
 
 	// Command handler for /start, which initializes or resets a user's workflow.
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		// Get or create an FSM instance for the user.
 		entry := fsmStore.Entry(ctx.EffectiveUser.Id)
 		// If the user is new, clone the master template for them.
@@ -94,7 +95,7 @@ func main() {
 	})
 
 	// This is the main handler for all subsequent text messages from the user.
-	bot.On.Message.Text(func(ctx *tg.Context) error {
+	b.On.Message.Text(func(ctx *ctx.Context) error {
 		// Attempt to retrieve the user's FSM instance.
 		opt := fsmStore.Get(ctx.EffectiveUser.Id)
 		if opt.IsNone() {
@@ -107,7 +108,7 @@ func main() {
 		// The user's text message is set as the 'Input' for the current FSM context.
 		// This makes it available to the next OnEnter callback.
 		fsm.Context().Input = ctx.EffectiveMessage.Text
-		// The latest tg.Context is also updated in the FSM's Values.
+		// The latest ctx.Context is also updated in the FSM's Values.
 		fsm.Context().Values.Set("tgctx", ctx)
 
 		// Trigger a transition using the "next" event, which will move the FSM
@@ -116,5 +117,5 @@ func main() {
 	})
 
 	// Start the bot's polling loop to listen for updates from Telegram.
-	bot.Polling().Start()
+	b.Polling().Start()
 }

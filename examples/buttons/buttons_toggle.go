@@ -2,13 +2,14 @@ package main
 
 import (
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 )
 
 func main() {
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
 	// Create toggleable buttons for fruits
 	apple := keyboard.NewButton().Callback("fruit:apple").On("🍏 Apple").Off("Apple")
@@ -22,12 +23,12 @@ func main() {
 		Row().Button(apple).Button(banan)
 
 	// Handle /start command: send initial keyboard
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		return ctx.Reply("Choose your fruits:").Markup(markup).Send().Err()
 	})
 
 	// Handle toggle for Apple button
-	bot.On.Callback.Equal("fruit:apple", func(ctx *tg.Context) error {
+	b.On.Callback.Equal("fruit:apple", func(ctx *ctx.Context) error {
 		apple.Flip()
 
 		markup.Edit(func(btn *keyboard.Button) {
@@ -41,7 +42,7 @@ func main() {
 	})
 
 	// Handle toggle for Banan button
-	bot.On.Callback.Equal("fruit:banan", func(ctx *tg.Context) error {
+	b.On.Callback.Equal("fruit:banan", func(ctx *ctx.Context) error {
 		banan.Flip()
 
 		markup.Edit(func(btn *keyboard.Button) {
@@ -54,5 +55,5 @@ func main() {
 		return ctx.EditMarkup(markup).Send().Err()
 	})
 
-	bot.Polling().DropPendingUpdates().Start()
+	b.Polling().DropPendingUpdates().Start()
 }

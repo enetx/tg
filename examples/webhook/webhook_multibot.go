@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/types/updates"
 	// "github.com/valyala/fasthttp"
 )
 
-var bots = NewMap[String, *tg.Bot]()
+var bots = NewMap[String, *bot.Bot]()
 
 func main() {
 	domain := String("https://3b1d-134-19-179-195.ngrok-free.app")
@@ -33,9 +34,9 @@ func main() {
 func register(token, domain String) {
 	path := "/bot/" + token
 
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
-	bot.Webhook().
+	b.Webhook().
 		Domain(domain).
 		Path(path).
 		SecretToken(token.Hash().MD5()). // use md5 hash of the token as a valid secret
@@ -44,11 +45,11 @@ func register(token, domain String) {
 		MaxConnections(100).
 		Register()
 
-	bot.On.Message.Text(func(ctx *tg.Context) error {
+	b.On.Message.Text(func(ctx *ctx.Context) error {
 		return ctx.Message("Hi from bot: " + token.Hash().MD5()).Send().Err()
 	})
 
-	bots.Set(token, bot)
+	bots.Set(token, b)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -114,8 +115,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 // 		return
 // 	}
 //
-// 	bot := bots.Get(token)
-// 	if bot.IsNone() {
+// 	b := bots.Get(token)
+// 	if b.IsNone() {
 // 		ctx.SetStatusCode(fasthttp.StatusNotFound)
 // 		ctx.SetBodyString("unknown bot")
 // 		return
@@ -126,7 +127,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 // 		return
 // 	}
 //
-// 	if err := bot.Some().HandleWebhook(ctx.PostBody()); err != nil {
+// 	if err := b.Some().HandleWebhook(ctx.PostBody()); err != nil {
 // 		ctx.SetStatusCode(fasthttp.StatusBadRequest)
 // 		ctx.SetBodyString("invalid update: " + err.Error())
 // 		return

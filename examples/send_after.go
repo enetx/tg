@@ -4,16 +4,17 @@ import (
 	"time"
 
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 )
 
 func main() {
 	// Read the bot token from the .env file
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
 	// Register a command handler for /start
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		// Send an immediate message so Telegram considers the update as "handled"
 		ctx.Message("Preparing self-destruct...").Send()
 
@@ -30,5 +31,5 @@ func main() {
 	})
 
 	// Start polling for updates and drop any pending ones from before startup
-	bot.Polling().DropPendingUpdates().Start()
+	b.Polling().DropPendingUpdates().Start()
 }

@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 
 	. "github.com/enetx/g"
@@ -9,7 +10,7 @@ import (
 
 func main() {
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
 	// Create the initial inline keyboard with two rows:
 	// - First row: a URL button linking to Google
@@ -34,12 +35,12 @@ func main() {
 	})
 
 	// Handle /start command: send initial keyboard
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		return ctx.Reply("Choose your fruits:").Markup(markup).Send().Err()
 	})
 
 	// Handle all callback queries starting with "fruit"
-	bot.On.Callback.Prefix("fruit", func(ctx *tg.Context) error {
+	b.On.Callback.Prefix("fruit", func(ctx *ctx.Context) error {
 		cb := String(ctx.Callback.Data)
 
 		if btn := buttons.Get(cb); btn.IsSome() {
@@ -65,5 +66,5 @@ func main() {
 		return ctx.Answer("Unknown fruit").Send().Err()
 	})
 
-	bot.Polling().Start()
+	b.Polling().Start()
 }

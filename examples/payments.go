@@ -2,14 +2,15 @@ package main
 
 import (
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 )
 
 func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		if ctx.EffectiveChat.Type != "private" {
 			return nil
 		}
@@ -25,7 +26,7 @@ func main() {
 			Err()
 	})
 
-	bot.Command("refund", func(ctx *tg.Context) error {
+	b.Command("refund", func(ctx *ctx.Context) error {
 		if ctx.EffectiveChat.Type != "private" {
 			return nil
 		}
@@ -47,14 +48,14 @@ func main() {
 		return nil
 	})
 
-	bot.On.PreCheckout.Any(func(ctx *tg.Context) error {
+	b.On.PreCheckout.Any(func(ctx *ctx.Context) error {
 		// you can validate payload/user here if needed
 
 		// return ctx.PreCheckout().Error("Payment declined").Send().Err()
 		return ctx.PreCheckout().Ok().Send().Err()
 	})
 
-	bot.On.Message.SuccessfulPayment(func(ctx *tg.Context) error {
+	b.On.Message.SuccessfulPayment(func(ctx *ctx.Context) error {
 		user := ctx.EffectiveUser
 		payment := ctx.EffectiveMessage.SuccessfulPayment
 		chargeID := ctx.EffectiveMessage.SuccessfulPayment.TelegramPaymentChargeId
@@ -67,9 +68,9 @@ func main() {
 			Err()
 	})
 
-	bot.On.Message.RefundedPayment(func(ctx *tg.Context) error {
+	b.On.Message.RefundedPayment(func(ctx *ctx.Context) error {
 		return ctx.Message("The refund was successful.").Send().Err()
 	})
 
-	bot.Polling().Start()
+	b.Polling().Start()
 }

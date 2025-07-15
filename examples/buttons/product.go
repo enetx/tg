@@ -2,7 +2,8 @@ package main
 
 import (
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -14,7 +15,7 @@ type Product struct {
 
 func main() {
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
 	products := Slice[Product]{
 		{ID: 1, Title: "iPhone", Price: 999.99},
@@ -22,7 +23,7 @@ func main() {
 		{ID: 3, Title: "AirPods", Price: 199.00},
 	}
 
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		kb := keyboard.Inline()
 
 		for _, p := range products {
@@ -33,7 +34,7 @@ func main() {
 	})
 
 	// buy:<id>
-	bot.On.Callback.Prefix("buy:", func(ctx *tg.Context) error {
+	b.On.Callback.Prefix("buy:", func(ctx *ctx.Context) error {
 		data := String(ctx.Callback.Data)
 
 		id := data.StripPrefix("buy:").ToInt().UnwrapOrDefault()
@@ -48,5 +49,5 @@ func main() {
 		return ctx.Answer(message).Send().Err()
 	})
 
-	bot.Polling().Start()
+	b.Polling().Start()
 }

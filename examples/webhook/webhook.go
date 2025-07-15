@@ -5,19 +5,20 @@ import (
 	"net/http"
 
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/types/updates"
 	// "github.com/valyala/fasthttp"
 )
 
 func main() {
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
 	path := String("/bot/" + token)
 	secret := String("my-secret-token")
 
-	bot.Webhook().
+	b.Webhook().
 		Domain("https://3b1d-134-19-179-195.ngrok-free.app").
 		Path(path).
 		SecretToken(secret).
@@ -27,7 +28,7 @@ func main() {
 		// Certificate("cert.pem").
 		Register()
 
-	bot.On.Message.Text(func(ctx *tg.Context) error { return ctx.Message("pong").Send().Err() })
+	b.On.Message.Text(func(ctx *ctx.Context) error { return ctx.Message("pong").Send().Err() })
 
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost || String(r.URL.Path).Ne(path) {
@@ -48,7 +49,7 @@ func main() {
 
 		defer r.Body.Close()
 
-		if err := bot.HandleWebhook(body); err != nil {
+		if err := b.HandleWebhook(body); err != nil {
 			http.Error(w, "invalid update: "+err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -76,7 +77,7 @@ func main() {
 	// 		return
 	// 	}
 	//
-	// 	if err := bot.HandleWebhook(ctx.PostBody()); err != nil {
+	// 	if err := b.HandleWebhook(ctx.PostBody()); err != nil {
 	// 		ctx.SetStatusCode(fasthttp.StatusBadRequest)
 	// 		ctx.SetBodyString("invalid update: " + err.Error())
 	// 		return

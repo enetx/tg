@@ -2,16 +2,17 @@ package main
 
 import (
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 )
 
 func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
 	// Middleware: restrict callbacks with "admin:" prefix to admins only
-	bot.Use(func(ctx *tg.Context) error {
+	b.Use(func(ctx *ctx.Context) error {
 		if ctx.Callback == nil || !String(ctx.Callback.Data).StartsWith("admin:") {
 			return nil
 		}
@@ -29,12 +30,12 @@ func main() {
 	})
 
 	// Middleware: log each incoming update type
-	bot.Use(func(ctx *tg.Context) error {
+	b.Use(func(ctx *ctx.Context) error {
 		Println("[MW] Update: {}", ctx.Update.GetType())
 		return nil
 	})
 
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		return ctx.Reply("Buttons:").Markup(keyboard.Inline().
 			Text("Admin only", "admin:secure").
 			Row().
@@ -43,17 +44,17 @@ func main() {
 	})
 
 	// Callback handler for admin-only button
-	bot.On.Callback.Equal("admin:secure", func(ctx *tg.Context) error {
+	b.On.Callback.Equal("admin:secure", func(ctx *ctx.Context) error {
 		return ctx.Answer("Welcome, admin!").Send().Err()
 	})
 
 	// Callback handler for public button
-	bot.On.Callback.Equal("public", func(ctx *tg.Context) error {
+	b.On.Callback.Equal("public", func(ctx *ctx.Context) error {
 		return ctx.Answer("This is accessible to everyone!").Send().Err()
 	})
 
 	// Simple message handler: replies "Hello" to any text message
-	bot.On.Message.Text(func(ctx *tg.Context) error { return ctx.Message("Hello").Send().Err() })
+	b.On.Message.Text(func(ctx *ctx.Context) error { return ctx.Message("Hello").Send().Err() })
 
-	bot.Polling().DropPendingUpdates().Start()
+	b.Polling().DropPendingUpdates().Start()
 }

@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.33
-	github.com/enetx/fsm v0.0.0-20250713191223-c9b91ea08f6a
+	github.com/enetx/fsm v0.0.0-20250714141636-7fa3df45a8d2
 	github.com/enetx/g v1.0.173
 )
 

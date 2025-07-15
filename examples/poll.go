@@ -2,16 +2,17 @@ package main
 
 import (
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/types/effects"
 )
 
 func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
-	quiz := func(ctx *tg.Context) *tg.Poll {
+	quiz := func(ctx *ctx.Context) *ctx.Poll {
 		return ctx.Poll("🧠 Choose the correct option:").
 			Option("Option A").
 			Option("Option B").
@@ -32,13 +33,13 @@ func main() {
 					Text("👍 Vote again", "vote_again"))
 	}
 
-	bot.Command("start", func(ctx *tg.Context) error { return quiz(ctx).Send().Err() })
+	b.Command("start", func(ctx *ctx.Context) error { return quiz(ctx).Send().Err() })
 
 	// Handle the "vote_again" callback
-	bot.On.Callback.Equal("vote_again", func(ctx *tg.Context) error {
+	b.On.Callback.Equal("vote_again", func(ctx *ctx.Context) error {
 		ctx.Delete().Send()
 		return quiz(ctx).Send().Err()
 	})
 
-	bot.Polling().DropPendingUpdates().Start()
+	b.Polling().DropPendingUpdates().Start()
 }

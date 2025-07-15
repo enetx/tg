@@ -2,15 +2,16 @@ package main
 
 import (
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 )
 
 func main() {
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		markup := keyboard.Reply().
 			Row().
 			Text("Hello").
@@ -24,10 +25,10 @@ func main() {
 		return ctx.Reply("Choose a button:").Markup(markup).Send().Err()
 	})
 
-	bot.On.Message.Contact(func(ctx *tg.Context) error {
+	b.On.Message.Contact(func(ctx *ctx.Context) error {
 		message := Format("Phone: {1.PhoneNumber}\nName: {1.FirstName}\nID: {1.UserId}", ctx.EffectiveMessage.Contact)
 		return ctx.Message(message).Send().Err()
 	})
 
-	bot.Polling().Start()
+	b.Polling().Start()
 }

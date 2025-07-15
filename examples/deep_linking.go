@@ -5,7 +5,9 @@ package main
 
 import (
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
 )
@@ -22,9 +24,9 @@ const (
 
 func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		payload := ctx.Args().Last().UnwrapOrDefault()
 		switch payload {
 		case CheckThisOut:
@@ -40,38 +42,38 @@ func main() {
 		}
 	})
 
-	bot.On.Callback.Equal(CallbackButton, func(ctx *tg.Context) error {
+	b.On.Callback.Equal(CallbackButton, func(ctx *ctx.Context) error {
 		url := Format(furl, ctx.Bot, UsingKeyboard)
 		return ctx.Answer("").URL(url).Send().Err()
 	})
 
-	bot.Polling().DropPendingUpdates().Start()
+	b.Polling().DropPendingUpdates().Start()
 }
 
-func start(ctx *tg.Context) error {
+func start(ctx *ctx.Context) error {
 	url := Format(furl, ctx, CheckThisOut)
 	return ctx.Message(String("Feel free to tell your friends about it:\n\n" + url)).Send().Err()
 }
 
-func deep1(ctx *tg.Context) error {
+func deep1(ctx *ctx.Context) error {
 	url := Format(furl, ctx, SoCool)
 	return ctx.Message("Awesome, you just accessed hidden functionality! Now let's get back to the private chat.").
 		Markup(keyboard.Inline().URL("Continue here!", url)).Send().Err()
 }
 
-func deep2(ctx *tg.Context) error {
+func deep2(ctx *ctx.Context) error {
 	url := Format(furl, ctx, UsingEntities)
 	msg := Format(`You can also mask the deep-linked URLs as links: <a href="{}">▶️ CLICK HERE</a>`, url)
 
 	return ctx.Message(String(msg)).HTML().Preview(preview.New().Disable()).Send().Err()
 }
 
-func deep3(ctx *tg.Context) error {
+func deep3(ctx *ctx.Context) error {
 	return ctx.Message("It is also possible to make deep-linking using InlineKeyboardButtons.").
 		Markup(keyboard.Inline().Text("Like this!", CallbackButton)).Send().Err()
 }
 
-func deep4(ctx *tg.Context) error {
+func deep4(ctx *ctx.Context) error {
 	msg := Format("Congratulations! This is as deep as it gets 👏🏻\n\nThe payload was: {}", ctx.Args())
 	return ctx.Message(msg).Send().Err()
 }

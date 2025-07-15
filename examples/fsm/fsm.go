@@ -3,7 +3,8 @@ package main
 import (
 	"github.com/enetx/fsm"
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -22,8 +23,8 @@ var fsmStore = NewMapSafe[int64, *fsm.FSM]()
 func main() {
 	// Load the bot token from a local .env file.
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	// Initialize the Telegram bot and its helper components.
-	bot := tg.NewBot(token).Build().Unwrap()
+	// Initialize the Telegram b and its helper components.
+	b := bot.New(token).Build().Unwrap()
 
 	// Define a master FSM template. Each new user will receive a clone of this template.
 	// This ensures a consistent workflow while maintaining separate states and data.
@@ -43,24 +44,24 @@ func main() {
 		Transition(StateLanguage, "next", StateSummary)
 
 	// Callback executed upon entering StateName. It prompts the user for their name.
-	fsmachine.OnEnter(StateName, func(ctx *fsm.Context) error {
-		// Retrieve the tg.Context that was stored in the FSM's Values by the /start handler.
-		tgctx := ctx.Values.Get("tgctx").Some().(*tg.Context)
+	fsmachine.OnEnter(StateName, func(fctx *fsm.Context) error {
+		// Retrieve the ctx.Context that was stored in the FSM's Values by the /start handler.
+		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
 
 		// Send a message asking for the user's name and force a reply.
 		return tgctx.Reply("Hi there! What's your name?").ForceReply().Send().Err()
 	})
 
 	// Callback executed upon entering StateLike. It asks the user if they enjoy writing bots.
-	fsmachine.OnEnter(StateLike, func(ctx *fsm.Context) error {
+	fsmachine.OnEnter(StateLike, func(fctx *fsm.Context) error {
 		// The user's name is retrieved from the input of the previous step.
-		name := ctx.Input
+		name := fctx.Input
 
 		// The name is stored in the FSM's persistent Data map for later use in the summary.
-		ctx.Data.Set("name", name)
+		fctx.Data.Set("name", name)
 
-		// Retrieve the latest tg.Context.
-		tgctx := ctx.Values.Get("tgctx").Some().(*tg.Context)
+		// Retrieve the latest ctx.Context.
+		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
 
 		// Ask the user a yes/no question using a custom reply keyboard.
 		return tgctx.Reply(Format("Did you <b>{}</b> like writing bots?", name)).
@@ -70,29 +71,29 @@ func main() {
 	})
 
 	// Callback executed upon entering StateLanguage. This state is only reached if the user answered "Yes".
-	fsmachine.OnEnter(StateLanguage, func(ctx *fsm.Context) error {
+	fsmachine.OnEnter(StateLanguage, func(fctx *fsm.Context) error {
 		// Store the "Yes" answer in the FSM's Data map.
-		ctx.Data.Set("like", ctx.Input)
+		fctx.Data.Set("like", fctx.Input)
 
-		// Retrieve the latest tg.Context.
-		tgctx := ctx.Values.Get("tgctx").Some().(*tg.Context)
+		// Retrieve the latest ctx.Context.
+		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
 
 		// Ask the user for their programming language and force a reply.
 		return tgctx.Reply("Cool! I'm too!\nWhat programming language did you use for it?").ForceReply().Send().Err()
 	})
 
 	// Callback executed upon entering StateSummary. This is the final step for all branches.
-	fsmachine.OnEnter(StateSummary, func(ctx *fsm.Context) error {
-		// Retrieve the latest tg.Context.
-		tgctx := ctx.Values.Get("tgctx").Some().(*tg.Context)
+	fsmachine.OnEnter(StateSummary, func(fctx *fsm.Context) error {
+		// Retrieve the latest ctx.Context.
+		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
 
 		// Crucial: Use defer to ensure the FSM instance is removed from the store after this
 		// function completes, freeing memory and allowing the user to /start again.
 		defer fsmStore.Delete(tgctx.EffectiveUser.Id)
 
 		// Retrieve all collected data from the FSM's persistent storage.
-		name := ctx.Data.Get("name").UnwrapOr("<no name>")
-		like := ctx.Data.Get("like")
+		name := fctx.Data.Get("name").UnwrapOr("<no name>")
+		like := fctx.Data.Get("like")
 
 		// If the user answered "No", the 'like' field was never set.
 		// We check for its absence to provide a different summary.
@@ -104,7 +105,7 @@ func main() {
 		}
 
 		// If we are here, the user answered "Yes" and provided a programming language.
-		lang := ctx.Input.(string)
+		lang := fctx.Input.(string)
 
 		// Add a playful, conditional greeting based on the language.
 		var greeting String
@@ -121,7 +122,7 @@ func main() {
 	})
 
 	// Command handler for /start, which initializes or resets a user's workflow.
-	bot.Command("start", func(ctx *tg.Context) error {
+	b.Command("start", func(ctx *ctx.Context) error {
 		// Get or create an FSM instance for the user.
 		entry := fsmStore.Entry(ctx.EffectiveUser.Id)
 		// If the user is new, clone the master template for them.
@@ -141,13 +142,13 @@ func main() {
 	})
 
 	// Command handler for /cancel to prematurely end the workflow and clean up.
-	bot.Command("cancel", func(ctx *tg.Context) error {
+	b.Command("cancel", func(ctx *ctx.Context) error {
 		fsmStore.Delete(ctx.EffectiveUser.Id)
 		return ctx.Reply("Cancelled.").RemoveKeyboard().Send().Err()
 	})
 
 	// This is the main handler for all subsequent text messages from the user.
-	bot.On.Message.Text(func(ctx *tg.Context) error {
+	b.On.Message.Text(func(ctx *ctx.Context) error {
 		// Attempt to retrieve the user's FSM instance.
 		fsmUser := fsmStore.Get(ctx.EffectiveUser.Id)
 		if fsmUser.IsNone() {
@@ -160,7 +161,7 @@ func main() {
 		// The user's text message is set as the 'Input' for the current FSM context.
 		// This makes it available to GuardFuncs and OnEnter callbacks.
 		fsm.Context().Input = ctx.EffectiveMessage.Text
-		// The latest tg.Context is also updated in the FSM's Values.
+		// The latest ctx.Context is also updated in the FSM's Values.
 		fsm.Context().Values.Set("tgctx", ctx)
 
 		// Attempt to trigger a transition. The FSM will use its internal rules
@@ -179,5 +180,5 @@ func main() {
 	})
 
 	// Start the bot's polling loop to listen for updates from Telegram.
-	bot.Polling().Start()
+	b.Polling().Start()
 }

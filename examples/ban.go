@@ -4,14 +4,15 @@ import (
 	"time"
 
 	. "github.com/enetx/g"
-	"github.com/enetx/tg"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 )
 
 func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	bot := tg.NewBot(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
-	bot.Command("ban", func(ctx *tg.Context) error {
+	b.Command("ban", func(ctx *ctx.Context) error {
 		if admin := ctx.IsAdmin(); admin.IsErr() || !admin.Ok() {
 			return nil
 		}
@@ -21,10 +22,11 @@ func main() {
 		}
 
 		userID := ctx.EffectiveMessage.ReplyToMessage.From.Id
-		ctx.Ban(userID, tg.NewBanChatMemberOpts().For(1*time.Hour))
+
+		ctx.Ban(userID).For(time.Hour).Send()
 
 		return ctx.Reply("User has been banned for 1 hour.").Send().Err()
 	})
 
-	bot.Polling().Start()
+	b.Polling().Start()
 }
