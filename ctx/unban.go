@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-
 	. "github.com/enetx/g"
 )
 

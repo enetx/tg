@@ -6,12 +6,10 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
-
+	. "github.com/enetx/g"
 	"github.com/enetx/tg/constants"
 	"github.com/enetx/tg/core"
 	"github.com/enetx/tg/keyboard"
-
-	. "github.com/enetx/g"
 )
 
 type Context struct {

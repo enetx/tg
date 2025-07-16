@@ -5,13 +5,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/enetx/tg/core"
-	"github.com/enetx/tg/handlers"
-
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
-
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/core"
+	"github.com/enetx/tg/handlers"
 )
 
 type Bot struct {

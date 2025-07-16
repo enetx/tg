@@ -4,10 +4,8 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-
-	"github.com/enetx/tg/types/permissions"
-
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/types/permissions"
 )
 
 type Restrict struct {

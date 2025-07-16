@@ -4,10 +4,8 @@ import (
 	"os"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-
-	"github.com/enetx/tg/types/updates"
-
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/types/updates"
 )
 
 type Webhook struct {

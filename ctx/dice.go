@@ -4,11 +4,9 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-
+	. "github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/types/effects"
-
-	. "github.com/enetx/g"
 )
 
 type Dice struct {

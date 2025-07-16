@@ -2,10 +2,8 @@ package handlers
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
-
-	"github.com/enetx/tg/core"
-
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/core"
 )
 
 type Command struct {

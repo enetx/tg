@@ -4,10 +4,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
-
-	"github.com/enetx/tg/core"
-
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/core"
 )
 
 type ChosenInlineResultHandlers struct{ Bot core.BotAPI }

@@ -2,10 +2,8 @@ package ctx
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-
-	"github.com/enetx/tg/keyboard"
-
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/keyboard"
 )
 
 type Invoice struct {

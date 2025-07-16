@@ -2,7 +2,6 @@ package ctx
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-
 	. "github.com/enetx/g"
 )
 

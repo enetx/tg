@@ -12,91 +12,84 @@ import (
 const (
 	StateName     = "state_name"     // Step 1: ask for the user's name
 	StateLike     = "state_like"     // Step 2: ask if the user likes writing bots (branching point)
-	StateLanguage = "state_language" // Step 3: ask which language was used (only if they like bots)
+	StateLanguage = "state_language" // Step 3: ask for programming language (conditional)
 	StateSummary  = "state_summary"  // Final step: show a summary of the answers
 )
 
 // fsmStore holds the active FSM instance for each user, keyed by their Telegram user ID.
-// This allows each user to have their own independent state in the conversation.
 var fsmStore = NewMapSafe[int64, *fsm.FSM]()
 
 func main() {
 	// Load the bot token from a local .env file.
 	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	// Initialize the Telegram b and its helper components.
+	// Initialize the Telegram bot and its helper components.
 	b := bot.New(token).Build().Unwrap()
 
 	// Define a master FSM template. Each new user will receive a clone of this template.
-	// This ensures a consistent workflow while maintaining separate states and data.
 	fsmachine := fsm.NewFSM(StateName).
-		// Defines the first transition from asking the name to asking if they like bots.
+		// Defines the first transition from asking for a name to the next step.
 		Transition(StateName, "next", StateLike).
-		// Defines a conditional transition. This path is only taken if the user's input is "Yes".
+		// Defines a conditional transition. This path is taken only if the GuardFunc returns true (input is "Yes").
 		TransitionWhen(StateLike, "next", StateLanguage, func(ctx *fsm.Context) bool {
 			return ctx.Input.(string) == "Yes"
 		}).
-		// Defines another conditional transition. This path is taken if the input is "No",
-		// skipping the 'StateLanguage' step entirely.
+		// Defines another conditional transition. This path is taken if input is "No", skipping StateLanguage.
 		TransitionWhen(StateLike, "next", StateSummary, func(ctx *fsm.Context) bool {
 			return ctx.Input.(string) == "No"
 		}).
-		// Defines the final transition from asking the language to showing the summary.
+		// Defines the final transition from the language step to the summary.
 		Transition(StateLanguage, "next", StateSummary)
 
-	// Callback executed upon entering StateName. It prompts the user for their name.
+	// OnEnter StateName: Prompts the user for their name.
 	fsmachine.OnEnter(StateName, func(fctx *fsm.Context) error {
-		// Retrieve the ctx.Context that was stored in the FSM's Values by the /start handler.
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
+		// Retrieve the tgctx stored in Meta to interact with the Telegram API.
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
-		// Send a message asking for the user's name and force a reply.
+		// Ask for the user's name and force a reply.
 		return tgctx.Reply("Hi there! What's your name?").ForceReply().Send().Err()
 	})
 
-	// Callback executed upon entering StateLike. It asks the user if they enjoy writing bots.
+	// OnEnter StateLike: Retrieves the user's name from Input, stores it, and asks the next question.
 	fsmachine.OnEnter(StateLike, func(fctx *fsm.Context) error {
-		// The user's name is retrieved from the input of the previous step.
+		// The user's name is retrieved from the input of the previous trigger.
 		name := fctx.Input
 
-		// The name is stored in the FSM's persistent Data map for later use in the summary.
+		// Store the name in the FSM's persistent Data map for use in the summary.
 		fctx.Data.Set("name", name)
 
-		// Retrieve the latest ctx.Context.
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
+		// Retrieve the latest Telegram context to send a reply.
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
-		// Ask the user a yes/no question using a custom reply keyboard.
+		// Ask the user a yes/no question using a reply keyboard.
 		return tgctx.Reply(Format("Did you <b>{}</b> like writing bots?", name)).
 			HTML().
 			Markup(keyboard.Reply().Row().Text("Yes").Text("No")).
 			Send().Err()
 	})
 
-	// Callback executed upon entering StateLanguage. This state is only reached if the user answered "Yes".
+	// OnEnter StateLanguage: This state is only reached if the user answered "Yes".
 	fsmachine.OnEnter(StateLanguage, func(fctx *fsm.Context) error {
-		// Store the "Yes" answer in the FSM's Data map.
+		// Store the "Yes" answer, which came from the previous trigger's input.
 		fctx.Data.Set("like", fctx.Input)
 
-		// Retrieve the latest ctx.Context.
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
-		// Ask the user for their programming language and force a reply.
+		// Ask for the user's programming language.
 		return tgctx.Reply("Cool! I'm too!\nWhat programming language did you use for it?").ForceReply().Send().Err()
 	})
 
-	// Callback executed upon entering StateSummary. This is the final step for all branches.
+	// OnEnter StateSummary: This is the final step, consolidating all collected data.
 	fsmachine.OnEnter(StateSummary, func(fctx *fsm.Context) error {
-		// Retrieve the latest ctx.Context.
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
-
-		// Crucial: Use defer to ensure the FSM instance is removed from the store after this
-		// function completes, freeing memory and allowing the user to /start again.
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
+		// Use defer to ensure the FSM instance is removed after the interaction is complete.
 		defer fsmStore.Delete(tgctx.EffectiveUser.Id)
 
-		// Retrieve all collected data from the FSM's persistent storage.
+		// Retrieve all collected data from persistent storage.
 		name := fctx.Data.Get("name").UnwrapOr("<no name>")
 		like := fctx.Data.Get("like")
 
-		// If the user answered "No", the 'like' field was never set.
-		// We check for its absence to provide a different summary.
+		// If the user answered "No", the `like` data was never set.
+		// Check for its absence to provide a different summary for the "No" branch.
 		if like.IsNone() {
 			return tgctx.Reply(Format("Not bad, not terrible.\nSee you soon.\n\nSummary:\n- Name: {}\n- Like bots? No", name)).
 				RemoveKeyboard().
@@ -104,16 +97,16 @@ func main() {
 				Err()
 		}
 
-		// If we are here, the user answered "Yes" and provided a programming language.
+		// If we are here, the user answered "Yes", and the final input is their programming language.
 		lang := fctx.Input.(string)
 
-		// Add a playful, conditional greeting based on the language.
+		// Add a playful, conditional greeting.
 		var greeting String
 		if lang == "go" {
 			greeting = "Go? Nice choice – that really makes my circuits light up! 😉\n"
 		}
 
-		// Compose and send the final, detailed summary.
+		// Compose and send the final, detailed summary for the "Yes" branch.
 		return tgctx.Reply(Format("{}<b>Summary:</b>\n- Name: {}\n- Like bots? {}\n- Language: {}", greeting, name, like.Some(), lang)).
 			HTML().
 			RemoveKeyboard().
@@ -125,17 +118,16 @@ func main() {
 	b.Command("start", func(ctx *ctx.Context) error {
 		// Get or create an FSM instance for the user.
 		entry := fsmStore.Entry(ctx.EffectiveUser.Id)
-		// If the user is new, clone the master template for them.
 		entry.OrSetBy(fsmachine.Clone)
 		fsm := entry.Get().Some()
 
-		// Manually set the FSM's state to the beginning. This ensures that
-		// a user can restart the flow cleanly even if they were halfway through.
+		// Manually reset the FSM to the initial state. This allows a user
+		// to restart the flow cleanly even if they were halfway through.
 		fsm.SetState(StateName)
 
-		// Store the current Telegram context in the FSM's temporary Values.
-		// This makes it accessible within the first OnEnter callback.
-		fsm.Context().Values.Set("tgctx", ctx)
+		// Store the current Telegram context in the FSM's Meta store,
+		// making it accessible within the first OnEnter callback.
+		fsm.Context().Meta.Set("tgctx", ctx)
 
 		// Manually trigger the entry callback for the initial state to begin the flow.
 		return fsm.CallEnter(StateName)
@@ -147,38 +139,35 @@ func main() {
 		return ctx.Reply("Cancelled.").RemoveKeyboard().Send().Err()
 	})
 
-	// This is the main handler for all subsequent text messages from the user.
+	// Main handler for all subsequent text messages from the user.
 	b.On.Message.Text(func(ctx *ctx.Context) error {
 		// Attempt to retrieve the user's FSM instance.
 		fsmUser := fsmStore.Get(ctx.EffectiveUser.Id)
 		if fsmUser.IsNone() {
-			// If no FSM exists, the user has not started the workflow.
 			return ctx.Reply("Please type /start to begin.").Send().Err()
 		}
 
 		fsm := fsmUser.Some()
+		input := ctx.EffectiveMessage.Text
 
-		// The user's text message is set as the 'Input' for the current FSM context.
-		// This makes it available to GuardFuncs and OnEnter callbacks.
-		fsm.Context().Input = ctx.EffectiveMessage.Text
-		// The latest ctx.Context is also updated in the FSM's Values.
-		fsm.Context().Values.Set("tgctx", ctx)
+		// Update the Telegram context to ensure the next callback can reply.
+		fsm.Context().Meta.Set("tgctx", ctx)
 
-		// Attempt to trigger a transition. The FSM will use its internal rules
-		// (including GuardFuncs) to determine the next state.
-		err := fsm.Trigger("next")
+		// Trigger a transition with the user's text as input. The FSM will use its
+		// GuardFuncs to determine the correct next state.
+		err := fsm.Trigger("next", input)
 		if err != nil {
-			// If a transition error occurs, we check if it's because the user
-			// provided invalid input (e.g., not "Yes" or "No").
+			// If a transition error occurs (e.g., input is not "Yes" or "No"),
+			// check if we are in the branching state and provide a helpful message.
 			if fsm.Current() == StateLike {
 				return ctx.Reply("I don't understand you :(").Send().Err()
 			}
 		}
 
-		// If the error is not a simple invalid input, it might be a bug. Propagate it.
+		// Propagate any other, unexpected errors.
 		return err
 	})
 
-	// Start the bot's polling loop to listen for updates from Telegram.
+	// Start the bot's polling loop.
 	b.Polling().Start()
 }

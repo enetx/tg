@@ -28,21 +28,22 @@ func main() {
 	// Load the bot token from a local .env file.
 	token := NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 
-	// Initialize the Telegram b and its helper components.
+	// Initialize the Telegram bot and its helper components.
 	b := bot.New(token).Build().Unwrap()
 
-	// Create a master FSM template. Each new user will receive a clone of this template.
+	// Create a master FSM fsmachine. Each new user will receive a clone of this fsmachine.
 	// This ensures a consistent workflow while maintaining separate states and data for each user.
-	template := fsm.NewFSM(StateGender).
-		// Define the linear flow of the conversation.
+	fsmachine := fsm.NewFSM(StateGender).
+		// Define the linear flow of the conversation. Each "next" event moves to the subsequent state.
 		Transition(StateGender, "next", StatePhoto).
 		Transition(StatePhoto, "next", StateLocation).
 		Transition(StateLocation, "next", StateDone)
 
-	// Step 1: Ask for gender. This is the entry point for a new workflow.
-	template.OnEnter(StateGender, func(fctx *fsm.Context) error {
-		// Retrieve the ctx.Context passed through FSM Values to interact with the Telegram API.
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
+	// Callback for entering StateGender. This is the entry point for a new workflow.
+	fsmachine.OnEnter(StateGender, func(fctx *fsm.Context) error {
+		// Retrieve the Telegram context (`tgctx`) stored in the FSM's Meta store.
+		// This context is needed to send replies to the user.
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
 		// Ask for the user's gender using a custom reply keyboard for easy input.
 		return tgctx.Reply("Are you a boy or a girl?").
@@ -50,26 +51,33 @@ func main() {
 			Send().Err()
 	})
 
-	// Step 2: Ask for a photo after the user has provided their gender.
-	template.OnEnter(StatePhoto, func(fctx *fsm.Context) error {
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
+	// Callback for entering StatePhoto, executed after the user has provided their gender.
+	fsmachine.OnEnter(StatePhoto, func(fctx *fsm.Context) error {
+		// Retrieve the user's gender from `fctx.Input`. The text handler passed this value
+		// when it called `fsm.Trigger("next", userText)`.
+		gender := fctx.Input.(string)
+		// Store the gender in the FSM's persistent Data store for later use in the summary.
+		fctx.Data.Set("gender", gender)
 
-		// Save the gender from the previous step's input.
-		fctx.Data.Set("gender", tgctx.EffectiveMessage.Text)
+		// Retrieve the tgctx to send the next prompt.
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
 		// Prompt the user to either send a photo or skip this optional step.
 		return tgctx.Reply("Send me your photo or type /skip").RemoveKeyboard().Send().Err()
 	})
 
-	// Step 3: Ask for location after the user has sent a photo or skipped.
-	template.OnEnter(StateLocation, func(fctx *fsm.Context) error {
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
+	// Callback for entering StateLocation, executed after the user has sent a photo or skipped.
+	fsmachine.OnEnter(StateLocation, func(fctx *fsm.Context) error {
+		// Process the input from the 'photo' state. This input can be actual photo data
+		// (passed by the photo handler) or a "skipped" string (passed by the /skip handler).
+		photoInput := fctx.Input
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
-		// Check if a photo was sent in the previous step and save it.
-		if tgctx.EffectiveMessage.Photo != nil {
-			fctx.Data.Set("photo", tgctx.EffectiveMessage.Photo)
+		// Check the type of input to determine if a photo was sent.
+		if photo, ok := photoInput.([]gotgbot.PhotoSize); ok {
+			fctx.Data.Set("photo", photo)
 			tgctx.Reply("✅ Photo received").Send()
-		} else if fctx.Data.Get("photo").UnwrapOrDefault() == "skipped" {
+		} else if skipped, ok := photoInput.(string); ok && skipped == "skipped" {
 			// Acknowledge that the photo step was skipped.
 			tgctx.Reply("⏭ Photo skipped").Send()
 		}
@@ -79,30 +87,35 @@ func main() {
 			Markup(keyboard.Reply().Location("Location")).Send().Err()
 	})
 
-	// This hook processes the final user input (location) before transitioning to the 'done' state.
-	// It acts as the final data processing step before the summary is shown.
-	template.OnExit(StateLocation, func(fctx *fsm.Context) error {
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
+	// This OnExit hook processes the user's final input (their location or a skip command).
+	// It runs *after* the user has responded in the 'location' state but *before* the 'done' state's OnEnter callback.
+	fsmachine.OnExit(StateLocation, func(fctx *fsm.Context) error {
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
-		// Check if a location was provided and save it.
-		if tgctx.EffectiveMessage.Location != nil {
-			fctx.Data.Set("location", tgctx.EffectiveMessage.Location)
+		// Retrieve the final input (location data or "skipped" string) from the context.
+		locationInput := fctx.Input
+		if loc, ok := locationInput.(*gotgbot.Location); ok {
+			fctx.Data.Set("location", loc)
 			tgctx.Reply("✅ Location received").Send()
-		} else if fctx.Data.Get("location").UnwrapOrDefault() == "skipped" {
-			// Acknowledge that the location step was skipped.
+		} else if skipped, ok := locationInput.(string); ok && skipped == "skipped" {
+			fctx.Data.Set("location", "skipped")
 			tgctx.Reply("⏭ Location skipped").Send()
 		}
 
-		// Inform the user that the data collection is complete and a summary will be shown.
+		// Inform the user that data collection is complete before showing the summary.
 		return tgctx.Message("Thanks! Let me summarize what you've told me...").RemoveKeyboard().Send().Err()
 	})
 
-	// Final Step: Display a summary of all collected data and clean up the user's FSM instance.
-	template.OnEnter(StateDone, func(fctx *fsm.Context) error {
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
-		data := fctx.Data
+	// Callback for entering StateDone. This is the final step where the summary is displayed.
+	fsmachine.OnEnter(StateDone, func(fctx *fsm.Context) error {
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
+
+		// Use `defer` to ensure the FSM instance is removed from the store after this function completes.
+		// This frees memory and allows the user to run /start again.
+		defer fsmStore.Delete(tgctx.EffectiveUser.Id)
 
 		// Retrieve all collected data from the FSM's persistent storage.
+		data := fctx.Data
 		gender := data.Get("gender").UnwrapOr("unknown")
 		photo := data.Get("photo")
 		location := data.Get("location")
@@ -127,10 +140,6 @@ func main() {
 		summary += "👤 Gender: " + gender.(string) + "\n"
 		tgctx.Message(String(summary)).Send()
 
-		// Crucial: Remove the user's FSM instance from the store to free up memory
-		// and allow them to start a new session later.
-		fsmStore.Delete(tgctx.EffectiveUser.Id)
-
 		// Send the final goodbye message.
 		return tgctx.Message("Thank you! I hope we can talk again some day.").Send().Err()
 	})
@@ -140,12 +149,12 @@ func main() {
 		// Get or create an FSM instance for the user.
 		entry := fsmStore.Entry(ctx.EffectiveUser.Id)
 		// If the user is new, clone the master template for them.
-		entry.OrSetBy(template.Clone)
+		entry.OrSetBy(fsmachine.Clone)
 		fsm := entry.Get().Some()
 
-		// Store the current Telegram context in the FSM's temporary Values.
-		// This makes it accessible within all callback functions for this interaction.
-		fsm.Context().Values.Set("tgctx", ctx)
+		// Store the current Telegram context in the FSM's temporary Meta store.
+		// This makes it accessible within all callbacks for sending API replies.
+		fsm.Context().Meta.Set("tgctx", ctx)
 
 		// Manually trigger the entry callback for the first state to begin the flow.
 		return fsm.CallEnter(StateGender)
@@ -159,20 +168,11 @@ func main() {
 		}
 
 		fsm := fsmOpt.Some()
-		fsm.Context().Values.Set("tgctx", ctx)
+		fsm.Context().Meta.Set("tgctx", ctx)
 
-		// Check the user's current state to determine if skipping is allowed.
-		switch fsm.Current() {
-		case StatePhoto:
-			fsm.Context().Data.Set("photo", "skipped")
-			return fsm.Trigger("next")
-		case StateLocation:
-			fsm.Context().Data.Set("location", "skipped")
-			return fsm.Trigger("next")
-		default:
-			// If the user is not in a skippable state, inform them.
-			return ctx.Reply("Nothing to skip.").Send().Err()
-		}
+		// Trigger the FSM's "next" event, passing the string "skipped" as the input.
+		// The appropriate OnEnter/OnExit callback will handle this special value.
+		return fsm.Trigger("next", "skipped")
 	})
 
 	// Command handler for /cancel to prematurely end the workflow and clean up.
@@ -181,30 +181,47 @@ func main() {
 		return ctx.Reply("Bye! I hope we can talk again some day.").Send().Err()
 	})
 
-	// Generic message handler for text, photo, and location inputs.
-	// This function handles the common logic for advancing the FSM.
-	handleMessage := func(ctx *ctx.Context) error {
-		// Attempt to retrieve the user's FSM instance.
+	// Handler for incoming text messages.
+	b.On.Message.Text(func(ctx *ctx.Context) error {
 		fsmOpt := fsmStore.Get(ctx.EffectiveUser.Id)
 		if fsmOpt.IsNone() {
-			// If no FSM exists, the user has not started the workflow.
 			return ctx.Reply("Please type /start to begin.").Send().Err()
 		}
 
 		fsm := fsmOpt.Some()
+		fsm.Context().Meta.Set("tgctx", ctx)
 
-		// Store the latest Telegram context in the FSM's Values.
-		fsm.Context().Values.Set("tgctx", ctx)
+		// Trigger the "next" event, passing the message text directly as the FSM input.
+		return fsm.Trigger("next", ctx.EffectiveMessage.Text)
+	})
 
-		// Trigger the "next" event to advance the state machine.
-		// The FSM's OnEnter/OnExit callbacks will handle the specific logic.
-		return fsm.Trigger("next")
-	}
+	// Handler for incoming photos.
+	b.On.Message.Photo(func(ctx *ctx.Context) error {
+		fsmOpt := fsmStore.Get(ctx.EffectiveUser.Id)
+		if fsmOpt.IsNone() {
+			return nil // Ignore photos if not in a workflow.
+		}
 
-	// Register the generic handler for different message types.
-	b.On.Message.Text(handleMessage)
-	b.On.Message.Photo(handleMessage)
-	b.On.Message.Location(handleMessage)
+		fsm := fsmOpt.Some()
+		fsm.Context().Meta.Set("tgctx", ctx)
+
+		// Trigger the "next" event, passing the photo data slice as the FSM input.
+		return fsm.Trigger("next", ctx.EffectiveMessage.Photo)
+	})
+
+	// Handler for incoming locations.
+	b.On.Message.Location(func(ctx *ctx.Context) error {
+		fsmOpt := fsmStore.Get(ctx.EffectiveUser.Id)
+		if fsmOpt.IsNone() {
+			return nil // Ignore locations if not in a workflow.
+		}
+
+		fsm := fsmOpt.Some()
+		fsm.Context().Meta.Set("tgctx", ctx)
+
+		// Trigger the "next" event, passing the location object as the FSM input.
+		return fsm.Trigger("next", ctx.EffectiveMessage.Location)
+	})
 
 	// Start the bot's polling loop to listen for updates from Telegram.
 	b.Polling().Start()

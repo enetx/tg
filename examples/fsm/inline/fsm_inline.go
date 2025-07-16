@@ -22,24 +22,25 @@ var fsmStore = NewMapSafe[int64, *fsm.FSM]()
 func main() {
 	// Load the Telegram bot token from a local .env file.
 	token := NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
-	// Initialize the Telegram b and its helper components.
+
+	// Initialize the Telegram bot and its helper components.
 	b := bot.New(token).Build().Unwrap()
 
-	// Define a master FSM template. Each new user will receive a clone of this template.
-	// This ensures a consistent workflow while maintaining separate states and data for each user.
+	// Define a master FSM template. Each new user will receive a clone of this template,
+	// ensuring a consistent workflow while maintaining separate states and data for each user.
 	template := fsm.NewFSM(StateColor).
 		// Defines the transition from choosing a color to choosing an animal.
 		Transition(StateColor, "color_selected", StateAnimal).
 		// Defines the final transition from choosing an animal to showing the summary.
 		Transition(StateAnimal, "animal_selected", StateSummary)
 
-	// Step 1: Callback executed upon entering StateColor. It asks the user to select a color.
+	// Step 1: Callback executed upon entering StateColor. Asks the user to select a color.
 	template.OnEnter(StateColor, func(fctx *fsm.Context) error {
-		// Retrieve the ctx.Context that was stored in the FSM's Values by the /start handler.
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
+		// Retrieve the tgctx stored in the FSM's Meta to interact with the Telegram API.
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
-		// Send a message with an inline keyboard. Each button has a callback_data
-		// value prefixed with "color:" to be handled by the corresponding callback handler.
+		// Send a message with an inline keyboard. Each button's callback_data is prefixed
+		// with "color:" to be handled by the corresponding callback handler.
 		return tgctx.Reply("🎨 Choose your favorite color:").
 			Markup(keyboard.Inline().
 				Row().Text("❤️ Red", "color:red").
@@ -50,18 +51,18 @@ func main() {
 
 	// Step 2: Callback executed upon entering StateAnimal, after a color has been selected.
 	template.OnEnter(StateAnimal, func(fctx *fsm.Context) error {
-		// Retrieve the latest ctx.Context.
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
+		// Retrieve the latest Telegram context.
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
 		// The selected color was passed as 'Input' from the color callback handler.
 		color := fctx.Input.(String)
 		// Store the color in the FSM's persistent Data map for later use.
 		fctx.Data.Set("color", color)
 
-		// Acknowledge the user's selection by editing the original message or sending a new one.
+		// Acknowledge the user's selection by sending a new message.
 		tgctx.Reply("✅ Color selected: " + color).Send()
 
-		// Send a new message asking for the user's favorite animal, again with an inline keyboard.
+		// Send a new message asking for the user's favorite animal.
 		return tgctx.Message("🐾 Pick your favorite animal:").
 			Markup(keyboard.Inline().
 				Row().Text("🐶 Dog", "animal:dog").
@@ -70,12 +71,12 @@ func main() {
 			Send().Err()
 	})
 
-	// Step 3: Callback executed upon entering StateSummary. This is the final step.
+	// Step 3: Callback executed upon entering StateSummary, the final step.
 	template.OnEnter(StateSummary, func(fctx *fsm.Context) error {
-		// Retrieve the latest ctx.Context.
-		tgctx := fctx.Values.Get("tgctx").Some().(*ctx.Context)
-		// Crucial: Use defer to ensure the FSM instance is removed from the store after this
-		// function completes, freeing memory and allowing the user to /start again.
+		// Retrieve the latest Telegram context.
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
+		// Use defer to ensure the FSM instance is removed from the store after this function completes,
+		// freeing memory and allowing the user to /start again.
 		defer fsmStore.Delete(tgctx.EffectiveUser.Id)
 
 		// Retrieve all collected data: color from the Data map, and animal from the current Input.
@@ -96,8 +97,8 @@ func main() {
 		entry.OrSetBy(template.Clone)
 		fsm := entry.Get().Some()
 
-		// Store the current Telegram context in the FSM's temporary Values.
-		fsm.Context().Values.Set("tgctx", ctx)
+		// Store the current Telegram context in the FSM's temporary Meta store.
+		fsm.Context().Meta.Set("tgctx", ctx)
 
 		// Manually trigger the entry callback for the initial state to begin the flow.
 		return fsm.CallEnter(StateColor)
@@ -110,7 +111,6 @@ func main() {
 	})
 
 	// Callback handler for buttons with data prefixed by "color:".
-	// This is only active when the user is expected to choose a color.
 	b.On.Callback.Prefix("color:", func(ctx *ctx.Context) error {
 		// Retrieve the user's FSM instance.
 		fsmOpt := fsmStore.Get(ctx.EffectiveUser.Id)
@@ -119,18 +119,17 @@ func main() {
 		}
 
 		fsm := fsmOpt.Some()
-		fsm.Context().Values.Set("tgctx", ctx)
+		fsm.Context().Meta.Set("tgctx", ctx)
 
-		// Extract the color value from the callback data (e.g., "color:red" -> "red").
-		// Set this value as the 'Input' for the FSM transition.
-		fsm.Context().Input = String(ctx.Callback.Data).StripPrefix("color:")
+		// Extract the color value from the callback data (e.g., "color:red" -> "red")
+		// and use it as the input for the FSM transition.
+		input := String(ctx.Callback.Data).StripPrefix("color:")
 
 		// Trigger the transition associated with selecting a color.
-		return fsm.Trigger("color_selected")
+		return fsm.Trigger("color_selected", input)
 	})
 
 	// Callback handler for buttons with data prefixed by "animal:".
-	// This is only active when the user is expected to choose an animal.
 	b.On.Callback.Prefix("animal:", func(ctx *ctx.Context) error {
 		// Retrieve the user's FSM instance.
 		fsmOpt := fsmStore.Get(ctx.EffectiveUser.Id)
@@ -139,17 +138,17 @@ func main() {
 		}
 
 		fsm := fsmOpt.Some()
-		fsm.Context().Values.Set("tgctx", ctx)
+		fsm.Context().Meta.Set("tgctx", ctx)
 
-		// Extract the animal value from the callback data and set it as the FSM's 'Input'.
-		fsm.Context().Input = String(ctx.Callback.Data).StripPrefix("animal:")
+		// Extract the animal value from the callback data and use it as the FSM's input.
+		input := String(ctx.Callback.Data).StripPrefix("animal:")
 
 		// Trigger the transition associated with selecting an animal.
-		return fsm.Trigger("animal_selected")
+		return fsm.Trigger("animal_selected", input)
 	})
 
 	// A catch-all handler to clean up any unsupported user interactions.
-	// This helps prevent the bot from appearing unresponsive if the user types text
+	// This prevents the bot from appearing unresponsive if the user types text
 	// when a button press is expected.
 	b.On.Any(func(ctx *ctx.Context) error {
 		// If the update is a text message (not a callback), delete it.
