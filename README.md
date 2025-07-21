@@ -200,7 +200,7 @@ b.Command("photo", func(ctx *ctx.Context) error {
 b.Command("doc", func(ctx *ctx.Context) error {
     return ctx.Document("document.pdf").
         Caption("Important document").
-		ReplyTo(ctx.EffectiveMessage.MessageId).
+	ReplyTo(ctx.EffectiveMessage.MessageId).
         Send().Err()
 })
 
@@ -209,9 +209,9 @@ b.Command("video", func(ctx *ctx.Context) error {
     return ctx.Video("video.mp4").
         Caption("Cool video").
         Spoiler().
-		Timeout(time.Minute * 3). // Custom timeout
-		ApplyMetadata().          // Extract video info (ffprobe)
-		GenerateThumbnail().      // Auto-generate thumbnail (ffmpeg)
+	Timeout(time.Minute * 3). // Custom timeout
+	ApplyMetadata().          // Extract video info (ffprobe)
+	GenerateThumbnail().      // Auto-generate thumbnail (ffmpeg)
         Send().Err()
 })
 
@@ -331,13 +331,11 @@ b.On.Message.SuccessfulPayment(func(ctx *ctx.Context) error {
     chargeID := payment.TelegramPaymentChargeId
 
     // Grant premium access here
+    Println("User {1.FirstName} ({1.Id}) paid {2.TotalAmount} {2.Currency} with payload {2.InvoicePayload}",
+        user, payment)
 
-	Println("User {1.FirstName} ({1.Id}) paid {2.TotalAmount} {2.Currency} with payload {2.InvoicePayload}",
-		user, payment)
-
-	return ctx.Message(Format("Payment complete! Thank you, {}!\nChargeID:\n{}", user.FirstName, chargeID)).
-		Send().
-		Err()
+    return ctx.Message(Format("Payment complete! Thank you, {}!\nChargeID:\n{}", user.FirstName, chargeID)).
+	Send().Err()
 })
 
 // Handle refunds
@@ -395,8 +393,8 @@ import (
     "net/http"
     "io"
 
-	"github.com/enetx/tg/bot"
-	"github.com/enetx/tg/types/updates"
+    "github.com/enetx/tg/bot"
+    "github.com/enetx/tg/types/updates"
 )
 
 func main() {
