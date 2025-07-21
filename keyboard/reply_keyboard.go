@@ -7,10 +7,12 @@ import (
 	. "github.com/enetx/g"
 )
 
+// ReplyKeyboard helps build Telegram reply keyboard markup using a fluent API.
 type ReplyKeyboard struct {
 	rows Slice[Slice[gotgbot.KeyboardButton]]
 }
 
+// Row starts a new row for subsequent buttons.
 func (rb *ReplyKeyboard) Row() *ReplyKeyboard {
 	rb.rows.Push([]gotgbot.KeyboardButton{})
 	return rb
@@ -26,12 +28,12 @@ func (rb *ReplyKeyboard) addToLastRow(btn gotgbot.KeyboardButton) *ReplyKeyboard
 	return rb
 }
 
-// Basic text button
+// Text adds a basic text button to the current row.
 func (rb *ReplyKeyboard) Text(text String) *ReplyKeyboard {
 	return rb.addToLastRow(gotgbot.KeyboardButton{Text: text.Std()})
 }
 
-// Request contact button
+// Contact adds a button that requests the user's contact information.
 func (rb *ReplyKeyboard) Contact(text String) *ReplyKeyboard {
 	return rb.addToLastRow(gotgbot.KeyboardButton{
 		Text:           text.Std(),
@@ -39,7 +41,7 @@ func (rb *ReplyKeyboard) Contact(text String) *ReplyKeyboard {
 	})
 }
 
-// Request location button
+// Location adds a button that requests the user's location.
 func (rb *ReplyKeyboard) Location(text String) *ReplyKeyboard {
 	return rb.addToLastRow(gotgbot.KeyboardButton{
 		Text:            text.Std(),
@@ -47,7 +49,7 @@ func (rb *ReplyKeyboard) Location(text String) *ReplyKeyboard {
 	})
 }
 
-// Launch WebApp
+// WebApp adds a button that launches a Telegram Web App at the specified URL.
 func (rb *ReplyKeyboard) WebApp(text, url String) *ReplyKeyboard {
 	return rb.addToLastRow(gotgbot.KeyboardButton{
 		Text:   text.Std(),
@@ -55,7 +57,7 @@ func (rb *ReplyKeyboard) WebApp(text, url String) *ReplyKeyboard {
 	})
 }
 
-// Request a poll from user
+// Poll adds a button that requests the user to create a poll.
 func (rb *ReplyKeyboard) Poll(text String) *ReplyKeyboard {
 	return rb.addToLastRow(gotgbot.KeyboardButton{
 		Text:        text.Std(),
@@ -63,7 +65,7 @@ func (rb *ReplyKeyboard) Poll(text String) *ReplyKeyboard {
 	})
 }
 
-// Request chat
+// Chat adds a button that requests the user to select a chat.
 func (rb *ReplyKeyboard) Chat(text String) *ReplyKeyboard {
 	return rb.addToLastRow(gotgbot.KeyboardButton{
 		Text:        text.Std(),
@@ -71,7 +73,7 @@ func (rb *ReplyKeyboard) Chat(text String) *ReplyKeyboard {
 	})
 }
 
-// Request users
+// Users adds a button that requests the user to select users.
 func (rb *ReplyKeyboard) Users(text String) *ReplyKeyboard {
 	return rb.addToLastRow(gotgbot.KeyboardButton{
 		Text:         text.Std(),
@@ -79,7 +81,7 @@ func (rb *ReplyKeyboard) Users(text String) *ReplyKeyboard {
 	})
 }
 
-// Final builder
+// Markup returns the final ReplyKeyboardMarkup structure.
 func (rb *ReplyKeyboard) Markup() gotgbot.ReplyMarkup {
 	keyboard := *(*([][]gotgbot.KeyboardButton))(unsafe.Pointer(&rb.rows))
 	return gotgbot.ReplyKeyboardMarkup{

@@ -8,17 +8,20 @@ import (
 	"github.com/enetx/tg/core"
 )
 
+// ShippingHandlers provides methods to handle shipping query events.
 type ShippingHandlers struct{ Bot core.BotAPI }
 
 func (h *ShippingHandlers) handleShippingQuery(f filters.ShippingQuery, fn Handler) {
 	h.Bot.Dispatcher().AddHandler(handlers.NewShippingQuery(f, wrap(h.Bot, middlewares(h.Bot), fn)))
 }
 
+// Any handles all shipping queries.
 func (h *ShippingHandlers) Any(fn Handler) *ShippingHandlers {
 	h.handleShippingQuery(nil, fn)
 	return h
 }
 
+// FromUserID handles shipping queries from a specific user.
 func (h *ShippingHandlers) FromUserID(id int64, fn Handler) *ShippingHandlers {
 	h.handleShippingQuery(func(s *gotgbot.ShippingQuery) bool {
 		return s != nil && s.From.Id == id
@@ -26,6 +29,7 @@ func (h *ShippingHandlers) FromUserID(id int64, fn Handler) *ShippingHandlers {
 	return h
 }
 
+// HasPayloadPrefix handles shipping queries where invoice payload starts with the specified prefix.
 func (h *ShippingHandlers) HasPayloadPrefix(prefix String, fn Handler) *ShippingHandlers {
 	h.handleShippingQuery(func(s *gotgbot.ShippingQuery) bool {
 		return s != nil && String(s.InvoicePayload).StartsWith(prefix)

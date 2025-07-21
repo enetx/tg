@@ -1,23 +1,26 @@
+// Package roles defines Telegram chat administrator role types and utilities.
 package roles
 
 import "github.com/PaulSonOfLars/gotgbot/v2"
 
+// Role enumerates all supported Telegram chat administrator roles.
 type Role int
 
 const (
-	ManageChat Role = iota
-	DeleteMessages
-	ManageVideoChats
-	RestrictMembers
-	PromoteMembers
-	ChangeInfo
-	InviteUsers
-	PostMessages
-	EditMessages
-	PinMessages
-	ManageTopics
+	ManageChat       Role = iota // Manage chat settings and info
+	DeleteMessages               // Delete messages from other users
+	ManageVideoChats             // Manage video chats
+	RestrictMembers              // Restrict, unrestrict, kick, and ban chat members
+	PromoteMembers               // Add new administrators with fewer rights than their own
+	ChangeInfo                   // Change chat title, photo, and other settings
+	InviteUsers                  // Invite new users to the chat
+	PostMessages                 // Post messages in channels
+	EditMessages                 // Edit messages of other users in channels
+	PinMessages                  // Pin messages
+	ManageTopics                 // Manage topics in forum supergroups
 )
 
+// Roles creates a PromoteChatMemberOpts object with the specified administrator roles enabled.
 func Roles(list ...Role) *gotgbot.PromoteChatMemberOpts {
 	opts := new(gotgbot.PromoteChatMemberOpts)
 	for _, r := range list {

@@ -6,6 +6,7 @@ import (
 	"github.com/enetx/g/ref"
 )
 
+// Button represents an inline keyboard button with support for toggle functionality and fluent configuration.
 type Button struct {
 	raw      *gotgbot.InlineKeyboardButton
 	on       String
@@ -20,6 +21,7 @@ type Button struct {
 
 type buttonGetter struct{ b *Button }
 
+// NewButton creates a new Button instance, optionally initializing it with an existing InlineKeyboardButton.
 func NewButton(ikb ...*gotgbot.InlineKeyboardButton) *Button {
 	raw := new(gotgbot.InlineKeyboardButton)
 	if len(ikb) > 0 && ikb[0] != nil {
@@ -37,67 +39,80 @@ func (b *Button) attach(kb *InlineKeyboard) *Button {
 	return b
 }
 
+// Text sets the button's display text.
 func (b *Button) Text(text String) *Button {
 	b.raw.Text = text.Std()
 	return b
 }
 
+// Callback sets the callback data that will be sent when the button is pressed.
 func (b *Button) Callback(callback String) *Button {
 	b.raw.CallbackData = callback.Std()
 	return b
 }
 
+// URL makes the button open the specified URL when pressed.
 func (b *Button) URL(url String) *Button {
 	b.raw.Url = url.Std()
 	return b
 }
 
+// WebApp makes the button launch a Telegram Web App at the specified URL.
 func (b *Button) WebApp(url String) *Button {
 	b.raw.WebApp = &gotgbot.WebAppInfo{Url: url.Std()}
 	return b
 }
 
+// LoginURL makes the button perform Telegram login via the specified URL.
 func (b *Button) LoginURL(url String) *Button {
 	b.raw.LoginUrl = &gotgbot.LoginUrl{Url: url.Std()}
 	return b
 }
 
+// CopyText makes the button copy the specified text to the user's clipboard when pressed.
 func (b *Button) CopyText(toCopy String) *Button {
 	b.raw.CopyText = &gotgbot.CopyTextButton{Text: toCopy.Std()}
 	return b
 }
 
+// Pay makes the button trigger a payment flow when pressed.
 func (b *Button) Pay() *Button {
 	b.raw.Pay = true
 	return b
 }
 
+// Game makes the button launch a Telegram game when pressed.
 func (b *Button) Game() *Button {
 	b.raw.CallbackGame = new(gotgbot.CallbackGame)
 	return b
 }
 
+// SwitchInlineQuery makes the button open an inline query with the specified query string in another chat.
 func (b *Button) SwitchInlineQuery(query String) *Button {
 	b.raw.SwitchInlineQuery = ref.Of(query.Std())
 	return b
 }
 
+// SwitchInlineQueryCurrentChat makes the button open an inline query with the specified query string in the current chat.
 func (b *Button) SwitchInlineQueryCurrentChat(query String) *Button {
 	b.raw.SwitchInlineQueryCurrentChat = ref.Of(query.Std())
 	return b
 }
 
+// Delete marks the button for deletion from the keyboard.
 func (b *Button) Delete() {
 	b.deleted = true
 }
 
 // Toggle-related methods
+// On sets the text to display when the toggle button is in the active state.
 func (b *Button) On(text String) *Button {
 	b.isToggle = true
 	b.on = text
 	return b
 }
 
+// Off sets the text to display when the toggle button is in the inactive state.
 func (b *Button) Off(text String) *Button {
 	b.isToggle = true
 	b.off = text
@@ -105,6 +120,7 @@ func (b *Button) Off(text String) *Button {
 	return b
 }
 
+// SetActive sets the toggle button's active state and updates its parent keyboard if attached.
 func (b *Button) SetActive(active bool) *Button {
 	b.isToggle = true
 	b.isActive = active
@@ -116,6 +132,7 @@ func (b *Button) SetActive(active bool) *Button {
 	return b
 }
 
+// Flip toggles the button's active state and updates its parent keyboard if attached.
 func (b *Button) Flip() *Button {
 	b.isActive = !b.isActive
 	if b.parent != nil {
@@ -140,22 +157,27 @@ func (b *Button) build() gotgbot.InlineKeyboardButton {
 }
 
 // Getters
+// Callback returns the button's callback data.
 func (g buttonGetter) Callback() String {
 	return String(g.b.raw.CallbackData)
 }
 
+// Text returns the button's display text.
 func (g buttonGetter) Text() String {
 	return String(g.b.raw.Text)
 }
 
+// URL returns the button's URL.
 func (g buttonGetter) URL() String {
 	return String(g.b.raw.Url)
 }
 
+// IsToggle returns true if the button is configured as a toggle button.
 func (g buttonGetter) IsToggle() bool {
 	return g.b.isToggle
 }
 
+// IsActive returns the toggle button's current active state.
 func (g buttonGetter) IsActive() bool {
 	return g.b.isActive
 }

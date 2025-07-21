@@ -37,9 +37,9 @@ func main() {
 		return ctx.Video("video.mp4").
 			Caption("Look at this cat").
 			Spoiler().
-			Timeout(time.Minute * 3).
-			ApplyMetadata().     // ffprobe
-			GenerateThumbnail(). // ffmpeg
+			Timeout(time.Minute * 3). // Custom timeout
+			ApplyMetadata().          // Extract video info (ffprobe)
+			GenerateThumbnail().      // Auto-generate thumbnail (ffmpeg)
 			Send().
 			Err()
 	})

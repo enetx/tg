@@ -2,6 +2,7 @@
 // These can be used in MessageEffectId for special effects in private chats.
 package effects
 
+// EffectType enumerates all supported Telegram message effect types.
 type EffectType int
 
 const (

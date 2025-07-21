@@ -14,26 +14,31 @@ type EditMarkup struct {
 	messageID Option[int64]
 }
 
+// ChatID sets the target chat ID for the markup edit.
 func (e *EditMarkup) ChatID(id int64) *EditMarkup {
 	e.chatID = Some(id)
 	return e
 }
 
+// MessageID sets the target message ID to edit.
 func (e *EditMarkup) MessageID(id int64) *EditMarkup {
 	e.messageID = Some(id)
 	return e
 }
 
+// InlineMessageID sets the inline message ID to edit.
 func (e *EditMarkup) InlineMessageID(id String) *EditMarkup {
 	e.opts.InlineMessageId = id.Std()
 	return e
 }
 
-func (e *EditMarkup) BusinessID(id String) *EditMarkup {
+// Business sets the business connection ID for the markup edit.
+func (e *EditMarkup) Business(id String) *EditMarkup {
 	e.opts.BusinessConnectionId = id.Std()
 	return e
 }
 
+// Send edits the message reply markup and returns the result.
 func (e *EditMarkup) Send() Result[*gotgbot.Message] {
 	if e.kb != nil {
 		if markup, ok := e.kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {

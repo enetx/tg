@@ -16,6 +16,7 @@ type Video struct {
 	opts        *gotgbot.SendVideoOpts
 	file        *File
 	thumb       *File
+	cover       *File
 	removethumb bool
 	duration    Float
 	chatID      Option[int64]
@@ -83,7 +84,7 @@ func (v *Video) HTML() *Video {
 }
 
 func (v *Video) Markdown() *Video {
-	v.opts.ParseMode = "Markdown"
+	v.opts.ParseMode = "MarkdownV2"
 	return v
 }
 
@@ -109,6 +110,39 @@ func (v *Video) ReplyTo(messageID int64) *Video {
 
 func (v *Video) Timeout(duration time.Duration) *Video {
 	v.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
+	return v
+}
+
+func (v *Video) Business(id String) *Video {
+	v.opts.BusinessConnectionId = id.Std()
+	return v
+}
+
+func (v *Video) Thread(id int64) *Video {
+	v.opts.MessageThreadId = id
+	return v
+}
+
+func (v *Video) ShowCaptionAboveMedia() *Video {
+	v.opts.ShowCaptionAboveMedia = true
+	return v
+}
+
+func (v *Video) Cover(filename String) *Video {
+	v.cover = NewFile(filename)
+
+	reader := v.cover.Open()
+	if reader.IsErr() {
+		v.err = reader.Err()
+		return v
+	}
+
+	v.opts.Cover = gotgbot.InputFileByReader(v.cover.Name().Std(), reader.Ok().Std())
+	return v
+}
+
+func (v *Video) StartTimestamp(seconds int64) *Video {
+	v.opts.StartTimestamp = seconds
 	return v
 }
 
@@ -209,6 +243,10 @@ func (v *Video) Send() Result[*gotgbot.Message] {
 				v.thumb.Remove()
 			}
 		}()
+	}
+
+	if v.cover != nil {
+		defer v.cover.Close()
 	}
 
 	return v.ctx.timers(v.after, v.deleteAfter, func() Result[*gotgbot.Message] {

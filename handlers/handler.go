@@ -8,6 +8,7 @@ import (
 	"github.com/enetx/tg/ctx"
 )
 
+// Handler is a function type that handles bot events and returns an error if processing fails.
 type Handler func(*ctx.Context) error
 
 func wrap(bot core.BotAPI, middlewares Slice[Handler], handler Handler) func(*gotgbot.Bot, *ext.Context) error {

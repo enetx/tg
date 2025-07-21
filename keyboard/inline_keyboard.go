@@ -30,6 +30,7 @@ func (b *InlineKeyboard) addToLastRow(btn gotgbot.InlineKeyboardButton) *InlineK
 	return b
 }
 
+// Button adds a Button to the keyboard, updating existing buttons with matching callback data.
 func (b *InlineKeyboard) Button(btn *Button) *InlineKeyboard {
 	if btn == nil || btn.raw == nil {
 		return b
@@ -77,6 +78,7 @@ func (b *InlineKeyboard) update(btn *Button) *InlineKeyboard {
 	return b.addToLastRow(btn.build())
 }
 
+// Text adds a text button with callback data to the current row.
 func (b *InlineKeyboard) Text(text, callback String) *InlineKeyboard {
 	return b.addToLastRow(gotgbot.InlineKeyboardButton{
 		Text:         text.Std(),
@@ -183,6 +185,7 @@ func (b *InlineKeyboard) fromKeyboard(from *InlineKeyboard) *InlineKeyboard {
 	}
 }
 
+// Edit applies a handler function to each button in the keyboard, allowing for batch modifications.
 func (b *InlineKeyboard) Edit(handler func(btn *Button)) *InlineKeyboard {
 	if handler == nil {
 		return b

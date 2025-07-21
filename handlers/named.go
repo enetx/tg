@@ -7,6 +7,7 @@ type namedHandler struct {
 	ext.Handler
 }
 
+// Name returns the name of the handler.
 func (n namedHandler) Name() string {
 	return n.name
 }

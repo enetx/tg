@@ -17,35 +17,42 @@ type Restrict struct {
 	chatID          Option[int64]
 }
 
+// ChatID sets the target chat ID for the restrict action.
 func (r *Restrict) ChatID(id int64) *Restrict {
 	r.chatID = Some(id)
 	return r
 }
 
+// Until sets the restriction expiration time.
 func (r *Restrict) Until(t time.Time) *Restrict {
 	r.opts.UntilDate = t.Unix()
 	return r
 }
 
+// For sets the restriction duration from now.
 func (r *Restrict) For(d time.Duration) *Restrict {
 	return r.Until(time.Now().Add(d))
 }
 
+// AutoPermissions uses chat default permissions instead of independent permissions.
 func (r *Restrict) AutoPermissions() *Restrict {
 	r.autoPermissions = true
 	return r
 }
 
+// Permissions sets the allowed permissions for the restricted user.
 func (r *Restrict) Permissions(perms ...permissions.Permission) *Restrict {
 	r.permissions = permissions.Permissions(perms...)
 	return r
 }
 
+// Timeout sets the request timeout duration.
 func (r *Restrict) Timeout(duration time.Duration) *Restrict {
 	r.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
 	return r
 }
 
+// Send restricts the user's permissions and returns the result.
 func (r *Restrict) Send() Result[bool] {
 	if r.permissions == nil {
 		return Err[bool](Errorf("permissions are required"))

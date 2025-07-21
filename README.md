@@ -1,0 +1,520 @@
+# TG - Telegram Bot Framework for Go
+
+Modern and elegant wrapper around [gotgbot](https://github.com/PaulSonOfLars/gotgbot) with convenient API and functional programming style support.
+
+## Features
+
+- 🚀 **Simple and intuitive API** with method chaining support
+- 🎯 **Type-safe** event handlers for all Telegram update types
+- 🔧 **Flexible bot configuration** through Builder pattern
+- 📝 **Rich functionality** for messages, media, keyboards and payments
+- 🎮 **Built-in FSM support** (finite state machines) for complex dialogues
+- 💰 **Telegram Payments and Stars** support with refunds
+- 🎲 **Full support** for all Telegram content types and features
+- 🔧 **Middleware system** for request filtering and processing
+- 📂 **Advanced file handling** with metadata and thumbnails
+- 🌐 **Webhook support** with security features
+
+## Quick Start
+
+### Installation
+
+```bash
+go mod init your-bot
+go get github.com/enetx/tg
+```
+
+### Simple Echo Bot
+
+```go
+package main
+
+import (
+    . "github.com/enetx/g"
+    "github.com/enetx/tg/bot"
+    "github.com/enetx/tg/ctx"
+)
+
+func main() {
+    token := "token"
+    b := bot.New(token).Build().Unwrap()
+
+    // Handle text messages
+    b.On.Message.Text(func(ctx *ctx.Context) error {
+        return ctx.Reply("Echo: " + String(ctx.EffectiveMessage.Text)).Send().Err()
+    })
+
+    // Handle /start command
+    b.Command("start", func(ctx *ctx.Context) error {
+        return ctx.Reply("Welcome to the bot!").Send().Err()
+    })
+
+    b.Polling().Start()
+}
+```
+
+## Message Handlers
+
+Handle different types of Telegram messages:
+
+```go
+// Text messages
+b.On.Message.Text(func(ctx *ctx.Context) error {
+    return ctx.Reply("Text received").Send().Err()
+})
+
+// Media messages
+b.On.Message.Photo(func(ctx *ctx.Context) error {
+    return ctx.Reply("Photo received").Send().Err()
+})
+
+b.On.Message.Voice(func(ctx *ctx.Context) error {
+    return ctx.Reply("Voice received").Send().Err()
+})
+
+b.On.Message.Video(func(ctx *ctx.Context) error {
+    return ctx.Reply("Video received").Send().Err()
+})
+
+b.On.Message.Document(func(ctx *ctx.Context) error {
+    return ctx.Reply("Document received").Send().Err()
+})
+
+// Contact and location
+b.On.Message.Contact(func(ctx *ctx.Context) error {
+    contact := ctx.EffectiveMessage.Contact
+    return ctx.Reply("Thanks for sharing your contact!").Send().Err()
+})
+
+b.On.Message.Location(func(ctx *ctx.Context) error {
+    location := ctx.EffectiveMessage.Location
+    return ctx.Reply("Location received").Send().Err()
+})
+```
+
+## Commands
+
+Register commands with advanced options:
+
+```go
+// Basic command
+b.Command("start", func(ctx *ctx.Context) error {
+    return ctx.Message("Start command triggered!").Send().Err()
+})
+
+// Command with custom triggers and options
+b.Command("help", func(ctx *ctx.Context) error {
+    return ctx.Reply("Help message").Send().Err()
+}).
+    Triggers('!', '.').  // Allow !help and .help
+    AllowEdited().       // Handle edited messages
+    AllowChannel().      // Work in channels
+    Register()
+
+// Commands work automatically, but you can customize them further
+```
+
+## Inline Keyboards
+
+Create interactive inline keyboards:
+
+```go
+// Basic inline keyboard
+b.Command("menu", func(ctx *ctx.Context) error {
+    markup := keyboard.Inline().
+        Row().
+        Text("Option 1", "opt1").
+        Text("Option 2", "opt2").
+        Row().
+        URL("Visit Site", "https://example.com").
+        WebApp("Open App", "https://webapp.com")
+
+    return ctx.Reply("Choose an option:").Markup(markup).Send().Err()
+})
+
+// Handle button presses
+b.On.Callback.Equal("opt1", func(ctx *ctx.Context) error {
+    return ctx.Answer("You chose option 1!").Send().Err()
+})
+
+b.On.Callback.Prefix("opt", func(ctx *ctx.Context) error {
+    data := ctx.Update.CallbackQuery.Data
+    return ctx.Answer("You clicked: " + String(data)).Alert().Send().Err()
+})
+```
+
+### Dynamic Keyboard Editing
+
+```go
+b.On.Callback.Equal("edit", func(ctx *ctx.Context) error {
+    // Edit existing keyboard
+    markup := keyboard.Inline(ctx.EffectiveMessage.ReplyMarkup).
+        Edit(func(btn *keyboard.Button) {
+            switch btn.Get.Callback() {
+            case "opt1":
+                btn.Text("Modified Option 1")
+            case "remove":
+                btn.Delete()
+            }
+        })
+
+    return ctx.EditMarkup(markup).Send().Err()
+})
+```
+
+## Reply Keyboards
+
+Create custom reply keyboards:
+
+```go
+b.Command("keyboard", func(ctx *ctx.Context) error {
+    markup := keyboard.Reply().
+        Row().
+        Text("Regular Button").
+        Contact("📞 Share Phone").
+        Row().
+        Location("📍 Send Location").
+        WebApp("🌐 Web App", "https://webapp.com").
+        Row().
+        Poll("📊 Create Poll", "regular")
+
+    return ctx.Reply("Use the keyboard below:").Markup(markup).Send().Err()
+})
+```
+
+## File Handling
+
+Send various types of media files:
+
+```go
+// Photo
+b.Command("photo", func(ctx *ctx.Context) error {
+    return ctx.Photo("photo.png").
+        Caption("Beautiful photo").
+        Send().Err()
+})
+
+// Document with advanced options
+b.Command("doc", func(ctx *ctx.Context) error {
+    return ctx.Document("document.pdf").
+        Caption("Important document").
+		ReplyTo(ctx.EffectiveMessage.MessageId).
+        Send().Err()
+})
+
+// Video with metadata
+b.Command("video", func(ctx *ctx.Context) error {
+    return ctx.Video("video.mp4").
+        Caption("Cool video").
+        Spoiler().
+		Timeout(time.Minute * 3). // Custom timeout
+		ApplyMetadata().          // Extract video info (ffprobe)
+		GenerateThumbnail().      // Auto-generate thumbnail (ffmpeg)
+        Send().Err()
+})
+
+// Audio with metadata
+b.Command("audio", func(ctx *ctx.Context) error {
+    return ctx.Audio("song.mp3").
+        Title("Song Title").
+        Performer("Artist Name").
+        Duration(180).
+        Send().Err()
+})
+```
+
+## Finite State Machine (FSM)
+
+Create complex multi-step conversations:
+
+```go
+import "github.com/enetx/fsm"
+
+// Define states
+const (
+    StateGetEmail = "get_email"
+    StateGetName  = "get_name"
+    StateSummary  = "summary"
+)
+
+// Store FSM instances per user
+var fsmStore = NewMapSafe[int64, *fsm.SyncFSM]()
+
+func main() {
+    b := bot.New(token).Build().Unwrap()
+
+    // Create FSM template
+    template := fsm.New(StateGetEmail).
+        Transition(StateGetEmail, "next", StateGetName).
+        Transition(StateGetName, "next", StateSummary)
+
+    // Define state handlers
+    template.OnEnter(StateGetEmail, func(fctx *fsm.Context) error {
+        tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
+        return tgctx.Reply("Enter your email:").Send().Err()
+    })
+
+    template.OnEnter(StateGetName, func(fctx *fsm.Context) error {
+        email := fctx.Input.(string)
+        fctx.Data.Set("email", email)
+
+        tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
+        return tgctx.Reply("Enter your name:").Send().Err()
+    })
+
+    template.OnEnter(StateSummary, func(fctx *fsm.Context) error {
+        name := fctx.Input.(string)
+        email := fctx.Data.Get("email").UnwrapOr("<no email>")
+
+        tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
+        defer fsmStore.Delete(tgctx.EffectiveUser.Id)
+
+        return tgctx.Reply(Format("Got name: {} and email: {}", name, email)).Send().Err()
+    })
+
+    // Start FSM
+    b.Command("register", func(ctx *ctx.Context) error {
+        entry := fsmStore.Entry(ctx.EffectiveUser.Id)
+        entry.OrSetBy(func() *fsm.SyncFSM { return template.Clone().Sync() })
+        fsm := entry.Get().Some()
+
+        fsm.SetState(StateGetEmail)
+        fsm.Context().Meta.Set("tgctx", ctx)
+        return fsm.CallEnter(StateGetEmail)
+    })
+
+    // Handle FSM input
+    b.On.Message.Text(func(ctx *ctx.Context) error {
+        opt := fsmStore.Get(ctx.EffectiveUser.Id)
+        if opt.IsNone() {
+            return nil // No active FSM
+        }
+
+        fsm := opt.Some()
+        fsm.Context().Meta.Set("tgctx", ctx)
+        return fsm.Trigger("next", ctx.EffectiveMessage.Text)
+    })
+
+    b.Polling().Start()
+}
+```
+
+## Payments with Telegram Stars
+
+Handle payments using Telegram's Stars system:
+
+```go
+// Create invoice
+b.Command("buy", func(ctx *ctx.Context) error {
+    if ctx.EffectiveChat.Type != "private" {
+        return nil
+    }
+
+    return ctx.Invoice("Premium Access", "Get premium features", "premium_123", "XTR").
+        Price("Premium Plan", 100).  // 100 stars
+        Protect().                   // Content protection
+        Send().Err()
+})
+
+// Handle pre-checkout (validation)
+b.On.PreCheckout.Any(func(ctx *ctx.Context) error {
+    // Validate payment here if needed
+    return ctx.PreCheckout().Ok().Send().Err()
+})
+
+// Handle successful payment
+b.On.Message.SuccessfulPayment(func(ctx *ctx.Context) error {
+    user := ctx.EffectiveUser
+    payment := ctx.EffectiveMessage.SuccessfulPayment
+    chargeID := payment.TelegramPaymentChargeId
+
+    // Grant premium access here
+
+	Println("User {1.FirstName} ({1.Id}) paid {2.TotalAmount} {2.Currency} with payload {2.InvoicePayload}",
+		user, payment)
+
+	return ctx.Message(Format("Payment complete! Thank you, {}!\nChargeID:\n{}", user.FirstName, chargeID)).
+		Send().
+		Err()
+})
+
+// Handle refunds
+b.Command("refund", func(ctx *ctx.Context) error {
+    chargeID := ctx.Args().Get(0).Some()
+
+    if result := ctx.RefundStarPayment(chargeID).Send(); result.IsErr() {
+        err := String(result.Err().Error())
+        if err.Contains("CHARGE_ALREADY_REFUNDED") {
+            return ctx.Reply("This payment was already refunded.").Send().Err()
+        }
+        return ctx.Reply("Refund failed.").Send().Err()
+    }
+
+    return ctx.Reply("Refund processed successfully.").Send().Err()
+})
+```
+
+## Middleware
+
+Add middleware for request processing:
+
+```go
+// Global middleware
+b.Use(func(ctx *ctx.Context) error {
+    // Log all updates
+    fmt.Println("Update from user:", ctx.EffectiveUser.Id)
+    return nil // Continue processing
+})
+
+// Admin-only middleware
+adminMiddleware := func(ctx *ctx.Context) error {
+	admin := ctx.IsAdmin()
+	if admin.IsErr() {
+		return admin.Err()
+	}
+
+	if !admin.Ok() {
+		return ctx.Answer("Access restricted to admins only!").Alert().Send().Err()
+	}
+
+    return nil // Continue
+}
+
+// Apply middleware to specific handlers
+b.On.Callback.Prefix("admin_", adminMiddleware)
+```
+
+## Webhook Mode
+
+Set up webhook instead of polling:
+
+```go
+import (
+    "net/http"
+    "io"
+
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/types/updates"
+)
+
+func main() {
+    b := bot.New(token).Build().Unwrap()
+
+    // Register webhook
+    err := b.Webhook().
+        Domain("https://yourdomain.com").
+        Path("/webhook").
+        SecretToken("your-secret").
+		AllowedUpdates(updates.Message, updates.CallbackQuery).
+        Register()
+    if err != nil {
+        panic(err)
+    }
+
+    // Setup HTTP server
+    http.HandleFunc("/webhook", func(w http.ResponseWriter, r *http.Request) {
+        // Verify secret token
+        if r.Header.Get("X-Telegram-Bot-Api-Secret-Token") != "your-secret" {
+            http.Error(w, "Unauthorized", http.StatusUnauthorized)
+            return
+        }
+
+        body, _ := io.ReadAll(r.Body)
+        b.HandleWebhook(body)
+        w.WriteHeader(http.StatusOK)
+    })
+
+    http.ListenAndServe(":8080", nil)
+}
+```
+
+## Advanced Features
+
+### Chat Actions
+
+Show typing indicators and other actions:
+
+```go
+b.On.Message.Text(func(ctx *ctx.Context) error {
+    // Show typing indicator
+    ctx.ChatAction().Typing().Send()
+
+    // Process message...
+    time.Sleep(2 * time.Second)
+
+    return ctx.Reply("Processed your message").Send().Err()
+})
+```
+
+### Dice and Games
+
+```go
+// Send dice
+b.Command("dice", func(ctx *ctx.Context) error {
+    return ctx.Dice().Send().Err()
+})
+
+// Send slot machine
+b.Command("slot", func(ctx *ctx.Context) error {
+    return ctx.Dice().Slot().Send().Err()
+})
+```
+
+### Message Editing and Deletion
+
+```go
+b.Command("edit", func(ctx *ctx.Context) error {
+    // Send initial message
+    msg := ctx.Reply("Original message").Send()
+
+    // Edit it
+    return ctx.EditText(msg.MessageID, "Edited message").Send().Err()
+})
+
+b.Command("delete", func(ctx *ctx.Context) error {
+    return ctx.Delete().Send().Err()
+})
+```
+
+## Bot Configuration
+
+Configure bot with advanced options:
+
+```go
+b := bot.New(token).
+    APIURL("https://api.telegram.org").  // Custom API URL
+    UseTestEnvironment().                // Use test environment
+    DisableTokenCheck().                 // Skip token validation
+    Build().
+    Unwrap()
+```
+
+## Error Handling
+
+All methods follow a consistent error handling pattern:
+
+```go
+if err := ctx.Reply("Hello").Send().Err(); err != nil {
+    log.Printf("Failed to send message: %v", err)
+}
+
+// Or chain with result handling
+result := ctx.Photo("image.jpg").Send()
+if result.IsErr() {
+    log.Printf("Failed to send photo: %v", result.Err())
+}
+```
+
+## API Documentation
+
+Full API documentation is available at [GoDoc](https://pkg.go.dev/github.com/enetx/tg).
+
+## License
+
+MIT License. See `LICENSE` file for details.
+
+## Support
+
+- Create GitHub issues for bug reports
+- Use discussions for questions and suggestions
+- Explore examples in the `examples/` folder

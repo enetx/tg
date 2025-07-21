@@ -2,6 +2,7 @@ package handlers
 
 import "github.com/enetx/tg/core"
 
+// Handlers provides a collection of all available event handlers for the bot.
 type Handlers struct {
 	bot                core.BotAPI
 	Message            *MessageHandlers
@@ -19,6 +20,7 @@ type Handlers struct {
 	PaidMedia          *PaidMediaHandlers
 }
 
+// NewHandlers creates a new instance of Handlers with all handler types initialized.
 func NewHandlers(bot core.BotAPI) *Handlers {
 	return &Handlers{
 		bot:                bot,
@@ -38,6 +40,7 @@ func NewHandlers(bot core.BotAPI) *Handlers {
 	}
 }
 
+// Any registers a handler for all event types and returns the bot instance.
 func (h *Handlers) Any(fn Handler) core.BotAPI {
 	h.Message.Any(fn)
 	h.Callback.Any(fn)

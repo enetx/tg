@@ -11,6 +11,7 @@ const (
 	Group                      // Group chat with multiple users
 	Supergroup                 // Supergroup — large group with additional features
 	Channel                    // Channel — one-way communication, e.g. news feed
+	Sender                     // Sender chat type for special contexts
 )
 
 // String returns the canonical string representation used by Telegram Bot API.
@@ -24,6 +25,8 @@ func (c ChatType) String() string {
 		return "supergroup"
 	case Channel:
 		return "channel"
+	case Sender:
+		return "sender"
 	default:
 		return "unknown"
 	}

@@ -22,7 +22,7 @@ const (
 
 var (
 	// fsmStore keeps a per-user FSM instance
-	fsmStore = NewMapSafe[int64, *fsm.FSM]()
+	fsmStore = NewMapSafe[int64, *fsm.SyncFSM]()
 
 	// furl is the template for Telegram deep-link URLs
 	furl = "https://t.me/{.Bot.Raw.Username}?start={}"
@@ -36,7 +36,7 @@ func main() {
 	b := bot.New(token).Build().Unwrap()
 
 	// Define the FSM template (will be cloned for each user)
-	fsmachine := fsm.NewFSM("start").
+	fsmachine := fsm.New("start").
 		Transition("start", CheckThisOut, "deep1").
 		Transition("deep1", SoCool, "deep2").
 		Transition("deep2", UsingEntities, "deep3").
@@ -50,7 +50,7 @@ func main() {
 	b.Command("start", func(ctx *ctx.Context) error {
 		// Retrieve or initialize FSM instance for the current user
 		entry := fsmStore.Entry(ctx.EffectiveUser.Id)
-		entry.OrSetBy(fsmachine.Clone)
+		entry.OrSetBy(func() *fsm.SyncFSM { return fsmachine.Clone().Sync() })
 		state := entry.Get().Some()
 
 		// Extract payload from /start {payload}

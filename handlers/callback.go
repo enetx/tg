@@ -11,6 +11,7 @@ import (
 	"github.com/enetx/tg/core"
 )
 
+// CallbackHandler handles callback query events from inline keyboards.
 type CallbackHandler struct {
 	bot          core.BotAPI
 	filter       filters.CallbackQuery
@@ -19,11 +20,13 @@ type CallbackHandler struct {
 	allowChannel bool
 }
 
+// AllowChannel configures the handler to process callback queries from channels.
 func (h *CallbackHandler) AllowChannel() *CallbackHandler {
 	h.allowChannel = true
 	return h
 }
 
+// Register registers the callback handler with the bot dispatcher.
 func (h *CallbackHandler) Register() *CallbackHandler {
 	h.bot.Dispatcher().RemoveHandlerFromGroup(h.name, 0)
 
@@ -38,6 +41,7 @@ func (h *CallbackHandler) Register() *CallbackHandler {
 	return h
 }
 
+// CallbackHandlers provides methods to handle callback query events.
 type CallbackHandlers struct{ Bot core.BotAPI }
 
 func (h *CallbackHandlers) handleCallback(f filters.CallbackQuery, fn Handler) *CallbackHandler {
@@ -49,44 +53,52 @@ func (h *CallbackHandlers) handleCallback(f filters.CallbackQuery, fn Handler) *
 	}).Register()
 }
 
+// Any handles all callback queries.
 func (h *CallbackHandlers) Any(fn Handler) *CallbackHandler { return h.handleCallback(nil, fn) }
 
+// Equal handles callback queries with exact matching data.
 func (h *CallbackHandlers) Equal(data String, fn Handler) *CallbackHandler {
 	return h.handleCallback(func(q *gotgbot.CallbackQuery) bool {
 		return q != nil && q.Data == data.Std()
 	}, fn)
 }
 
+// Prefix handles callback queries with data starting with the specified prefix.
 func (h *CallbackHandlers) Prefix(prefix String, fn Handler) *CallbackHandler {
 	return h.handleCallback(func(q *gotgbot.CallbackQuery) bool {
 		return q != nil && String(q.Data).StartsWith(prefix)
 	}, fn)
 }
 
+// Suffix handles callback queries with data ending with the specified suffix.
 func (h *CallbackHandlers) Suffix(suffix String, fn Handler) *CallbackHandler {
 	return h.handleCallback(func(q *gotgbot.CallbackQuery) bool {
 		return q != nil && String(q.Data).EndsWith(suffix)
 	}, fn)
 }
 
+// FromUserID handles callback queries from a specific user ID.
 func (h *CallbackHandlers) FromUserID(id int64, fn Handler) *CallbackHandler {
 	return h.handleCallback(func(q *gotgbot.CallbackQuery) bool {
 		return q != nil && q.From.Id == id
 	}, fn)
 }
 
+// GameName handles callback queries from games with the specified short name.
 func (h *CallbackHandlers) GameName(name String, fn Handler) *CallbackHandler {
 	return h.handleCallback(func(q *gotgbot.CallbackQuery) bool {
 		return q != nil && q.GameShortName == name.Std()
 	}, fn)
 }
 
+// Inline handles callback queries with inline message ID.
 func (h *CallbackHandlers) Inline(fn Handler) *CallbackHandler {
 	return h.handleCallback(func(q *gotgbot.CallbackQuery) bool {
 		return q != nil && q.InlineMessageId != ""
 	}, fn)
 }
 
+// ChatInstance handles callback queries with the specified chat instance.
 func (h *CallbackHandlers) ChatInstance(inst String, fn Handler) *CallbackHandler {
 	return h.handleCallback(func(q *gotgbot.CallbackQuery) bool {
 		return q != nil && q.ChatInstance == inst.Std()

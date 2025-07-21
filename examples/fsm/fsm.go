@@ -17,7 +17,7 @@ const (
 )
 
 // fsmStore holds the active FSM instance for each user, keyed by their Telegram user ID.
-var fsmStore = NewMapSafe[int64, *fsm.FSM]()
+var fsmStore = NewMapSafe[int64, *fsm.SyncFSM]()
 
 func main() {
 	// Load the bot token from a local .env file.
@@ -26,7 +26,7 @@ func main() {
 	b := bot.New(token).Build().Unwrap()
 
 	// Define a master FSM template. Each new user will receive a clone of this template.
-	fsmachine := fsm.NewFSM(StateName).
+	fsmachine := fsm.New(StateName).
 		// Defines the first transition from asking for a name to the next step.
 		Transition(StateName, "next", StateLike).
 		// Defines a conditional transition. This path is taken only if the GuardFunc returns true (input is "Yes").
@@ -118,7 +118,7 @@ func main() {
 	b.Command("start", func(ctx *ctx.Context) error {
 		// Get or create an FSM instance for the user.
 		entry := fsmStore.Entry(ctx.EffectiveUser.Id)
-		entry.OrSetBy(fsmachine.Clone)
+		entry.OrSetBy(func() *fsm.SyncFSM { return fsmachine.Clone().Sync() })
 		fsm := entry.Get().Some()
 
 		// Manually reset the FSM to the initial state. This allows a user

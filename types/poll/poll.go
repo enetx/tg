@@ -8,6 +8,7 @@ const (
 	Quiz                    // Quiz with correct answer
 )
 
+// String returns the canonical string representation used by Telegram Bot API.
 func (p PollType) String() string {
 	switch p {
 	case Regular:

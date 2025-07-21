@@ -35,5 +35,5 @@ func Inline(from ...any) *InlineKeyboard {
 	}
 }
 
-// Reply returns a new reply keyboard builder.
+// Reply creates a new ReplyKeyboard builder for creating custom reply keyboards.
 func Reply() *ReplyKeyboard { return new(ReplyKeyboard) }

@@ -22,7 +22,7 @@ const (
 
 // fsmStore holds the active FSM instance for each user, keyed by their Telegram user ID.
 // This allows each user to have their own independent state in the conversation.
-var fsmStore = NewMapSafe[int64, *fsm.FSM]()
+var fsmStore = NewMapSafe[int64, *fsm.SyncFSM]()
 
 func main() {
 	// Load the bot token from a local .env file.
@@ -33,7 +33,7 @@ func main() {
 
 	// Create a master FSM fsmachine. Each new user will receive a clone of this fsmachine.
 	// This ensures a consistent workflow while maintaining separate states and data for each user.
-	fsmachine := fsm.NewFSM(StateGender).
+	fsmachine := fsm.New(StateGender).
 		// Define the linear flow of the conversation. Each "next" event moves to the subsequent state.
 		Transition(StateGender, "next", StatePhoto).
 		Transition(StatePhoto, "next", StateLocation).
@@ -149,7 +149,7 @@ func main() {
 		// Get or create an FSM instance for the user.
 		entry := fsmStore.Entry(ctx.EffectiveUser.Id)
 		// If the user is new, clone the master template for them.
-		entry.OrSetBy(fsmachine.Clone)
+		entry.OrSetBy(func() *fsm.SyncFSM { return fsmachine.Clone().Sync() })
 		fsm := entry.Get().Some()
 
 		// Store the current Telegram context in the FSM's temporary Meta store.

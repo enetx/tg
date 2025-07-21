@@ -1,26 +1,29 @@
+// Package permissions defines Telegram chat permission types and utilities.
 package permissions
 
 import "github.com/PaulSonOfLars/gotgbot/v2"
 
+// Permission enumerates all supported Telegram chat permission types.
 type Permission int
 
 const (
-	SendMessages Permission = iota
-	SendAudios
-	SendDocuments
-	SendPhotos
-	SendVideos
-	SendVideoNotes
-	SendVoiceNotes
-	SendPolls
-	SendOtherMessages
-	AddWebPagePreviews
-	ChangeInfo
-	InviteUsers
-	PinMessages
-	ManageTopics
+	SendMessages       Permission = iota // Send text messages
+	SendAudios                           // Send audio files
+	SendDocuments                        // Send documents
+	SendPhotos                           // Send photos
+	SendVideos                           // Send videos
+	SendVideoNotes                       // Send video notes
+	SendVoiceNotes                       // Send voice notes
+	SendPolls                            // Send polls
+	SendOtherMessages                    // Send other messages (stickers, animations)
+	AddWebPagePreviews                   // Add web page previews
+	ChangeInfo                           // Change chat info
+	InviteUsers                          // Invite users to chat
+	PinMessages                          // Pin messages
+	ManageTopics                         // Manage topics in forum chats
 )
 
+// Permissions creates a ChatPermissions object with the specified permissions enabled.
 func Permissions(perms ...Permission) *gotgbot.ChatPermissions {
 	cp := new(gotgbot.ChatPermissions)
 	for _, p := range perms {

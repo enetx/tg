@@ -16,26 +16,31 @@ type Delete struct {
 	opts      *gotgbot.DeleteMessageOpts
 }
 
+// After schedules the message deletion after the specified duration.
 func (d *Delete) After(duration time.Duration) *Delete {
 	d.after = Some(duration)
 	return d
 }
 
+// ChatID sets the target chat ID for the delete action.
 func (d *Delete) ChatID(id int64) *Delete {
 	d.chatID = Some(id)
 	return d
 }
 
+// MessageID sets the target message ID to delete.
 func (d *Delete) MessageID(id int64) *Delete {
 	d.messageID = Some(id)
 	return d
 }
 
+// Timeout sets the request timeout duration.
 func (d *Delete) Timeout(duration time.Duration) *Delete {
 	d.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
 	return d
 }
 
+// Send deletes the message and returns the result.
 func (d *Delete) Send() Result[bool] {
 	chatID := d.chatID.UnwrapOr(d.ctx.EffectiveChat.Id)
 	messageID := d.messageID.UnwrapOr(d.ctx.EffectiveMessage.MessageId)

@@ -12,17 +12,21 @@ type PreCheckout struct {
 	opts *gotgbot.AnswerPreCheckoutQueryOpts
 }
 
+// Ok marks the pre-checkout query as successful.
 func (p *PreCheckout) Ok() *PreCheckout {
 	p.ok = true
 	return p
 }
 
+// Error marks the pre-checkout query as failed with the specified error message.
 func (p *PreCheckout) Error(text String) *PreCheckout {
 	p.ok = false
 	p.err = text
+
 	return p
 }
 
+// Send answers the pre-checkout query and returns the result.
 func (p *PreCheckout) Send() Result[bool] {
 	query := p.ctx.Update.PreCheckoutQuery
 	if query == nil {
