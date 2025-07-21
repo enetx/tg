@@ -1,3 +1,5 @@
+<img width="2562" height="2855" alt="image" src="https://github.com/user-attachments/assets/fe90b972-3cdb-43ee-8584-aac05a414d61" />
+
 # TG - Telegram Bot Framework for Go
 
 Modern and elegant wrapper around [gotgbot](https://github.com/PaulSonOfLars/gotgbot) with convenient API and functional programming style support.
