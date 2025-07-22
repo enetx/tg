@@ -639,31 +639,6 @@ if result.IsErr() {
 }
 ```
 
-## Testing
-
-The framework includes comprehensive unit tests for core components:
-
-```bash
-# Run unit tests
-make test-unit
-
-# Run with coverage
-make test-coverage
-
-# Run with race detection  
-make test-race
-
-# Run integration tests (requires BOT_TOKEN environment variable)
-export BOT_TOKEN=your_bot_token
-make test-integration
-```
-
-### Test Structure
-
-- **Unit tests** - Test individual components (entities, keyboards, bot builder)
-- **Integration tests** - Test with real Telegram API (requires bot token)
-- **Coverage reports** - Generate HTML coverage reports
-
 ## API Documentation
 
 Full API documentation is available at [GoDoc](https://pkg.go.dev/github.com/enetx/tg).
