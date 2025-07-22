@@ -54,7 +54,7 @@ func main() {
 	})
 
 	// Simple message handler: replies "Hello" to any text message
-	b.On.Message.Text(func(ctx *ctx.Context) error { return ctx.Message("Hello").Send().Err() })
+	b.On.Message.Text(func(ctx *ctx.Context) error { return ctx.SendMessage("Hello").Send().Err() })
 
 	b.Polling().DropPendingUpdates().Start()
 }

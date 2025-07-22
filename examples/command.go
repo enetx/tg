@@ -12,14 +12,14 @@ func main() {
 	b := bot.New(token).Build().Unwrap()
 
 	// /start command - responds to !start as well, works on edited messages
-	b.Command("start", func(ctx *ctx.Context) error { return ctx.Message("Start command triggered!").Send().Err() }).
+	b.Command("start", func(ctx *ctx.Context) error { return ctx.SendMessage("Start command triggered!").Send().Err() }).
 		Triggers('!').  // reacts to commands starting with '!', e.g. !start
 		AllowEdited().  // allows handling of edited messages
 		AllowChannel(). // allows handling of messages from channels
 		Register()
 
 	// /announce command - works in channels
-	b.Command("announce", func(ctx *ctx.Context) error { return ctx.Message("Received command from channel!").Send().Err() }).
+	b.Command("announce", func(ctx *ctx.Context) error { return ctx.SendMessage("Received command from channel!").Send().Err() }).
 		AllowChannel().
 		Register()
 

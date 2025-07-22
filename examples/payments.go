@@ -63,7 +63,7 @@ func main() {
 		Println("User {1.FirstName} ({1.Id}) paid {2.TotalAmount} {2.Currency} with payload {2.InvoicePayload}",
 			user, payment)
 
-		return ctx.Message(Format("Payment complete! Thank you, {}!\nChargeID:\n{}", user.FirstName, chargeID)).
+		return ctx.SendMessage(Format("Payment complete! Thank you, {}!\nChargeID:\n{}", user.FirstName, chargeID)).
 			Send().
 			Err()
 	})

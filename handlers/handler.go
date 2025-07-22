@@ -33,8 +33,8 @@ func wrap(bot core.BotAPI, middlewares Slice[Handler], handler Handler) func(*go
 }
 
 // middlewares extracts middleware handlers from the bot API if available.
-func middlewares(api core.BotAPI) []Handler {
-	if b, ok := api.(interface{ Middlewares() []Handler }); ok {
+func middlewares(api core.BotAPI) Slice[Handler] {
+	if b, ok := api.(interface{ Middlewares() Slice[Handler] }); ok {
 		return b.Middlewares()
 	}
 
