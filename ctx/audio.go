@@ -5,10 +5,11 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 )
 
-type Audio struct {
+type SendAudio struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendAudioOpts
@@ -20,132 +21,154 @@ type Audio struct {
 	err         error
 }
 
+// CaptionEntities sets custom entities for the audio caption.
+func (c *SendAudio) CaptionEntities(e *entities.Entities) *SendAudio {
+	c.opts.CaptionEntities = e.Std()
+	return c
+}
+
 // After schedules the audio to be sent after the specified duration.
-func (a *Audio) After(duration time.Duration) *Audio {
-	a.after = Some(duration)
-	return a
+func (c *SendAudio) After(duration time.Duration) *SendAudio {
+	c.after = Some(duration)
+	return c
 }
 
 // DeleteAfter schedules the audio message to be deleted after the specified duration.
-func (a *Audio) DeleteAfter(duration time.Duration) *Audio {
-	a.deleteAfter = Some(duration)
-	return a
+func (c *SendAudio) DeleteAfter(duration time.Duration) *SendAudio {
+	c.deleteAfter = Some(duration)
+	return c
 }
 
 // Caption sets the caption text for the audio.
-func (a *Audio) Caption(caption String) *Audio {
-	a.opts.Caption = caption.Std()
-	return a
+func (c *SendAudio) Caption(caption String) *SendAudio {
+	c.opts.Caption = caption.Std()
+	return c
 }
 
 // HTML sets the caption parse mode to HTML.
-func (a *Audio) HTML() *Audio {
-	a.opts.ParseMode = "HTML"
-	return a
+func (c *SendAudio) HTML() *SendAudio {
+	c.opts.ParseMode = "HTML"
+	return c
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
-func (a *Audio) Markdown() *Audio {
-	a.opts.ParseMode = "MarkdownV2"
-	return a
+func (c *SendAudio) Markdown() *SendAudio {
+	c.opts.ParseMode = "MarkdownV2"
+	return c
 }
 
 // Silent disables notification for the audio message.
-func (a *Audio) Silent() *Audio {
-	a.opts.DisableNotification = true
-	return a
+func (c *SendAudio) Silent() *SendAudio {
+	c.opts.DisableNotification = true
+	return c
 }
 
 // Protect enables content protection for the audio message.
-func (a *Audio) Protect() *Audio {
-	a.opts.ProtectContent = true
-	return a
+func (c *SendAudio) Protect() *SendAudio {
+	c.opts.ProtectContent = true
+	return c
 }
 
 // Markup sets the reply markup keyboard for the audio message.
-func (a *Audio) Markup(kb keyboard.KeyboardBuilder) *Audio {
-	a.opts.ReplyMarkup = kb.Markup()
-	return a
+func (c *SendAudio) Markup(kb keyboard.KeyboardBuilder) *SendAudio {
+	c.opts.ReplyMarkup = kb.Markup()
+	return c
 }
 
 // Thumbnail sets a custom thumbnail for the audio.
-func (a *Audio) Thumbnail(file String) *Audio {
-	a.thumb = NewFile(file)
+func (c *SendAudio) Thumbnail(file String) *SendAudio {
+	c.thumb = NewFile(file)
 
-	reader := a.thumb.Open()
+	reader := c.thumb.Open()
 	if reader.IsErr() {
-		a.err = reader.Err()
-		return a
+		c.err = reader.Err()
+		return c
 	}
 
-	a.opts.Thumbnail = gotgbot.InputFileByReader(a.thumb.Name().Std(), reader.Ok().Std())
-	return a
+	c.opts.Thumbnail = gotgbot.InputFileByReader(c.thumb.Name().Std(), reader.Ok().Std())
+	return c
 }
 
 // ReplyTo sets the message ID to reply to.
-func (a *Audio) ReplyTo(messageID int64) *Audio {
-	a.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return a
+func (c *SendAudio) ReplyTo(messageID int64) *SendAudio {
+	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return c
 }
 
-// Timeout sets the request timeout duration.
-func (a *Audio) Timeout(duration time.Duration) *Audio {
-	a.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
-	return a
+// Timeout sets a custom timeout for this request.
+func (c *SendAudio) Timeout(duration time.Duration) *SendAudio {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *SendAudio) APIURL(url String) *SendAudio {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
 }
 
 // Business sets the business connection ID for the audio message.
-func (a *Audio) Business(id String) *Audio {
-	a.opts.BusinessConnectionId = id.Std()
-	return a
+func (c *SendAudio) Business(id String) *SendAudio {
+	c.opts.BusinessConnectionId = id.Std()
+	return c
 }
 
 // Thread sets the message thread ID for the audio message.
-func (a *Audio) Thread(id int64) *Audio {
-	a.opts.MessageThreadId = id
-	return a
+func (c *SendAudio) Thread(id int64) *SendAudio {
+	c.opts.MessageThreadId = id
+	return c
 }
 
 // Duration sets the audio duration in seconds.
-func (a *Audio) Duration(seconds int64) *Audio {
-	a.opts.Duration = seconds
-	return a
+func (c *SendAudio) Duration(seconds int64) *SendAudio {
+	c.opts.Duration = seconds
+	return c
 }
 
 // Performer sets the audio performer/artist name.
-func (a *Audio) Performer(artist String) *Audio {
-	a.opts.Performer = artist.Std()
-	return a
+func (c *SendAudio) Performer(artist String) *SendAudio {
+	c.opts.Performer = artist.Std()
+	return c
 }
 
 // Title sets the audio track title.
-func (a *Audio) Title(title String) *Audio {
-	a.opts.Title = title.Std()
-	return a
+func (c *SendAudio) Title(title String) *SendAudio {
+	c.opts.Title = title.Std()
+	return c
 }
 
 // To sets the target chat ID for the audio message.
-func (a *Audio) To(chatID int64) *Audio {
-	a.chatID = Some(chatID)
-	return a
+func (c *SendAudio) To(chatID int64) *SendAudio {
+	c.chatID = Some(chatID)
+	return c
 }
 
 // Send sends the audio message to Telegram and returns the result.
-func (a *Audio) Send() Result[*gotgbot.Message] {
-	if a.err != nil {
-		return Err[*gotgbot.Message](a.err)
+func (c *SendAudio) Send() Result[*gotgbot.Message] {
+	if c.err != nil {
+		return Err[*gotgbot.Message](c.err)
 	}
 
-	if a.file != nil {
-		defer a.file.Close()
+	if c.file != nil {
+		defer c.file.Close()
 	}
 
-	if a.thumb != nil {
-		defer a.thumb.Close()
+	if c.thumb != nil {
+		defer c.thumb.Close()
 	}
 
-	return a.ctx.timers(a.after, a.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := a.chatID.UnwrapOr(a.ctx.EffectiveChat.Id)
-		return ResultOf(a.ctx.Bot.Raw().SendAudio(chatID, a.doc, a.opts))
+	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
+		return ResultOf(c.ctx.Bot.Raw().SendAudio(chatID, c.doc, c.opts))
 	})
 }

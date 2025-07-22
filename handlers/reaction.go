@@ -11,6 +11,7 @@ import (
 // ReactionHandlers provides methods to handle message reaction events.
 type ReactionHandlers struct{ Bot core.BotAPI }
 
+// handleReaction registers a message reaction handler with the dispatcher.
 func (h *ReactionHandlers) handleReaction(f filters.Reaction, fn Handler) {
 	h.Bot.Dispatcher().AddHandler(handlers.NewReaction(f, wrap(h.Bot, middlewares(h.Bot), fn)))
 }

@@ -103,7 +103,7 @@ func main() {
 		}
 
 		// Inform the user that data collection is complete before showing the summary.
-		return tgctx.Message("Thanks! Let me summarize what you've told me...").RemoveKeyboard().Send().Err()
+		return tgctx.SendMessage("Thanks! Let me summarize what you've told me...").RemoveKeyboard().Send().Err()
 	})
 
 	// Callback for entering StateDone. This is the final step where the summary is displayed.
@@ -124,7 +124,7 @@ func main() {
 		if photo.IsSome() {
 			if sizes, ok := photo.Some().([]gotgbot.PhotoSize); ok && len(sizes) > 0 {
 				fileID := sizes[len(sizes)-1].FileId
-				tgctx.Photo(String(fileID).Prepend(constants.FileIDPrefix)).Caption("Your photo").Send()
+				tgctx.SendPhoto(String(fileID).Prepend(constants.FileIDPrefix)).Caption("Your photo").Send()
 			}
 		}
 
@@ -138,10 +138,10 @@ func main() {
 		// Compose and send the final text summary.
 		summary := "🧾 Summary:\n"
 		summary += "👤 Gender: " + gender.(string) + "\n"
-		tgctx.Message(String(summary)).Send()
+		tgctx.SendMessage(String(summary)).Send()
 
 		// Send the final goodbye message.
-		return tgctx.Message("Thank you! I hope we can talk again some day.").Send().Err()
+		return tgctx.SendMessage("Thank you! I hope we can talk again some day.").Send().Err()
 	})
 
 	// Command handler for /start, which initializes or resets a user's workflow.

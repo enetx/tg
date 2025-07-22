@@ -8,7 +8,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 )
 
-type VideoNote struct {
+type SendVideoNote struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendVideoNoteOpts
@@ -20,94 +20,124 @@ type VideoNote struct {
 	err         error
 }
 
-func (vn *VideoNote) After(duration time.Duration) *VideoNote {
-	vn.after = Some(duration)
-	return vn
+// After schedules the video note to be sent after the specified duration.
+func (c *SendVideoNote) After(duration time.Duration) *SendVideoNote {
+	c.after = Some(duration)
+	return c
 }
 
-func (vn *VideoNote) DeleteAfter(duration time.Duration) *VideoNote {
-	vn.deleteAfter = Some(duration)
-	return vn
+// DeleteAfter schedules the video note message to be deleted after the specified duration.
+func (c *SendVideoNote) DeleteAfter(duration time.Duration) *SendVideoNote {
+	c.deleteAfter = Some(duration)
+	return c
 }
 
-func (vn *VideoNote) Silent() *VideoNote {
-	vn.opts.DisableNotification = true
-	return vn
+// Silent disables notification for the video note message.
+func (c *SendVideoNote) Silent() *SendVideoNote {
+	c.opts.DisableNotification = true
+	return c
 }
 
-func (vn *VideoNote) Protect() *VideoNote {
-	vn.opts.ProtectContent = true
-	return vn
+// Protect enables content protection for the video note message.
+func (c *SendVideoNote) Protect() *SendVideoNote {
+	c.opts.ProtectContent = true
+	return c
 }
 
-func (vn *VideoNote) Markup(kb keyboard.KeyboardBuilder) *VideoNote {
-	vn.opts.ReplyMarkup = kb.Markup()
-	return vn
+// Markup sets the reply markup keyboard for the video note message.
+func (c *SendVideoNote) Markup(kb keyboard.KeyboardBuilder) *SendVideoNote {
+	c.opts.ReplyMarkup = kb.Markup()
+	return c
 }
 
-func (vn *VideoNote) Duration(duration int64) *VideoNote {
-	vn.opts.Duration = duration
-	return vn
+// Duration sets the video note duration in seconds.
+func (c *SendVideoNote) Duration(duration int64) *SendVideoNote {
+	c.opts.Duration = duration
+	return c
 }
 
-func (vn *VideoNote) Length(length int64) *VideoNote {
-	vn.opts.Length = length
-	return vn
+// Length sets the video note diameter (video notes are square).
+func (c *SendVideoNote) Length(length int64) *SendVideoNote {
+	c.opts.Length = length
+	return c
 }
 
-func (vn *VideoNote) Thumbnail(file String) *VideoNote {
-	vn.thumb = NewFile(file)
+// Thumbnail sets a custom thumbnail for the video note.
+func (c *SendVideoNote) Thumbnail(file String) *SendVideoNote {
+	c.thumb = NewFile(file)
 
-	reader := vn.thumb.Open()
+	reader := c.thumb.Open()
 	if reader.IsErr() {
-		vn.err = reader.Err()
-		return vn
+		c.err = reader.Err()
+		return c
 	}
 
-	vn.opts.Thumbnail = gotgbot.InputFileByReader(vn.thumb.Name().Std(), reader.Ok().Std())
-	return vn
+	c.opts.Thumbnail = gotgbot.InputFileByReader(c.thumb.Name().Std(), reader.Ok().Std())
+	return c
 }
 
-func (vn *VideoNote) ReplyTo(messageID int64) *VideoNote {
-	vn.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return vn
+// ReplyTo sets the message ID to reply to.
+func (c *SendVideoNote) ReplyTo(messageID int64) *SendVideoNote {
+	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return c
 }
 
-func (vn *VideoNote) Timeout(duration time.Duration) *VideoNote {
-	vn.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
-	return vn
-}
-
-func (vn *VideoNote) Business(id String) *VideoNote {
-	vn.opts.BusinessConnectionId = id.Std()
-	return vn
-}
-
-func (vn *VideoNote) Thread(id int64) *VideoNote {
-	vn.opts.MessageThreadId = id
-	return vn
-}
-
-func (vn *VideoNote) To(chatID int64) *VideoNote {
-	vn.chatID = Some(chatID)
-	return vn
-}
-
-func (vn *VideoNote) Send() Result[*gotgbot.Message] {
-	if vn.err != nil {
-		return Err[*gotgbot.Message](vn.err)
+// Timeout sets a custom timeout for this request.
+func (c *SendVideoNote) Timeout(duration time.Duration) *SendVideoNote {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	if vn.file != nil {
-		defer vn.file.Close()
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *SendVideoNote) APIURL(url String) *SendVideoNote {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	if vn.thumb != nil {
-		defer vn.thumb.Close()
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
+}
+
+// Business sets the business connection ID for the video note message.
+func (c *SendVideoNote) Business(id String) *SendVideoNote {
+	c.opts.BusinessConnectionId = id.Std()
+	return c
+}
+
+// Thread sets the message thread ID for the video note message.
+func (c *SendVideoNote) Thread(id int64) *SendVideoNote {
+	c.opts.MessageThreadId = id
+	return c
+}
+
+// To sets the target chat ID for the video note message.
+func (c *SendVideoNote) To(chatID int64) *SendVideoNote {
+	c.chatID = Some(chatID)
+	return c
+}
+
+// Send sends the video note message to Telegram and returns the result.
+func (c *SendVideoNote) Send() Result[*gotgbot.Message] {
+	if c.err != nil {
+		return Err[*gotgbot.Message](c.err)
 	}
 
-	return vn.ctx.timers(vn.after, vn.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := vn.chatID.UnwrapOr(vn.ctx.EffectiveChat.Id)
-		return ResultOf(vn.ctx.Bot.Raw().SendVideoNote(chatID, vn.doc, vn.opts))
+	if c.file != nil {
+		defer c.file.Close()
+	}
+
+	if c.thumb != nil {
+		defer c.thumb.Close()
+	}
+
+	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
+		return ResultOf(c.ctx.Bot.Raw().SendVideoNote(chatID, c.doc, c.opts))
 	})
 }

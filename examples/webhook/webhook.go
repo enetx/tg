@@ -28,7 +28,7 @@ func main() {
 		// Certificate("cert.pem").
 		Register()
 
-	b.On.Message.Text(func(ctx *ctx.Context) error { return ctx.Message("pong").Send().Err() })
+	b.On.Message.Text(func(ctx *ctx.Context) error { return ctx.SendMessage("pong").Send().Err() })
 
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost || String(r.URL.Path).Ne(path) {

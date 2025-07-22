@@ -101,7 +101,7 @@ Register commands with advanced options:
 ```go
 // Basic command
 b.Command("start", func(ctx *ctx.Context) error {
-    return ctx.Message("Start command triggered!").Send().Err()
+    return ctx.SendMessage("Start command triggered!").Send().Err()
 })
 
 // Command with custom triggers and options
@@ -191,33 +191,33 @@ Send various types of media files:
 ```go
 // Photo
 b.Command("photo", func(ctx *ctx.Context) error {
-    return ctx.Photo("photo.png").
+    return ctx.SendPhoto("photo.png").
         Caption("Beautiful photo").
         Send().Err()
 })
 
 // Document with advanced options
 b.Command("doc", func(ctx *ctx.Context) error {
-    return ctx.Document("document.pdf").
+    return ctx.SendDocument("document.pdf").
         Caption("Important document").
-	ReplyTo(ctx.EffectiveMessage.MessageId).
+        ReplyTo(ctx.EffectiveMessage.MessageId).
         Send().Err()
 })
 
 // Video with metadata
 b.Command("video", func(ctx *ctx.Context) error {
-    return ctx.Video("video.mp4").
+    return ctx.SendVideo("video.mp4").
         Caption("Cool video").
         Spoiler().
-	Timeout(time.Minute * 3). // Custom timeout
-	ApplyMetadata().          // Extract video info (ffprobe)
-	GenerateThumbnail().      // Auto-generate thumbnail (ffmpeg)
+        Timeout(time.Minute * 3). // Custom timeout
+        ApplyMetadata().          // Extract video info (ffprobe)
+        GenerateThumbnail().      // Auto-generate thumbnail (ffmpeg)
         Send().Err()
 })
 
 // Audio with metadata
 b.Command("audio", func(ctx *ctx.Context) error {
-    return ctx.Audio("song.mp3").
+    return ctx.SendAudio("song.mp3").
         Title("Song Title").
         Performer("Artist Name").
         Duration(180).
@@ -334,8 +334,8 @@ b.On.Message.SuccessfulPayment(func(ctx *ctx.Context) error {
     Println("User {1.FirstName} ({1.Id}) paid {2.TotalAmount} {2.Currency} with payload {2.InvoicePayload}",
         user, payment)
 
-    return ctx.Message(Format("Payment complete! Thank you, {}!\nChargeID:\n{}", user.FirstName, chargeID)).
-	Send().Err()
+    return ctx.SendMessage(Format("Payment complete! Thank you, {}!\nChargeID:\n{}", user.FirstName, chargeID)).
+        Send().Err()
 })
 
 // Handle refunds
@@ -405,7 +405,7 @@ func main() {
         Domain("https://yourdomain.com").
         Path("/webhook").
         SecretToken("your-secret").
-		AllowedUpdates(updates.Message, updates.CallbackQuery).
+        AllowedUpdates(updates.Message, updates.CallbackQuery).
         Register()
     if err != nil {
         panic(err)
@@ -426,6 +426,140 @@ func main() {
 
     http.ListenAndServe(":8080", nil)
 }
+```
+
+## Business Account API
+
+Handle business account connections and messages:
+
+```go
+// Handle business connection updates
+b.On.BusinessConnection.Enabled(func(ctx *ctx.Context) error {
+    conn := ctx.Update.BusinessConnection
+
+    // Configure business account
+    return ctx.SetBusinessAccountName(String(conn.Id), "My Business").
+        LastName("LLC").
+        Send().Err()
+})
+
+// Handle business messages
+b.On.Message.Business(func(ctx *ctx.Context) error {
+    return ctx.Reply("Business message received!").Send().Err()
+})
+
+// Handle deleted business messages
+b.On.DeletedBusinessMessages.Any(func(ctx *ctx.Context) error {
+    deleted := ctx.Update.DeletedBusinessMessages
+    // Process message deletions
+    return nil
+})
+
+// Manage business account settings
+b.Command("business_setup", func(ctx *ctx.Context) error {
+    connectionId := "your_connection_id"
+
+    // Set profile information
+    err := ctx.SetBusinessAccountBio(connectionId).
+        Bio("Professional business account").
+        Send().Err()
+
+    if err != nil {
+        return err
+    }
+
+    // Check star balance
+    balance := ctx.GetBusinessAccountStarBalance(connectionId).Send()
+    if balance.IsOk() {
+        return ctx.Reply("Stars balance: " + String(balance.Ok().StarCount)).Send().Err()
+    }
+
+    return ctx.Reply("Business account configured").Send().Err()
+})
+```
+
+## Text Entities and Formatting
+
+Format text messages with various entities:
+
+```go
+import (
+    . "github.com/enetx/g"
+    "github.com/enetx/tg/entities"
+)
+
+// Basic text formatting
+b.Command("format", func(ctx *ctx.Context) error {
+    text := String("Hello bold italic code")
+
+    e := entities.New(text).
+        Bold("bold").     // Make "bold" bold
+        Italic("italic"). // Make "italic" italic
+        Code("code")      // Make "code" monospace
+
+    return ctx.Reply(text).
+        Entities(e).
+        Send().Err()
+})
+
+// Links and spoilers
+b.Command("links", func(ctx *ctx.Context) error {
+    text := String("Click here to visit Google")
+
+    e := entities.New(text).
+        URL("here", "https://google.com"). // "here" as hyperlink
+        Spoiler("Google")                  // "Google" as spoiler
+
+    return ctx.Reply(text).
+        Entities(e).
+        Send().Err()
+})
+
+// Code blocks with syntax highlighting
+b.Command("codeblock", func(ctx *ctx.Context) error {
+    code := String(`func main() {
+    fmt.Println("Hello")
+}`)
+    codeText := Format("Check this Go code:\n{}", code)
+
+    e := entities.New(codeText).
+        Pre(code, "go") // Go code with syntax highlighting
+
+    return ctx.Reply(codeText).
+        Entities(e).
+        Send().Err()
+})
+
+// Multiple formatting types
+b.Command("mixed", func(ctx *ctx.Context) error {
+    text := String("Bold italic underline strikethrough spoiler")
+
+    e := entities.New(text).
+        Bold("Bold").
+        Italic("italic").
+        Underline("underline").
+        Strikethrough("strikethrough").
+        Spoiler("spoiler")
+
+    return ctx.Reply(text).
+        Entities(e).
+        Send().Err()
+})
+
+// Blockquotes
+b.Command("quotes", func(ctx *ctx.Context) error {
+    text := String(`Regular text
+This is a blockquote
+This is expandable quote`)
+
+    e := entities.New(text).
+        Blockquote("This is a blockquote").
+        ExpandableBlockquote("This is expandable quote")
+
+    return ctx.Reply(text).
+        Entities(e).
+        Send().Err()
+})
 ```
 
 ## Advanced Features
@@ -451,12 +585,12 @@ b.On.Message.Text(func(ctx *ctx.Context) error {
 ```go
 // Send dice
 b.Command("dice", func(ctx *ctx.Context) error {
-    return ctx.Dice().Send().Err()
+    return ctx.SendDice().Send().Err()
 })
 
 // Send slot machine
 b.Command("slot", func(ctx *ctx.Context) error {
-    return ctx.Dice().Slot().Send().Err()
+    return ctx.SendDice().Slot().Send().Err()
 })
 ```
 
@@ -504,6 +638,31 @@ if result.IsErr() {
     log.Printf("Failed to send photo: %v", result.Err())
 }
 ```
+
+## Testing
+
+The framework includes comprehensive unit tests for core components:
+
+```bash
+# Run unit tests
+make test-unit
+
+# Run with coverage
+make test-coverage
+
+# Run with race detection  
+make test-race
+
+# Run integration tests (requires BOT_TOKEN environment variable)
+export BOT_TOKEN=your_bot_token
+make test-integration
+```
+
+### Test Structure
+
+- **Unit tests** - Test individual components (entities, keyboards, bot builder)
+- **Integration tests** - Test with real Telegram API (requires bot token)
+- **Coverage reports** - Generate HTML coverage reports
 
 ## API Documentation
 

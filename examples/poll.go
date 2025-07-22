@@ -12,8 +12,8 @@ func main() {
 	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
-	quiz := func(ctx *ctx.Context) *ctx.Poll {
-		return ctx.Poll("🧠 Choose the correct option:").
+	quiz := func(ctx *ctx.Context) *ctx.SendPoll {
+		return ctx.SendPoll("🧠 Choose the correct option:").
 			Option("Option A").
 			Option("Option B").
 			Option("Option C").

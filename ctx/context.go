@@ -81,9 +81,9 @@ func (ctx *Context) Promote(userID int64) *Promote {
 	}
 }
 
-// Poll creates a new Poll request with the specified question.
-func (ctx *Context) Poll(question String) *Poll {
-	return &Poll{
+// SendPoll creates a new Poll request with the specified question.
+func (ctx *Context) SendPoll(question String) *SendPoll {
+	return &SendPoll{
 		ctx:      ctx,
 		question: question,
 		opts:     new(gotgbot.SendPollOpts),
@@ -99,18 +99,18 @@ func (ctx *Context) Reply(text String) *Reply {
 	}
 }
 
-// Message creates a new Message request to send a text message.
-func (ctx *Context) Message(text String) *Message {
-	return &Message{
+// SendMessage creates a new SendMessage request to send a text message.
+func (ctx *Context) SendMessage(text String) *SendMessage {
+	return &SendMessage{
 		ctx:  ctx,
 		text: text,
 		opts: new(gotgbot.SendMessageOpts),
 	}
 }
 
-// Document creates a new Document request to send a document file.
-func (ctx *Context) Document(filename String) *Document {
-	d := &Document{
+// SendDocument creates a new SendDocument request to send a document file.
+func (ctx *Context) SendDocument(filename String) *SendDocument {
+	d := &SendDocument{
 		ctx:  ctx,
 		opts: new(gotgbot.SendDocumentOpts),
 	}
@@ -127,9 +127,9 @@ func (ctx *Context) Document(filename String) *Document {
 	return d
 }
 
-// Audio creates a new Audio request to send an audio file.
-func (ctx *Context) Audio(filename String) *Audio {
-	a := &Audio{
+// SendAudio creates a new SendAudio request to send an audio file.
+func (ctx *Context) SendAudio(filename String) *SendAudio {
+	a := &SendAudio{
 		ctx:  ctx,
 		opts: new(gotgbot.SendAudioOpts),
 	}
@@ -146,9 +146,9 @@ func (ctx *Context) Audio(filename String) *Audio {
 	return a
 }
 
-// Photo creates a new Photo request to send a photo.
-func (ctx *Context) Photo(filename String) *Photo {
-	p := &Photo{
+// SendPhoto creates a new SendPhoto request to send a photo.
+func (ctx *Context) SendPhoto(filename String) *SendPhoto {
+	p := &SendPhoto{
 		ctx:  ctx,
 		opts: new(gotgbot.SendPhotoOpts),
 	}
@@ -165,9 +165,9 @@ func (ctx *Context) Photo(filename String) *Photo {
 	return p
 }
 
-// Video creates a new Video request to send a video file.
-func (ctx *Context) Video(filename String) *Video {
-	v := &Video{
+// SendVideo creates a new SendVideo request to send a video file.
+func (ctx *Context) SendVideo(filename String) *SendVideo {
+	v := &SendVideo{
 		ctx:  ctx,
 		opts: new(gotgbot.SendVideoOpts),
 	}
@@ -184,9 +184,9 @@ func (ctx *Context) Video(filename String) *Video {
 	return v
 }
 
-// Voice creates a new Voice request to send a voice message.
-func (ctx *Context) Voice(filename String) *Voice {
-	v := &Voice{
+// SendVoice creates a new SendVoice request to send a voice message.
+func (ctx *Context) SendVoice(filename String) *SendVoice {
+	v := &SendVoice{
 		ctx:  ctx,
 		opts: new(gotgbot.SendVoiceOpts),
 	}
@@ -203,9 +203,9 @@ func (ctx *Context) Voice(filename String) *Voice {
 	return v
 }
 
-// VideoNote creates a new VideoNote request to send a video note.
-func (ctx *Context) VideoNote(filename String) *VideoNote {
-	vn := &VideoNote{
+// SendVideoNote creates a new SendVideoNote request to send a video note.
+func (ctx *Context) SendVideoNote(filename String) *SendVideoNote {
+	vn := &SendVideoNote{
 		ctx:  ctx,
 		opts: new(gotgbot.SendVideoNoteOpts),
 	}
@@ -222,9 +222,9 @@ func (ctx *Context) VideoNote(filename String) *VideoNote {
 	return vn
 }
 
-// Animation creates a new Animation request to send an animated GIF or video.
-func (ctx *Context) Animation(filename String) *Animation {
-	a := &Animation{
+// SendAnimation creates a new SendAnimation request to send an animated GIF or video.
+func (ctx *Context) SendAnimation(filename String) *SendAnimation {
+	a := &SendAnimation{
 		ctx:  ctx,
 		opts: new(gotgbot.SendAnimationOpts),
 	}
@@ -241,9 +241,9 @@ func (ctx *Context) Animation(filename String) *Animation {
 	return a
 }
 
-// Sticker creates a new Sticker request to send a sticker.
-func (ctx *Context) Sticker(filename String) *Sticker {
-	s := &Sticker{
+// SendSticker creates a new SendSticker request to send a sticker.
+func (ctx *Context) SendSticker(filename String) *SendSticker {
+	s := &SendSticker{
 		ctx:  ctx,
 		opts: new(gotgbot.SendStickerOpts),
 	}
@@ -260,9 +260,9 @@ func (ctx *Context) Sticker(filename String) *Sticker {
 	return s
 }
 
-// Location creates a new Location request to send a location.
-func (ctx *Context) Location(latitude, longitude float64) *Location {
-	return &Location{
+// SendLocation creates a new SendLocation request to send a location.
+func (ctx *Context) SendLocation(latitude, longitude float64) *SendLocation {
+	return &SendLocation{
 		ctx:       ctx,
 		latitude:  latitude,
 		longitude: longitude,
@@ -270,9 +270,9 @@ func (ctx *Context) Location(latitude, longitude float64) *Location {
 	}
 }
 
-// Venue creates a new Venue request to send a venue location.
-func (ctx *Context) Venue(latitude, longitude float64, title, address String) *Venue {
-	return &Venue{
+// SendVenue creates a new SendVenue request to send a venue location.
+func (ctx *Context) SendVenue(latitude, longitude float64, title, address String) *SendVenue {
+	return &SendVenue{
 		ctx:       ctx,
 		latitude:  latitude,
 		longitude: longitude,
@@ -282,9 +282,9 @@ func (ctx *Context) Venue(latitude, longitude float64, title, address String) *V
 	}
 }
 
-// Contact creates a new Contact request to send a contact.
-func (ctx *Context) Contact(phoneNumber, firstName String) *Contact {
-	return &Contact{
+// SendContact creates a new SendContact request to send a contact.
+func (ctx *Context) SendContact(phoneNumber, firstName String) *SendContact {
+	return &SendContact{
 		ctx:         ctx,
 		phoneNumber: phoneNumber,
 		firstName:   firstName,
@@ -339,9 +339,9 @@ func (ctx *Context) Answer(text String) *Answer {
 	}
 }
 
-// Dice creates a new Dice request to send a dice animation.
-func (ctx *Context) Dice() *Dice {
-	return &Dice{
+// SendDice creates a new SendDice request to send a dice animation.
+func (ctx *Context) SendDice() *SendDice {
+	return &SendDice{
 		ctx:  ctx,
 		opts: new(gotgbot.SendDiceOpts),
 	}
@@ -374,6 +374,70 @@ func (ctx *Context) RefundStarPayment(chargeID String) *RefundStarPayment {
 		ctx:      ctx,
 		chargeID: chargeID,
 		opts:     new(gotgbot.RefundStarPaymentOpts),
+	}
+}
+
+// Gift creates a Gift request builder.
+func (ctx *Context) SendGift(giftID String) *SendGift {
+	return &SendGift{
+		ctx:    ctx,
+		giftID: giftID,
+		opts:   new(gotgbot.SendGiftOpts),
+	}
+}
+
+// ConvertGiftToStars creates a ConvertGiftToStars request builder.
+func (ctx *Context) ConvertGiftToStars(businessConnectionID, ownedGiftID String) *ConvertGiftToStars {
+	return &ConvertGiftToStars{
+		ctx:                  ctx,
+		businessConnectionID: businessConnectionID,
+		ownedGiftID:          ownedGiftID,
+		opts:                 new(gotgbot.ConvertGiftToStarsOpts),
+	}
+}
+
+// TransferGift creates a TransferGift request builder.
+func (ctx *Context) TransferGift(businessConnectionID, ownedGiftID String, newOwnerChatID int64) *TransferGift {
+	return &TransferGift{
+		ctx:                  ctx,
+		businessConnectionID: businessConnectionID,
+		ownedGiftID:          ownedGiftID,
+		newOwnerChatID:       newOwnerChatID,
+		opts:                 new(gotgbot.TransferGiftOpts),
+	}
+}
+
+// UpgradeGift creates an UpgradeGift request builder.
+func (ctx *Context) UpgradeGift(businessConnectionID, ownedGiftID String) *UpgradeGift {
+	return &UpgradeGift{
+		ctx:                  ctx,
+		businessConnectionID: businessConnectionID,
+		ownedGiftID:          ownedGiftID,
+		opts:                 new(gotgbot.UpgradeGiftOpts),
+	}
+}
+
+// GetAvailableGifts creates a GetAvailableGifts request builder.
+func (ctx *Context) GetAvailableGifts() *GetAvailableGifts {
+	return &GetAvailableGifts{
+		ctx:  ctx,
+		opts: new(gotgbot.GetAvailableGiftsOpts),
+	}
+}
+
+// GetMyStarBalance creates a GetMyStarBalance request builder.
+func (ctx *Context) GetMyStarBalance() *GetMyStarBalance {
+	return &GetMyStarBalance{
+		ctx:  ctx,
+		opts: new(gotgbot.GetMyStarBalanceOpts),
+	}
+}
+
+// GetStarTransactions creates a GetStarTransactions request builder.
+func (ctx *Context) GetStarTransactions() *GetStarTransactions {
+	return &GetStarTransactions{
+		ctx:  ctx,
+		opts: new(gotgbot.GetStarTransactionsOpts),
 	}
 }
 

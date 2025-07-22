@@ -25,7 +25,7 @@ func main() {
 
 	// Text message handler - responds to any text, including in channels
 	b.On.Message.Text(func(ctx *ctx.Context) error {
-		return ctx.Message("Received a text message!").Send().Err()
+		return ctx.SendMessage("Received a text message!").Send().Err()
 	}).
 		AllowChannel(). // enable in channels
 		Register()

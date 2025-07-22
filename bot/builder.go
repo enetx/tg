@@ -11,19 +11,13 @@ import (
 	"github.com/enetx/tg/handlers"
 )
 
+// BotBuilder provides a fluent interface for configuring and building Telegram bots.
 type BotBuilder struct {
 	token String
 	opts  *gotgbot.BotOpts
 }
 
-func (b *BotBuilder) APIURL(url String) *BotBuilder {
-	if base, ok := b.opts.BotClient.(*gotgbot.BaseBotClient); ok {
-		base.DefaultRequestOpts.APIURL = url.Std()
-	}
-
-	return b
-}
-
+// UseTestEnvironment configures the bot to use Telegram's test environment.
 func (b *BotBuilder) UseTestEnvironment() *BotBuilder {
 	if base, ok := b.opts.BotClient.(*gotgbot.BaseBotClient); ok {
 		base.UseTestEnvironment = true
@@ -32,21 +26,49 @@ func (b *BotBuilder) UseTestEnvironment() *BotBuilder {
 	return b
 }
 
+// DisableTokenCheck disables the automatic bot token validation during build.
 func (b *BotBuilder) DisableTokenCheck() *BotBuilder {
 	b.opts.DisableTokenCheck = true
 	return b
 }
 
+// UseClient sets a custom HTTP client for the bot.
 func (b *BotBuilder) UseClient(c *http.Client) *BotBuilder {
 	b.opts.BotClient = &gotgbot.BaseBotClient{Client: *c}
 	return b
 }
 
-func (b *BotBuilder) Timeout(d time.Duration) *BotBuilder {
-	b.opts.RequestOpts.Timeout = d
+// Timeout sets the timeout for bot builder operations.
+func (b *BotBuilder) Timeout(duration time.Duration) *BotBuilder {
+	b.opts.RequestOpts.Timeout = duration
 	return b
 }
 
+// APIURL sets the API URL for bot builder operations.
+func (b *BotBuilder) APIURL(url String) *BotBuilder {
+	b.opts.RequestOpts.APIURL = url.Std()
+	return b
+}
+
+// DefaultTimeout sets the default timeout for all bot requests.
+func (b *BotBuilder) DefaultTimeout(duration time.Duration) *BotBuilder {
+	if base, ok := b.opts.BotClient.(*gotgbot.BaseBotClient); ok {
+		base.DefaultRequestOpts.Timeout = duration
+	}
+
+	return b
+}
+
+// DefaultAPIURL sets the default API URL for all bot requests.
+func (b *BotBuilder) DefaultAPIURL(url String) *BotBuilder {
+	if base, ok := b.opts.BotClient.(*gotgbot.BaseBotClient); ok {
+		base.DefaultRequestOpts.APIURL = url.Std()
+	}
+
+	return b
+}
+
+// Build creates and initializes a new Bot instance with the configured settings.
 func (b *BotBuilder) Build() Result[*Bot] {
 	raw := &gotgbot.Bot{
 		Token:     b.token.Std(),

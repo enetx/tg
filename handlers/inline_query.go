@@ -12,6 +12,7 @@ import (
 // InlineQueryHandlers provides methods to handle inline query events.
 type InlineQueryHandlers struct{ Bot core.BotAPI }
 
+// handleInlineQuery registers an inline query handler with the dispatcher.
 func (h *InlineQueryHandlers) handleInlineQuery(f filters.InlineQuery, fn Handler) {
 	h.Bot.Dispatcher().AddHandler(handlers.NewInlineQuery(f, wrap(h.Bot, middlewares(h.Bot), fn)))
 }

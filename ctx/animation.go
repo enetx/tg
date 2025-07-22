@@ -5,10 +5,11 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 )
 
-type Animation struct {
+type SendAnimation struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendAnimationOpts
@@ -20,144 +21,167 @@ type Animation struct {
 	err         error
 }
 
+// CaptionEntities sets custom entities for the animation caption.
+func (c *SendAnimation) CaptionEntities(e *entities.Entities) *SendAnimation {
+	c.opts.CaptionEntities = e.Std()
+	return c
+}
+
 // After schedules the animation to be sent after the specified duration.
-func (a *Animation) After(duration time.Duration) *Animation {
-	a.after = Some(duration)
-	return a
+func (c *SendAnimation) After(duration time.Duration) *SendAnimation {
+	c.after = Some(duration)
+	return c
 }
 
 // DeleteAfter schedules the animation message to be deleted after the specified duration.
-func (a *Animation) DeleteAfter(duration time.Duration) *Animation {
-	a.deleteAfter = Some(duration)
-	return a
+func (c *SendAnimation) DeleteAfter(duration time.Duration) *SendAnimation {
+	c.deleteAfter = Some(duration)
+	return c
 }
 
 // Caption sets the caption text for the animation.
-func (a *Animation) Caption(caption String) *Animation {
-	a.opts.Caption = caption.Std()
-	return a
+func (c *SendAnimation) Caption(caption String) *SendAnimation {
+	c.opts.Caption = caption.Std()
+	return c
 }
 
 // HTML sets the caption parse mode to HTML.
-func (a *Animation) HTML() *Animation {
-	a.opts.ParseMode = "HTML"
-	return a
+func (c *SendAnimation) HTML() *SendAnimation {
+	c.opts.ParseMode = "HTML"
+	return c
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
-func (a *Animation) Markdown() *Animation {
-	a.opts.ParseMode = "MarkdownV2"
-	return a
+func (c *SendAnimation) Markdown() *SendAnimation {
+	c.opts.ParseMode = "MarkdownV2"
+	return c
 }
 
 // Silent disables notification for the animation message.
-func (a *Animation) Silent() *Animation {
-	a.opts.DisableNotification = true
-	return a
+func (c *SendAnimation) Silent() *SendAnimation {
+	c.opts.DisableNotification = true
+	return c
 }
 
 // Protect enables content protection for the animation message.
-func (a *Animation) Protect() *Animation {
-	a.opts.ProtectContent = true
-	return a
+func (c *SendAnimation) Protect() *SendAnimation {
+	c.opts.ProtectContent = true
+	return c
 }
 
 // Markup sets the reply markup keyboard for the animation message.
-func (a *Animation) Markup(kb keyboard.KeyboardBuilder) *Animation {
-	a.opts.ReplyMarkup = kb.Markup()
-	return a
+func (c *SendAnimation) Markup(kb keyboard.KeyboardBuilder) *SendAnimation {
+	c.opts.ReplyMarkup = kb.Markup()
+	return c
 }
 
 // Duration sets the animation duration in seconds.
-func (a *Animation) Duration(duration int64) *Animation {
-	a.opts.Duration = duration
-	return a
+func (c *SendAnimation) Duration(duration int64) *SendAnimation {
+	c.opts.Duration = duration
+	return c
 }
 
 // Width sets the animation width.
-func (a *Animation) Width(width int64) *Animation {
-	a.opts.Width = width
-	return a
+func (c *SendAnimation) Width(width int64) *SendAnimation {
+	c.opts.Width = width
+	return c
 }
 
 // Height sets the animation height.
-func (a *Animation) Height(height int64) *Animation {
-	a.opts.Height = height
-	return a
+func (c *SendAnimation) Height(height int64) *SendAnimation {
+	c.opts.Height = height
+	return c
 }
 
 // Thumbnail sets a custom thumbnail for the animation.
-func (a *Animation) Thumbnail(file String) *Animation {
-	a.thumb = NewFile(file)
+func (c *SendAnimation) Thumbnail(file String) *SendAnimation {
+	c.thumb = NewFile(file)
 
-	reader := a.thumb.Open()
+	reader := c.thumb.Open()
 	if reader.IsErr() {
-		a.err = reader.Err()
-		return a
+		c.err = reader.Err()
+		return c
 	}
 
-	a.opts.Thumbnail = gotgbot.InputFileByReader(a.thumb.Name().Std(), reader.Ok().Std())
-	return a
+	c.opts.Thumbnail = gotgbot.InputFileByReader(c.thumb.Name().Std(), reader.Ok().Std())
+
+	return c
 }
 
 // ReplyTo sets the message ID to reply to.
-func (a *Animation) ReplyTo(messageID int64) *Animation {
-	a.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return a
+func (c *SendAnimation) ReplyTo(messageID int64) *SendAnimation {
+	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return c
 }
 
-// Timeout sets the request timeout duration.
-func (a *Animation) Timeout(duration time.Duration) *Animation {
-	a.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
-	return a
+// Timeout sets a custom timeout for this request.
+func (c *SendAnimation) Timeout(duration time.Duration) *SendAnimation {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *SendAnimation) APIURL(url String) *SendAnimation {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
 }
 
 // Business sets the business connection ID for the animation message.
-func (a *Animation) Business(id String) *Animation {
-	a.opts.BusinessConnectionId = id.Std()
-	return a
+func (c *SendAnimation) Business(id String) *SendAnimation {
+	c.opts.BusinessConnectionId = id.Std()
+	return c
 }
 
 // Thread sets the message thread ID for the animation message.
-func (a *Animation) Thread(id int64) *Animation {
-	a.opts.MessageThreadId = id
-	return a
+func (c *SendAnimation) Thread(id int64) *SendAnimation {
+	c.opts.MessageThreadId = id
+	return c
 }
 
 // ShowCaptionAboveMedia displays the caption above the animation instead of below.
-func (a *Animation) ShowCaptionAboveMedia() *Animation {
-	a.opts.ShowCaptionAboveMedia = true
-	return a
+func (c *SendAnimation) ShowCaptionAboveMedia() *SendAnimation {
+	c.opts.ShowCaptionAboveMedia = true
+	return c
 }
 
 // Spoiler marks the animation as a spoiler.
-func (a *Animation) Spoiler() *Animation {
-	a.opts.HasSpoiler = true
-	return a
+func (c *SendAnimation) Spoiler() *SendAnimation {
+	c.opts.HasSpoiler = true
+	return c
 }
 
 // To sets the target chat ID for the animation message.
-func (a *Animation) To(chatID int64) *Animation {
-	a.chatID = Some(chatID)
-	return a
+func (c *SendAnimation) To(chatID int64) *SendAnimation {
+	c.chatID = Some(chatID)
+	return c
 }
 
 // Send sends the animation message to Telegram and returns the result.
-func (a *Animation) Send() Result[*gotgbot.Message] {
-	if a.err != nil {
-		return Err[*gotgbot.Message](a.err)
+func (c *SendAnimation) Send() Result[*gotgbot.Message] {
+	if c.err != nil {
+		return Err[*gotgbot.Message](c.err)
 	}
 
-	if a.file != nil {
-		defer a.file.Close()
+	if c.file != nil {
+		defer c.file.Close()
 	}
 
-	if a.thumb != nil {
-		defer a.thumb.Close()
+	if c.thumb != nil {
+		defer c.thumb.Close()
 	}
 
-	return a.ctx.timers(a.after, a.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := a.chatID.UnwrapOr(a.ctx.EffectiveChat.Id)
-		return ResultOf(a.ctx.Bot.Raw().SendAnimation(chatID, a.doc, a.opts))
+	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
+		return ResultOf(c.ctx.Bot.Raw().SendAnimation(chatID, c.doc, c.opts))
 	})
 }

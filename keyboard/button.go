@@ -34,6 +34,7 @@ func NewButton(ikb ...*gotgbot.InlineKeyboardButton) *Button {
 	return b
 }
 
+// attach connects the button to its parent keyboard for state synchronization.
 func (b *Button) attach(kb *InlineKeyboard) *Button {
 	b.parent = kb
 	return b
@@ -142,6 +143,7 @@ func (b *Button) Flip() *Button {
 	return b
 }
 
+// build constructs the final gotgbot.InlineKeyboardButton with toggle state applied.
 func (b *Button) build() gotgbot.InlineKeyboardButton {
 	btn := *b.raw
 

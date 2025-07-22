@@ -6,22 +6,26 @@ package updates
 type UpdateType int
 
 const (
-	Message              UpdateType = iota // Incoming message
-	EditedMessage                          // Edited incoming message
-	ChannelPost                            // New channel post
-	EditedChannelPost                      // Edited channel post
-	InlineQuery                            // Inline query (e.g. @your_bot query)
-	ChosenInlineResult                     // Result chosen from inline query
-	CallbackQuery                          // Button callback with callback_data
-	ShippingQuery                          // Shipping address query for payments
-	PreCheckoutQuery                       // Pre-checkout query before confirming a payment
-	Poll                                   // Poll creation
-	PollAnswer                             // User’s answer to a non-anonymous poll
-	MyChatMember                           // Bot's status updated in a chat
-	ChatMember                             // Chat member's status updated
-	ChatJoinRequest                        // Incoming join request to a chat
-	MessageReaction                        // New or removed reaction to a message
-	MessageReactionCount                   // Updated reaction count on a message
+	Message                 UpdateType = iota // Incoming message
+	EditedMessage                             // Edited incoming message
+	ChannelPost                               // New channel post
+	EditedChannelPost                         // Edited channel post
+	InlineQuery                               // Inline query (e.g. @your_bot query)
+	ChosenInlineResult                        // Result chosen from inline query
+	CallbackQuery                             // Button callback with callback_data
+	ShippingQuery                             // Shipping address query for payments
+	PreCheckoutQuery                          // Pre-checkout query before confirming a payment
+	Poll                                      // Poll creation
+	PollAnswer                                // User’s answer to a non-anonymous poll
+	MyChatMember                              // Bot's status updated in a chat
+	ChatMember                                // Chat member's status updated
+	ChatJoinRequest                           // Incoming join request to a chat
+	MessageReaction                           // New or removed reaction to a message
+	MessageReactionCount                      // Updated reaction count on a message
+	BusinessConnection                        // Bot connected/disconnected from business account
+	BusinessMessage                           // New message from connected business account
+	EditedBusinessMessage                     // Edited message from connected business account
+	DeletedBusinessMessages                   // Messages deleted from connected business account
 )
 
 // String returns the raw string name for UpdateType, as used in Telegram Bot API updates.
@@ -59,6 +63,14 @@ func (u UpdateType) String() string {
 		return "message_reaction"
 	case MessageReactionCount:
 		return "message_reaction_count"
+	case BusinessConnection:
+		return "business_connection"
+	case BusinessMessage:
+		return "business_message"
+	case EditedBusinessMessage:
+		return "edited_business_message"
+	case DeletedBusinessMessages:
+		return "deleted_business_messages"
 	default:
 		return "unknown"
 	}

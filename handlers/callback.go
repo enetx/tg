@@ -44,6 +44,7 @@ func (h *CallbackHandler) Register() *CallbackHandler {
 // CallbackHandlers provides methods to handle callback query events.
 type CallbackHandlers struct{ Bot core.BotAPI }
 
+// handleCallback creates and registers a new callback query handler with the specified filter.
 func (h *CallbackHandlers) handleCallback(f filters.CallbackQuery, fn Handler) *CallbackHandler {
 	return (&CallbackHandler{
 		bot:     h.Bot,

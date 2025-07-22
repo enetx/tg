@@ -13,7 +13,7 @@ func main() {
 
 	b.Command("start", func(ctx *ctx.Context) error {
 		button := keyboard.Reply().WebApp("peet", "https://tls.peet.ws/api/all")
-		return ctx.Message("оk").Markup(button).Send().Err()
+		return ctx.SendMessage("оk").Markup(button).Send().Err()
 	})
 
 	b.Polling().Start()

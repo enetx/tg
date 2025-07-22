@@ -80,7 +80,7 @@ func main() {
 // Fallback handler for unknown payloads or transitions
 func handleDefault(c *ctx.Context) error {
 	url := Format(furl, c, CheckThisOut)
-	return c.Message(String("Feel free to tell your friends about it:\n\n" + url)).Send().Err()
+	return c.SendMessage(String("Feel free to tell your friends about it:\n\n" + url)).Send().Err()
 }
 
 // FSM: Entered state "deep1"
@@ -88,7 +88,7 @@ func handleDeep1(fctx *fsm.Context) error {
 	tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 	url := Format(furl, tgctx, SoCool)
 
-	return tgctx.Message("Awesome, you just accessed hidden functionality! Now let's get back to the private chat.").
+	return tgctx.SendMessage("Awesome, you just accessed hidden functionality! Now let's get back to the private chat.").
 		Markup(keyboard.Inline().URL("Continue here!", url)).
 		Send().
 		Err()
@@ -100,13 +100,13 @@ func handleDeep2(fctx *fsm.Context) error {
 	url := Format(furl, tgctx, UsingEntities)
 	msg := Format(`You can also mask the deep-linked URLs as links: <a href="{}">▶️ CLICK HERE</a>`, url)
 
-	return tgctx.Message(msg).HTML().Preview(preview.New().Disable()).Send().Err()
+	return tgctx.SendMessage(msg).HTML().Preview(preview.New().Disable()).Send().Err()
 }
 
 // FSM: Entered state "deep3"
 func handleDeep3(fctx *fsm.Context) error {
 	tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
-	return tgctx.Message("It is also possible to make deep-linking using InlineKeyboardButtons.").
+	return tgctx.SendMessage("It is also possible to make deep-linking using InlineKeyboardButtons.").
 		Markup(keyboard.Inline().Text("Like this!", CallbackButton)).Send().Err()
 }
 
@@ -117,7 +117,7 @@ func handleDeep4(fctx *fsm.Context) error {
 	// Clear FSM for the user (optional, since this is a final state)
 	defer fsmStore.Delete(tgctx.EffectiveUser.Id)
 
-	return tgctx.Message(Format("Congratulations! This is as deep as it gets \n\nThe payload was: {}", fctx.Input)).
+	return tgctx.SendMessage(Format("Congratulations! This is as deep as it gets \n\nThe payload was: {}", fctx.Input)).
 		Send().
 		Err()
 }

@@ -63,6 +63,7 @@ func (h *MessageHandler) Register() *MessageHandler {
 // MessageHandlers provides methods to handle message events with various filters.
 type MessageHandlers struct{ Bot core.BotAPI }
 
+// handleMessage creates and registers a new message handler with the specified filter.
 func (h *MessageHandlers) handleMessage(f filters.Message, fn Handler) *MessageHandler {
 	return (&MessageHandler{
 		bot:     h.Bot,

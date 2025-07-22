@@ -8,7 +8,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 )
 
-type Location struct {
+type SendLocation struct {
 	ctx         *Context
 	latitude    float64
 	longitude   float64
@@ -19,93 +19,109 @@ type Location struct {
 }
 
 // After schedules the location to be sent after the specified duration.
-func (l *Location) After(duration time.Duration) *Location {
-	l.after = Some(duration)
-	return l
+func (c *SendLocation) After(duration time.Duration) *SendLocation {
+	c.after = Some(duration)
+	return c
 }
 
 // DeleteAfter schedules the location message to be deleted after the specified duration.
-func (l *Location) DeleteAfter(duration time.Duration) *Location {
-	l.deleteAfter = Some(duration)
-	return l
+func (c *SendLocation) DeleteAfter(duration time.Duration) *SendLocation {
+	c.deleteAfter = Some(duration)
+	return c
 }
 
 // Silent disables notification for the location message.
-func (l *Location) Silent() *Location {
-	l.opts.DisableNotification = true
-	return l
+func (c *SendLocation) Silent() *SendLocation {
+	c.opts.DisableNotification = true
+	return c
 }
 
 // Protect enables content protection for the location message.
-func (l *Location) Protect() *Location {
-	l.opts.ProtectContent = true
-	return l
+func (c *SendLocation) Protect() *SendLocation {
+	c.opts.ProtectContent = true
+	return c
 }
 
 // Markup sets the reply markup keyboard for the location message.
-func (l *Location) Markup(kb keyboard.KeyboardBuilder) *Location {
-	l.opts.ReplyMarkup = kb.Markup()
-	return l
+func (c *SendLocation) Markup(kb keyboard.KeyboardBuilder) *SendLocation {
+	c.opts.ReplyMarkup = kb.Markup()
+	return c
 }
 
 // LivePeriod sets the period in seconds for which the location will be updated.
-func (l *Location) LivePeriod(seconds int64) *Location {
-	l.opts.LivePeriod = seconds
-	return l
+func (c *SendLocation) LivePeriod(seconds int64) *SendLocation {
+	c.opts.LivePeriod = seconds
+	return c
 }
 
 // Heading sets the direction in which the user is moving, in degrees.
-func (l *Location) Heading(heading int64) *Location {
-	l.opts.Heading = heading
-	return l
+func (c *SendLocation) Heading(heading int64) *SendLocation {
+	c.opts.Heading = heading
+	return c
 }
 
 // ProximityAlertRadius sets the maximum distance for proximity alerts about approaching another chat member.
-func (l *Location) ProximityAlertRadius(radius int64) *Location {
-	l.opts.ProximityAlertRadius = radius
-	return l
+func (c *SendLocation) ProximityAlertRadius(radius int64) *SendLocation {
+	c.opts.ProximityAlertRadius = radius
+	return c
 }
 
 // HorizontalAccuracy sets the radius of uncertainty for the location, measured in meters.
-func (l *Location) HorizontalAccuracy(accuracy float64) *Location {
-	l.opts.HorizontalAccuracy = accuracy
-	return l
+func (c *SendLocation) HorizontalAccuracy(accuracy float64) *SendLocation {
+	c.opts.HorizontalAccuracy = accuracy
+	return c
 }
 
 // ReplyTo sets the message ID to reply to.
-func (l *Location) ReplyTo(messageID int64) *Location {
-	l.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return l
+func (c *SendLocation) ReplyTo(messageID int64) *SendLocation {
+	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return c
 }
 
-// Timeout sets the request timeout duration.
-func (l *Location) Timeout(duration time.Duration) *Location {
-	l.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
-	return l
+// Timeout sets a custom timeout for this request.
+func (c *SendLocation) Timeout(duration time.Duration) *SendLocation {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *SendLocation) APIURL(url String) *SendLocation {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
 }
 
 // Business sets the business connection ID for the location message.
-func (l *Location) Business(id String) *Location {
-	l.opts.BusinessConnectionId = id.Std()
-	return l
+func (c *SendLocation) Business(id String) *SendLocation {
+	c.opts.BusinessConnectionId = id.Std()
+	return c
 }
 
 // Thread sets the message thread ID for the location message.
-func (l *Location) Thread(id int64) *Location {
-	l.opts.MessageThreadId = id
-	return l
+func (c *SendLocation) Thread(id int64) *SendLocation {
+	c.opts.MessageThreadId = id
+	return c
 }
 
 // To sets the target chat ID for the location message.
-func (l *Location) To(chatID int64) *Location {
-	l.chatID = Some(chatID)
-	return l
+func (c *SendLocation) To(chatID int64) *SendLocation {
+	c.chatID = Some(chatID)
+	return c
 }
 
 // Send sends the location message to Telegram and returns the result.
-func (l *Location) Send() Result[*gotgbot.Message] {
-	return l.ctx.timers(l.after, l.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := l.chatID.UnwrapOr(l.ctx.EffectiveChat.Id)
-		return ResultOf(l.ctx.Bot.Raw().SendLocation(chatID, l.latitude, l.longitude, l.opts))
+func (c *SendLocation) Send() Result[*gotgbot.Message] {
+	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
+		return ResultOf(c.ctx.Bot.Raw().SendLocation(chatID, c.latitude, c.longitude, c.opts))
 	})
 }

@@ -18,48 +18,64 @@ type Restrict struct {
 }
 
 // ChatID sets the target chat ID for the restrict action.
-func (r *Restrict) ChatID(id int64) *Restrict {
-	r.chatID = Some(id)
-	return r
+func (c *Restrict) ChatID(id int64) *Restrict {
+	c.chatID = Some(id)
+	return c
 }
 
 // Until sets the restriction expiration time.
-func (r *Restrict) Until(t time.Time) *Restrict {
-	r.opts.UntilDate = t.Unix()
-	return r
+func (c *Restrict) Until(t time.Time) *Restrict {
+	c.opts.UntilDate = t.Unix()
+	return c
 }
 
 // For sets the restriction duration from now.
-func (r *Restrict) For(d time.Duration) *Restrict {
-	return r.Until(time.Now().Add(d))
+func (c *Restrict) For(d time.Duration) *Restrict {
+	return c.Until(time.Now().Add(d))
 }
 
 // AutoPermissions uses chat default permissions instead of independent permissions.
-func (r *Restrict) AutoPermissions() *Restrict {
-	r.autoPermissions = true
-	return r
+func (c *Restrict) AutoPermissions() *Restrict {
+	c.autoPermissions = true
+	return c
 }
 
 // Permissions sets the allowed permissions for the restricted user.
-func (r *Restrict) Permissions(perms ...permissions.Permission) *Restrict {
-	r.permissions = permissions.Permissions(perms...)
-	return r
+func (c *Restrict) Permissions(perms ...permissions.Permission) *Restrict {
+	c.permissions = permissions.Permissions(perms...)
+	return c
 }
 
-// Timeout sets the request timeout duration.
-func (r *Restrict) Timeout(duration time.Duration) *Restrict {
-	r.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
-	return r
+// Timeout sets a custom timeout for this request.
+func (c *Restrict) Timeout(duration time.Duration) *Restrict {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *Restrict) APIURL(url String) *Restrict {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
 }
 
 // Send restricts the user's permissions and returns the result.
-func (r *Restrict) Send() Result[bool] {
-	if r.permissions == nil {
+func (c *Restrict) Send() Result[bool] {
+	if c.permissions == nil {
 		return Err[bool](Errorf("permissions are required"))
 	}
 
-	chatID := r.chatID.UnwrapOr(r.ctx.EffectiveChat.Id)
-	r.opts.UseIndependentChatPermissions = !r.autoPermissions
+	chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
+	c.opts.UseIndependentChatPermissions = !c.autoPermissions
 
-	return ResultOf(r.ctx.Bot.Raw().RestrictChatMember(chatID, r.userID, *r.permissions, r.opts))
+	return ResultOf(c.ctx.Bot.Raw().RestrictChatMember(chatID, c.userID, *c.permissions, c.opts))
 }

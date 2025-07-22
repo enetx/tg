@@ -9,7 +9,7 @@ import (
 	"github.com/enetx/tg/types/effects"
 )
 
-type Dice struct {
+type SendDice struct {
 	ctx         *Context
 	chatID      Option[int64]
 	after       Option[time.Duration]
@@ -18,111 +18,133 @@ type Dice struct {
 }
 
 // After schedules the dice to be sent after the specified duration.
-func (d *Dice) After(duration time.Duration) *Dice {
-	d.after = Some(duration)
-	return d
+func (c *SendDice) After(duration time.Duration) *SendDice {
+	c.after = Some(duration)
+	return c
 }
 
 // DeleteAfter schedules the dice message to be deleted after the specified duration.
-func (d *Dice) DeleteAfter(duration time.Duration) *Dice {
-	d.deleteAfter = Some(duration)
-	return d
+func (c *SendDice) DeleteAfter(duration time.Duration) *SendDice {
+	c.deleteAfter = Some(duration)
+	return c
 }
 
 // Emoji sets a custom emoji for the dice.
-func (d *Dice) Emoji(e String) *Dice {
-	d.opts.Emoji = e.Std()
-	return d
+func (c *SendDice) Emoji(e String) *SendDice {
+	c.opts.Emoji = e.Std()
+	return c
 }
 
 // Dart sets the dice emoji to dart.
-func (d *Dice) Dart() *Dice {
-	d.opts.Emoji = "🎯"
-	return d
+func (c *SendDice) Dart() *SendDice {
+	c.opts.Emoji = "🎯"
+	return c
 }
 
 // Slot sets the dice emoji to slot machine.
-func (d *Dice) Slot() *Dice {
-	d.opts.Emoji = "🎰"
-	return d
+func (c *SendDice) Slot() *SendDice {
+	c.opts.Emoji = "🎰"
+	return c
 }
 
 // Ball sets the dice emoji to basketball.
-func (d *Dice) Ball() *Dice {
-	d.opts.Emoji = "🏀"
-	return d
+func (c *SendDice) Ball() *SendDice {
+	c.opts.Emoji = "🏀"
+	return c
 }
 
 // Soccer sets the dice emoji to soccer ball.
-func (d *Dice) Soccer() *Dice {
-	d.opts.Emoji = "⚽"
-	return d
+func (c *SendDice) Soccer() *SendDice {
+	c.opts.Emoji = "⚽"
+	return c
 }
 
 // Bowling sets the dice emoji to bowling.
-func (d *Dice) Bowling() *Dice {
-	d.opts.Emoji = "🎳"
-	return d
+func (c *SendDice) Bowling() *SendDice {
+	c.opts.Emoji = "🎳"
+	return c
 }
 
 // Silent disables notification for the dice message.
-func (d *Dice) Silent() *Dice {
-	d.opts.DisableNotification = true
-	return d
+func (c *SendDice) Silent() *SendDice {
+	c.opts.DisableNotification = true
+	return c
 }
 
 // Thread sets the message thread ID for the dice message.
-func (d *Dice) Thread(id int64) *Dice {
-	d.opts.MessageThreadId = id
-	return d
+func (c *SendDice) Thread(id int64) *SendDice {
+	c.opts.MessageThreadId = id
+	return c
 }
 
 // AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
-func (d *Dice) AllowPaidBroadcast() *Dice {
-	d.opts.AllowPaidBroadcast = true
-	return d
+func (c *SendDice) AllowPaidBroadcast() *SendDice {
+	c.opts.AllowPaidBroadcast = true
+	return c
 }
 
 // Effect sets a message effect for the dice message.
-func (d *Dice) Effect(effect effects.EffectType) *Dice {
-	d.opts.MessageEffectId = effect.String()
-	return d
+func (c *SendDice) Effect(effect effects.EffectType) *SendDice {
+	c.opts.MessageEffectId = effect.String()
+	return c
 }
 
 // ReplyTo sets the message ID to reply to.
-func (d *Dice) ReplyTo(id int64) *Dice {
-	d.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: id}
-	return d
+func (c *SendDice) ReplyTo(id int64) *SendDice {
+	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: id}
+	return c
 }
 
 // Markup sets the reply markup keyboard for the dice message.
-func (d *Dice) Markup(kb keyboard.KeyboardBuilder) *Dice {
-	d.opts.ReplyMarkup = kb.Markup()
-	return d
+func (c *SendDice) Markup(kb keyboard.KeyboardBuilder) *SendDice {
+	c.opts.ReplyMarkup = kb.Markup()
+	return c
 }
 
 // Business sets the business connection ID for the dice message.
-func (d *Dice) Business(id String) *Dice {
-	d.opts.BusinessConnectionId = id.Std()
-	return d
+func (c *SendDice) Business(id String) *SendDice {
+	c.opts.BusinessConnectionId = id.Std()
+	return c
 }
 
 // Protect enables content protection for the dice message.
-func (d *Dice) Protect() *Dice {
-	d.opts.ProtectContent = true
-	return d
+func (c *SendDice) Protect() *SendDice {
+	c.opts.ProtectContent = true
+	return c
 }
 
 // To sets the target chat ID for the dice message.
-func (d *Dice) To(chatID int64) *Dice {
-	d.chatID = Some(chatID)
-	return d
+func (c *SendDice) To(chatID int64) *SendDice {
+	c.chatID = Some(chatID)
+	return c
+}
+
+// Timeout sets a custom timeout for this request.
+func (c *SendDice) Timeout(duration time.Duration) *SendDice {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *SendDice) APIURL(url String) *SendDice {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
 }
 
 // Send sends the dice message to Telegram and returns the result.
-func (d *Dice) Send() Result[*gotgbot.Message] {
-	return d.ctx.timers(d.after, d.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := d.chatID.UnwrapOr(d.ctx.EffectiveChat.Id)
-		return ResultOf(d.ctx.Bot.Raw().SendDice(chatID, d.opts))
+func (c *SendDice) Send() Result[*gotgbot.Message] {
+	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
+		return ResultOf(c.ctx.Bot.Raw().SendDice(chatID, c.opts))
 	})
 }

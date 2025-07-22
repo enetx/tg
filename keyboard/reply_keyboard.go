@@ -18,6 +18,7 @@ func (rb *ReplyKeyboard) Row() *ReplyKeyboard {
 	return rb
 }
 
+// addToLastRow adds a button to the last row, creating a new row if needed.
 func (rb *ReplyKeyboard) addToLastRow(btn gotgbot.KeyboardButton) *ReplyKeyboard {
 	if rb.rows.Empty() {
 		rb.rows.Push([]gotgbot.KeyboardButton{btn})

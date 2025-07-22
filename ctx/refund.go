@@ -15,19 +15,35 @@ type RefundStarPayment struct {
 }
 
 // UserID sets the user ID for the refund.
-func (r *RefundStarPayment) UserID(id int64) *RefundStarPayment {
-	r.userID = Some(id)
-	return r
+func (c *RefundStarPayment) UserID(id int64) *RefundStarPayment {
+	c.userID = Some(id)
+	return c
 }
 
-// Timeout sets the request timeout duration.
-func (r *RefundStarPayment) Timeout(duration time.Duration) *RefundStarPayment {
-	r.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
-	return r
+// Timeout sets a custom timeout for this request.
+func (c *RefundStarPayment) Timeout(duration time.Duration) *RefundStarPayment {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *RefundStarPayment) APIURL(url String) *RefundStarPayment {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
 }
 
 // Send processes the star payment refund and returns the result.
-func (r *RefundStarPayment) Send() Result[bool] {
-	userID := r.userID.UnwrapOr(r.ctx.EffectiveUser.Id)
-	return ResultOf(r.ctx.Bot.Raw().RefundStarPayment(userID, r.chargeID.Std(), r.opts))
+func (c *RefundStarPayment) Send() Result[bool] {
+	userID := c.userID.UnwrapOr(c.ctx.EffectiveUser.Id)
+	return ResultOf(c.ctx.Bot.Raw().RefundStarPayment(userID, c.chargeID.Std(), c.opts))
 }

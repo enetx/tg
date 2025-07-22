@@ -11,6 +11,7 @@ import (
 // ChosenInlineResultHandlers provides methods to handle chosen inline result events.
 type ChosenInlineResultHandlers struct{ Bot core.BotAPI }
 
+// handleChosenInlineResult registers a chosen inline result handler with the dispatcher.
 func (h *ChosenInlineResultHandlers) handleChosenInlineResult(f filters.ChosenInlineResult, fn Handler) {
 	h.Bot.Dispatcher().AddHandler(handlers.NewChosenInlineResult(f, wrap(h.Bot, middlewares(h.Bot), fn)))
 }

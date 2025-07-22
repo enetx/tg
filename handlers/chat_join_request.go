@@ -10,6 +10,7 @@ import (
 // ChatJoinRequestHandlers provides methods to handle chat join request events.
 type ChatJoinRequestHandlers struct{ Bot core.BotAPI }
 
+// handleChatJoinRequest registers a chat join request handler with the dispatcher.
 func (h *ChatJoinRequestHandlers) handleChatJoinRequest(f filters.ChatJoinRequest, fn Handler) {
 	h.Bot.Dispatcher().AddHandler(handlers.NewChatJoinRequest(f, wrap(h.Bot, middlewares(h.Bot), fn)))
 }

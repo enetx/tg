@@ -27,7 +27,7 @@ func main() {
 
 	b.On.Message.Contact(func(ctx *ctx.Context) error {
 		message := Format("Phone: {1.PhoneNumber}\nName: {1.FirstName}\nID: {1.UserId}", ctx.EffectiveMessage.Contact)
-		return ctx.Message(message).Send().Err()
+		return ctx.SendMessage(message).Send().Err()
 	})
 
 	b.Polling().Start()

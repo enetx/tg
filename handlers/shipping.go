@@ -11,6 +11,7 @@ import (
 // ShippingHandlers provides methods to handle shipping query events.
 type ShippingHandlers struct{ Bot core.BotAPI }
 
+// handleShippingQuery registers a shipping query handler with the dispatcher.
 func (h *ShippingHandlers) handleShippingQuery(f filters.ShippingQuery, fn Handler) {
 	h.Bot.Dispatcher().AddHandler(handlers.NewShippingQuery(f, wrap(h.Bot, middlewares(h.Bot), fn)))
 }

@@ -63,7 +63,7 @@ func main() {
 		tgctx.Reply("✅ Color selected: " + color).Send()
 
 		// Send a new message asking for the user's favorite animal.
-		return tgctx.Message("🐾 Pick your favorite animal:").
+		return tgctx.SendMessage("🐾 Pick your favorite animal:").
 			Markup(keyboard.Inline().
 				Row().Text("🐶 Dog", "animal:dog").
 				Row().Text("🐱 Cat", "animal:cat").
@@ -87,7 +87,7 @@ func main() {
 		tgctx.Reply("✅ Animal selected: " + animal).Send()
 
 		// Compose and send the final summary message to the user.
-		return tgctx.Message(Format("🧾 Your preferences:\n- Color: {}\n- Animal: {}", color, animal)).Send().Err()
+		return tgctx.SendMessage(Format("🧾 Your preferences:\n- Color: {}\n- Animal: {}", color, animal)).Send().Err()
 	})
 
 	// Command handler for /start, which initializes or resets a user's workflow.

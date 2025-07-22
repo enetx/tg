@@ -6,6 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
 	"github.com/enetx/g/ref"
+	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -17,6 +18,12 @@ type Copy struct {
 	toChatID    Option[int64]
 	after       Option[time.Duration]
 	deleteAfter Option[time.Duration]
+}
+
+// CaptionEntities sets custom entities for the copied message caption.
+func (c *Copy) CaptionEntities(e *entities.Entities) *Copy {
+	c.opts.CaptionEntities = e.Std()
+	return c
 }
 
 // After schedules the copy to be sent after the specified duration.
@@ -73,9 +80,25 @@ func (c *Copy) ReplyTo(messageID int64) *Copy {
 	return c
 }
 
-// Timeout sets the request timeout duration.
+// Timeout sets a custom timeout for this request.
 func (c *Copy) Timeout(duration time.Duration) *Copy {
-	c.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *Copy) APIURL(url String) *Copy {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
 	return c
 }
 

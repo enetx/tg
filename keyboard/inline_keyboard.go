@@ -19,7 +19,7 @@ func (b *InlineKeyboard) Row() *InlineKeyboard {
 	return b
 }
 
-// addToLastRow adds a button to the last row, or creates one if needed.
+// addToLastRow adds a button to the last row, creating a new row if needed.
 func (b *InlineKeyboard) addToLastRow(btn gotgbot.InlineKeyboardButton) *InlineKeyboard {
 	if b.rows.Empty() {
 		b.rows.Push([]gotgbot.InlineKeyboardButton{btn})
@@ -59,6 +59,7 @@ func (b *InlineKeyboard) Button(btn *Button) *InlineKeyboard {
 	return b.addToLastRow(btn.build())
 }
 
+// update refreshes an existing button in the keyboard based on its callback data.
 func (b *InlineKeyboard) update(btn *Button) *InlineKeyboard {
 	if btn == nil || btn.raw == nil || btn.raw.CallbackData == "" {
 		return b
@@ -156,7 +157,7 @@ func (b *InlineKeyboard) Markup() gotgbot.ReplyMarkup {
 	return gotgbot.InlineKeyboardMarkup{InlineKeyboard: keyboard}
 }
 
-// cloneMarkup directly copies the raw InlineKeyboardMarkup into the builder.
+// fromMarkup directly copies the raw InlineKeyboardMarkup into the builder.
 // Uses unsafe.Pointer for zero-allocation conversion.
 func (b *InlineKeyboard) fromMarkup(markup gotgbot.ReplyMarkup) *InlineKeyboard {
 	switch m := markup.(type) {
@@ -169,7 +170,7 @@ func (b *InlineKeyboard) fromMarkup(markup gotgbot.ReplyMarkup) *InlineKeyboard 
 	return b
 }
 
-// cloneKeyboard copies another InlineKeyboard into this builder by reusing its markup.
+// fromKeyboard copies another InlineKeyboard into this builder by reusing its markup.
 func (b *InlineKeyboard) fromKeyboard(from *InlineKeyboard) *InlineKeyboard {
 	if from == nil {
 		return b

@@ -1,6 +1,8 @@
 package ctx
 
 import (
+	"time"
+
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
@@ -15,40 +17,62 @@ type EditMarkup struct {
 }
 
 // ChatID sets the target chat ID for the markup edit.
-func (e *EditMarkup) ChatID(id int64) *EditMarkup {
-	e.chatID = Some(id)
-	return e
+func (c *EditMarkup) ChatID(id int64) *EditMarkup {
+	c.chatID = Some(id)
+	return c
 }
 
 // MessageID sets the target message ID to edit.
-func (e *EditMarkup) MessageID(id int64) *EditMarkup {
-	e.messageID = Some(id)
-	return e
+func (c *EditMarkup) MessageID(id int64) *EditMarkup {
+	c.messageID = Some(id)
+	return c
 }
 
 // InlineMessageID sets the inline message ID to edit.
-func (e *EditMarkup) InlineMessageID(id String) *EditMarkup {
-	e.opts.InlineMessageId = id.Std()
-	return e
+func (c *EditMarkup) InlineMessageID(id String) *EditMarkup {
+	c.opts.InlineMessageId = id.Std()
+	return c
 }
 
 // Business sets the business connection ID for the markup edit.
-func (e *EditMarkup) Business(id String) *EditMarkup {
-	e.opts.BusinessConnectionId = id.Std()
-	return e
+func (c *EditMarkup) Business(id String) *EditMarkup {
+	c.opts.BusinessConnectionId = id.Std()
+	return c
+}
+
+// Timeout sets a custom timeout for this request.
+func (c *EditMarkup) Timeout(duration time.Duration) *EditMarkup {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *EditMarkup) APIURL(url String) *EditMarkup {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
 }
 
 // Send edits the message reply markup and returns the result.
-func (e *EditMarkup) Send() Result[*gotgbot.Message] {
-	if e.kb != nil {
-		if markup, ok := e.kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
-			e.opts.ReplyMarkup = markup
+func (c *EditMarkup) Send() Result[*gotgbot.Message] {
+	if c.kb != nil {
+		if markup, ok := c.kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
+			c.opts.ReplyMarkup = markup
 		}
 	}
 
-	e.opts.ChatId = e.chatID.UnwrapOr(e.ctx.EffectiveChat.Id)
-	e.opts.MessageId = e.messageID.UnwrapOr(e.ctx.EffectiveMessage.MessageId)
-	msg, _, err := e.ctx.Bot.Raw().EditMessageReplyMarkup(e.opts)
+	c.opts.ChatId = c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
+	c.opts.MessageId = c.messageID.UnwrapOr(c.ctx.EffectiveMessage.MessageId)
+	msg, _, err := c.ctx.Bot.Raw().EditMessageReplyMarkup(c.opts)
 
 	return ResultOf(msg, err)
 }

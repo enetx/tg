@@ -17,43 +17,59 @@ type Delete struct {
 }
 
 // After schedules the message deletion after the specified duration.
-func (d *Delete) After(duration time.Duration) *Delete {
-	d.after = Some(duration)
-	return d
+func (c *Delete) After(duration time.Duration) *Delete {
+	c.after = Some(duration)
+	return c
 }
 
 // ChatID sets the target chat ID for the delete action.
-func (d *Delete) ChatID(id int64) *Delete {
-	d.chatID = Some(id)
-	return d
+func (c *Delete) ChatID(id int64) *Delete {
+	c.chatID = Some(id)
+	return c
 }
 
 // MessageID sets the target message ID to delete.
-func (d *Delete) MessageID(id int64) *Delete {
-	d.messageID = Some(id)
-	return d
+func (c *Delete) MessageID(id int64) *Delete {
+	c.messageID = Some(id)
+	return c
 }
 
-// Timeout sets the request timeout duration.
-func (d *Delete) Timeout(duration time.Duration) *Delete {
-	d.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
-	return d
+// Timeout sets a custom timeout for this request.
+func (c *Delete) Timeout(duration time.Duration) *Delete {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *Delete) APIURL(url String) *Delete {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
 }
 
 // Send deletes the message and returns the result.
-func (d *Delete) Send() Result[bool] {
-	chatID := d.chatID.UnwrapOr(d.ctx.EffectiveChat.Id)
-	messageID := d.messageID.UnwrapOr(d.ctx.EffectiveMessage.MessageId)
+func (c *Delete) Send() Result[bool] {
+	chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
+	messageID := c.messageID.UnwrapOr(c.ctx.EffectiveMessage.MessageId)
 
-	if d.after.IsSome() {
-		delay := d.after.Some()
-		d.after = None[time.Duration]()
+	if c.after.IsSome() {
+		delay := c.after.Some()
+		c.after = None[time.Duration]()
 
-		bot := d.ctx.Bot
+		bot := c.ctx.Bot
 
 		var opts *gotgbot.DeleteMessageOpts
-		if d.opts != nil {
-			ocp := *d.opts
+		if c.opts != nil {
+			ocp := *c.opts
 			opts = &ocp
 		}
 
@@ -65,5 +81,5 @@ func (d *Delete) Send() Result[bool] {
 		return Ok(true)
 	}
 
-	return ResultOf(d.ctx.Bot.Raw().DeleteMessage(chatID, messageID, d.opts))
+	return ResultOf(c.ctx.Bot.Raw().DeleteMessage(chatID, messageID, c.opts))
 }

@@ -11,6 +11,7 @@ import (
 // PaidMediaHandlers provides methods to handle paid media purchase events.
 type PaidMediaHandlers struct{ Bot core.BotAPI }
 
+// handlePurchasedPaidMedia registers a paid media purchase handler with the dispatcher.
 func (h *PaidMediaHandlers) handlePurchasedPaidMedia(f filters.PurchasedPaidMedia, fn Handler) {
 	h.Bot.Dispatcher().AddHandler(handlers.NewPurchasedPaidMedia(f, wrap(h.Bot, middlewares(h.Bot), fn)))
 }

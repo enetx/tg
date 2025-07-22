@@ -8,7 +8,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 )
 
-type Venue struct {
+type SendVenue struct {
 	ctx         *Context
 	latitude    float64
 	longitude   float64
@@ -20,81 +20,112 @@ type Venue struct {
 	deleteAfter Option[time.Duration]
 }
 
-func (v *Venue) After(duration time.Duration) *Venue {
-	v.after = Some(duration)
-	return v
+// After schedules the venue to be sent after the specified duration.
+func (c *SendVenue) After(duration time.Duration) *SendVenue {
+	c.after = Some(duration)
+	return c
 }
 
-func (v *Venue) DeleteAfter(duration time.Duration) *Venue {
-	v.deleteAfter = Some(duration)
-	return v
+// DeleteAfter schedules the venue message to be deleted after the specified duration.
+func (c *SendVenue) DeleteAfter(duration time.Duration) *SendVenue {
+	c.deleteAfter = Some(duration)
+	return c
 }
 
-func (v *Venue) Silent() *Venue {
-	v.opts.DisableNotification = true
-	return v
+// Silent disables notification for the venue message.
+func (c *SendVenue) Silent() *SendVenue {
+	c.opts.DisableNotification = true
+	return c
 }
 
-func (v *Venue) Protect() *Venue {
-	v.opts.ProtectContent = true
-	return v
+// Protect enables content protection for the venue message.
+func (c *SendVenue) Protect() *SendVenue {
+	c.opts.ProtectContent = true
+	return c
 }
 
-func (v *Venue) Markup(kb keyboard.KeyboardBuilder) *Venue {
-	v.opts.ReplyMarkup = kb.Markup()
-	return v
+// Markup sets the reply markup keyboard for the venue message.
+func (c *SendVenue) Markup(kb keyboard.KeyboardBuilder) *SendVenue {
+	c.opts.ReplyMarkup = kb.Markup()
+	return c
 }
 
-func (v *Venue) FoursquareID(id String) *Venue {
-	v.opts.FoursquareId = id.Std()
-	return v
+// FoursquareID sets the Foursquare identifier of the venue.
+func (c *SendVenue) FoursquareID(id String) *SendVenue {
+	c.opts.FoursquareId = id.Std()
+	return c
 }
 
-func (v *Venue) FoursquareType(venueType String) *Venue {
-	v.opts.FoursquareType = venueType.Std()
-	return v
+// FoursquareType sets the Foursquare type of the venue.
+func (c *SendVenue) FoursquareType(venueType String) *SendVenue {
+	c.opts.FoursquareType = venueType.Std()
+	return c
 }
 
-func (v *Venue) GooglePlaceID(id String) *Venue {
-	v.opts.GooglePlaceId = id.Std()
-	return v
+// GooglePlaceID sets the Google Places identifier of the venue.
+func (c *SendVenue) GooglePlaceID(id String) *SendVenue {
+	c.opts.GooglePlaceId = id.Std()
+	return c
 }
 
-func (v *Venue) GooglePlaceType(placeType String) *Venue {
-	v.opts.GooglePlaceType = placeType.Std()
-	return v
+// GooglePlaceType sets the Google Places type of the venue.
+func (c *SendVenue) GooglePlaceType(placeType String) *SendVenue {
+	c.opts.GooglePlaceType = placeType.Std()
+	return c
 }
 
-func (v *Venue) ReplyTo(messageID int64) *Venue {
-	v.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return v
+// ReplyTo sets the message ID to reply to.
+func (c *SendVenue) ReplyTo(messageID int64) *SendVenue {
+	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return c
 }
 
-func (v *Venue) Timeout(duration time.Duration) *Venue {
-	v.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
-	return v
+// Timeout sets a custom timeout for this request.
+func (c *SendVenue) Timeout(duration time.Duration) *SendVenue {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
 }
 
-func (v *Venue) Business(id String) *Venue {
-	v.opts.BusinessConnectionId = id.Std()
-	return v
+// APIURL sets a custom API URL for this request.
+func (c *SendVenue) APIURL(url String) *SendVenue {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
 }
 
-func (v *Venue) Thread(id int64) *Venue {
-	v.opts.MessageThreadId = id
-	return v
+// Business sets the business connection ID for the venue message.
+func (c *SendVenue) Business(id String) *SendVenue {
+	c.opts.BusinessConnectionId = id.Std()
+	return c
 }
 
-func (v *Venue) To(chatID int64) *Venue {
-	v.chatID = Some(chatID)
-	return v
+// Thread sets the message thread ID for the venue message.
+func (c *SendVenue) Thread(id int64) *SendVenue {
+	c.opts.MessageThreadId = id
+	return c
 }
 
-func (v *Venue) Send() Result[*gotgbot.Message] {
-	return v.ctx.timers(v.after, v.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := v.chatID.UnwrapOr(v.ctx.EffectiveChat.Id)
+// To sets the target chat ID for the venue message.
+func (c *SendVenue) To(chatID int64) *SendVenue {
+	c.chatID = Some(chatID)
+	return c
+}
+
+// Send sends the venue message to Telegram and returns the result.
+func (c *SendVenue) Send() Result[*gotgbot.Message] {
+	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
 		return ResultOf(
-			v.ctx.Bot.Raw().SendVenue(chatID, v.latitude, v.longitude, v.title.Std(), v.address.Std(), v.opts),
+			c.ctx.Bot.Raw().SendVenue(chatID, c.latitude, c.longitude, c.title.Std(), c.address.Std(), c.opts),
 		)
 	})
 }

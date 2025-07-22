@@ -11,6 +11,7 @@ import (
 // PollAnswerHandlers provides methods to handle poll answer events.
 type PollAnswerHandlers struct{ Bot core.BotAPI }
 
+// handlePollAnswer registers a poll answer handler with the dispatcher.
 func (h *PollAnswerHandlers) handlePollAnswer(f filters.PollAnswer, fn Handler) {
 	h.Bot.Dispatcher().AddHandler(handlers.NewPollAnswer(f, wrap(h.Bot, middlewares(h.Bot), fn)))
 }

@@ -5,10 +5,11 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 )
 
-type Voice struct {
+type SendVoice struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendVoiceOpts
@@ -19,87 +20,124 @@ type Voice struct {
 	err         error
 }
 
-func (v *Voice) After(duration time.Duration) *Voice {
-	v.after = Some(duration)
-	return v
+// CaptionEntities sets custom entities for the voice caption.
+func (c *SendVoice) CaptionEntities(e *entities.Entities) *SendVoice {
+	c.opts.CaptionEntities = e.Std()
+	return c
 }
 
-func (v *Voice) DeleteAfter(duration time.Duration) *Voice {
-	v.deleteAfter = Some(duration)
-	return v
+// After schedules the voice message to be sent after the specified duration.
+func (c *SendVoice) After(duration time.Duration) *SendVoice {
+	c.after = Some(duration)
+	return c
 }
 
-func (v *Voice) Caption(caption String) *Voice {
-	v.opts.Caption = caption.Std()
-	return v
+// DeleteAfter schedules the voice message to be deleted after the specified duration.
+func (c *SendVoice) DeleteAfter(duration time.Duration) *SendVoice {
+	c.deleteAfter = Some(duration)
+	return c
 }
 
-func (v *Voice) HTML() *Voice {
-	v.opts.ParseMode = "HTML"
-	return v
+// Caption sets the caption text for the voice message.
+func (c *SendVoice) Caption(caption String) *SendVoice {
+	c.opts.Caption = caption.Std()
+	return c
 }
 
-func (v *Voice) Markdown() *Voice {
-	v.opts.ParseMode = "MarkdownV2"
-	return v
+// HTML sets the caption parse mode to HTML.
+func (c *SendVoice) HTML() *SendVoice {
+	c.opts.ParseMode = "HTML"
+	return c
 }
 
-func (v *Voice) Silent() *Voice {
-	v.opts.DisableNotification = true
-	return v
+// Markdown sets the caption parse mode to MarkdownV2.
+func (c *SendVoice) Markdown() *SendVoice {
+	c.opts.ParseMode = "MarkdownV2"
+	return c
 }
 
-func (v *Voice) Protect() *Voice {
-	v.opts.ProtectContent = true
-	return v
+// Silent disables notification for the voice message.
+func (c *SendVoice) Silent() *SendVoice {
+	c.opts.DisableNotification = true
+	return c
 }
 
-func (v *Voice) Markup(kb keyboard.KeyboardBuilder) *Voice {
-	v.opts.ReplyMarkup = kb.Markup()
-	return v
+// Protect enables content protection for the voice message.
+func (c *SendVoice) Protect() *SendVoice {
+	c.opts.ProtectContent = true
+	return c
 }
 
-func (v *Voice) Duration(duration int64) *Voice {
-	v.opts.Duration = duration
-	return v
+// Markup sets the reply markup keyboard for the voice message.
+func (c *SendVoice) Markup(kb keyboard.KeyboardBuilder) *SendVoice {
+	c.opts.ReplyMarkup = kb.Markup()
+	return c
 }
 
-func (v *Voice) ReplyTo(messageID int64) *Voice {
-	v.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return v
+// Duration sets the voice message duration in seconds.
+func (c *SendVoice) Duration(duration int64) *SendVoice {
+	c.opts.Duration = duration
+	return c
 }
 
-func (v *Voice) Timeout(duration time.Duration) *Voice {
-	v.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
-	return v
+// ReplyTo sets the message ID to reply to.
+func (c *SendVoice) ReplyTo(messageID int64) *SendVoice {
+	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return c
 }
 
-func (v *Voice) Business(id String) *Voice {
-	v.opts.BusinessConnectionId = id.Std()
-	return v
-}
-
-func (v *Voice) Thread(id int64) *Voice {
-	v.opts.MessageThreadId = id
-	return v
-}
-
-func (v *Voice) To(chatID int64) *Voice {
-	v.chatID = Some(chatID)
-	return v
-}
-
-func (v *Voice) Send() Result[*gotgbot.Message] {
-	if v.err != nil {
-		return Err[*gotgbot.Message](v.err)
+// Timeout sets a custom timeout for this request.
+func (c *SendVoice) Timeout(duration time.Duration) *SendVoice {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	if v.file != nil {
-		defer v.file.Close()
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *SendVoice) APIURL(url String) *SendVoice {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	return v.ctx.timers(v.after, v.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := v.chatID.UnwrapOr(v.ctx.EffectiveChat.Id)
-		return ResultOf(v.ctx.Bot.Raw().SendVoice(chatID, v.doc, v.opts))
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
+}
+
+// Business sets the business connection ID for the voice message.
+func (c *SendVoice) Business(id String) *SendVoice {
+	c.opts.BusinessConnectionId = id.Std()
+	return c
+}
+
+// Thread sets the message thread ID for the voice message.
+func (c *SendVoice) Thread(id int64) *SendVoice {
+	c.opts.MessageThreadId = id
+	return c
+}
+
+// To sets the target chat ID for the voice message.
+func (c *SendVoice) To(chatID int64) *SendVoice {
+	c.chatID = Some(chatID)
+	return c
+}
+
+// Send sends the voice message to Telegram and returns the result.
+func (c *SendVoice) Send() Result[*gotgbot.Message] {
+	if c.err != nil {
+		return Err[*gotgbot.Message](c.err)
+	}
+
+	if c.file != nil {
+		defer c.file.Close()
+	}
+
+	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
+		return ResultOf(c.ctx.Bot.Raw().SendVoice(chatID, c.doc, c.opts))
 	})
 }

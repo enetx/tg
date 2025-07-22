@@ -11,6 +11,7 @@ import (
 // ChatMemberHandlers provides methods to handle chat member update events.
 type ChatMemberHandlers struct{ Bot core.BotAPI }
 
+// handleChatMember registers a chat member update handler with the dispatcher.
 func (h *ChatMemberHandlers) handleChatMember(f filters.ChatMember, fn Handler) {
 	h.Bot.Dispatcher().AddHandler(handlers.NewChatMember(f, wrap(h.Bot, middlewares(h.Bot), fn)))
 }

@@ -16,11 +16,11 @@ func main() {
 	// Register a command handler for /start
 	b.Command("start", func(ctx *ctx.Context) error {
 		// Send an immediate message so Telegram considers the update as "handled"
-		ctx.Message("Preparing self-destruct...").Send()
+		ctx.SendMessage("Preparing self-destruct...").Send()
 
 		// Schedule a second message to be sent after 3 seconds,
 		// and automatically delete it 5 seconds after it is sent
-		ctx.Message("This message will self-destruct in 5 seconds.").
+		ctx.SendMessage("This message will self-destruct in 5 seconds.").
 			After(time.Second * 3).       // Delay sending by 3 seconds
 			DeleteAfter(time.Second * 5). // Delete 5 seconds after it is sent
 			Send()

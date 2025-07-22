@@ -8,7 +8,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 )
 
-type Sticker struct {
+type SendSticker struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendStickerOpts
@@ -20,83 +20,99 @@ type Sticker struct {
 }
 
 // After schedules the sticker to be sent after the specified duration.
-func (s *Sticker) After(duration time.Duration) *Sticker {
-	s.after = Some(duration)
-	return s
+func (c *SendSticker) After(duration time.Duration) *SendSticker {
+	c.after = Some(duration)
+	return c
 }
 
 // DeleteAfter schedules the sticker message to be deleted after the specified duration.
-func (s *Sticker) DeleteAfter(duration time.Duration) *Sticker {
-	s.deleteAfter = Some(duration)
-	return s
+func (c *SendSticker) DeleteAfter(duration time.Duration) *SendSticker {
+	c.deleteAfter = Some(duration)
+	return c
 }
 
 // Silent disables notification for the sticker message.
-func (s *Sticker) Silent() *Sticker {
-	s.opts.DisableNotification = true
-	return s
+func (c *SendSticker) Silent() *SendSticker {
+	c.opts.DisableNotification = true
+	return c
 }
 
 // Protect enables content protection for the sticker message.
-func (s *Sticker) Protect() *Sticker {
-	s.opts.ProtectContent = true
-	return s
+func (c *SendSticker) Protect() *SendSticker {
+	c.opts.ProtectContent = true
+	return c
 }
 
 // Markup sets the reply markup keyboard for the sticker message.
-func (s *Sticker) Markup(kb keyboard.KeyboardBuilder) *Sticker {
-	s.opts.ReplyMarkup = kb.Markup()
-	return s
+func (c *SendSticker) Markup(kb keyboard.KeyboardBuilder) *SendSticker {
+	c.opts.ReplyMarkup = kb.Markup()
+	return c
 }
 
 // Emoji sets the emoji associated with the sticker.
-func (s *Sticker) Emoji(emoji String) *Sticker {
-	s.opts.Emoji = emoji.Std()
-	return s
+func (c *SendSticker) Emoji(emoji String) *SendSticker {
+	c.opts.Emoji = emoji.Std()
+	return c
 }
 
 // ReplyTo sets the message ID to reply to.
-func (s *Sticker) ReplyTo(messageID int64) *Sticker {
-	s.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return s
+func (c *SendSticker) ReplyTo(messageID int64) *SendSticker {
+	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return c
 }
 
-// Timeout sets the request timeout duration.
-func (s *Sticker) Timeout(duration time.Duration) *Sticker {
-	s.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
-	return s
+// Timeout sets a custom timeout for this request.
+func (c *SendSticker) Timeout(duration time.Duration) *SendSticker {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
+}
+
+// APIURL sets a custom API URL for this request.
+func (c *SendSticker) APIURL(url String) *SendSticker {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
 }
 
 // Business sets the business connection ID for the sticker message.
-func (s *Sticker) Business(id String) *Sticker {
-	s.opts.BusinessConnectionId = id.Std()
-	return s
+func (c *SendSticker) Business(id String) *SendSticker {
+	c.opts.BusinessConnectionId = id.Std()
+	return c
 }
 
 // Thread sets the message thread ID for the sticker message.
-func (s *Sticker) Thread(id int64) *Sticker {
-	s.opts.MessageThreadId = id
-	return s
+func (c *SendSticker) Thread(id int64) *SendSticker {
+	c.opts.MessageThreadId = id
+	return c
 }
 
 // To sets the target chat ID for the sticker message.
-func (s *Sticker) To(chatID int64) *Sticker {
-	s.chatID = Some(chatID)
-	return s
+func (c *SendSticker) To(chatID int64) *SendSticker {
+	c.chatID = Some(chatID)
+	return c
 }
 
 // Send sends the sticker message to Telegram and returns the result.
-func (s *Sticker) Send() Result[*gotgbot.Message] {
-	if s.err != nil {
-		return Err[*gotgbot.Message](s.err)
+func (c *SendSticker) Send() Result[*gotgbot.Message] {
+	if c.err != nil {
+		return Err[*gotgbot.Message](c.err)
 	}
 
-	if s.file != nil {
-		defer s.file.Close()
+	if c.file != nil {
+		defer c.file.Close()
 	}
 
-	return s.ctx.timers(s.after, s.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := s.chatID.UnwrapOr(s.ctx.EffectiveChat.Id)
-		return ResultOf(s.ctx.Bot.Raw().SendSticker(chatID, s.doc, s.opts))
+	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
+		return ResultOf(c.ctx.Bot.Raw().SendSticker(chatID, c.doc, c.opts))
 	})
 }

@@ -17,11 +17,11 @@ func main() {
 	})
 
 	b.Command("doc", func(ctx *ctx.Context) error {
-		return ctx.Document("doc.pdf").Caption("pdf doc").Send().Err()
+		return ctx.SendDocument("doc.pdf").Caption("pdf doc").Send().Err()
 	})
 
 	b.Command("audio", func(ctx *ctx.Context) error {
-		return ctx.Audio("audio.mp3").
+		return ctx.SendAudio("audio.mp3").
 			Caption("some audio").
 			ReplyTo(ctx.EffectiveMessage.MessageId).
 			Timeout(time.Second * 30).
@@ -30,11 +30,11 @@ func main() {
 	})
 
 	b.Command("photo", func(ctx *ctx.Context) error {
-		return ctx.Photo("photo.png").Send().Err()
+		return ctx.SendPhoto("photo.png").Send().Err()
 	})
 
 	b.Command("video", func(ctx *ctx.Context) error {
-		return ctx.Video("video.mp4").
+		return ctx.SendVideo("video.mp4").
 			Caption("Look at this cat").
 			Spoiler().
 			Timeout(time.Minute * 3). // Custom timeout

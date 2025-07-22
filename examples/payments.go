@@ -15,7 +15,7 @@ func main() {
 			return nil
 		}
 
-		ctx.Message("Welcome! Here's your invoice.").Send()
+		ctx.SendMessage("Welcome! Here's your invoice.").Send()
 
 		return ctx.Invoice("Digital Product", "A cool digital item.", "invoice_payload_123", "XTR").
 			Price("Cool item", 1).
@@ -69,7 +69,7 @@ func main() {
 	})
 
 	b.On.Message.RefundedPayment(func(ctx *ctx.Context) error {
-		return ctx.Message("The refund was successful.").Send().Err()
+		return ctx.SendMessage("The refund was successful.").Send().Err()
 	})
 
 	b.Polling().Start()

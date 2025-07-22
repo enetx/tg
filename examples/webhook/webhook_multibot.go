@@ -46,7 +46,7 @@ func register(token, domain String) {
 		Register()
 
 	b.On.Message.Text(func(ctx *ctx.Context) error {
-		return ctx.Message("Hi from bot: " + token.Hash().MD5()).Send().Err()
+		return ctx.SendMessage("Hi from bot: " + token.Hash().MD5()).Send().Err()
 	})
 
 	bots.Set(token, b)

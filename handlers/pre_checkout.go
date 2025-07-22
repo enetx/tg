@@ -11,6 +11,7 @@ import (
 // PreCheckoutHandlers provides methods to handle pre-checkout query events.
 type PreCheckoutHandlers struct{ Bot core.BotAPI }
 
+// handlePreCheckoutQuery registers a pre-checkout query handler with the dispatcher.
 func (h *PreCheckoutHandlers) handlePreCheckoutQuery(f filters.PreCheckoutQuery, fn Handler) {
 	h.Bot.Dispatcher().AddHandler(handlers.NewPreCheckoutQuery(f, wrap(h.Bot, middlewares(h.Bot), fn)))
 }

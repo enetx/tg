@@ -15,7 +15,7 @@ func main() {
 
 	b.Command("start", func(ctx *ctx.Context) error {
 		// Self-destruct message
-		ctx.Message("This message will self-destruct in 5 seconds.").
+		ctx.SendMessage("This message will self-destruct in 5 seconds.").
 			DeleteAfter(5 * time.Second).
 			Send()
 

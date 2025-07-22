@@ -6,11 +6,12 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/internal/pkg/ffmpeg"
 	"github.com/enetx/tg/keyboard"
 )
 
-type Video struct {
+type SendVideo struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendVideoOpts
@@ -25,173 +26,218 @@ type Video struct {
 	err         error
 }
 
-func (v *Video) After(duration time.Duration) *Video {
-	v.after = Some(duration)
-	return v
+// CaptionEntities sets custom entities for the video caption.
+func (c *SendVideo) CaptionEntities(e *entities.Entities) *SendVideo {
+	c.opts.CaptionEntities = e.Std()
+	return c
 }
 
-func (v *Video) DeleteAfter(duration time.Duration) *Video {
-	v.deleteAfter = Some(duration)
-	return v
+// After schedules the video to be sent after the specified duration.
+func (c *SendVideo) After(duration time.Duration) *SendVideo {
+	c.after = Some(duration)
+	return c
 }
 
-func (v *Video) Width(width int64) *Video {
-	v.opts.Width = width
-	return v
+// DeleteAfter schedules the video message to be deleted after the specified duration.
+func (c *SendVideo) DeleteAfter(duration time.Duration) *SendVideo {
+	c.deleteAfter = Some(duration)
+	return c
 }
 
-func (v *Video) Height(height int64) *Video {
-	v.opts.Height = height
-	return v
+// Width sets the video width.
+func (c *SendVideo) Width(width int64) *SendVideo {
+	c.opts.Width = width
+	return c
 }
 
-func (v *Video) Duration(duration int64) *Video {
-	v.opts.Duration = duration
-	return v
+// Height sets the video height.
+func (c *SendVideo) Height(height int64) *SendVideo {
+	c.opts.Height = height
+	return c
 }
 
-func (v *Video) Thumbnail(file String) *Video {
-	v.thumb = NewFile(file)
+// Duration sets the video duration in seconds.
+func (c *SendVideo) Duration(duration int64) *SendVideo {
+	c.opts.Duration = duration
+	return c
+}
 
-	reader := v.thumb.Open()
+// Thumbnail sets a custom thumbnail for the video.
+func (c *SendVideo) Thumbnail(file String) *SendVideo {
+	c.thumb = NewFile(file)
+
+	reader := c.thumb.Open()
 	if reader.IsErr() {
-		v.err = reader.Err()
-		return v
+		c.err = reader.Err()
+		return c
 	}
 
-	v.opts.Thumbnail = gotgbot.InputFileByReader(v.thumb.Name().Std(), reader.Ok().Std())
-	return v
+	c.opts.Thumbnail = gotgbot.InputFileByReader(c.thumb.Name().Std(), reader.Ok().Std())
+	return c
 }
 
-func (v *Video) Spoiler() *Video {
-	v.opts.HasSpoiler = true
-	return v
+// Spoiler marks the video as a spoiler.
+func (c *SendVideo) Spoiler() *SendVideo {
+	c.opts.HasSpoiler = true
+	return c
 }
 
-func (v *Video) Streamable() *Video {
-	v.opts.SupportsStreaming = true
-	return v
+// Streamable enables streaming support for the video.
+func (c *SendVideo) Streamable() *SendVideo {
+	c.opts.SupportsStreaming = true
+	return c
 }
 
-func (v *Video) Caption(caption String) *Video {
-	v.opts.Caption = caption.Std()
-	return v
+// Caption sets the caption text for the video.
+func (c *SendVideo) Caption(caption String) *SendVideo {
+	c.opts.Caption = caption.Std()
+	return c
 }
 
-func (v *Video) HTML() *Video {
-	v.opts.ParseMode = "HTML"
-	return v
+// HTML sets the caption parse mode to HTML.
+func (c *SendVideo) HTML() *SendVideo {
+	c.opts.ParseMode = "HTML"
+	return c
 }
 
-func (v *Video) Markdown() *Video {
-	v.opts.ParseMode = "MarkdownV2"
-	return v
+// Markdown sets the caption parse mode to MarkdownV2.
+func (c *SendVideo) Markdown() *SendVideo {
+	c.opts.ParseMode = "MarkdownV2"
+	return c
 }
 
-func (v *Video) Silent() *Video {
-	v.opts.DisableNotification = true
-	return v
+// Silent disables notification for the video message.
+func (c *SendVideo) Silent() *SendVideo {
+	c.opts.DisableNotification = true
+	return c
 }
 
-func (v *Video) Protect() *Video {
-	v.opts.ProtectContent = true
-	return v
+// Protect enables content protection for the video message.
+func (c *SendVideo) Protect() *SendVideo {
+	c.opts.ProtectContent = true
+	return c
 }
 
-func (v *Video) Markup(kb keyboard.KeyboardBuilder) *Video {
-	v.opts.ReplyMarkup = kb.Markup()
-	return v
+// Markup sets the reply markup keyboard for the video message.
+func (c *SendVideo) Markup(kb keyboard.KeyboardBuilder) *SendVideo {
+	c.opts.ReplyMarkup = kb.Markup()
+	return c
 }
 
-func (v *Video) ReplyTo(messageID int64) *Video {
-	v.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return v
+// ReplyTo sets the message ID to reply to.
+func (c *SendVideo) ReplyTo(messageID int64) *SendVideo {
+	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return c
 }
 
-func (v *Video) Timeout(duration time.Duration) *Video {
-	v.opts.RequestOpts = &gotgbot.RequestOpts{Timeout: duration}
-	return v
+// Timeout sets a custom timeout for this request.
+func (c *SendVideo) Timeout(duration time.Duration) *SendVideo {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.Timeout = duration
+
+	return c
 }
 
-func (v *Video) Business(id String) *Video {
-	v.opts.BusinessConnectionId = id.Std()
-	return v
+// APIURL sets a custom API URL for this request.
+func (c *SendVideo) APIURL(url String) *SendVideo {
+	if c.opts.RequestOpts == nil {
+		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	c.opts.RequestOpts.APIURL = url.Std()
+
+	return c
 }
 
-func (v *Video) Thread(id int64) *Video {
-	v.opts.MessageThreadId = id
-	return v
+// Business sets the business connection ID for the video message.
+func (c *SendVideo) Business(id String) *SendVideo {
+	c.opts.BusinessConnectionId = id.Std()
+	return c
 }
 
-func (v *Video) ShowCaptionAboveMedia() *Video {
-	v.opts.ShowCaptionAboveMedia = true
-	return v
+// Thread sets the message thread ID for the video message.
+func (c *SendVideo) Thread(id int64) *SendVideo {
+	c.opts.MessageThreadId = id
+	return c
 }
 
-func (v *Video) Cover(filename String) *Video {
-	v.cover = NewFile(filename)
+// ShowCaptionAboveMedia displays the caption above the video instead of below.
+func (c *SendVideo) ShowCaptionAboveMedia() *SendVideo {
+	c.opts.ShowCaptionAboveMedia = true
+	return c
+}
 
-	reader := v.cover.Open()
+// Cover sets a cover image for the video.
+func (c *SendVideo) Cover(filename String) *SendVideo {
+	c.cover = NewFile(filename)
+
+	reader := c.cover.Open()
 	if reader.IsErr() {
-		v.err = reader.Err()
-		return v
+		c.err = reader.Err()
+		return c
 	}
 
-	v.opts.Cover = gotgbot.InputFileByReader(v.cover.Name().Std(), reader.Ok().Std())
-	return v
+	c.opts.Cover = gotgbot.InputFileByReader(c.cover.Name().Std(), reader.Ok().Std())
+	return c
 }
 
-func (v *Video) StartTimestamp(seconds int64) *Video {
-	v.opts.StartTimestamp = seconds
-	return v
+// StartTimestamp sets the video start timestamp in seconds.
+func (c *SendVideo) StartTimestamp(seconds int64) *SendVideo {
+	c.opts.StartTimestamp = seconds
+	return c
 }
 
-func (v *Video) ApplyMetadata() *Video {
-	if v.file == nil {
-		v.err = errors.New("video file is not set")
-		return v
+// ApplyMetadata automatically extracts and applies video metadata (duration, width, height).
+func (c *SendVideo) ApplyMetadata() *SendVideo {
+	if c.file == nil {
+		c.err = errors.New("video file is not set")
+		return c
 	}
 
-	path := v.file.Path()
+	path := c.file.Path()
 	if path.IsErr() {
-		v.err = path.Err()
-		return v
+		c.err = path.Err()
+		return c
 	}
 
 	meta := ffmpeg.GetVideoMetadata(path.Ok())
 	if meta.IsErr() {
-		v.err = meta.Err()
-		return v
+		c.err = meta.Err()
+		return c
 	}
 
 	info := meta.Ok()
 
-	v.duration = info.Duration.ToFloat().UnwrapOrDefault()
-	v.Width(info.Width)
-	v.Height(info.Height)
+	c.duration = info.Duration.ToFloat().UnwrapOrDefault()
+	c.Width(info.Width)
+	c.Height(info.Height)
 
-	if !v.duration.IsZero() {
-		v.Duration(int64(v.duration))
+	if !c.duration.IsZero() {
+		c.Duration(int64(c.duration))
 	}
 
-	return v
+	return c
 }
 
-func (v *Video) GenerateThumbnail(seek ...String) *Video {
-	if v.file == nil {
-		v.err = errors.New("video file is not set")
-		return v
+// GenerateThumbnail automatically generates a thumbnail from the video at the specified seek time.
+func (c *SendVideo) GenerateThumbnail(seek ...String) *SendVideo {
+	if c.file == nil {
+		c.err = errors.New("video file is not set")
+		return c
 	}
 
-	path := v.file.Path()
+	path := c.file.Path()
 	if path.IsErr() {
-		v.err = path.Err()
-		return v
+		c.err = path.Err()
+		return c
 	}
 
-	if v.duration.IsZero() {
-		v.err = errors.New("duration not set, call ApplyMetadata() first")
-		return v
+	if c.duration.IsZero() {
+		c.err = errors.New("duration not set, call ApplyMetadata() first")
+		return c
 	}
 
 	var seekTime String
@@ -199,58 +245,60 @@ func (v *Video) GenerateThumbnail(seek ...String) *Video {
 	if len(seek) != 0 {
 		seekTime = seek[0]
 	} else {
-		seekTime = v.duration.Div(2).Max(1.0).RoundDecimal(3).String()
+		seekTime = c.duration.Div(2).Max(1.0).RoundDecimal(3).String()
 	}
 
 	thumb := ffmpeg.GenerateThumbnail(path.Ok(), seekTime)
 	if thumb.IsErr() {
-		v.err = thumb.Err()
-		return v
+		c.err = thumb.Err()
+		return c
 	}
 
-	v.thumb = thumb.Ok()
+	c.thumb = thumb.Ok()
 
-	reader := v.thumb.Open()
+	reader := c.thumb.Open()
 	if reader.IsErr() {
-		v.err = reader.Err()
-		return v
+		c.err = reader.Err()
+		return c
 	}
 
-	v.removethumb = true
+	c.removethumb = true
 
-	v.opts.Thumbnail = gotgbot.InputFileByReader(v.thumb.Name().Std(), reader.Ok().Std())
-	return v
+	c.opts.Thumbnail = gotgbot.InputFileByReader(c.thumb.Name().Std(), reader.Ok().Std())
+	return c
 }
 
-func (v *Video) To(chatID int64) *Video {
-	v.chatID = Some(chatID)
-	return v
+// To sets the target chat ID for the video message.
+func (c *SendVideo) To(chatID int64) *SendVideo {
+	c.chatID = Some(chatID)
+	return c
 }
 
-func (v *Video) Send() Result[*gotgbot.Message] {
-	if v.err != nil {
-		return Err[*gotgbot.Message](v.err)
+// Send sends the video message to Telegram and returns the result.
+func (c *SendVideo) Send() Result[*gotgbot.Message] {
+	if c.err != nil {
+		return Err[*gotgbot.Message](c.err)
 	}
 
-	if v.file != nil {
-		defer v.file.Close()
+	if c.file != nil {
+		defer c.file.Close()
 	}
 
-	if v.thumb != nil {
+	if c.thumb != nil {
 		defer func() {
-			v.thumb.Close()
-			if v.removethumb {
-				v.thumb.Remove()
+			c.thumb.Close()
+			if c.removethumb {
+				c.thumb.Remove()
 			}
 		}()
 	}
 
-	if v.cover != nil {
-		defer v.cover.Close()
+	if c.cover != nil {
+		defer c.cover.Close()
 	}
 
-	return v.ctx.timers(v.after, v.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := v.chatID.UnwrapOr(v.ctx.EffectiveChat.Id)
-		return ResultOf(v.ctx.Bot.Raw().SendVideo(chatID, v.doc, v.opts))
+	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
+		return ResultOf(c.ctx.Bot.Raw().SendVideo(chatID, c.doc, c.opts))
 	})
 }
