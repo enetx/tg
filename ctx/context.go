@@ -441,6 +441,72 @@ func (ctx *Context) GetStarTransactions() *GetStarTransactions {
 	}
 }
 
+// PostPhotoStory creates a new PostStory request for posting a photo story.
+func (ctx *Context) PostPhotoStory(businessConnectionID, filename String) *PostStory {
+	return &PostStory{
+		ctx:                  ctx,
+		businessConnectionID: businessConnectionID,
+		activePeriod:         86400, // Default 24 hours
+		opts:                 new(gotgbot.PostStoryOpts),
+		storyType:            "photo",
+		content: &gotgbot.InputStoryContentPhoto{
+			Photo: filename.Std(),
+		},
+	}
+}
+
+// PostVideoStory creates a new PostStory request for posting a video story.
+func (ctx *Context) PostVideoStory(businessConnectionID, filename String) *PostStory {
+	return &PostStory{
+		ctx:                  ctx,
+		businessConnectionID: businessConnectionID,
+		activePeriod:         86400, // Default 24 hours
+		opts:                 new(gotgbot.PostStoryOpts),
+		storyType:            "video",
+		content: &gotgbot.InputStoryContentVideo{
+			Video: filename.Std(),
+		},
+	}
+}
+
+// EditPhotoStory creates a new EditStory request for editing a photo story.
+func (ctx *Context) EditPhotoStory(businessConnectionID String, storyID int64, filename String) *EditStory {
+	return &EditStory{
+		ctx:                  ctx,
+		businessConnectionID: businessConnectionID,
+		storyID:              storyID,
+		opts:                 new(gotgbot.EditStoryOpts),
+		storyType:            "photo",
+		content: &gotgbot.InputStoryContentPhoto{
+			Photo: filename.Std(),
+		},
+	}
+}
+
+// EditVideoStory creates a new EditStory request for editing a video story.
+func (ctx *Context) EditVideoStory(businessConnectionID String, storyID int64, filename String) *EditStory {
+	return &EditStory{
+		ctx:                  ctx,
+		businessConnectionID: businessConnectionID,
+		storyID:              storyID,
+		opts:                 new(gotgbot.EditStoryOpts),
+		storyType:            "video",
+		content: &gotgbot.InputStoryContentVideo{
+			Video: filename.Std(),
+		},
+	}
+}
+
+// DeleteStory creates a new DeleteStory request for the specified business connection and story.
+func (ctx *Context) DeleteStory(businessConnectionID String, storyID int64) *DeleteStory {
+	return &DeleteStory{
+		ctx:                  ctx,
+		businessConnectionID: businessConnectionID,
+		storyID:              storyID,
+		opts:                 new(gotgbot.DeleteStoryOpts),
+	}
+}
+
 // IsAdmin checks if the effective user is an administrator in the current chat.
 func (ctx *Context) IsAdmin() Result[bool] {
 	member, err := ctx.Bot.Raw().GetChatMember(ctx.EffectiveChat.Id, ctx.EffectiveUser.Id, nil)
