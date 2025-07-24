@@ -23,7 +23,7 @@ func main() {
 		}
 
 		if !admin.Ok() {
-			return ctx.Answer("Access restricted to admins only!").Alert().Send().Err()
+			return ctx.AnswerCallback("Access restricted to admins only!").Alert().Send().Err()
 		}
 
 		return nil
@@ -45,12 +45,12 @@ func main() {
 
 	// Callback handler for admin-only button
 	b.On.Callback.Equal("admin:secure", func(ctx *ctx.Context) error {
-		return ctx.Answer("Welcome, admin!").Send().Err()
+		return ctx.AnswerCallback("Welcome, admin!").Send().Err()
 	})
 
 	// Callback handler for public button
 	b.On.Callback.Equal("public", func(ctx *ctx.Context) error {
-		return ctx.Answer("This is accessible to everyone!").Send().Err()
+		return ctx.AnswerCallback("This is accessible to everyone!").Send().Err()
 	})
 
 	// Simple message handler: replies "Hello" to any text message

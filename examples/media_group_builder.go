@@ -245,7 +245,7 @@ func main() {
 			Video(video).
 			ApplyMetadata().
 			GenerateThumbnail().
-			Caption("🚀 Cross-chat video delivery").
+			Caption("Cross-chat video delivery").
 			Add().
 			Send()
 

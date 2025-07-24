@@ -46,7 +46,7 @@ func main() {
 			message = Format("You selected: {1.Title} — ${1.Price}", product.Some())
 		}
 
-		return ctx.Answer(message).Send().Err()
+		return ctx.AnswerCallback(message).Send().Err()
 	})
 
 	b.Polling().Start()

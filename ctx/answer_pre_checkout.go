@@ -7,7 +7,7 @@ import (
 	. "github.com/enetx/g"
 )
 
-type PreCheckout struct {
+type AnswerPreCheckoutQuery struct {
 	ctx  *Context
 	ok   bool
 	err  String
@@ -15,13 +15,13 @@ type PreCheckout struct {
 }
 
 // Ok marks the pre-checkout query as successful.
-func (pc *PreCheckout) Ok() *PreCheckout {
+func (pc *AnswerPreCheckoutQuery) Ok() *AnswerPreCheckoutQuery {
 	pc.ok = true
 	return pc
 }
 
 // Error marks the pre-checkout query as failed with the specified error message.
-func (pc *PreCheckout) Error(text String) *PreCheckout {
+func (pc *AnswerPreCheckoutQuery) Error(text String) *AnswerPreCheckoutQuery {
 	pc.ok = false
 	pc.err = text
 
@@ -29,7 +29,7 @@ func (pc *PreCheckout) Error(text String) *PreCheckout {
 }
 
 // Timeout sets a custom timeout for this request.
-func (pc *PreCheckout) Timeout(duration time.Duration) *PreCheckout {
+func (pc *AnswerPreCheckoutQuery) Timeout(duration time.Duration) *AnswerPreCheckoutQuery {
 	if pc.opts == nil {
 		pc.opts = new(gotgbot.AnswerPreCheckoutQueryOpts)
 	}
@@ -44,7 +44,7 @@ func (pc *PreCheckout) Timeout(duration time.Duration) *PreCheckout {
 }
 
 // APIURL sets a custom API URL for this request.
-func (pc *PreCheckout) APIURL(url String) *PreCheckout {
+func (pc *AnswerPreCheckoutQuery) APIURL(url String) *AnswerPreCheckoutQuery {
 	if pc.opts == nil {
 		pc.opts = new(gotgbot.AnswerPreCheckoutQueryOpts)
 	}
@@ -59,7 +59,7 @@ func (pc *PreCheckout) APIURL(url String) *PreCheckout {
 }
 
 // Send answers the pre-checkout query and returns the result.
-func (pc *PreCheckout) Send() Result[bool] {
+func (pc *AnswerPreCheckoutQuery) Send() Result[bool] {
 	query := pc.ctx.Update.PreCheckoutQuery
 	if query == nil {
 		return Err[bool](Errorf("no precheckout query"))

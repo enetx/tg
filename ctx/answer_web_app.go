@@ -1,0 +1,44 @@
+package ctx
+
+import (
+	"time"
+
+	"github.com/PaulSonOfLars/gotgbot/v2"
+	. "github.com/enetx/g"
+)
+
+// AnswerWebAppQuery represents a request to answer a web app query.
+type AnswerWebAppQuery struct {
+	ctx           *Context
+	webAppQueryID String
+	result        gotgbot.InlineQueryResult
+	opts          *gotgbot.AnswerWebAppQueryOpts
+	err           error
+}
+
+// Timeout sets a custom timeout for this request.
+func (awaq *AnswerWebAppQuery) Timeout(duration time.Duration) *AnswerWebAppQuery {
+	if awaq.opts.RequestOpts == nil {
+		awaq.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	awaq.opts.RequestOpts.Timeout = duration
+
+	return awaq
+}
+
+// APIURL sets a custom API URL for this request.
+func (awaq *AnswerWebAppQuery) APIURL(url String) *AnswerWebAppQuery {
+	if awaq.opts.RequestOpts == nil {
+		awaq.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	awaq.opts.RequestOpts.APIURL = url.Std()
+
+	return awaq
+}
+
+// Send answers the web app query and returns the result.
+func (awaq *AnswerWebAppQuery) Send() Result[*gotgbot.SentWebAppMessage] {
+	return ResultOf(awaq.ctx.Bot.Raw().AnswerWebAppQuery(awaq.webAppQueryID.Std(), awaq.result, awaq.opts))
+}

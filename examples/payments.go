@@ -51,8 +51,8 @@ func main() {
 	b.On.PreCheckout.Any(func(ctx *ctx.Context) error {
 		// you can validate payload/user here if needed
 
-		// return ctx.PreCheckout().Error("Payment declined").Send().Err()
-		return ctx.PreCheckout().Ok().Send().Err()
+		// return ctx.AnswerPreCheckout().Error("Payment declined").Send().Err()
+		return ctx.AnswerPreCheckout().Ok().Send().Err()
 	})
 
 	b.On.Message.SuccessfulPayment(func(ctx *ctx.Context) error {

@@ -63,7 +63,7 @@ func main() {
 		}
 
 		// Unknown button
-		return ctx.Answer("Unknown fruit").Send().Err()
+		return ctx.AnswerCallback("Unknown fruit").Send().Err()
 	})
 
 	b.Polling().Start()

@@ -24,7 +24,7 @@ func main() {
 
 	// Callback query handler
 	b.On.Callback.Equal("start_callback", func(ctx *ctx.Context) error {
-		ctx.Answer("You pressed a button!").Alert().Send()
+		ctx.AnswerCallback("You pressed a button!").Alert().Send()
 		return ctx.EditText("You edited the start message.").Send().Err()
 	})
 

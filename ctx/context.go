@@ -330,9 +330,9 @@ func (ctx *Context) EditText(text String) *EditText {
 	}
 }
 
-// Answer creates a new Answer request to answer a callback query.
-func (ctx *Context) Answer(text String) *Answer {
-	return &Answer{
+// AnswerCallback creates a new AnswerCallback request to answer a callback query.
+func (ctx *Context) AnswerCallback(text String) *AnswerCallbackQuery {
+	return &AnswerCallbackQuery{
 		ctx:  ctx,
 		text: text,
 		opts: new(gotgbot.AnswerCallbackQueryOpts),
@@ -360,9 +360,9 @@ func (ctx *Context) Invoice(title, desc, payload, currency String) *Invoice {
 	}
 }
 
-// PreCheckout creates a new PreCheckout request to answer a pre-checkout query.
-func (ctx *Context) PreCheckout() *PreCheckout {
-	return &PreCheckout{
+// AnswerPreCheckout creates a new AnswerPreCheckout request to answer a pre-checkout query.
+func (ctx *Context) AnswerPreCheckout() *AnswerPreCheckoutQuery {
+	return &AnswerPreCheckoutQuery{
 		ctx:  ctx,
 		opts: new(gotgbot.AnswerPreCheckoutQueryOpts),
 	}
@@ -1003,6 +1003,103 @@ func (ctx *Context) GetGameHighScores(userID int64) *GetGameHighScores {
 		ctx:    ctx,
 		userID: userID,
 		opts:   new(gotgbot.GetGameHighScoresOpts),
+	}
+}
+
+// CreateChatInviteLink creates a new invite link for a chat.
+func (ctx *Context) CreateChatInviteLink() *CreateChatInviteLink {
+	return &CreateChatInviteLink{
+		ctx:  ctx,
+		opts: new(gotgbot.CreateChatInviteLinkOpts),
+	}
+}
+
+// EditChatInviteLink edits an existing chat invite link.
+func (ctx *Context) EditChatInviteLink(inviteLink String) *EditChatInviteLink {
+	return &EditChatInviteLink{
+		ctx:        ctx,
+		inviteLink: inviteLink,
+		opts:       new(gotgbot.EditChatInviteLinkOpts),
+	}
+}
+
+// RevokeChatInviteLink revokes a chat invite link.
+func (ctx *Context) RevokeChatInviteLink(inviteLink String) *RevokeChatInviteLink {
+	return &RevokeChatInviteLink{
+		ctx:        ctx,
+		inviteLink: inviteLink,
+		opts:       new(gotgbot.RevokeChatInviteLinkOpts),
+	}
+}
+
+// ApproveChatJoinRequest approves a chat join request.
+func (ctx *Context) ApproveChatJoinRequest(userID int64) *ApproveChatJoinRequest {
+	return &ApproveChatJoinRequest{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.ApproveChatJoinRequestOpts),
+	}
+}
+
+// DeclineChatJoinRequest declines a chat join request.
+func (ctx *Context) DeclineChatJoinRequest(userID int64) *DeclineChatJoinRequest {
+	return &DeclineChatJoinRequest{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.DeclineChatJoinRequestOpts),
+	}
+}
+
+// LeaveChat leaves a chat.
+func (ctx *Context) LeaveChat() *LeaveChat {
+	return &LeaveChat{
+		ctx:  ctx,
+		opts: new(gotgbot.LeaveChatOpts),
+	}
+}
+
+// GetFile gets information about a file.
+func (ctx *Context) GetFile(fileID String) *GetFile {
+	return &GetFile{
+		ctx:    ctx,
+		fileID: fileID,
+		opts:   new(gotgbot.GetFileOpts),
+	}
+}
+
+// SetChatStickerSet sets a chat's sticker set.
+func (ctx *Context) SetChatStickerSet(stickerSetName String) *SetChatStickerSet {
+	return &SetChatStickerSet{
+		ctx:            ctx,
+		stickerSetName: stickerSetName,
+		opts:           new(gotgbot.SetChatStickerSetOpts),
+	}
+}
+
+// DeleteChatStickerSet deletes a chat's sticker set.
+func (ctx *Context) DeleteChatStickerSet() *DeleteChatStickerSet {
+	return &DeleteChatStickerSet{
+		ctx:  ctx,
+		opts: new(gotgbot.DeleteChatStickerSetOpts),
+	}
+}
+
+// AnswerWebAppQuery answers a web app query.
+func (ctx *Context) AnswerWebApp(webAppQueryID String, result gotgbot.InlineQueryResult) *AnswerWebAppQuery {
+	return &AnswerWebAppQuery{
+		ctx:           ctx,
+		webAppQueryID: webAppQueryID,
+		result:        result,
+		opts:          new(gotgbot.AnswerWebAppQueryOpts),
+	}
+}
+
+// SetMessageReaction creates a new SetMessageReaction request to set reactions on a message.
+func (ctx *Context) SetMessageReaction(messageID int64) *SetMessageReaction {
+	return &SetMessageReaction{
+		ctx:       ctx,
+		messageID: messageID,
+		opts:      new(gotgbot.SetMessageReactionOpts),
 	}
 }
 

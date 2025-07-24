@@ -179,7 +179,7 @@ func main() {
 		}
 
 		builder := NewBuilder()
-		builder.WriteString("👑 Chat Administrators:\n")
+		builder.WriteString("Chat Administrators:\n")
 
 		for admin := range admins.Ok().Iter() {
 			builder.WriteString(Format("• {.GetUser.FirstName}", admin))
@@ -199,7 +199,7 @@ func main() {
 			return count.Err()
 		}
 
-		return ctx.Reply("👥 Chat has " + count.Ok().String() + " members").Send().Err()
+		return ctx.Reply("Chat has " + count.Ok().String() + " members").Send().Err()
 	})
 
 	// Examples with different chat IDs
@@ -216,7 +216,7 @@ func main() {
 			return admins.Err()
 		}
 
-		return ctx.Reply("👑 Found " + admins.Ok().Len().String() + " administrators in that chat").
+		return ctx.Reply("Found " + admins.Ok().Len().String() + " administrators in that chat").
 			Send().Err()
 	})
 

@@ -66,11 +66,11 @@ func main() {
 
 	// Callback
 	b.On.Callback.Equal("confirm", func(ctx *ctx.Context) error {
-		return ctx.Answer("Confirmed").Send().Err()
+		return ctx.AnswerCallback("Confirmed").Send().Err()
 	})
 
 	b.On.Callback.Prefix("cb_", func(ctx *ctx.Context) error {
-		return ctx.Answer("Callback prefix matched").Send().Err()
+		return ctx.AnswerCallback("Callback prefix matched").Send().Err()
 	})
 
 	// InlineQuery

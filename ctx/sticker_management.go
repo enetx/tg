@@ -609,3 +609,86 @@ func (gces *GetCustomEmojiStickers) Send() Result[Slice[gotgbot.Sticker]] {
 	stickers, err := gces.ctx.Bot.Raw().GetCustomEmojiStickers(gces.customEmojiIDs.ToStringSlice(), gces.opts)
 	return ResultOf[Slice[gotgbot.Sticker]](stickers, err)
 }
+
+// SetChatStickerSet represents a request to set a chat's sticker set.
+type SetChatStickerSet struct {
+	ctx            *Context
+	stickerSetName String
+	opts           *gotgbot.SetChatStickerSetOpts
+	chatID         Option[int64]
+}
+
+// ChatID sets the target chat ID.
+func (scss *SetChatStickerSet) ChatID(chatID int64) *SetChatStickerSet {
+	scss.chatID = Some(chatID)
+	return scss
+}
+
+// Timeout sets a custom timeout for this request.
+func (scss *SetChatStickerSet) Timeout(duration time.Duration) *SetChatStickerSet {
+	if scss.opts.RequestOpts == nil {
+		scss.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	scss.opts.RequestOpts.Timeout = duration
+
+	return scss
+}
+
+// APIURL sets a custom API URL for this request.
+func (scss *SetChatStickerSet) APIURL(url String) *SetChatStickerSet {
+	if scss.opts.RequestOpts == nil {
+		scss.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	scss.opts.RequestOpts.APIURL = url.Std()
+
+	return scss
+}
+
+// Send sets the chat sticker set and returns the result.
+func (scss *SetChatStickerSet) Send() Result[bool] {
+	chatID := scss.chatID.UnwrapOr(scss.ctx.EffectiveChat.Id)
+	return ResultOf(scss.ctx.Bot.Raw().SetChatStickerSet(chatID, scss.stickerSetName.Std(), scss.opts))
+}
+
+// DeleteChatStickerSet represents a request to delete a chat's sticker set.
+type DeleteChatStickerSet struct {
+	ctx    *Context
+	opts   *gotgbot.DeleteChatStickerSetOpts
+	chatID Option[int64]
+}
+
+// ChatID sets the target chat ID.
+func (dcss *DeleteChatStickerSet) ChatID(chatID int64) *DeleteChatStickerSet {
+	dcss.chatID = Some(chatID)
+	return dcss
+}
+
+// Timeout sets a custom timeout for this request.
+func (dcss *DeleteChatStickerSet) Timeout(duration time.Duration) *DeleteChatStickerSet {
+	if dcss.opts.RequestOpts == nil {
+		dcss.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	dcss.opts.RequestOpts.Timeout = duration
+
+	return dcss
+}
+
+// APIURL sets a custom API URL for this request.
+func (dcss *DeleteChatStickerSet) APIURL(url String) *DeleteChatStickerSet {
+	if dcss.opts.RequestOpts == nil {
+		dcss.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	dcss.opts.RequestOpts.APIURL = url.Std()
+
+	return dcss
+}
+
+// Send deletes the chat sticker set and returns the result.
+func (dcss *DeleteChatStickerSet) Send() Result[bool] {
+	chatID := dcss.chatID.UnwrapOr(dcss.ctx.EffectiveChat.Id)
+	return ResultOf(dcss.ctx.Bot.Raw().DeleteChatStickerSet(chatID, dcss.opts))
+}

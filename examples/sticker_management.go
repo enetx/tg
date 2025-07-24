@@ -361,10 +361,10 @@ func main() {
 	})
 
 	// Multi-sticker set creation
-	b.Command("multistickerSet", func(ctx *ctx.Context) error {
+	b.Command("multistickerset", func(ctx *ctx.Context) error {
 		args := ctx.Args()
 		if args.Len() < 7 {
-			return ctx.Reply("Usage: /multistickerSet <user_id> <name> <title> <file1> <emoji1> <file2> <emoji2>").
+			return ctx.Reply("Usage: /multistickerset <user_id> <name> <title> <file1> <emoji1> <file2> <emoji2>").
 				Send().
 				Err()
 		}
