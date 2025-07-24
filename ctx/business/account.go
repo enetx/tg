@@ -43,39 +43,39 @@ type SetName struct {
 }
 
 // LastName sets the optional last name.
-func (n *SetName) LastName(lastName String) *SetName {
-	n.opts.LastName = lastName.Std()
-	return n
+func (sn *SetName) LastName(lastName String) *SetName {
+	sn.opts.LastName = lastName.Std()
+	return sn
 }
 
 // Timeout sets a custom timeout for this request.
-func (n *SetName) Timeout(duration time.Duration) *SetName {
-	if n.opts.RequestOpts == nil {
-		n.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sn *SetName) Timeout(duration time.Duration) *SetName {
+	if sn.opts.RequestOpts == nil {
+		sn.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	n.opts.RequestOpts.Timeout = duration
+	sn.opts.RequestOpts.Timeout = duration
 
-	return n
+	return sn
 }
 
 // APIURL sets a custom API URL for this request.
-func (n *SetName) APIURL(url String) *SetName {
-	if n.opts.RequestOpts == nil {
-		n.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sn *SetName) APIURL(url String) *SetName {
+	if sn.opts.RequestOpts == nil {
+		sn.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	n.opts.RequestOpts.APIURL = url.Std()
+	sn.opts.RequestOpts.APIURL = url.Std()
 
-	return n
+	return sn
 }
 
 // Send executes the SetName request.
-func (n *SetName) Send() Result[bool] {
-	return ResultOf(n.account.bot.Raw().SetBusinessAccountName(
-		n.account.connID.Std(),
-		n.firstName.Std(),
-		n.opts,
+func (sn *SetName) Send() Result[bool] {
+	return ResultOf(sn.account.bot.Raw().SetBusinessAccountName(
+		sn.account.connID.Std(),
+		sn.firstName.Std(),
+		sn.opts,
 	))
 }
 
@@ -94,32 +94,32 @@ type SetUsername struct {
 }
 
 // Timeout sets a custom timeout for this request.
-func (u *SetUsername) Timeout(duration time.Duration) *SetUsername {
-	if u.opts.RequestOpts == nil {
-		u.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (su *SetUsername) Timeout(duration time.Duration) *SetUsername {
+	if su.opts.RequestOpts == nil {
+		su.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	u.opts.RequestOpts.Timeout = duration
+	su.opts.RequestOpts.Timeout = duration
 
-	return u
+	return su
 }
 
 // APIURL sets a custom API URL for this request.
-func (u *SetUsername) APIURL(url String) *SetUsername {
-	if u.opts.RequestOpts == nil {
-		u.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (su *SetUsername) APIURL(url String) *SetUsername {
+	if su.opts.RequestOpts == nil {
+		su.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	u.opts.RequestOpts.APIURL = url.Std()
+	su.opts.RequestOpts.APIURL = url.Std()
 
-	return u
+	return su
 }
 
 // Send executes the SetUsername request.
-func (u *SetUsername) Send() Result[bool] {
-	return ResultOf(u.account.bot.Raw().SetBusinessAccountUsername(
-		u.account.connID.Std(),
-		u.opts,
+func (su *SetUsername) Send() Result[bool] {
+	return ResultOf(su.account.bot.Raw().SetBusinessAccountUsername(
+		su.account.connID.Std(),
+		su.opts,
 	))
 }
 
@@ -138,32 +138,32 @@ type SetBio struct {
 }
 
 // Timeout sets a custom timeout for this request.
-func (b *SetBio) Timeout(duration time.Duration) *SetBio {
-	if b.opts.RequestOpts == nil {
-		b.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sb *SetBio) Timeout(duration time.Duration) *SetBio {
+	if sb.opts.RequestOpts == nil {
+		sb.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	b.opts.RequestOpts.Timeout = duration
+	sb.opts.RequestOpts.Timeout = duration
 
-	return b
+	return sb
 }
 
 // APIURL sets a custom API URL for this request.
-func (b *SetBio) APIURL(url String) *SetBio {
-	if b.opts.RequestOpts == nil {
-		b.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sb *SetBio) APIURL(url String) *SetBio {
+	if sb.opts.RequestOpts == nil {
+		sb.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	b.opts.RequestOpts.APIURL = url.Std()
+	sb.opts.RequestOpts.APIURL = url.Std()
 
-	return b
+	return sb
 }
 
 // Send executes the SetBio request.
-func (b *SetBio) Send() Result[bool] {
-	return ResultOf(b.account.bot.Raw().SetBusinessAccountBio(
-		b.account.connID.Std(),
-		b.opts,
+func (sb *SetBio) Send() Result[bool] {
+	return ResultOf(sb.account.bot.Raw().SetBusinessAccountBio(
+		sb.account.connID.Std(),
+		sb.opts,
 	))
 }
 
@@ -194,53 +194,53 @@ type SetAnimatedPhoto struct {
 }
 
 // MainFrame sets the timestamp in seconds of the frame that will be used as the static profile photo.
-func (p *SetAnimatedPhoto) MainFrame(timestamp float64) *SetAnimatedPhoto {
-	p.mainFrameTimestamp = Some(timestamp)
-	return p
+func (sap *SetAnimatedPhoto) MainFrame(timestamp float64) *SetAnimatedPhoto {
+	sap.mainFrameTimestamp = Some(timestamp)
+	return sap
 }
 
 // Public marks the profile photo as publicly visible.
-func (p *SetAnimatedPhoto) Public() *SetAnimatedPhoto {
-	p.opts.IsPublic = true
-	return p
+func (sap *SetAnimatedPhoto) Public() *SetAnimatedPhoto {
+	sap.opts.IsPublic = true
+	return sap
 }
 
 // Timeout sets a custom timeout for this request.
-func (p *SetAnimatedPhoto) Timeout(duration time.Duration) *SetAnimatedPhoto {
-	if p.opts.RequestOpts == nil {
-		p.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sap *SetAnimatedPhoto) Timeout(duration time.Duration) *SetAnimatedPhoto {
+	if sap.opts.RequestOpts == nil {
+		sap.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	p.opts.RequestOpts.Timeout = duration
+	sap.opts.RequestOpts.Timeout = duration
 
-	return p
+	return sap
 }
 
 // APIURL sets a custom API URL for this request.
-func (p *SetAnimatedPhoto) APIURL(url String) *SetAnimatedPhoto {
-	if p.opts.RequestOpts == nil {
-		p.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sap *SetAnimatedPhoto) APIURL(url String) *SetAnimatedPhoto {
+	if sap.opts.RequestOpts == nil {
+		sap.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	p.opts.RequestOpts.APIURL = url.Std()
+	sap.opts.RequestOpts.APIURL = url.Std()
 
-	return p
+	return sap
 }
 
 // Send executes the SetAnimatedPhoto request.
-func (p *SetAnimatedPhoto) Send() Result[bool] {
+func (sap *SetAnimatedPhoto) Send() Result[bool] {
 	animated := gotgbot.InputProfilePhotoAnimated{
-		Animation: p.animation.Std(),
+		Animation: sap.animation.Std(),
 	}
 
-	if p.mainFrameTimestamp.IsSome() {
-		animated.MainFrameTimestamp = p.mainFrameTimestamp.Some()
+	if sap.mainFrameTimestamp.IsSome() {
+		animated.MainFrameTimestamp = sap.mainFrameTimestamp.Some()
 	}
 
-	return ResultOf(p.account.bot.Raw().SetBusinessAccountProfilePhoto(
-		p.account.connID.Std(),
+	return ResultOf(sap.account.bot.Raw().SetBusinessAccountProfilePhoto(
+		sap.account.connID.Std(),
 		animated,
-		p.opts,
+		sap.opts,
 	))
 }
 
@@ -252,39 +252,39 @@ type SetPhoto struct {
 }
 
 // Public marks the profile photo as publicly visible.
-func (p *SetPhoto) Public() *SetPhoto {
-	p.opts.IsPublic = true
-	return p
+func (sp *SetPhoto) Public() *SetPhoto {
+	sp.opts.IsPublic = true
+	return sp
 }
 
 // Timeout sets a custom timeout for this request.
-func (p *SetPhoto) Timeout(duration time.Duration) *SetPhoto {
-	if p.opts.RequestOpts == nil {
-		p.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sp *SetPhoto) Timeout(duration time.Duration) *SetPhoto {
+	if sp.opts.RequestOpts == nil {
+		sp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	p.opts.RequestOpts.Timeout = duration
+	sp.opts.RequestOpts.Timeout = duration
 
-	return p
+	return sp
 }
 
 // APIURL sets a custom API URL for this request.
-func (p *SetPhoto) APIURL(url String) *SetPhoto {
-	if p.opts.RequestOpts == nil {
-		p.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sp *SetPhoto) APIURL(url String) *SetPhoto {
+	if sp.opts.RequestOpts == nil {
+		sp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	p.opts.RequestOpts.APIURL = url.Std()
+	sp.opts.RequestOpts.APIURL = url.Std()
 
-	return p
+	return sp
 }
 
 // Send executes the SetPhoto request.
-func (p *SetPhoto) Send() Result[bool] {
-	return ResultOf(p.account.bot.Raw().SetBusinessAccountProfilePhoto(
-		p.account.connID.Std(),
-		gotgbot.InputProfilePhotoStatic{Photo: p.photo.Std()},
-		p.opts,
+func (sp *SetPhoto) Send() Result[bool] {
+	return ResultOf(sp.account.bot.Raw().SetBusinessAccountProfilePhoto(
+		sp.account.connID.Std(),
+		gotgbot.InputProfilePhotoStatic{Photo: sp.photo.Std()},
+		sp.opts,
 	))
 }
 
@@ -303,38 +303,38 @@ type RemovePhoto struct {
 }
 
 // Public removes the public profile photo if present.
-func (r *RemovePhoto) Public() *RemovePhoto {
-	r.opts.IsPublic = true
-	return r
+func (rp *RemovePhoto) Public() *RemovePhoto {
+	rp.opts.IsPublic = true
+	return rp
 }
 
 // Timeout sets a custom timeout for this request.
-func (r *RemovePhoto) Timeout(duration time.Duration) *RemovePhoto {
-	if r.opts.RequestOpts == nil {
-		r.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (rp *RemovePhoto) Timeout(duration time.Duration) *RemovePhoto {
+	if rp.opts.RequestOpts == nil {
+		rp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	r.opts.RequestOpts.Timeout = duration
+	rp.opts.RequestOpts.Timeout = duration
 
-	return r
+	return rp
 }
 
 // APIURL sets a custom API URL for this request.
-func (r *RemovePhoto) APIURL(url String) *RemovePhoto {
-	if r.opts.RequestOpts == nil {
-		r.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (rp *RemovePhoto) APIURL(url String) *RemovePhoto {
+	if rp.opts.RequestOpts == nil {
+		rp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	r.opts.RequestOpts.APIURL = url.Std()
+	rp.opts.RequestOpts.APIURL = url.Std()
 
-	return r
+	return rp
 }
 
 // Send executes the RemovePhoto request.
-func (r *RemovePhoto) Send() Result[bool] {
-	return ResultOf(r.account.bot.Raw().RemoveBusinessAccountProfilePhoto(
-		r.account.connID.Std(),
-		r.opts,
+func (rp *RemovePhoto) Send() Result[bool] {
+	return ResultOf(rp.account.bot.Raw().RemoveBusinessAccountProfilePhoto(
+		rp.account.connID.Std(),
+		rp.opts,
 	))
 }
 

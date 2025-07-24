@@ -20,175 +20,175 @@ type Invoice struct {
 }
 
 // To sets the target chat ID for the invoice.
-func (c *Invoice) To(chatID int64) *Invoice {
-	c.chatID = Some(chatID)
-	return c
+func (i *Invoice) To(chatID int64) *Invoice {
+	i.chatID = Some(chatID)
+	return i
 }
 
 // Price adds a labeled price item to the invoice.
-func (c *Invoice) Price(label String, amount int) *Invoice {
-	c.prices.Push(gotgbot.LabeledPrice{Label: label.Std(), Amount: int64(amount)})
-	return c
+func (i *Invoice) Price(label String, amount int) *Invoice {
+	i.prices.Push(gotgbot.LabeledPrice{Label: label.Std(), Amount: int64(amount)})
+	return i
 }
 
 // Thread sets the message thread ID for the invoice.
-func (c *Invoice) Thread(id int64) *Invoice {
-	c.opts.MessageThreadId = id
-	return c
+func (i *Invoice) Thread(id int64) *Invoice {
+	i.opts.MessageThreadId = id
+	return i
 }
 
 // ProviderToken sets the payment provider token.
-func (c *Invoice) ProviderToken(token String) *Invoice {
-	c.opts.ProviderToken = token.Std()
-	return c
+func (i *Invoice) ProviderToken(token String) *Invoice {
+	i.opts.ProviderToken = token.Std()
+	return i
 }
 
 // MaxTip sets the maximum accepted tip amount.
-func (c *Invoice) MaxTip(amount int64) *Invoice {
-	c.opts.MaxTipAmount = amount
-	return c
+func (i *Invoice) MaxTip(amount int64) *Invoice {
+	i.opts.MaxTipAmount = amount
+	return i
 }
 
 // SuggestedTips sets suggested tip amounts for the invoice.
-func (c *Invoice) SuggestedTips(tips ...int64) *Invoice {
-	c.opts.SuggestedTipAmounts = tips
-	return c
+func (i *Invoice) SuggestedTips(tips ...int64) *Invoice {
+	i.opts.SuggestedTipAmounts = tips
+	return i
 }
 
 // StartParameter sets the unique deep-linking parameter.
-func (c *Invoice) StartParameter(param String) *Invoice {
-	c.opts.StartParameter = param.Std()
-	return c
+func (i *Invoice) StartParameter(param String) *Invoice {
+	i.opts.StartParameter = param.Std()
+	return i
 }
 
 // ProviderData sets JSON-encoded data for the payment provider.
-func (c *Invoice) ProviderData(data String) *Invoice {
-	c.opts.ProviderData = data.Std()
-	return c
+func (i *Invoice) ProviderData(data String) *Invoice {
+	i.opts.ProviderData = data.Std()
+	return i
 }
 
 // Photo sets the product photo URL and dimensions.
-func (c *Invoice) Photo(url String, size, width, height int64) *Invoice {
-	c.opts.PhotoUrl = url.Std()
-	c.opts.PhotoSize = size
-	c.opts.PhotoWidth = width
-	c.opts.PhotoHeight = height
+func (i *Invoice) Photo(url String, size, width, height int64) *Invoice {
+	i.opts.PhotoUrl = url.Std()
+	i.opts.PhotoSize = size
+	i.opts.PhotoWidth = width
+	i.opts.PhotoHeight = height
 
-	return c
+	return i
 }
 
 // NeedName requests user's full name for payment.
-func (c *Invoice) NeedName() *Invoice {
-	c.opts.NeedName = true
-	return c
+func (i *Invoice) NeedName() *Invoice {
+	i.opts.NeedName = true
+	return i
 }
 
 // NeedPhone requests user's phone number for payment.
-func (c *Invoice) NeedPhone() *Invoice {
-	c.opts.NeedPhoneNumber = true
-	return c
+func (i *Invoice) NeedPhone() *Invoice {
+	i.opts.NeedPhoneNumber = true
+	return i
 }
 
 // NeedEmail requests user's email address for payment.
-func (c *Invoice) NeedEmail() *Invoice {
-	c.opts.NeedEmail = true
-	return c
+func (i *Invoice) NeedEmail() *Invoice {
+	i.opts.NeedEmail = true
+	return i
 }
 
 // NeedShipping requests user's shipping address for payment.
-func (c *Invoice) NeedShipping() *Invoice {
-	c.opts.NeedShippingAddress = true
-	return c
+func (i *Invoice) NeedShipping() *Invoice {
+	i.opts.NeedShippingAddress = true
+	return i
 }
 
 // SendPhone sends the user's phone number to the payment provider.
-func (c *Invoice) SendPhone() *Invoice {
-	c.opts.SendPhoneNumberToProvider = true
-	return c
+func (i *Invoice) SendPhone() *Invoice {
+	i.opts.SendPhoneNumberToProvider = true
+	return i
 }
 
 // SendEmail sends the user's email to the payment provider.
-func (c *Invoice) SendEmail() *Invoice {
-	c.opts.SendEmailToProvider = true
-	return c
+func (i *Invoice) SendEmail() *Invoice {
+	i.opts.SendEmailToProvider = true
+	return i
 }
 
 // Flexible enables flexible pricing (final price depends on shipping).
-func (c *Invoice) Flexible() *Invoice {
-	c.opts.IsFlexible = true
-	return c
+func (i *Invoice) Flexible() *Invoice {
+	i.opts.IsFlexible = true
+	return i
 }
 
 // Silent disables notification for the invoice message.
-func (c *Invoice) Silent() *Invoice {
-	c.opts.DisableNotification = true
-	return c
+func (i *Invoice) Silent() *Invoice {
+	i.opts.DisableNotification = true
+	return i
 }
 
 // Protect enables content protection for the invoice message.
-func (c *Invoice) Protect() *Invoice {
-	c.opts.ProtectContent = true
-	return c
+func (i *Invoice) Protect() *Invoice {
+	i.opts.ProtectContent = true
+	return i
 }
 
 // AllowPaidBroadcast allows the invoice to be sent in paid broadcast channels.
-func (c *Invoice) AllowPaidBroadcast() *Invoice {
-	c.opts.AllowPaidBroadcast = true
-	return c
+func (i *Invoice) AllowPaidBroadcast() *Invoice {
+	i.opts.AllowPaidBroadcast = true
+	return i
 }
 
 // Effect sets a message effect for the invoice message.
-func (c *Invoice) Effect(effect string) *Invoice {
-	c.opts.MessageEffectId = effect
-	return c
+func (i *Invoice) Effect(effect string) *Invoice {
+	i.opts.MessageEffectId = effect
+	return i
 }
 
 // ReplyTo sets the message ID to reply to.
-func (c *Invoice) ReplyTo(messageID int64) *Invoice {
-	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return c
+func (i *Invoice) ReplyTo(messageID int64) *Invoice {
+	i.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return i
 }
 
 // Markup sets the reply markup keyboard for the invoice message.
-func (c *Invoice) Markup(kb keyboard.KeyboardBuilder) *Invoice {
+func (i *Invoice) Markup(kb keyboard.KeyboardBuilder) *Invoice {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
-		c.opts.ReplyMarkup = markup
+		i.opts.ReplyMarkup = markup
 	}
 
-	return c
+	return i
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *Invoice) Timeout(duration time.Duration) *Invoice {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (i *Invoice) Timeout(duration time.Duration) *Invoice {
+	if i.opts.RequestOpts == nil {
+		i.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	i.opts.RequestOpts.Timeout = duration
 
-	return c
+	return i
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *Invoice) APIURL(url String) *Invoice {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (i *Invoice) APIURL(url String) *Invoice {
+	if i.opts.RequestOpts == nil {
+		i.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	i.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return i
 }
 
 // Send sends the invoice to Telegram and returns the result.
-func (c *Invoice) Send() Result[*gotgbot.Message] {
-	return ResultOf(c.ctx.Bot.Raw().SendInvoice(
-		c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id),
-		c.title.Std(),
-		c.desc.Std(),
-		c.payload.Std(),
-		c.currency.Std(),
-		c.prices,
-		c.opts,
+func (i *Invoice) Send() Result[*gotgbot.Message] {
+	return ResultOf(i.ctx.Bot.Raw().SendInvoice(
+		i.chatID.UnwrapOr(i.ctx.EffectiveChat.Id),
+		i.title.Std(),
+		i.desc.Std(),
+		i.payload.Std(),
+		i.currency.Std(),
+		i.prices,
+		i.opts,
 	))
 }

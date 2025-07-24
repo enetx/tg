@@ -21,123 +21,123 @@ type SendVideoNote struct {
 }
 
 // After schedules the video note to be sent after the specified duration.
-func (c *SendVideoNote) After(duration time.Duration) *SendVideoNote {
-	c.after = Some(duration)
-	return c
+func (svn *SendVideoNote) After(duration time.Duration) *SendVideoNote {
+	svn.after = Some(duration)
+	return svn
 }
 
 // DeleteAfter schedules the video note message to be deleted after the specified duration.
-func (c *SendVideoNote) DeleteAfter(duration time.Duration) *SendVideoNote {
-	c.deleteAfter = Some(duration)
-	return c
+func (svn *SendVideoNote) DeleteAfter(duration time.Duration) *SendVideoNote {
+	svn.deleteAfter = Some(duration)
+	return svn
 }
 
 // Silent disables notification for the video note message.
-func (c *SendVideoNote) Silent() *SendVideoNote {
-	c.opts.DisableNotification = true
-	return c
+func (svn *SendVideoNote) Silent() *SendVideoNote {
+	svn.opts.DisableNotification = true
+	return svn
 }
 
 // Protect enables content protection for the video note message.
-func (c *SendVideoNote) Protect() *SendVideoNote {
-	c.opts.ProtectContent = true
-	return c
+func (svn *SendVideoNote) Protect() *SendVideoNote {
+	svn.opts.ProtectContent = true
+	return svn
 }
 
 // Markup sets the reply markup keyboard for the video note message.
-func (c *SendVideoNote) Markup(kb keyboard.KeyboardBuilder) *SendVideoNote {
-	c.opts.ReplyMarkup = kb.Markup()
-	return c
+func (svn *SendVideoNote) Markup(kb keyboard.KeyboardBuilder) *SendVideoNote {
+	svn.opts.ReplyMarkup = kb.Markup()
+	return svn
 }
 
 // Duration sets the video note duration in seconds.
-func (c *SendVideoNote) Duration(duration int64) *SendVideoNote {
-	c.opts.Duration = duration
-	return c
+func (svn *SendVideoNote) Duration(duration int64) *SendVideoNote {
+	svn.opts.Duration = duration
+	return svn
 }
 
 // Length sets the video note diameter (video notes are square).
-func (c *SendVideoNote) Length(length int64) *SendVideoNote {
-	c.opts.Length = length
-	return c
+func (svn *SendVideoNote) Length(length int64) *SendVideoNote {
+	svn.opts.Length = length
+	return svn
 }
 
 // Thumbnail sets a custom thumbnail for the video note.
-func (c *SendVideoNote) Thumbnail(file String) *SendVideoNote {
-	c.thumb = NewFile(file)
+func (svn *SendVideoNote) Thumbnail(file String) *SendVideoNote {
+	svn.thumb = NewFile(file)
 
-	reader := c.thumb.Open()
+	reader := svn.thumb.Open()
 	if reader.IsErr() {
-		c.err = reader.Err()
-		return c
+		svn.err = reader.Err()
+		return svn
 	}
 
-	c.opts.Thumbnail = gotgbot.InputFileByReader(c.thumb.Name().Std(), reader.Ok().Std())
-	return c
+	svn.opts.Thumbnail = gotgbot.InputFileByReader(svn.thumb.Name().Std(), reader.Ok().Std())
+	return svn
 }
 
 // ReplyTo sets the message ID to reply to.
-func (c *SendVideoNote) ReplyTo(messageID int64) *SendVideoNote {
-	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return c
+func (svn *SendVideoNote) ReplyTo(messageID int64) *SendVideoNote {
+	svn.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return svn
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *SendVideoNote) Timeout(duration time.Duration) *SendVideoNote {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (svn *SendVideoNote) Timeout(duration time.Duration) *SendVideoNote {
+	if svn.opts.RequestOpts == nil {
+		svn.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	svn.opts.RequestOpts.Timeout = duration
 
-	return c
+	return svn
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *SendVideoNote) APIURL(url String) *SendVideoNote {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (svn *SendVideoNote) APIURL(url String) *SendVideoNote {
+	if svn.opts.RequestOpts == nil {
+		svn.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	svn.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return svn
 }
 
 // Business sets the business connection ID for the video note message.
-func (c *SendVideoNote) Business(id String) *SendVideoNote {
-	c.opts.BusinessConnectionId = id.Std()
-	return c
+func (svn *SendVideoNote) Business(id String) *SendVideoNote {
+	svn.opts.BusinessConnectionId = id.Std()
+	return svn
 }
 
 // Thread sets the message thread ID for the video note message.
-func (c *SendVideoNote) Thread(id int64) *SendVideoNote {
-	c.opts.MessageThreadId = id
-	return c
+func (svn *SendVideoNote) Thread(id int64) *SendVideoNote {
+	svn.opts.MessageThreadId = id
+	return svn
 }
 
 // To sets the target chat ID for the video note message.
-func (c *SendVideoNote) To(chatID int64) *SendVideoNote {
-	c.chatID = Some(chatID)
-	return c
+func (svn *SendVideoNote) To(chatID int64) *SendVideoNote {
+	svn.chatID = Some(chatID)
+	return svn
 }
 
 // Send sends the video note message to Telegram and returns the result.
-func (c *SendVideoNote) Send() Result[*gotgbot.Message] {
-	if c.err != nil {
-		return Err[*gotgbot.Message](c.err)
+func (svn *SendVideoNote) Send() Result[*gotgbot.Message] {
+	if svn.err != nil {
+		return Err[*gotgbot.Message](svn.err)
 	}
 
-	if c.file != nil {
-		defer c.file.Close()
+	if svn.file != nil {
+		defer svn.file.Close()
 	}
 
-	if c.thumb != nil {
-		defer c.thumb.Close()
+	if svn.thumb != nil {
+		defer svn.thumb.Close()
 	}
 
-	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
-		return ResultOf(c.ctx.Bot.Raw().SendVideoNote(chatID, c.doc, c.opts))
+	return svn.ctx.timers(svn.after, svn.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := svn.chatID.UnwrapOr(svn.ctx.EffectiveChat.Id)
+		return ResultOf(svn.ctx.Bot.Raw().SendVideoNote(chatID, svn.doc, svn.opts))
 	})
 }

@@ -18,80 +18,80 @@ type SendGift struct {
 }
 
 // To sets the target user ID for the gift.
-func (c *SendGift) To(userID int64) *SendGift {
-	c.userID = Some(userID)
-	return c
+func (sg *SendGift) To(userID int64) *SendGift {
+	sg.userID = Some(userID)
+	return sg
 }
 
 // ToChat sets the target chat ID for the gift.
-func (c *SendGift) ToChat(chatID int64) *SendGift {
-	c.chatID = Some(chatID)
-	return c
+func (sg *SendGift) ToChat(chatID int64) *SendGift {
+	sg.chatID = Some(chatID)
+	return sg
 }
 
 // PayForUpgrade enables paying for upgrade from bot's balance.
-func (c *SendGift) PayForUpgrade() *SendGift {
-	c.opts.PayForUpgrade = true
-	return c
+func (sg *SendGift) PayForUpgrade() *SendGift {
+	sg.opts.PayForUpgrade = true
+	return sg
 }
 
 // Text sets the text shown with the gift (0-128 characters).
-func (c *SendGift) Text(text String) *SendGift {
-	c.opts.Text = text.Std()
-	return c
+func (sg *SendGift) Text(text String) *SendGift {
+	sg.opts.Text = text.Std()
+	return sg
 }
 
 // HTML sets the gift text parse mode to HTML.
-func (c *SendGift) HTML() *SendGift {
-	c.opts.TextParseMode = "HTML"
-	return c
+func (sg *SendGift) HTML() *SendGift {
+	sg.opts.TextParseMode = "HTML"
+	return sg
 }
 
 // Markdown sets the gift text parse mode to MarkdownV2.
-func (c *SendGift) Markdown() *SendGift {
-	c.opts.TextParseMode = "MarkdownV2"
-	return c
+func (sg *SendGift) Markdown() *SendGift {
+	sg.opts.TextParseMode = "MarkdownV2"
+	return sg
 }
 
 // TextEntities sets special entities in the gift text using Entities builder.
-func (c *SendGift) TextEntities(e *entities.Entities) *SendGift {
-	c.opts.TextEntities = e.Std()
-	return c
+func (sg *SendGift) TextEntities(e *entities.Entities) *SendGift {
+	sg.opts.TextEntities = e.Std()
+	return sg
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *SendGift) Timeout(duration time.Duration) *SendGift {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sg *SendGift) Timeout(duration time.Duration) *SendGift {
+	if sg.opts.RequestOpts == nil {
+		sg.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	sg.opts.RequestOpts.Timeout = duration
 
-	return c
+	return sg
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *SendGift) APIURL(url String) *SendGift {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sg *SendGift) APIURL(url String) *SendGift {
+	if sg.opts.RequestOpts == nil {
+		sg.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	sg.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return sg
 }
 
 // Send executes the SendGift request.
-func (c *SendGift) Send() Result[bool] {
-	if c.userID.IsSome() {
-		c.opts.UserId = c.userID.Unwrap()
-	} else if c.chatID.IsSome() {
-		c.opts.ChatId = c.chatID.Unwrap()
+func (sg *SendGift) Send() Result[bool] {
+	if sg.userID.IsSome() {
+		sg.opts.UserId = sg.userID.Some()
+	} else if sg.chatID.IsSome() {
+		sg.opts.ChatId = sg.chatID.Some()
 	} else {
-		c.opts.UserId = c.ctx.EffectiveUser.Id
+		sg.opts.UserId = sg.ctx.EffectiveUser.Id
 	}
 
-	return ResultOf(c.ctx.Bot.Raw().SendGift(c.giftID.Std(), c.opts))
+	return ResultOf(sg.ctx.Bot.Raw().SendGift(sg.giftID.Std(), sg.opts))
 }
 
 // GetAvailableGifts is a request builder for getting available gifts.
@@ -101,30 +101,30 @@ type GetAvailableGifts struct {
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *GetAvailableGifts) Timeout(duration time.Duration) *GetAvailableGifts {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (gags *GetAvailableGifts) Timeout(duration time.Duration) *GetAvailableGifts {
+	if gags.opts.RequestOpts == nil {
+		gags.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	gags.opts.RequestOpts.Timeout = duration
 
-	return c
+	return gags
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *GetAvailableGifts) APIURL(url String) *GetAvailableGifts {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (gags *GetAvailableGifts) APIURL(url String) *GetAvailableGifts {
+	if gags.opts.RequestOpts == nil {
+		gags.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	gags.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return gags
 }
 
 // Send executes the GetAvailableGifts request.
-func (c *GetAvailableGifts) Send() Result[*gotgbot.Gifts] {
-	return ResultOf(c.ctx.Bot.Raw().GetAvailableGifts(c.opts))
+func (gags *GetAvailableGifts) Send() Result[*gotgbot.Gifts] {
+	return ResultOf(gags.ctx.Bot.Raw().GetAvailableGifts(gags.opts))
 }
 
 // ConvertGiftToStars is a request builder for converting gifts to stars.
@@ -136,33 +136,33 @@ type ConvertGiftToStars struct {
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *ConvertGiftToStars) Timeout(duration time.Duration) *ConvertGiftToStars {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (cgts *ConvertGiftToStars) Timeout(duration time.Duration) *ConvertGiftToStars {
+	if cgts.opts.RequestOpts == nil {
+		cgts.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	cgts.opts.RequestOpts.Timeout = duration
 
-	return c
+	return cgts
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *ConvertGiftToStars) APIURL(url String) *ConvertGiftToStars {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (cgts *ConvertGiftToStars) APIURL(url String) *ConvertGiftToStars {
+	if cgts.opts.RequestOpts == nil {
+		cgts.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	cgts.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return cgts
 }
 
 // Send executes the ConvertGiftToStars request.
-func (c *ConvertGiftToStars) Send() Result[bool] {
-	return ResultOf(c.ctx.Bot.Raw().ConvertGiftToStars(
-		c.businessConnectionID.Std(),
-		c.ownedGiftID.Std(),
-		c.opts,
+func (cgts *ConvertGiftToStars) Send() Result[bool] {
+	return ResultOf(cgts.ctx.Bot.Raw().ConvertGiftToStars(
+		cgts.businessConnectionID.Std(),
+		cgts.ownedGiftID.Std(),
+		cgts.opts,
 	))
 }
 
@@ -176,40 +176,40 @@ type TransferGift struct {
 }
 
 // StarCount sets the amount of stars to pay for transfer from business balance.
-func (c *TransferGift) StarCount(count int64) *TransferGift {
-	c.opts.StarCount = count
-	return c
+func (tg *TransferGift) StarCount(count int64) *TransferGift {
+	tg.opts.StarCount = count
+	return tg
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *TransferGift) Timeout(duration time.Duration) *TransferGift {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (tg *TransferGift) Timeout(duration time.Duration) *TransferGift {
+	if tg.opts.RequestOpts == nil {
+		tg.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	tg.opts.RequestOpts.Timeout = duration
 
-	return c
+	return tg
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *TransferGift) APIURL(url String) *TransferGift {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (tg *TransferGift) APIURL(url String) *TransferGift {
+	if tg.opts.RequestOpts == nil {
+		tg.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	tg.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return tg
 }
 
 // Send executes the TransferGift request.
-func (c *TransferGift) Send() Result[bool] {
-	return ResultOf(c.ctx.Bot.Raw().TransferGift(
-		c.businessConnectionID.Std(),
-		c.ownedGiftID.Std(),
-		c.newOwnerChatID,
-		c.opts,
+func (tg *TransferGift) Send() Result[bool] {
+	return ResultOf(tg.ctx.Bot.Raw().TransferGift(
+		tg.businessConnectionID.Std(),
+		tg.ownedGiftID.Std(),
+		tg.newOwnerChatID,
+		tg.opts,
 	))
 }
 
@@ -222,44 +222,44 @@ type UpgradeGift struct {
 }
 
 // KeepOriginalDetails preserves original gift text, sender, and receiver.
-func (c *UpgradeGift) KeepOriginalDetails() *UpgradeGift {
-	c.opts.KeepOriginalDetails = true
-	return c
+func (ug *UpgradeGift) KeepOriginalDetails() *UpgradeGift {
+	ug.opts.KeepOriginalDetails = true
+	return ug
 }
 
 // StarCount sets the amount of stars to pay for upgrade from business balance.
-func (c *UpgradeGift) StarCount(count int64) *UpgradeGift {
-	c.opts.StarCount = count
-	return c
+func (ug *UpgradeGift) StarCount(count int64) *UpgradeGift {
+	ug.opts.StarCount = count
+	return ug
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *UpgradeGift) Timeout(duration time.Duration) *UpgradeGift {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (ug *UpgradeGift) Timeout(duration time.Duration) *UpgradeGift {
+	if ug.opts.RequestOpts == nil {
+		ug.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	ug.opts.RequestOpts.Timeout = duration
 
-	return c
+	return ug
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *UpgradeGift) APIURL(url String) *UpgradeGift {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (ug *UpgradeGift) APIURL(url String) *UpgradeGift {
+	if ug.opts.RequestOpts == nil {
+		ug.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	ug.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return ug
 }
 
 // Send executes the UpgradeGift request.
-func (c *UpgradeGift) Send() Result[bool] {
-	return ResultOf(c.ctx.Bot.Raw().UpgradeGift(
-		c.businessConnectionID.Std(),
-		c.ownedGiftID.Std(),
-		c.opts,
+func (ug *UpgradeGift) Send() Result[bool] {
+	return ResultOf(ug.ctx.Bot.Raw().UpgradeGift(
+		ug.businessConnectionID.Std(),
+		ug.ownedGiftID.Std(),
+		ug.opts,
 	))
 }

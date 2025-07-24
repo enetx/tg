@@ -14,30 +14,30 @@ type GetMyStarBalance struct {
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *GetMyStarBalance) Timeout(duration time.Duration) *GetMyStarBalance {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (gmsb *GetMyStarBalance) Timeout(duration time.Duration) *GetMyStarBalance {
+	if gmsb.opts.RequestOpts == nil {
+		gmsb.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	gmsb.opts.RequestOpts.Timeout = duration
 
-	return c
+	return gmsb
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *GetMyStarBalance) APIURL(url String) *GetMyStarBalance {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (gmsb *GetMyStarBalance) APIURL(url String) *GetMyStarBalance {
+	if gmsb.opts.RequestOpts == nil {
+		gmsb.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	gmsb.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return gmsb
 }
 
 // Send executes the GetMyStarBalance request.
-func (c *GetMyStarBalance) Send() Result[*gotgbot.StarAmount] {
-	return ResultOf(c.ctx.Bot.Raw().GetMyStarBalance(c.opts))
+func (gmsb *GetMyStarBalance) Send() Result[*gotgbot.StarAmount] {
+	return ResultOf(gmsb.ctx.Bot.Raw().GetMyStarBalance(gmsb.opts))
 }
 
 // GetStarTransactions is a request builder for getting star transaction history.
@@ -47,57 +47,42 @@ type GetStarTransactions struct {
 }
 
 // Offset sets the number of transactions to skip.
-func (c *GetStarTransactions) Offset(offset int64) *GetStarTransactions {
-	c.opts.Offset = offset
-	return c
+func (gsts *GetStarTransactions) Offset(offset int64) *GetStarTransactions {
+	gsts.opts.Offset = offset
+	return gsts
 }
 
 // Limit sets the maximum number of transactions to retrieve (1-100, defaults to 100).
-func (c *GetStarTransactions) Limit(limit int64) *GetStarTransactions {
-	c.opts.Limit = limit
-	return c
+func (gsts *GetStarTransactions) Limit(limit int64) *GetStarTransactions {
+	gsts.opts.Limit = limit
+	return gsts
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *GetStarTransactions) Timeout(duration time.Duration) *GetStarTransactions {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (gsts *GetStarTransactions) Timeout(duration time.Duration) *GetStarTransactions {
+	if gsts.opts.RequestOpts == nil {
+		gsts.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	gsts.opts.RequestOpts.Timeout = duration
 
-	return c
+	return gsts
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *GetStarTransactions) APIURL(url String) *GetStarTransactions {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (gsts *GetStarTransactions) APIURL(url String) *GetStarTransactions {
+	if gsts.opts.RequestOpts == nil {
+		gsts.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	gsts.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return gsts
 }
 
 // Send executes the GetStarTransactions request.
-func (c *GetStarTransactions) Send() Result[*gotgbot.StarTransactions] {
-	return ResultOf(c.ctx.Bot.Raw().GetStarTransactions(c.opts))
-}
-
-// EditUserStarSubscription creates an EditUserStarSubscription request builder.
-func (ctx *Context) EditUserStarSubscription(
-	userID int64,
-	telegramPaymentChargeID String,
-	isCanceled bool,
-) *EditUserStarSubscription {
-	return &EditUserStarSubscription{
-		ctx:                     ctx,
-		userID:                  userID,
-		telegramPaymentChargeID: telegramPaymentChargeID,
-		isCanceled:              isCanceled,
-		opts:                    new(gotgbot.EditUserStarSubscriptionOpts),
-	}
+func (gsts *GetStarTransactions) Send() Result[*gotgbot.StarTransactions] {
+	return ResultOf(gsts.ctx.Bot.Raw().GetStarTransactions(gsts.opts))
 }
 
 // EditUserStarSubscription is a request builder for editing user star subscriptions.

@@ -21,123 +21,123 @@ type SendPhoto struct {
 }
 
 // CaptionEntities sets custom entities for the photo caption.
-func (c *SendPhoto) CaptionEntities(e *entities.Entities) *SendPhoto {
-	c.opts.CaptionEntities = e.Std()
-	return c
+func (sp *SendPhoto) CaptionEntities(e *entities.Entities) *SendPhoto {
+	sp.opts.CaptionEntities = e.Std()
+	return sp
 }
 
 // After schedules the photo to be sent after the specified duration.
-func (c *SendPhoto) After(duration time.Duration) *SendPhoto {
-	c.after = Some(duration)
-	return c
+func (sp *SendPhoto) After(duration time.Duration) *SendPhoto {
+	sp.after = Some(duration)
+	return sp
 }
 
 // DeleteAfter schedules the photo message to be deleted after the specified duration.
-func (c *SendPhoto) DeleteAfter(duration time.Duration) *SendPhoto {
-	c.deleteAfter = Some(duration)
-	return c
+func (sp *SendPhoto) DeleteAfter(duration time.Duration) *SendPhoto {
+	sp.deleteAfter = Some(duration)
+	return sp
 }
 
 // Caption sets the caption text for the photo.
-func (c *SendPhoto) Caption(caption String) *SendPhoto {
-	c.opts.Caption = caption.Std()
-	return c
+func (sp *SendPhoto) Caption(caption String) *SendPhoto {
+	sp.opts.Caption = caption.Std()
+	return sp
 }
 
 // HTML sets the caption parse mode to HTML.
-func (c *SendPhoto) HTML() *SendPhoto {
-	c.opts.ParseMode = "HTML"
-	return c
+func (sp *SendPhoto) HTML() *SendPhoto {
+	sp.opts.ParseMode = "HTML"
+	return sp
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
-func (c *SendPhoto) Markdown() *SendPhoto {
-	c.opts.ParseMode = "MarkdownV2"
-	return c
+func (sp *SendPhoto) Markdown() *SendPhoto {
+	sp.opts.ParseMode = "MarkdownV2"
+	return sp
 }
 
 // Silent disables notification for the photo message.
-func (c *SendPhoto) Silent() *SendPhoto {
-	c.opts.DisableNotification = true
-	return c
+func (sp *SendPhoto) Silent() *SendPhoto {
+	sp.opts.DisableNotification = true
+	return sp
 }
 
 // Protect enables content protection for the photo message.
-func (c *SendPhoto) Protect() *SendPhoto {
-	c.opts.ProtectContent = true
-	return c
+func (sp *SendPhoto) Protect() *SendPhoto {
+	sp.opts.ProtectContent = true
+	return sp
 }
 
 // Markup sets the reply markup keyboard for the photo message.
-func (c *SendPhoto) Markup(kb keyboard.KeyboardBuilder) *SendPhoto {
-	c.opts.ReplyMarkup = kb.Markup()
-	return c
+func (sp *SendPhoto) Markup(kb keyboard.KeyboardBuilder) *SendPhoto {
+	sp.opts.ReplyMarkup = kb.Markup()
+	return sp
 }
 
 // ReplyTo sets the message ID to reply to.
-func (c *SendPhoto) ReplyTo(messageID int64) *SendPhoto {
-	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return c
+func (sp *SendPhoto) ReplyTo(messageID int64) *SendPhoto {
+	sp.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return sp
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *SendPhoto) Timeout(duration time.Duration) *SendPhoto {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sp *SendPhoto) Timeout(duration time.Duration) *SendPhoto {
+	if sp.opts.RequestOpts == nil {
+		sp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	sp.opts.RequestOpts.Timeout = duration
 
-	return c
+	return sp
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *SendPhoto) APIURL(url String) *SendPhoto {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sp *SendPhoto) APIURL(url String) *SendPhoto {
+	if sp.opts.RequestOpts == nil {
+		sp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	sp.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return sp
 }
 
 // Business sets the business connection ID for the photo message.
-func (c *SendPhoto) Business(id String) *SendPhoto {
-	c.opts.BusinessConnectionId = id.Std()
-	return c
+func (sp *SendPhoto) Business(id String) *SendPhoto {
+	sp.opts.BusinessConnectionId = id.Std()
+	return sp
 }
 
 // Thread sets the message thread ID for the photo message.
-func (c *SendPhoto) Thread(id int64) *SendPhoto {
-	c.opts.MessageThreadId = id
-	return c
+func (sp *SendPhoto) Thread(id int64) *SendPhoto {
+	sp.opts.MessageThreadId = id
+	return sp
 }
 
 // ShowCaptionAboveMedia displays the caption above the photo instead of below.
-func (c *SendPhoto) ShowCaptionAboveMedia() *SendPhoto {
-	c.opts.ShowCaptionAboveMedia = true
-	return c
+func (sp *SendPhoto) ShowCaptionAboveMedia() *SendPhoto {
+	sp.opts.ShowCaptionAboveMedia = true
+	return sp
 }
 
 // To sets the target chat ID for the photo message.
-func (c *SendPhoto) To(chatID int64) *SendPhoto {
-	c.chatID = Some(chatID)
-	return c
+func (sp *SendPhoto) To(chatID int64) *SendPhoto {
+	sp.chatID = Some(chatID)
+	return sp
 }
 
 // Send sends the photo message to Telegram and returns the result.
-func (c *SendPhoto) Send() Result[*gotgbot.Message] {
-	if c.err != nil {
-		return Err[*gotgbot.Message](c.err)
+func (sp *SendPhoto) Send() Result[*gotgbot.Message] {
+	if sp.err != nil {
+		return Err[*gotgbot.Message](sp.err)
 	}
 
-	if c.file != nil {
-		defer c.file.Close()
+	if sp.file != nil {
+		defer sp.file.Close()
 	}
 
-	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
-		return ResultOf(c.ctx.Bot.Raw().SendPhoto(chatID, c.doc, c.opts))
+	return sp.ctx.timers(sp.after, sp.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := sp.chatID.UnwrapOr(sp.ctx.EffectiveChat.Id)
+		return ResultOf(sp.ctx.Bot.Raw().SendPhoto(chatID, sp.doc, sp.opts))
 	})
 }

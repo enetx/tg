@@ -19,89 +19,89 @@ type EditText struct {
 }
 
 // Entities sets custom entities for the edited text.
-func (c *EditText) Entities(e *entities.Entities) *EditText {
-	c.opts.Entities = e.Std()
-	return c
+func (et *EditText) Entities(e *entities.Entities) *EditText {
+	et.opts.Entities = e.Std()
+	return et
 }
 
 // HTML sets the text parse mode to HTML.
-func (c *EditText) HTML() *EditText {
-	c.opts.ParseMode = "HTML"
-	return c
+func (et *EditText) HTML() *EditText {
+	et.opts.ParseMode = "HTML"
+	return et
 }
 
 // Markdown sets the text parse mode to MarkdownV2.
-func (c *EditText) Markdown() *EditText {
-	c.opts.ParseMode = "MarkdownV2"
-	return c
+func (et *EditText) Markdown() *EditText {
+	et.opts.ParseMode = "MarkdownV2"
+	return et
 }
 
 // ChatID sets the target chat ID for the text edit.
-func (c *EditText) ChatID(id int64) *EditText {
-	c.chatID = Some(id)
-	return c
+func (et *EditText) ChatID(id int64) *EditText {
+	et.chatID = Some(id)
+	return et
 }
 
 // MessageID sets the target message ID to edit.
-func (c *EditText) MessageID(id int64) *EditText {
-	c.messageID = Some(id)
-	return c
+func (et *EditText) MessageID(id int64) *EditText {
+	et.messageID = Some(id)
+	return et
 }
 
 // InlineMessageID sets the inline message ID to edit.
-func (c *EditText) InlineMessageID(id String) *EditText {
-	c.opts.InlineMessageId = id.Std()
-	return c
+func (et *EditText) InlineMessageID(id String) *EditText {
+	et.opts.InlineMessageId = id.Std()
+	return et
 }
 
 // Business sets the business connection ID for the text edit.
-func (c *EditText) Business(id String) *EditText {
-	c.opts.BusinessConnectionId = id.Std()
-	return c
+func (et *EditText) Business(id String) *EditText {
+	et.opts.BusinessConnectionId = id.Std()
+	return et
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *EditText) Timeout(duration time.Duration) *EditText {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (et *EditText) Timeout(duration time.Duration) *EditText {
+	if et.opts.RequestOpts == nil {
+		et.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	et.opts.RequestOpts.Timeout = duration
 
-	return c
+	return et
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *EditText) APIURL(url String) *EditText {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (et *EditText) APIURL(url String) *EditText {
+	if et.opts.RequestOpts == nil {
+		et.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	et.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return et
 }
 
 // Markup sets the reply markup keyboard for the edited message.
-func (c *EditText) Markup(kb keyboard.KeyboardBuilder) *EditText {
+func (et *EditText) Markup(kb keyboard.KeyboardBuilder) *EditText {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
-		c.opts.ReplyMarkup = markup
+		et.opts.ReplyMarkup = markup
 	}
 
-	return c
+	return et
 }
 
 // Preview sets link preview options for the edited text.
-func (c *EditText) Preview(p *preview.Preview) *EditText {
-	c.opts.LinkPreviewOptions = p.Std()
-	return c
+func (et *EditText) Preview(p *preview.Preview) *EditText {
+	et.opts.LinkPreviewOptions = p.Std()
+	return et
 }
 
 // Send edits the message text and returns the result.
-func (c *EditText) Send() Result[*gotgbot.Message] {
-	c.opts.ChatId = c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
-	c.opts.MessageId = c.messageID.UnwrapOr(c.ctx.EffectiveMessage.MessageId)
-	msg, _, err := c.ctx.Bot.Raw().EditMessageText(c.text.Std(), c.opts)
+func (et *EditText) Send() Result[*gotgbot.Message] {
+	et.opts.ChatId = et.chatID.UnwrapOr(et.ctx.EffectiveChat.Id)
+	et.opts.MessageId = et.messageID.UnwrapOr(et.ctx.EffectiveMessage.MessageId)
+	msg, _, err := et.ctx.Bot.Raw().EditMessageText(et.text.Std(), et.opts)
 
 	return ResultOf(msg, err)
 }

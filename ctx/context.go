@@ -441,6 +441,21 @@ func (ctx *Context) GetStarTransactions() *GetStarTransactions {
 	}
 }
 
+// EditUserStarSubscription creates an EditUserStarSubscription request builder.
+func (ctx *Context) EditUserStarSubscription(
+	userID int64,
+	telegramPaymentChargeID String,
+	isCanceled bool,
+) *EditUserStarSubscription {
+	return &EditUserStarSubscription{
+		ctx:                     ctx,
+		userID:                  userID,
+		telegramPaymentChargeID: telegramPaymentChargeID,
+		isCanceled:              isCanceled,
+		opts:                    new(gotgbot.EditUserStarSubscriptionOpts),
+	}
+}
+
 // PostPhotoStory creates a new PostStory request for posting a photo story.
 func (ctx *Context) PostPhotoStory(businessConnectionID, filename String) *PostStory {
 	return &PostStory{
@@ -532,15 +547,6 @@ func (ctx *Context) MediaGroup() *MediaGroup {
 	}
 }
 
-// Game creates a new Game request to send a game.
-func (ctx *Context) Game(gameShortName String) *Game {
-	return &Game{
-		ctx:           ctx,
-		gameShortName: gameShortName,
-		opts:          new(gotgbot.SendGameOpts),
-	}
-}
-
 // ChatAction creates a new ChatAction request to send a chat action.
 func (ctx *Context) ChatAction() *ChatAction {
 	return &ChatAction{
@@ -554,6 +560,449 @@ func (ctx *Context) Delete() *Delete {
 	return &Delete{
 		ctx:  ctx,
 		opts: new(gotgbot.DeleteMessageOpts),
+	}
+}
+
+// DeleteMessages creates a new DeleteMessages request to delete multiple messages.
+func (ctx *Context) DeleteMessages() *DeleteMessages {
+	return &DeleteMessages{
+		ctx:        ctx,
+		messageIDs: NewSlice[int64](),
+		opts:       new(gotgbot.DeleteMessagesOpts),
+	}
+}
+
+// ForwardMessages creates a new ForwardMessages request to forward multiple messages.
+func (ctx *Context) ForwardMessages() *ForwardMessages {
+	return &ForwardMessages{
+		ctx:        ctx,
+		messageIDs: NewSlice[int64](),
+		opts:       new(gotgbot.ForwardMessagesOpts),
+	}
+}
+
+// CopyMessages creates a new CopyMessages request to copy multiple messages.
+func (ctx *Context) CopyMessages() *CopyMessages {
+	return &CopyMessages{
+		ctx:        ctx,
+		messageIDs: NewSlice[int64](),
+		opts:       new(gotgbot.CopyMessagesOpts),
+	}
+}
+
+// SendPaidMedia creates a new SendPaidMedia request to send paid media content.
+func (ctx *Context) SendPaidMedia(starCount int64) *SendPaidMedia {
+	return &SendPaidMedia{
+		ctx:       ctx,
+		starCount: starCount,
+		media:     NewSlice[gotgbot.InputPaidMedia](),
+		files:     NewSlice[*File](),
+		tempfiles: NewSlice[*File](),
+		opts:      new(gotgbot.SendPaidMediaOpts),
+	}
+}
+
+// CreateForumTopic creates a new CreateForumTopic request.
+func (ctx *Context) CreateForumTopic(name String) *CreateForumTopic {
+	return &CreateForumTopic{
+		ctx:  ctx,
+		name: name,
+		opts: new(gotgbot.CreateForumTopicOpts),
+	}
+}
+
+// EditForumTopic creates a new EditForumTopic request.
+func (ctx *Context) EditForumTopic(messageThreadID int64) *EditForumTopic {
+	return &EditForumTopic{
+		ctx:             ctx,
+		messageThreadID: messageThreadID,
+		opts:            new(gotgbot.EditForumTopicOpts),
+	}
+}
+
+// CloseForumTopic creates a new CloseForumTopic request.
+func (ctx *Context) CloseForumTopic(messageThreadID int64) *CloseForumTopic {
+	return &CloseForumTopic{
+		ctx:             ctx,
+		messageThreadID: messageThreadID,
+		opts:            new(gotgbot.CloseForumTopicOpts),
+	}
+}
+
+// ReopenForumTopic creates a new ReopenForumTopic request.
+func (ctx *Context) ReopenForumTopic(messageThreadID int64) *ReopenForumTopic {
+	return &ReopenForumTopic{
+		ctx:             ctx,
+		messageThreadID: messageThreadID,
+		opts:            new(gotgbot.ReopenForumTopicOpts),
+	}
+}
+
+// DeleteForumTopic creates a new DeleteForumTopic request.
+func (ctx *Context) DeleteForumTopic(messageThreadID int64) *DeleteForumTopic {
+	return &DeleteForumTopic{
+		ctx:             ctx,
+		messageThreadID: messageThreadID,
+		opts:            new(gotgbot.DeleteForumTopicOpts),
+	}
+}
+
+// EditGeneralForumTopic creates a new EditGeneralForumTopic request.
+func (ctx *Context) EditGeneralForumTopic(name String) *EditGeneralForumTopic {
+	return &EditGeneralForumTopic{
+		ctx:  ctx,
+		name: name,
+		opts: new(gotgbot.EditGeneralForumTopicOpts),
+	}
+}
+
+// CloseGeneralForumTopic creates a new CloseGeneralForumTopic request.
+func (ctx *Context) CloseGeneralForumTopic() *CloseGeneralForumTopic {
+	return &CloseGeneralForumTopic{
+		ctx:  ctx,
+		opts: new(gotgbot.CloseGeneralForumTopicOpts),
+	}
+}
+
+// SetChatTitle creates a new SetChatTitle request.
+func (ctx *Context) SetChatTitle(title String) *SetChatTitle {
+	return &SetChatTitle{
+		ctx:   ctx,
+		title: title,
+		opts:  new(gotgbot.SetChatTitleOpts),
+	}
+}
+
+// SetChatDescription creates a new SetChatDescription request.
+func (ctx *Context) SetChatDescription(description String) *SetChatDescription {
+	return &SetChatDescription{
+		ctx:  ctx,
+		opts: &gotgbot.SetChatDescriptionOpts{Description: description.Std()},
+	}
+}
+
+// SetChatPhoto creates a new SetChatPhoto request.
+func (ctx *Context) SetChatPhoto(filename String) *SetChatPhoto {
+	p := &SetChatPhoto{
+		ctx:  ctx,
+		opts: new(gotgbot.SetChatPhotoOpts),
+	}
+
+	result := tgfile.ProcessFile(filename)
+	if result.IsErr() {
+		p.err = result.Err()
+		return p
+	}
+
+	p.doc = result.Ok().Doc.(gotgbot.InputFile)
+	p.file = result.Ok().File
+
+	return p
+}
+
+// DeleteChatPhoto creates a new DeleteChatPhoto request.
+func (ctx *Context) DeleteChatPhoto() *DeleteChatPhoto {
+	return &DeleteChatPhoto{
+		ctx:  ctx,
+		opts: new(gotgbot.DeleteChatPhotoOpts),
+	}
+}
+
+// SetChatPermissions creates a new SetChatPermissions request.
+func (ctx *Context) SetChatPermissions() *SetChatPermissions {
+	return &SetChatPermissions{
+		ctx:  ctx,
+		opts: new(gotgbot.SetChatPermissionsOpts),
+	}
+}
+
+// SetChatAdministratorCustomTitle creates a new SetChatAdministratorCustomTitle request.
+func (ctx *Context) SetChatAdministratorCustomTitle(userID int64, customTitle String) *SetChatAdministratorCustomTitle {
+	return &SetChatAdministratorCustomTitle{
+		ctx:         ctx,
+		userID:      userID,
+		customTitle: customTitle,
+		opts:        new(gotgbot.SetChatAdministratorCustomTitleOpts),
+	}
+}
+
+// PinChatMessage creates a new PinChatMessage request.
+func (ctx *Context) PinChatMessage(messageID int64) *PinChatMessage {
+	return &PinChatMessage{
+		ctx:       ctx,
+		messageID: messageID,
+		opts:      new(gotgbot.PinChatMessageOpts),
+	}
+}
+
+// UnpinChatMessage creates a new UnpinChatMessage request.
+func (ctx *Context) UnpinChatMessage() *UnpinChatMessage {
+	return &UnpinChatMessage{
+		ctx:  ctx,
+		opts: new(gotgbot.UnpinChatMessageOpts),
+	}
+}
+
+// UnpinAllChatMessages creates a new UnpinAllChatMessages request.
+func (ctx *Context) UnpinAllChatMessages() *UnpinAllChatMessages {
+	return &UnpinAllChatMessages{
+		ctx:  ctx,
+		opts: new(gotgbot.UnpinAllChatMessagesOpts),
+	}
+}
+
+// GetChatAdministrators creates a new GetChatAdministrators request.
+func (ctx *Context) GetChatAdministrators() *GetChatAdministrators {
+	return &GetChatAdministrators{
+		ctx:  ctx,
+		opts: new(gotgbot.GetChatAdministratorsOpts),
+	}
+}
+
+// GetChatMemberCount creates a new GetChatMemberCount request.
+func (ctx *Context) GetChatMemberCount() *GetChatMemberCount {
+	return &GetChatMemberCount{
+		ctx:  ctx,
+		opts: new(gotgbot.GetChatMemberCountOpts),
+	}
+}
+
+// CreateNewStickerSet creates a new sticker set.
+func (ctx *Context) CreateNewStickerSet(userID int64, name, title String) *CreateNewStickerSet {
+	return &CreateNewStickerSet{
+		ctx:    ctx,
+		userID: userID,
+		name:   name,
+		title:  title,
+		opts:   new(gotgbot.CreateNewStickerSetOpts),
+	}
+}
+
+// AddStickerToSet adds a sticker to an existing sticker set.
+func (ctx *Context) AddStickerToSet(userID int64, name String) *AddStickerToSet {
+	return &AddStickerToSet{
+		ctx:    ctx,
+		userID: userID,
+		name:   name,
+		opts:   new(gotgbot.AddStickerToSetOpts),
+	}
+}
+
+// GetStickerSet gets sticker set information by name.
+func (ctx *Context) GetStickerSet(name String) *GetStickerSet {
+	return &GetStickerSet{
+		ctx:  ctx,
+		name: name,
+		opts: new(gotgbot.GetStickerSetOpts),
+	}
+}
+
+// DeleteStickerSet deletes a sticker set.
+func (ctx *Context) DeleteStickerSet(name String) *DeleteStickerSet {
+	return &DeleteStickerSet{
+		ctx:  ctx,
+		name: name,
+		opts: new(gotgbot.DeleteStickerSetOpts),
+	}
+}
+
+// DeleteStickerFromSet deletes a sticker from a set.
+func (ctx *Context) DeleteStickerFromSet(sticker String) *DeleteStickerFromSet {
+	return &DeleteStickerFromSet{
+		ctx:     ctx,
+		sticker: sticker,
+		opts:    new(gotgbot.DeleteStickerFromSetOpts),
+	}
+}
+
+// SetStickerPositionInSet sets the position of a sticker in a set.
+func (ctx *Context) SetStickerPositionInSet(sticker String, position int64) *SetStickerPositionInSet {
+	return &SetStickerPositionInSet{
+		ctx:      ctx,
+		sticker:  sticker,
+		position: position,
+		opts:     new(gotgbot.SetStickerPositionInSetOpts),
+	}
+}
+
+// SetStickerEmojiList sets the emoji list for a sticker.
+func (ctx *Context) SetStickerEmojiList(sticker String) *SetStickerEmojiList {
+	return &SetStickerEmojiList{
+		ctx:     ctx,
+		sticker: sticker,
+		opts:    new(gotgbot.SetStickerEmojiListOpts),
+	}
+}
+
+// SetStickerKeywords sets keywords for a sticker.
+func (ctx *Context) SetStickerKeywords(sticker String) *SetStickerKeywords {
+	return &SetStickerKeywords{
+		ctx:     ctx,
+		sticker: sticker,
+		opts:    new(gotgbot.SetStickerKeywordsOpts),
+	}
+}
+
+// SetStickerMaskPosition sets the mask position for a sticker.
+func (ctx *Context) SetStickerMaskPosition(sticker String) *SetStickerMaskPosition {
+	return &SetStickerMaskPosition{
+		ctx:     ctx,
+		sticker: sticker,
+		opts:    new(gotgbot.SetStickerMaskPositionOpts),
+	}
+}
+
+// SetStickerSetThumbnail sets the thumbnail for a sticker set.
+func (ctx *Context) SetStickerSetThumbnail(name String, userID int64) *SetStickerSetThumbnail {
+	return &SetStickerSetThumbnail{
+		ctx:    ctx,
+		name:   name,
+		userID: userID,
+		opts:   new(gotgbot.SetStickerSetThumbnailOpts),
+	}
+}
+
+// UploadStickerFile uploads a sticker file.
+func (ctx *Context) UploadStickerFile(userID int64, format String) *UploadStickerFile {
+	return &UploadStickerFile{
+		ctx:           ctx,
+		userID:        userID,
+		stickerFormat: format,
+		opts:          new(gotgbot.UploadStickerFileOpts),
+	}
+}
+
+// GetCustomEmojiStickers gets custom emoji stickers by IDs.
+func (ctx *Context) GetCustomEmojiStickers(ids Slice[String]) *GetCustomEmojiStickers {
+	return &GetCustomEmojiStickers{
+		ctx:            ctx,
+		customEmojiIDs: ids,
+		opts:           new(gotgbot.GetCustomEmojiStickersOpts),
+	}
+}
+
+// SetMyCommands sets the list of bot commands.
+func (ctx *Context) SetMyCommands() *SetMyCommands {
+	return &SetMyCommands{
+		ctx:  ctx,
+		opts: new(gotgbot.SetMyCommandsOpts),
+	}
+}
+
+// GetMyCommands gets the current list of bot commands.
+func (ctx *Context) GetMyCommands() *GetMyCommands {
+	return &GetMyCommands{
+		ctx:  ctx,
+		opts: new(gotgbot.GetMyCommandsOpts),
+	}
+}
+
+// DeleteMyCommands deletes the list of bot commands.
+func (ctx *Context) DeleteMyCommands() *DeleteMyCommands {
+	return &DeleteMyCommands{
+		ctx:  ctx,
+		opts: new(gotgbot.DeleteMyCommandsOpts),
+	}
+}
+
+// SetChatMenuButton sets the menu button of a chat.
+func (ctx *Context) SetChatMenuButton() *SetChatMenuButton {
+	return &SetChatMenuButton{
+		ctx:  ctx,
+		opts: new(gotgbot.SetChatMenuButtonOpts),
+	}
+}
+
+// GetChatMenuButton gets the menu button of a chat.
+func (ctx *Context) GetChatMenuButton() *GetChatMenuButton {
+	return &GetChatMenuButton{
+		ctx:  ctx,
+		opts: new(gotgbot.GetChatMenuButtonOpts),
+	}
+}
+
+// VerifyUser verifies a user.
+func (ctx *Context) VerifyUser(userID int64) *VerifyUser {
+	return &VerifyUser{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.VerifyUserOpts),
+	}
+}
+
+// VerifyChat verifies a chat.
+func (ctx *Context) VerifyChat(chatID int64) *VerifyChat {
+	return &VerifyChat{
+		ctx:    ctx,
+		chatID: chatID,
+		opts:   new(gotgbot.VerifyChatOpts),
+	}
+}
+
+// RemoveUserVerification removes verification from a user.
+func (ctx *Context) RemoveUserVerification(userID int64) *RemoveUserVerification {
+	return &RemoveUserVerification{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.RemoveUserVerificationOpts),
+	}
+}
+
+// RemoveChatVerification removes verification from a chat.
+func (ctx *Context) RemoveChatVerification(chatID int64) *RemoveChatVerification {
+	return &RemoveChatVerification{
+		ctx:    ctx,
+		chatID: chatID,
+		opts:   new(gotgbot.RemoveChatVerificationOpts),
+	}
+}
+
+// SendChecklist sends a checklist message.
+func (ctx *Context) SendChecklist(businessConnectionID, title String) *SendChecklist {
+	return &SendChecklist{
+		ctx:                  ctx,
+		checklist:            gotgbot.InputChecklist{Title: title.Std()},
+		businessConnectionID: businessConnectionID,
+		opts:                 new(gotgbot.SendChecklistOpts),
+		taskIDCounter:        0,
+	}
+}
+
+// EditMessageChecklist edits a checklist message.
+func (ctx *Context) EditMessageChecklist(businessConnectionID String) *EditMessageChecklist {
+	return &EditMessageChecklist{
+		ctx:                  ctx,
+		businessConnectionID: businessConnectionID,
+		opts:                 new(gotgbot.EditMessageChecklistOpts),
+		taskIDCounter:        0,
+	}
+}
+
+// SendGame creates a new SendGame request to send a game.
+func (ctx *Context) SendGame(gameShortName String) *SendGame {
+	return &SendGame{
+		ctx:           ctx,
+		gameShortName: gameShortName,
+		opts:          new(gotgbot.SendGameOpts),
+	}
+}
+
+// SetGameScore sets the score for a game.
+func (ctx *Context) SetGameScore(userID, score int64) *SetGameScore {
+	return &SetGameScore{
+		ctx:    ctx,
+		userID: userID,
+		score:  score,
+		opts:   new(gotgbot.SetGameScoreOpts),
+	}
+}
+
+// GetGameHighScores gets high scores for a game.
+func (ctx *Context) GetGameHighScores(userID int64) *GetGameHighScores {
+	return &GetGameHighScores{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.GetGameHighScoresOpts),
 	}
 }
 

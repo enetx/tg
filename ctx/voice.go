@@ -21,123 +21,123 @@ type SendVoice struct {
 }
 
 // CaptionEntities sets custom entities for the voice caption.
-func (c *SendVoice) CaptionEntities(e *entities.Entities) *SendVoice {
-	c.opts.CaptionEntities = e.Std()
-	return c
+func (sv *SendVoice) CaptionEntities(e *entities.Entities) *SendVoice {
+	sv.opts.CaptionEntities = e.Std()
+	return sv
 }
 
 // After schedules the voice message to be sent after the specified duration.
-func (c *SendVoice) After(duration time.Duration) *SendVoice {
-	c.after = Some(duration)
-	return c
+func (sv *SendVoice) After(duration time.Duration) *SendVoice {
+	sv.after = Some(duration)
+	return sv
 }
 
 // DeleteAfter schedules the voice message to be deleted after the specified duration.
-func (c *SendVoice) DeleteAfter(duration time.Duration) *SendVoice {
-	c.deleteAfter = Some(duration)
-	return c
+func (sv *SendVoice) DeleteAfter(duration time.Duration) *SendVoice {
+	sv.deleteAfter = Some(duration)
+	return sv
 }
 
 // Caption sets the caption text for the voice message.
-func (c *SendVoice) Caption(caption String) *SendVoice {
-	c.opts.Caption = caption.Std()
-	return c
+func (sv *SendVoice) Caption(caption String) *SendVoice {
+	sv.opts.Caption = caption.Std()
+	return sv
 }
 
 // HTML sets the caption parse mode to HTML.
-func (c *SendVoice) HTML() *SendVoice {
-	c.opts.ParseMode = "HTML"
-	return c
+func (sv *SendVoice) HTML() *SendVoice {
+	sv.opts.ParseMode = "HTML"
+	return sv
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
-func (c *SendVoice) Markdown() *SendVoice {
-	c.opts.ParseMode = "MarkdownV2"
-	return c
+func (sv *SendVoice) Markdown() *SendVoice {
+	sv.opts.ParseMode = "MarkdownV2"
+	return sv
 }
 
 // Silent disables notification for the voice message.
-func (c *SendVoice) Silent() *SendVoice {
-	c.opts.DisableNotification = true
-	return c
+func (sv *SendVoice) Silent() *SendVoice {
+	sv.opts.DisableNotification = true
+	return sv
 }
 
 // Protect enables content protection for the voice message.
-func (c *SendVoice) Protect() *SendVoice {
-	c.opts.ProtectContent = true
-	return c
+func (sv *SendVoice) Protect() *SendVoice {
+	sv.opts.ProtectContent = true
+	return sv
 }
 
 // Markup sets the reply markup keyboard for the voice message.
-func (c *SendVoice) Markup(kb keyboard.KeyboardBuilder) *SendVoice {
-	c.opts.ReplyMarkup = kb.Markup()
-	return c
+func (sv *SendVoice) Markup(kb keyboard.KeyboardBuilder) *SendVoice {
+	sv.opts.ReplyMarkup = kb.Markup()
+	return sv
 }
 
 // Duration sets the voice message duration in seconds.
-func (c *SendVoice) Duration(duration int64) *SendVoice {
-	c.opts.Duration = duration
-	return c
+func (sv *SendVoice) Duration(duration int64) *SendVoice {
+	sv.opts.Duration = duration
+	return sv
 }
 
 // ReplyTo sets the message ID to reply to.
-func (c *SendVoice) ReplyTo(messageID int64) *SendVoice {
-	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return c
+func (sv *SendVoice) ReplyTo(messageID int64) *SendVoice {
+	sv.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return sv
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *SendVoice) Timeout(duration time.Duration) *SendVoice {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sv *SendVoice) Timeout(duration time.Duration) *SendVoice {
+	if sv.opts.RequestOpts == nil {
+		sv.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	sv.opts.RequestOpts.Timeout = duration
 
-	return c
+	return sv
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *SendVoice) APIURL(url String) *SendVoice {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sv *SendVoice) APIURL(url String) *SendVoice {
+	if sv.opts.RequestOpts == nil {
+		sv.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	sv.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return sv
 }
 
 // Business sets the business connection ID for the voice message.
-func (c *SendVoice) Business(id String) *SendVoice {
-	c.opts.BusinessConnectionId = id.Std()
-	return c
+func (sv *SendVoice) Business(id String) *SendVoice {
+	sv.opts.BusinessConnectionId = id.Std()
+	return sv
 }
 
 // Thread sets the message thread ID for the voice message.
-func (c *SendVoice) Thread(id int64) *SendVoice {
-	c.opts.MessageThreadId = id
-	return c
+func (sv *SendVoice) Thread(id int64) *SendVoice {
+	sv.opts.MessageThreadId = id
+	return sv
 }
 
 // To sets the target chat ID for the voice message.
-func (c *SendVoice) To(chatID int64) *SendVoice {
-	c.chatID = Some(chatID)
-	return c
+func (sv *SendVoice) To(chatID int64) *SendVoice {
+	sv.chatID = Some(chatID)
+	return sv
 }
 
 // Send sends the voice message to Telegram and returns the result.
-func (c *SendVoice) Send() Result[*gotgbot.Message] {
-	if c.err != nil {
-		return Err[*gotgbot.Message](c.err)
+func (sv *SendVoice) Send() Result[*gotgbot.Message] {
+	if sv.err != nil {
+		return Err[*gotgbot.Message](sv.err)
 	}
 
-	if c.file != nil {
-		defer c.file.Close()
+	if sv.file != nil {
+		defer sv.file.Close()
 	}
 
-	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
-		return ResultOf(c.ctx.Bot.Raw().SendVoice(chatID, c.doc, c.opts))
+	return sv.ctx.timers(sv.after, sv.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := sv.chatID.UnwrapOr(sv.ctx.EffectiveChat.Id)
+		return ResultOf(sv.ctx.Bot.Raw().SendVoice(chatID, sv.doc, sv.opts))
 	})
 }

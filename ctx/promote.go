@@ -17,47 +17,47 @@ type Promote struct {
 }
 
 // ChatID sets the target chat ID for the promote action.
-func (c *Promote) ChatID(id int64) *Promote {
-	c.chatID = Some(id)
-	return c
+func (p *Promote) ChatID(id int64) *Promote {
+	p.chatID = Some(id)
+	return p
 }
 
 // Roles sets the administrator roles to grant to the user.
-func (c *Promote) Roles(r ...roles.Role) *Promote {
-	c.opts = roles.Roles(r...)
-	c.roles = true
+func (p *Promote) Roles(r ...roles.Role) *Promote {
+	p.opts = roles.Roles(r...)
+	p.roles = true
 
-	return c
+	return p
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *Promote) Timeout(duration time.Duration) *Promote {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (p *Promote) Timeout(duration time.Duration) *Promote {
+	if p.opts.RequestOpts == nil {
+		p.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	p.opts.RequestOpts.Timeout = duration
 
-	return c
+	return p
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *Promote) APIURL(url String) *Promote {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (p *Promote) APIURL(url String) *Promote {
+	if p.opts.RequestOpts == nil {
+		p.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	p.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return p
 }
 
 // Send promotes the user to administrator and returns the result.
-func (c *Promote) Send() Result[bool] {
-	if !c.roles {
+func (p *Promote) Send() Result[bool] {
+	if !p.roles {
 		return Err[bool](Errorf("roles are required"))
 	}
 
-	chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
-	return ResultOf(c.ctx.Bot.Raw().PromoteChatMember(chatID, c.userID, c.opts))
+	chatID := p.chatID.UnwrapOr(p.ctx.EffectiveChat.Id)
+	return ResultOf(p.ctx.Bot.Raw().PromoteChatMember(chatID, p.userID, p.opts))
 }

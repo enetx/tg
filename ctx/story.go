@@ -37,12 +37,6 @@ func (ps *PostStory) Markdown() *PostStory {
 	return ps
 }
 
-// ParseMode sets the parse mode for the caption.
-func (ps *PostStory) ParseMode(mode String) *PostStory {
-	ps.opts.ParseMode = mode.Std()
-	return ps
-}
-
 // CaptionEntities sets custom formatting entities for the caption.
 func (ps *PostStory) CaptionEntities(e *entities.Entities) *PostStory {
 	ps.opts.CaptionEntities = e.Std()
@@ -152,8 +146,8 @@ func (es *EditStory) ParseMode(mode String) *EditStory {
 }
 
 // CaptionEntities sets custom formatting entities for the caption.
-func (es *EditStory) CaptionEntities(entities []gotgbot.MessageEntity) *EditStory {
-	es.opts.CaptionEntities = entities
+func (es *EditStory) CaptionEntities(e *entities.Entities) *EditStory {
+	es.opts.CaptionEntities = e.Std()
 	return es
 }
 

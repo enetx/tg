@@ -15,41 +15,41 @@ type Unban struct {
 }
 
 // ChatID sets the target chat ID for the unban action.
-func (c *Unban) ChatID(id int64) *Unban {
-	c.chatID = Some(id)
-	return c
+func (u *Unban) ChatID(id int64) *Unban {
+	u.chatID = Some(id)
+	return u
 }
 
 // OnlyIfBanned only unbans the user if they are currently banned.
-func (c *Unban) OnlyIfBanned() *Unban {
-	c.opts.OnlyIfBanned = true
-	return c
+func (u *Unban) OnlyIfBanned() *Unban {
+	u.opts.OnlyIfBanned = true
+	return u
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *Unban) Timeout(duration time.Duration) *Unban {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (u *Unban) Timeout(duration time.Duration) *Unban {
+	if u.opts.RequestOpts == nil {
+		u.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	u.opts.RequestOpts.Timeout = duration
 
-	return c
+	return u
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *Unban) APIURL(url String) *Unban {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (u *Unban) APIURL(url String) *Unban {
+	if u.opts.RequestOpts == nil {
+		u.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	u.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return u
 }
 
 // Send executes the unban action and returns the result.
-func (c *Unban) Send() Result[bool] {
-	chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
-	return ResultOf(c.ctx.Bot.Raw().UnbanChatMember(chatID, c.userID, c.opts))
+func (u *Unban) Send() Result[bool] {
+	chatID := u.chatID.UnwrapOr(u.ctx.EffectiveChat.Id)
+	return ResultOf(u.ctx.Bot.Raw().UnbanChatMember(chatID, u.userID, u.opts))
 }

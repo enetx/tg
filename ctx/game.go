@@ -9,7 +9,7 @@ import (
 	"github.com/enetx/tg/types/effects"
 )
 
-type Game struct {
+type SendGame struct {
 	ctx           *Context
 	gameShortName String
 	opts          *gotgbot.SendGameOpts
@@ -19,100 +19,261 @@ type Game struct {
 }
 
 // After schedules the game to be sent after the specified duration.
-func (c *Game) After(duration time.Duration) *Game {
-	c.after = Some(duration)
-	return c
+func (sg *SendGame) After(duration time.Duration) *SendGame {
+	sg.after = Some(duration)
+	return sg
 }
 
 // DeleteAfter schedules the game message to be deleted after the specified duration.
-func (c *Game) DeleteAfter(duration time.Duration) *Game {
-	c.deleteAfter = Some(duration)
-	return c
+func (sg *SendGame) DeleteAfter(duration time.Duration) *SendGame {
+	sg.deleteAfter = Some(duration)
+	return sg
 }
 
 // Silent disables notification for the game message.
-func (c *Game) Silent() *Game {
-	c.opts.DisableNotification = true
-	return c
+func (sg *SendGame) Silent() *SendGame {
+	sg.opts.DisableNotification = true
+	return sg
 }
 
 // Protect enables content protection for the game message.
-func (c *Game) Protect() *Game {
-	c.opts.ProtectContent = true
-	return c
+func (sg *SendGame) Protect() *SendGame {
+	sg.opts.ProtectContent = true
+	return sg
 }
 
 // AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
-func (c *Game) AllowPaidBroadcast() *Game {
-	c.opts.AllowPaidBroadcast = true
-	return c
+func (sg *SendGame) AllowPaidBroadcast() *SendGame {
+	sg.opts.AllowPaidBroadcast = true
+	return sg
 }
 
 // Thread sets the message thread ID for the game message.
-func (c *Game) Thread(id int64) *Game {
-	c.opts.MessageThreadId = id
-	return c
+func (sg *SendGame) Thread(id int64) *SendGame {
+	sg.opts.MessageThreadId = id
+	return sg
 }
 
 // Effect sets a message effect for the game message.
-func (c *Game) Effect(effect effects.EffectType) *Game {
-	c.opts.MessageEffectId = effect.String()
-	return c
+func (sg *SendGame) Effect(effect effects.EffectType) *SendGame {
+	sg.opts.MessageEffectId = effect.String()
+	return sg
 }
 
 // ReplyTo sets the message ID to reply to.
-func (c *Game) ReplyTo(messageID int64) *Game {
-	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return c
+func (sg *SendGame) ReplyTo(messageID int64) *SendGame {
+	sg.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return sg
 }
 
 // Markup sets the reply markup keyboard for the game message.
-func (c *Game) Markup(kb keyboard.KeyboardBuilder) *Game {
+func (sg *SendGame) Markup(kb keyboard.KeyboardBuilder) *SendGame {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
-		c.opts.ReplyMarkup = markup
+		sg.opts.ReplyMarkup = markup
 	}
 
-	return c
+	return sg
 }
 
 // Business sets the business connection ID for the game message.
-func (c *Game) Business(id String) *Game {
-	c.opts.BusinessConnectionId = id.Std()
-	return c
+func (sg *SendGame) Business(id String) *SendGame {
+	sg.opts.BusinessConnectionId = id.Std()
+	return sg
 }
 
 // To sets the target chat ID for the game message.
-func (c *Game) To(chatID int64) *Game {
-	c.chatID = Some(chatID)
-	return c
+func (sg *SendGame) To(chatID int64) *SendGame {
+	sg.chatID = Some(chatID)
+	return sg
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *Game) Timeout(duration time.Duration) *Game {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sg *SendGame) Timeout(duration time.Duration) *SendGame {
+	if sg.opts.RequestOpts == nil {
+		sg.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	sg.opts.RequestOpts.Timeout = duration
 
-	return c
+	return sg
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *Game) APIURL(url String) *Game {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sg *SendGame) APIURL(url String) *SendGame {
+	if sg.opts.RequestOpts == nil {
+		sg.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	sg.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return sg
 }
 
 // Send sends the game message to Telegram and returns the result.
-func (c *Game) Send() Result[*gotgbot.Message] {
-	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
-		return ResultOf(c.ctx.Bot.Raw().SendGame(chatID, c.gameShortName.Std(), c.opts))
+func (sg *SendGame) Send() Result[*gotgbot.Message] {
+	return sg.ctx.timers(sg.after, sg.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := sg.chatID.UnwrapOr(sg.ctx.EffectiveChat.Id)
+		return ResultOf(sg.ctx.Bot.Raw().SendGame(chatID, sg.gameShortName.Std(), sg.opts))
 	})
+}
+
+// SetGameScore represents a request to set the score for a game.
+type SetGameScore struct {
+	ctx             *Context
+	userID          int64
+	score           int64
+	opts            *gotgbot.SetGameScoreOpts
+	chatID          Option[int64]
+	messageID       Option[int64]
+	inlineMessageID Option[String]
+}
+
+// UserID sets the user ID for the score.
+func (sgs *SetGameScore) UserID(userID int64) *SetGameScore {
+	sgs.userID = userID
+	return sgs
+}
+
+// Score sets the new score value.
+func (sgs *SetGameScore) Score(score int64) *SetGameScore {
+	sgs.score = score
+	return sgs
+}
+
+// Force forces the score update even if it's lower than current.
+func (sgs *SetGameScore) Force() *SetGameScore {
+	sgs.opts.Force = true
+	return sgs
+}
+
+// DisableEditMessage prevents editing the game message.
+func (sgs *SetGameScore) DisableEditMessage() *SetGameScore {
+	sgs.opts.DisableEditMessage = true
+	return sgs
+}
+
+// ChatID sets the chat ID where the game message is located.
+func (sgs *SetGameScore) ChatID(chatID int64) *SetGameScore {
+	sgs.chatID = Some(chatID)
+	return sgs
+}
+
+// MessageID sets the message ID of the game message.
+func (sgs *SetGameScore) MessageID(messageID int64) *SetGameScore {
+	sgs.messageID = Some(messageID)
+	return sgs
+}
+
+// InlineMessageID sets the inline message ID for inline games.
+func (sgs *SetGameScore) InlineMessageID(inlineMessageID String) *SetGameScore {
+	sgs.inlineMessageID = Some(inlineMessageID)
+	return sgs
+}
+
+// Timeout sets a custom timeout for this request.
+func (sgs *SetGameScore) Timeout(duration time.Duration) *SetGameScore {
+	if sgs.opts.RequestOpts == nil {
+		sgs.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	sgs.opts.RequestOpts.Timeout = duration
+
+	return sgs
+}
+
+// APIURL sets a custom API URL for this request.
+func (sgs *SetGameScore) APIURL(url String) *SetGameScore {
+	if sgs.opts.RequestOpts == nil {
+		sgs.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	sgs.opts.RequestOpts.APIURL = url.Std()
+
+	return sgs
+}
+
+// Send sets the game score and returns the result.
+func (sgs *SetGameScore) Send() Result[*gotgbot.Message] {
+	if sgs.score < 0 {
+		return Err[*gotgbot.Message](Errorf("score cannot be negative: {}", sgs.score))
+	}
+
+	sgs.opts.ChatId = sgs.chatID.UnwrapOr(sgs.ctx.EffectiveChat.Id)
+	sgs.opts.MessageId = sgs.messageID.UnwrapOr(sgs.ctx.EffectiveMessage.MessageId)
+
+	if sgs.inlineMessageID.IsSome() {
+		sgs.opts.InlineMessageId = sgs.inlineMessageID.Some().Std()
+	}
+
+	msg, _, err := sgs.ctx.Bot.Raw().SetGameScore(sgs.userID, sgs.score, sgs.opts)
+	return ResultOf(msg, err)
+}
+
+// GetGameHighScores represents a request to get high scores for a game.
+type GetGameHighScores struct {
+	ctx             *Context
+	userID          int64
+	opts            *gotgbot.GetGameHighScoresOpts
+	chatID          Option[int64]
+	messageID       Option[int64]
+	inlineMessageID Option[String]
+}
+
+// UserID sets the user ID to get scores for.
+func (gghs *GetGameHighScores) UserID(userID int64) *GetGameHighScores {
+	gghs.userID = userID
+	return gghs
+}
+
+// ChatID sets the chat ID where the game message is located.
+func (gghs *GetGameHighScores) ChatID(chatID int64) *GetGameHighScores {
+	gghs.chatID = Some(chatID)
+	return gghs
+}
+
+// MessageID sets the message ID of the game message.
+func (gghs *GetGameHighScores) MessageID(messageID int64) *GetGameHighScores {
+	gghs.messageID = Some(messageID)
+	return gghs
+}
+
+// InlineMessageID sets the inline message ID for inline games.
+func (gghs *GetGameHighScores) InlineMessageID(inlineMessageID String) *GetGameHighScores {
+	gghs.inlineMessageID = Some(inlineMessageID)
+	return gghs
+}
+
+// Timeout sets a custom timeout for this request.
+func (gghs *GetGameHighScores) Timeout(duration time.Duration) *GetGameHighScores {
+	if gghs.opts.RequestOpts == nil {
+		gghs.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	gghs.opts.RequestOpts.Timeout = duration
+
+	return gghs
+}
+
+// APIURL sets a custom API URL for this request.
+func (gghs *GetGameHighScores) APIURL(url String) *GetGameHighScores {
+	if gghs.opts.RequestOpts == nil {
+		gghs.opts.RequestOpts = new(gotgbot.RequestOpts)
+	}
+
+	gghs.opts.RequestOpts.APIURL = url.Std()
+
+	return gghs
+}
+
+// Send gets the game high scores and returns the result.
+func (gghs *GetGameHighScores) Send() Result[Slice[gotgbot.GameHighScore]] {
+	gghs.opts.ChatId = gghs.chatID.UnwrapOr(gghs.ctx.EffectiveChat.Id)
+	gghs.opts.MessageId = gghs.messageID.UnwrapOr(gghs.ctx.EffectiveMessage.MessageId)
+
+	if gghs.inlineMessageID.IsSome() {
+		gghs.opts.InlineMessageId = gghs.inlineMessageID.Some().Std()
+	}
+
+	scores, err := gghs.ctx.Bot.Raw().GetGameHighScores(gghs.userID, gghs.opts)
+	return ResultOf[Slice[gotgbot.GameHighScore]](scores, err)
 }

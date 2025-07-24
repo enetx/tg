@@ -17,7 +17,7 @@ func main() {
 		// Send gift to user with text
 		result := ctx.SendGift(String(giftID)).
 			To(ctx.EffectiveUser.Id).
-			Text("Happy holidays! 🎁").
+			Text("Happy holidays!").
 			HTML().
 			PayForUpgrade().
 			Send()
@@ -26,7 +26,7 @@ func main() {
 			return ctx.Reply("Failed to send gift").Send().Err()
 		}
 
-		return ctx.Reply("Gift sent successfully! 🎉").Send().Err()
+		return ctx.Reply("Gift sent successfully!").Send().Err()
 	})
 
 	// Command to get available gifts
@@ -100,14 +100,14 @@ func main() {
 		newOwnerChatID := int64(123456789)
 		if result := ctx.TransferGift(connectionID, ownedGiftID, newOwnerChatID).
 			StarCount(100).Send(); result.IsOk() {
-			return ctx.Reply("Gift transferred! 🎁➡️").Send().Err()
+			return ctx.Reply("Gift transferred!").Send().Err()
 		}
 
 		// Upgrade gift
 		if result := ctx.UpgradeGift(connectionID, ownedGiftID).
 			KeepOriginalDetails().
 			StarCount(500).Send(); result.IsOk() {
-			return ctx.Reply("Gift upgraded! ✨").Send().Err()
+			return ctx.Reply("Gift upgraded!").Send().Err()
 		}
 
 		return ctx.Reply("Gift operation failed").Send().Err()

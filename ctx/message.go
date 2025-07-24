@@ -21,133 +21,133 @@ type SendMessage struct {
 }
 
 // Entities sets special entities in the message text using Entities builder.
-func (c *SendMessage) Entities(e *entities.Entities) *SendMessage {
-	c.opts.Entities = e.Std()
-	return c
+func (sm *SendMessage) Entities(e *entities.Entities) *SendMessage {
+	sm.opts.Entities = e.Std()
+	return sm
 }
 
 // After schedules the message to be sent after the specified duration.
-func (c *SendMessage) After(duration time.Duration) *SendMessage {
-	c.after = Some(duration)
-	return c
+func (sm *SendMessage) After(duration time.Duration) *SendMessage {
+	sm.after = Some(duration)
+	return sm
 }
 
 // DeleteAfter schedules the message to be deleted after the specified duration.
-func (c *SendMessage) DeleteAfter(duration time.Duration) *SendMessage {
-	c.deleteAfter = Some(duration)
-	return c
+func (sm *SendMessage) DeleteAfter(duration time.Duration) *SendMessage {
+	sm.deleteAfter = Some(duration)
+	return sm
 }
 
 // To sets the target chat ID for the message.
-func (c *SendMessage) To(chatID int64) *SendMessage {
-	c.chatID = Some(chatID)
-	return c
+func (sm *SendMessage) To(chatID int64) *SendMessage {
+	sm.chatID = Some(chatID)
+	return sm
 }
 
 // HTML sets the message parse mode to HTML.
-func (c *SendMessage) HTML() *SendMessage {
-	c.opts.ParseMode = "HTML"
-	return c
+func (sm *SendMessage) HTML() *SendMessage {
+	sm.opts.ParseMode = "HTML"
+	return sm
 }
 
 // Markdown sets the message parse mode to MarkdownV2.
-func (c *SendMessage) Markdown() *SendMessage {
-	c.opts.ParseMode = "MarkdownV2"
-	return c
+func (sm *SendMessage) Markdown() *SendMessage {
+	sm.opts.ParseMode = "MarkdownV2"
+	return sm
 }
 
 // Silent disables notification for the message.
-func (c *SendMessage) Silent() *SendMessage {
-	c.opts.DisableNotification = true
-	return c
+func (sm *SendMessage) Silent() *SendMessage {
+	sm.opts.DisableNotification = true
+	return sm
 }
 
 // Effect sets a message effect for the message.
-func (c *SendMessage) Effect(effect effects.EffectType) *SendMessage {
-	c.opts.MessageEffectId = effect.String()
-	return c
+func (sm *SendMessage) Effect(effect effects.EffectType) *SendMessage {
+	sm.opts.MessageEffectId = effect.String()
+	return sm
 }
 
 // ReplyTo sets the message ID to reply to.
-func (c *SendMessage) ReplyTo(messageID int64) *SendMessage {
-	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return c
+func (sm *SendMessage) ReplyTo(messageID int64) *SendMessage {
+	sm.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return sm
 }
 
 // Markup sets the reply markup keyboard for the message.
-func (c *SendMessage) Markup(kb keyboard.KeyboardBuilder) *SendMessage {
-	c.opts.ReplyMarkup = kb.Markup()
-	return c
+func (sm *SendMessage) Markup(kb keyboard.KeyboardBuilder) *SendMessage {
+	sm.opts.ReplyMarkup = kb.Markup()
+	return sm
 }
 
 // AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
-func (c *SendMessage) AllowPaidBroadcast() *SendMessage {
-	c.opts.AllowPaidBroadcast = true
-	return c
+func (sm *SendMessage) AllowPaidBroadcast() *SendMessage {
+	sm.opts.AllowPaidBroadcast = true
+	return sm
 }
 
 // Thread sets the message thread ID for the message.
-func (c *SendMessage) Thread(id int64) *SendMessage {
-	c.opts.MessageThreadId = id
-	return c
+func (sm *SendMessage) Thread(id int64) *SendMessage {
+	sm.opts.MessageThreadId = id
+	return sm
 }
 
 // ForceReply forces users to reply to the message.
-func (c *SendMessage) ForceReply() *SendMessage {
-	c.opts.ReplyMarkup = gotgbot.ForceReply{ForceReply: true}
-	return c
+func (sm *SendMessage) ForceReply() *SendMessage {
+	sm.opts.ReplyMarkup = gotgbot.ForceReply{ForceReply: true}
+	return sm
 }
 
 // RemoveKeyboard removes the custom keyboard.
-func (c *SendMessage) RemoveKeyboard() *SendMessage {
-	c.opts.ReplyMarkup = gotgbot.ReplyKeyboardRemove{RemoveKeyboard: true}
-	return c
+func (sm *SendMessage) RemoveKeyboard() *SendMessage {
+	sm.opts.ReplyMarkup = gotgbot.ReplyKeyboardRemove{RemoveKeyboard: true}
+	return sm
 }
 
 // Preview sets link preview options for the message.
-func (c *SendMessage) Preview(p *preview.Preview) *SendMessage {
-	c.opts.LinkPreviewOptions = p.Std()
-	return c
+func (sm *SendMessage) Preview(p *preview.Preview) *SendMessage {
+	sm.opts.LinkPreviewOptions = p.Std()
+	return sm
 }
 
 // Business sets the business connection ID for the message.
-func (c *SendMessage) Business(id String) *SendMessage {
-	c.opts.BusinessConnectionId = id.Std()
-	return c
+func (sm *SendMessage) Business(id String) *SendMessage {
+	sm.opts.BusinessConnectionId = id.Std()
+	return sm
 }
 
 // Protect enables content protection for the message.
-func (c *SendMessage) Protect() *SendMessage {
-	c.opts.ProtectContent = true
-	return c
+func (sm *SendMessage) Protect() *SendMessage {
+	sm.opts.ProtectContent = true
+	return sm
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *SendMessage) Timeout(duration time.Duration) *SendMessage {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sm *SendMessage) Timeout(duration time.Duration) *SendMessage {
+	if sm.opts.RequestOpts == nil {
+		sm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	sm.opts.RequestOpts.Timeout = duration
 
-	return c
+	return sm
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *SendMessage) APIURL(url String) *SendMessage {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sm *SendMessage) APIURL(url String) *SendMessage {
+	if sm.opts.RequestOpts == nil {
+		sm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	sm.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return sm
 }
 
 // Send sends the message to Telegram and returns the result.
-func (c *SendMessage) Send() Result[*gotgbot.Message] {
-	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
-		return ResultOf(c.ctx.Bot.Raw().SendMessage(chatID, c.text.Std(), c.opts))
+func (sm *SendMessage) Send() Result[*gotgbot.Message] {
+	return sm.ctx.timers(sm.after, sm.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := sm.chatID.UnwrapOr(sm.ctx.EffectiveChat.Id)
+		return ResultOf(sm.ctx.Bot.Raw().SendMessage(chatID, sm.text.Std(), sm.opts))
 	})
 }

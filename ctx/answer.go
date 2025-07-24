@@ -14,47 +14,47 @@ type Answer struct {
 }
 
 // URL sets a URL to be opened by the user's client when the button is pressed.
-func (c *Answer) URL(url String) *Answer {
-	c.opts.Url = url.Std()
-	return c
+func (a *Answer) URL(url String) *Answer {
+	a.opts.Url = url.Std()
+	return a
 }
 
 // Alert displays the answer as an alert instead of a notification.
-func (c *Answer) Alert() *Answer {
-	c.opts.ShowAlert = true
-	return c
+func (a *Answer) Alert() *Answer {
+	a.opts.ShowAlert = true
+	return a
 }
 
 // CacheTime sets the maximum amount of time the result may be cached on Telegram's servers.
-func (c *Answer) CacheTime(seconds int64) *Answer {
-	c.opts.CacheTime = seconds
-	return c
+func (a *Answer) CacheTime(seconds int64) *Answer {
+	a.opts.CacheTime = seconds
+	return a
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *Answer) Timeout(duration time.Duration) *Answer {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (a *Answer) Timeout(duration time.Duration) *Answer {
+	if a.opts.RequestOpts == nil {
+		a.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	a.opts.RequestOpts.Timeout = duration
 
-	return c
+	return a
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *Answer) APIURL(url String) *Answer {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (a *Answer) APIURL(url String) *Answer {
+	if a.opts.RequestOpts == nil {
+		a.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	a.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return a
 }
 
 // Send sends the callback query answer and returns the result.
-func (c *Answer) Send() Result[bool] {
-	c.opts.Text = c.text.Std()
-	return ResultOf(c.ctx.Update.CallbackQuery.Answer(c.ctx.Bot.Raw(), c.opts))
+func (a *Answer) Send() Result[bool] {
+	a.opts.Text = a.text.Std()
+	return ResultOf(a.ctx.Update.CallbackQuery.Answer(a.ctx.Bot.Raw(), a.opts))
 }

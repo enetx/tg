@@ -21,171 +21,171 @@ type SendPoll struct {
 }
 
 // QuestionEntities sets custom entities for the poll question.
-func (c *SendPoll) QuestionEntities(e *entities.Entities) *SendPoll {
-	c.opts.QuestionEntities = e.Std()
-	return c
+func (sp *SendPoll) QuestionEntities(e *entities.Entities) *SendPoll {
+	sp.opts.QuestionEntities = e.Std()
+	return sp
 }
 
 // ExplanationEntities sets custom entities for the poll explanation.
-func (c *SendPoll) ExplanationEntities(e *entities.Entities) *SendPoll {
-	c.opts.ExplanationEntities = e.Std()
-	return c
+func (sp *SendPoll) ExplanationEntities(e *entities.Entities) *SendPoll {
+	sp.opts.ExplanationEntities = e.Std()
+	return sp
 }
 
 // After schedules the poll to be sent after the specified duration.
-func (c *SendPoll) After(duration time.Duration) *SendPoll {
-	c.after = Some(duration)
-	return c
+func (sp *SendPoll) After(duration time.Duration) *SendPoll {
+	sp.after = Some(duration)
+	return sp
 }
 
 // DeleteAfter schedules the poll message to be deleted after the specified duration.
-func (c *SendPoll) DeleteAfter(duration time.Duration) *SendPoll {
-	c.deleteAfter = Some(duration)
-	return c
+func (sp *SendPoll) DeleteAfter(duration time.Duration) *SendPoll {
+	sp.deleteAfter = Some(duration)
+	return sp
 }
 
 // To sets the target chat ID for the poll.
-func (c *SendPoll) To(id int64) *SendPoll {
-	c.chatID = Some(id)
-	return c
+func (sp *SendPoll) To(id int64) *SendPoll {
+	sp.chatID = Some(id)
+	return sp
 }
 
 // Option adds a poll option with the specified text.
-func (c *SendPoll) Option(text String) *SendPoll {
+func (sp *SendPoll) Option(text String) *SendPoll {
 	opt := gotgbot.InputPollOption{Text: text.Std()}
-	c.options.Push(opt)
-	return c
+	sp.options.Push(opt)
+	return sp
 }
 
 // Anonymous makes the poll anonymous.
-func (c *SendPoll) Anonymous() *SendPoll {
-	c.opts.IsAnonymous = true
-	return c
+func (sp *SendPoll) Anonymous() *SendPoll {
+	sp.opts.IsAnonymous = true
+	return sp
 }
 
 // Business sets the business connection ID for the poll.
-func (c *SendPoll) Business(id String) *SendPoll {
-	c.opts.BusinessConnectionId = id.Std()
-	return c
+func (sp *SendPoll) Business(id String) *SendPoll {
+	sp.opts.BusinessConnectionId = id.Std()
+	return sp
 }
 
 // Thread sets the message thread ID for the poll.
-func (c *SendPoll) Thread(id int64) *SendPoll {
-	c.opts.MessageThreadId = id
-	return c
+func (sp *SendPoll) Thread(id int64) *SendPoll {
+	sp.opts.MessageThreadId = id
+	return sp
 }
 
 // AllowPaidBroadcast allows the poll to be sent in paid broadcast channels.
-func (c *SendPoll) AllowPaidBroadcast() *SendPoll {
-	c.opts.AllowPaidBroadcast = true
-	return c
+func (sp *SendPoll) AllowPaidBroadcast() *SendPoll {
+	sp.opts.AllowPaidBroadcast = true
+	return sp
 }
 
 // Effect sets a message effect for the poll.
-func (c *SendPoll) Effect(effect effects.EffectType) *SendPoll {
-	c.opts.MessageEffectId = effect.String()
-	return c
+func (sp *SendPoll) Effect(effect effects.EffectType) *SendPoll {
+	sp.opts.MessageEffectId = effect.String()
+	return sp
 }
 
 // MultipleAnswers allows users to select multiple answers.
-func (c *SendPoll) MultipleAnswers() *SendPoll {
-	c.opts.AllowsMultipleAnswers = true
-	return c
+func (sp *SendPoll) MultipleAnswers() *SendPoll {
+	sp.opts.AllowsMultipleAnswers = true
+	return sp
 }
 
 // Protect enables content protection for the poll.
-func (c *SendPoll) Protect() *SendPoll {
-	c.opts.ProtectContent = true
-	return c
+func (sp *SendPoll) Protect() *SendPoll {
+	sp.opts.ProtectContent = true
+	return sp
 }
 
 // Quiz converts the poll to a quiz with the specified correct option index.
-func (c *SendPoll) Quiz(correct int) *SendPoll {
-	c.opts.Type = "quiz"
-	c.opts.CorrectOptionId = int64(correct)
-	return c
+func (sp *SendPoll) Quiz(correct int) *SendPoll {
+	sp.opts.Type = "quiz"
+	sp.opts.CorrectOptionId = int64(correct)
+	return sp
 }
 
 // Explanation sets an explanation text for quiz answers.
-func (c *SendPoll) Explanation(text String) *SendPoll {
-	c.opts.Explanation = text.Std()
-	return c
+func (sp *SendPoll) Explanation(text String) *SendPoll {
+	sp.opts.Explanation = text.Std()
+	return sp
 }
 
 // ExplanationHTML sets the explanation parse mode to HTML.
-func (c *SendPoll) ExplanationHTML() *SendPoll {
-	c.opts.ExplanationParseMode = "HTML"
-	return c
+func (sp *SendPoll) ExplanationHTML() *SendPoll {
+	sp.opts.ExplanationParseMode = "HTML"
+	return sp
 }
 
 // ExplanationMarkdown sets the explanation parse mode to MarkdownV2.
-func (c *SendPoll) ExplanationMarkdown() *SendPoll {
-	c.opts.ExplanationParseMode = "MarkdownV2"
-	return c
+func (sp *SendPoll) ExplanationMarkdown() *SendPoll {
+	sp.opts.ExplanationParseMode = "MarkdownV2"
+	return sp
 }
 
 // Silent disables notification for the poll.
-func (c *SendPoll) Silent() *SendPoll {
-	c.opts.DisableNotification = true
-	return c
+func (sp *SendPoll) Silent() *SendPoll {
+	sp.opts.DisableNotification = true
+	return sp
 }
 
 // CloseIn sets the poll to close after the specified number of seconds.
-func (c *SendPoll) CloseIn(seconds int64) *SendPoll {
-	c.opts.OpenPeriod = seconds
-	return c
+func (sp *SendPoll) CloseIn(seconds int64) *SendPoll {
+	sp.opts.OpenPeriod = seconds
+	return sp
 }
 
 // CloseAt sets the poll to close at the specified timestamp.
-func (c *SendPoll) CloseAt(timestamp int64) *SendPoll {
-	c.opts.CloseDate = timestamp
-	return c
+func (sp *SendPoll) CloseAt(timestamp int64) *SendPoll {
+	sp.opts.CloseDate = timestamp
+	return sp
 }
 
 // Closed marks the poll as already closed.
-func (c *SendPoll) Closed() *SendPoll {
-	c.opts.IsClosed = true
-	return c
+func (sp *SendPoll) Closed() *SendPoll {
+	sp.opts.IsClosed = true
+	return sp
 }
 
 // Markup sets the reply markup keyboard for the poll.
-func (c *SendPoll) Markup(kb keyboard.KeyboardBuilder) *SendPoll {
-	c.opts.ReplyMarkup = kb.Markup()
-	return c
+func (sp *SendPoll) Markup(kb keyboard.KeyboardBuilder) *SendPoll {
+	sp.opts.ReplyMarkup = kb.Markup()
+	return sp
 }
 
 // ReplyTo sets the message ID to reply to.
-func (c *SendPoll) ReplyTo(messageID int64) *SendPoll {
-	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
-	return c
+func (sp *SendPoll) ReplyTo(messageID int64) *SendPoll {
+	sp.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+	return sp
 }
 
 // Timeout sets a custom timeout for this request.
-func (c *SendPoll) Timeout(duration time.Duration) *SendPoll {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sp *SendPoll) Timeout(duration time.Duration) *SendPoll {
+	if sp.opts.RequestOpts == nil {
+		sp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.Timeout = duration
+	sp.opts.RequestOpts.Timeout = duration
 
-	return c
+	return sp
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *SendPoll) APIURL(url String) *SendPoll {
-	if c.opts.RequestOpts == nil {
-		c.opts.RequestOpts = new(gotgbot.RequestOpts)
+func (sp *SendPoll) APIURL(url String) *SendPoll {
+	if sp.opts.RequestOpts == nil {
+		sp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
-	c.opts.RequestOpts.APIURL = url.Std()
+	sp.opts.RequestOpts.APIURL = url.Std()
 
-	return c
+	return sp
 }
 
 // Send sends the poll to Telegram and returns the result.
-func (c *SendPoll) Send() Result[*gotgbot.Message] {
-	return c.ctx.timers(c.after, c.deleteAfter, func() Result[*gotgbot.Message] {
-		chatID := c.chatID.UnwrapOr(c.ctx.EffectiveChat.Id)
-		return ResultOf(c.ctx.Bot.Raw().SendPoll(chatID, c.question.Std(), c.options, c.opts))
+func (sp *SendPoll) Send() Result[*gotgbot.Message] {
+	return sp.ctx.timers(sp.after, sp.deleteAfter, func() Result[*gotgbot.Message] {
+		chatID := sp.chatID.UnwrapOr(sp.ctx.EffectiveChat.Id)
+		return ResultOf(sp.ctx.Bot.Raw().SendPoll(chatID, sp.question.Std(), sp.options, sp.opts))
 	})
 }
