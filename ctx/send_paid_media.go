@@ -68,9 +68,9 @@ func (pvb *PaidVideoBuilder) Height(height int64) *PaidVideoBuilder {
 	return pvb
 }
 
-// Duration sets the video duration in seconds.
-func (pvb *PaidVideoBuilder) Duration(duration int64) *PaidVideoBuilder {
-	pvb.video.Duration = duration
+// Duration sets the video duration.
+func (pvb *PaidVideoBuilder) Duration(duration time.Duration) *PaidVideoBuilder {
+	pvb.video.Duration = int64(duration.Seconds())
 	return pvb
 }
 
@@ -80,9 +80,9 @@ func (pvb *PaidVideoBuilder) Streamable() *PaidVideoBuilder {
 	return pvb
 }
 
-// StartTimestamp sets the start timestamp for the video.
-func (pvb *PaidVideoBuilder) StartTimestamp(seconds int64) *PaidVideoBuilder {
-	pvb.video.StartTimestamp = seconds
+// StartAt sets the video start timestamp from the beginning.
+func (pvb *PaidVideoBuilder) StartAt(offset time.Duration) *PaidVideoBuilder {
+	pvb.video.StartTimestamp = int64(offset.Seconds())
 	return pvb
 }
 
@@ -134,7 +134,7 @@ func (pvb *PaidVideoBuilder) ApplyMetadata() *PaidVideoBuilder {
 	pvb.Height(info.Height)
 
 	if !pvb.duration.IsZero() {
-		pvb.Duration(int64(pvb.duration))
+		pvb.Duration(time.Duration(pvb.duration) * time.Second)
 	}
 
 	return pvb

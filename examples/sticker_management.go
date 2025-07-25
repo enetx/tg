@@ -24,8 +24,8 @@ func main() {
 		emoji := args[4]
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
-			AddSticker(stickerFile, "static", []String{emoji}).
 			StickerType("regular").
+			Sticker(stickerFile, "static", []String{emoji}).Add().
 			Send()
 
 		if result.IsErr() {
@@ -290,9 +290,10 @@ func main() {
 		emoji := args[4]
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
-			AddSticker(tgsFile, "animated", []String{emoji}).
-			Keywords([]String{"animated", "custom"}).
 			StickerType("regular").
+			Sticker(tgsFile, "animated", []String{emoji}).
+			Keywords([]String{"animated", "custom"}).
+			Add().
 			Send()
 
 		if result.IsErr() {
@@ -316,9 +317,10 @@ func main() {
 		emoji := args[4]
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
-			AddSticker(webmFile, "video", []String{emoji}).
-			Keywords([]String{"video", "custom"}).
 			StickerType("regular").
+			Sticker(webmFile, "video", []String{emoji}).
+			Keywords([]String{"video", "custom"}).
+			Add().
 			Send()
 
 		if result.IsErr() {
@@ -331,7 +333,7 @@ func main() {
 	// Advanced: Create mask sticker set
 	b.Command("createmaskset", func(ctx *ctx.Context) error {
 		args := ctx.Args()
-		if args.Len() < 8 {
+		if args.Len() < 9 {
 			return ctx.Reply("Usage: /createmaskset <user_id> <name> <title> <sticker_file> <emoji> <point> <x_shift> <y_shift> <scale>").
 				Send().
 				Err()
@@ -348,9 +350,10 @@ func main() {
 		scale := args[8].ToFloat().Unwrap()
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
-			AddSticker(stickerFile, "static", []String{emoji}).
-			MaskPosition(point, xShift.Std(), yShift.Std(), scale.Std()).
 			StickerType("mask").
+			Sticker(stickerFile, "static", []String{emoji}).
+			MaskPosition(point, xShift.Std(), yShift.Std(), scale.Std()).
+			Add().
 			Send()
 
 		if result.IsErr() {
@@ -360,7 +363,7 @@ func main() {
 		return ctx.Reply("Mask sticker set created successfully!").Send().Err()
 	})
 
-	// Multi-sticker set creation
+	// Multi-sticker set creation with different properties
 	b.Command("multistickerset", func(ctx *ctx.Context) error {
 		args := ctx.Args()
 		if args.Len() < 7 {
@@ -374,11 +377,13 @@ func main() {
 		title := args[2]
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
-			AddSticker(args[3], "static", []String{args[4]}).
-			Keywords([]String{"first", "custom"}).
-			AddSticker(args[5], "static", []String{args[6]}).
-			Keywords([]String{"second", "custom"}).
 			StickerType("regular").
+			Sticker(args[3], "static", []String{args[4]}).
+			Keywords([]String{"first", "custom", "happy"}).
+			Add().
+			Sticker(args[5], "static", []String{args[6]}).
+			Keywords([]String{"second", "custom", "sad"}).
+			Add().
 			Send()
 
 		if result.IsErr() {

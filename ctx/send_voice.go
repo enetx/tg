@@ -74,9 +74,9 @@ func (sv *SendVoice) Markup(kb keyboard.KeyboardBuilder) *SendVoice {
 	return sv
 }
 
-// Duration sets the voice message duration in seconds.
-func (sv *SendVoice) Duration(duration int64) *SendVoice {
-	sv.opts.Duration = duration
+// Duration sets the voice message duration.
+func (sv *SendVoice) Duration(duration time.Duration) *SendVoice {
+	sv.opts.Duration = int64(duration.Seconds())
 	return sv
 }
 

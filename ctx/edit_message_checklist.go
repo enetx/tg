@@ -11,12 +11,29 @@ import (
 // EditMessageChecklist represents a request to edit a checklist message.
 type EditMessageChecklist struct {
 	ctx                  *Context
-	messageID            Option[int64]
 	checklist            gotgbot.InputChecklist
 	opts                 *gotgbot.EditMessageChecklistOpts
 	businessConnectionID String
 	chatID               Option[int64]
+	messageID            Option[int64]
 	taskIDCounter        int64
+}
+
+// Task starts building a new checklist task.
+// Returns a builder allowing you to set formatting (HTML, Markdown, Entities) and add the task.
+// After calling .Add(), the task is added to the checklist, and you can continue the chain (e.g., call .Send()).
+func (emc *EditMessageChecklist) Task(text String) *TaskBuilder[*EditMessageChecklist] {
+	return &TaskBuilder[*EditMessageChecklist]{
+		target: emc,
+		text:   text,
+		add: func(t *EditMessageChecklist, task gotgbot.InputChecklistTask) {
+			t.checklist.Tasks = append(t.checklist.Tasks, task)
+		},
+		next: func(t *EditMessageChecklist) int64 {
+			t.taskIDCounter++
+			return t.taskIDCounter
+		},
+	}
 }
 
 // MessageID sets the message ID to edit.
@@ -31,28 +48,9 @@ func (emc *EditMessageChecklist) ChatID(chatID int64) *EditMessageChecklist {
 	return emc
 }
 
-// AddTask adds a task to the checklist.
-func (emc *EditMessageChecklist) AddTask(text String) *EditMessageChecklist {
-	emc.taskIDCounter++
-
-	task := gotgbot.InputChecklistTask{
-		Id:   emc.taskIDCounter,
-		Text: text.Std(),
-	}
-
-	emc.checklist.Tasks = append(emc.checklist.Tasks, task)
-	return emc
-}
-
 // Title sets the checklist title.
 func (emc *EditMessageChecklist) Title(title String) *EditMessageChecklist {
 	emc.checklist.Title = title.Std()
-	return emc
-}
-
-// Tasks sets the entire task list at once.
-func (emc *EditMessageChecklist) Tasks(tasks []gotgbot.InputChecklistTask) *EditMessageChecklist {
-	emc.checklist.Tasks = tasks
 	return emc
 }
 

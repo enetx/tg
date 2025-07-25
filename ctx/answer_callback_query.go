@@ -25,7 +25,7 @@ func (acq *AnswerCallbackQuery) Alert() *AnswerCallbackQuery {
 	return acq
 }
 
-// CacheTime sets the maximum amount of time the result may be cached on Telegram's servers.
+// CacheFor sets the maximum amount of time the result may be cached on Telegram's servers.
 func (acq *AnswerCallbackQuery) CacheFor(duration time.Duration) *AnswerCallbackQuery {
 	acq.opts.CacheTime = int64(duration.Seconds())
 	return acq

@@ -75,9 +75,9 @@ func (sa *SendAnimation) Markup(kb keyboard.KeyboardBuilder) *SendAnimation {
 	return sa
 }
 
-// Duration sets the animation duration in seconds.
-func (sa *SendAnimation) Duration(duration int64) *SendAnimation {
-	sa.opts.Duration = duration
+// Duration sets the animation duration.
+func (sa *SendAnimation) Duration(duration time.Duration) *SendAnimation {
+	sa.opts.Duration = int64(duration.Seconds())
 	return sa
 }
 

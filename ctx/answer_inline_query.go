@@ -27,9 +27,9 @@ func (aiq *AnswerInlineQuery) AddResult(result gotgbot.InlineQueryResult) *Answe
 	return aiq
 }
 
-// CacheTime sets the maximum amount of time the result may be cached on Telegram servers.
-func (aiq *AnswerInlineQuery) CacheTime(cacheTime int64) *AnswerInlineQuery {
-	aiq.opts.CacheTime = cacheTime
+// CacheFor sets the maximum amount of time the result may be cached on Telegram servers.
+func (aiq *AnswerInlineQuery) CacheFor(duration time.Duration) *AnswerInlineQuery {
+	aiq.opts.CacheTime = int64(duration.Seconds())
 	return aiq
 }
 
@@ -45,8 +45,8 @@ func (aiq *AnswerInlineQuery) NextOffset(nextOffset String) *AnswerInlineQuery {
 	return aiq
 }
 
-// SwitchPmText sets the text of the button that appears at the top of search results.
-func (aiq *AnswerInlineQuery) SwitchPmText(text String) *AnswerInlineQuery {
+// ButtonText sets the text of the button that appears at the top of search results.
+func (aiq *AnswerInlineQuery) ButtonText(text String) *AnswerInlineQuery {
 	if aiq.opts.Button == nil {
 		aiq.opts.Button = new(gotgbot.InlineQueryResultsButton)
 	}
@@ -56,13 +56,24 @@ func (aiq *AnswerInlineQuery) SwitchPmText(text String) *AnswerInlineQuery {
 	return aiq
 }
 
-// SwitchPmParameter sets the parameter for the start message sent to the bot.
-func (aiq *AnswerInlineQuery) SwitchPmParameter(parameter String) *AnswerInlineQuery {
+// StartParameter sets the parameter for the start message sent to the bot.
+func (aiq *AnswerInlineQuery) StartParameter(parameter String) *AnswerInlineQuery {
 	if aiq.opts.Button == nil {
 		aiq.opts.Button = new(gotgbot.InlineQueryResultsButton)
 	}
 
 	aiq.opts.Button.StartParameter = parameter.Std()
+
+	return aiq
+}
+
+// WebApp sets the Web App that will be launched when the user presses the button.
+func (aiq *AnswerInlineQuery) WebApp(webApp *gotgbot.WebAppInfo) *AnswerInlineQuery {
+	if aiq.opts.Button == nil {
+		aiq.opts.Button = new(gotgbot.InlineQueryResultsButton)
+	}
+
+	aiq.opts.Button.WebApp = webApp
 
 	return aiq
 }

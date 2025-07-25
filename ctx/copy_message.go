@@ -74,6 +74,30 @@ func (c *CopyMessage) Markup(kb keyboard.KeyboardBuilder) *CopyMessage {
 	return c
 }
 
+// Thread sets the message thread ID for forum supergroups.
+func (c *CopyMessage) Thread(id int64) *CopyMessage {
+	c.opts.MessageThreadId = id
+	return c
+}
+
+// VideoStartAt sets the start timestamp for copied video.
+func (c *CopyMessage) VideoStartAt(offset time.Duration) *CopyMessage {
+	c.opts.VideoStartTimestamp = int64(offset.Seconds())
+	return c
+}
+
+// ShowCaptionAbove displays the caption above the media instead of below.
+func (c *CopyMessage) ShowCaptionAbove() *CopyMessage {
+	c.opts.ShowCaptionAboveMedia = true
+	return c
+}
+
+// AllowPaidBroadcast allows paid broadcast for high-speed delivery.
+func (c *CopyMessage) AllowPaidBroadcast() *CopyMessage {
+	c.opts.AllowPaidBroadcast = true
+	return c
+}
+
 // ReplyTo sets the message ID to reply to.
 func (c *CopyMessage) ReplyTo(messageID int64) *CopyMessage {
 	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}

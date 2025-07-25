@@ -188,9 +188,9 @@ func (sv *SendVideo) Cover(filename String) *SendVideo {
 	return sv
 }
 
-// StartTimestamp sets the video start timestamp in seconds.
-func (sv *SendVideo) StartTimestamp(seconds int64) *SendVideo {
-	sv.opts.StartTimestamp = seconds
+// StartAt sets the video start timestamp from the beginning.
+func (sv *SendVideo) StartAt(offset time.Duration) *SendVideo {
+	sv.opts.StartTimestamp = int64(offset.Seconds())
 	return sv
 }
 
@@ -220,7 +220,7 @@ func (sv *SendVideo) ApplyMetadata() *SendVideo {
 	sv.Height(info.Height)
 
 	if !sv.duration.IsZero() {
-		sv.Duration(int64(sv.duration))
+		sv.Duration(time.Duration(sv.duration) * time.Second)
 	}
 
 	return sv

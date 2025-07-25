@@ -20,6 +20,23 @@ type SendChecklist struct {
 	taskIDCounter        int64
 }
 
+// Task starts building a new checklist task.
+// Returns a builder allowing you to set formatting (HTML, Markdown, Entities) and add the task.
+// After calling .Add(), the task is added to the checklist, and you can continue the chain (e.g., call .Send()).
+func (sc *SendChecklist) Task(text String) *TaskBuilder[*SendChecklist] {
+	return &TaskBuilder[*SendChecklist]{
+		target: sc,
+		text:   text,
+		add: func(t *SendChecklist, task gotgbot.InputChecklistTask) {
+			t.checklist.Tasks = append(t.checklist.Tasks, task)
+		},
+		next: func(t *SendChecklist) int64 {
+			t.taskIDCounter++
+			return t.taskIDCounter
+		},
+	}
+}
+
 // After schedules the checklist to be sent after the specified duration.
 func (sc *SendChecklist) After(duration time.Duration) *SendChecklist {
 	sc.after = Some(duration)
@@ -29,25 +46,6 @@ func (sc *SendChecklist) After(duration time.Duration) *SendChecklist {
 // DeleteAfter schedules the checklist message to be deleted after the specified duration.
 func (sc *SendChecklist) DeleteAfter(duration time.Duration) *SendChecklist {
 	sc.deleteAfter = Some(duration)
-	return sc
-}
-
-// AddTask adds a task to the checklist.
-func (sc *SendChecklist) AddTask(text String) *SendChecklist {
-	sc.taskIDCounter++
-
-	task := gotgbot.InputChecklistTask{
-		Id:   sc.taskIDCounter,
-		Text: text.Std(),
-	}
-
-	sc.checklist.Tasks = append(sc.checklist.Tasks, task)
-	return sc
-}
-
-// Tasks sets the entire task list at once.
-func (sc *SendChecklist) Tasks(tasks []gotgbot.InputChecklistTask) *SendChecklist {
-	sc.checklist.Tasks = tasks
 	return sc
 }
 

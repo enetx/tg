@@ -4,6 +4,7 @@ import (
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/entities"
 )
 
 func main() {
@@ -21,9 +22,20 @@ func main() {
 		title := args[1]
 
 		result := ctx.SendChecklist(businessConnectionID, title).
-			AddTask("Complete task 1").
-			AddTask("Complete task 2").
-			AddTask("Complete task 3").
+			// Task with HTML formatting
+			Task("<b>Bold task</b>").HTML().Add().
+			// Task with Markdown formatting
+			Task("*Italic task*").Markdown().Add().
+			// Task with manually constructed entities
+			Task("Underline and bold").
+			Entities(
+				entities.New("Underline and bold").
+					Underline("Underline").
+					Bold("bold")).
+			Add().
+			// Plain text tasks
+			Task("Simple task 1").Add().
+			Task("Simple task 2").Add().
 			OthersCanMarkTasksAsDone().
 			Send()
 
@@ -44,11 +56,11 @@ func main() {
 		businessConnectionID := args[0]
 
 		result := ctx.SendChecklist(businessConnectionID, "Project Setup").
-			AddTask("Create repository").
-			AddTask("Setup CI/CD").
-			AddTask("Write documentation").
-			AddTask("Add tests").
-			AddTask("Deploy to production").
+			Task("Create repository").Add().
+			Task("Setup CI/CD").Add().
+			Task("Write documentation").Add().
+			Task("Add tests").Add().
+			Task("Deploy to production").Add().
 			OthersCanMarkTasksAsDone().
 			Send()
 
@@ -69,11 +81,11 @@ func main() {
 		businessConnectionID := args[0]
 
 		result := ctx.SendChecklist(businessConnectionID, "Shopping List").
-			AddTask("Milk").
-			AddTask("Bread").
-			AddTask("Eggs").
-			AddTask("Apples").
-			AddTask("Cheese").
+			Task("Milk").Add().
+			Task("Bread").Add().
+			Task("Eggs").Add().
+			Task("Apples").Add().
+			Task("Cheese").Add().
 			OthersCanMarkTasksAsDone().
 			Send()
 
@@ -97,9 +109,9 @@ func main() {
 		result := ctx.EditMessageChecklist(businessConnectionID).
 			MessageID(messageID).
 			Title("Updated Checklist").
-			AddTask("New task 1").
-			AddTask("New task 2").
-			AddTask("New task 3").
+			Task("New task 1").Add().
+			Task("New task 2").Add().
+			Task("New task 3").Add().
 			OthersCanMarkTasksAsDone().
 			Send()
 
@@ -120,10 +132,10 @@ func main() {
 		businessConnectionID := args[0]
 
 		result := ctx.SendChecklist(businessConnectionID, "Team Tasks").
-			AddTask("@alice: Review code").
-			AddTask("@bob: Update database").
-			AddTask("@charlie: Test features").
-			AddTask("@diana: Write documentation").
+			Task("@alice: Review code").Add().
+			Task("@bob: Update database").Add().
+			Task("@charlie: Test features").Add().
+			Task("@diana: Write documentation").Add().
 			OthersCanMarkTasksAsDone().
 			Send()
 
