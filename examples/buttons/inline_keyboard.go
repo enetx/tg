@@ -32,7 +32,7 @@ func main() {
 	// Handles any callback data
 	b.On.Callback.Any(func(ctx *ctx.Context) error {
 		data := ctx.Update.CallbackQuery.Data
-		return ctx.EditText(Format("Selected option: <b>{}</b>", data)).
+		return ctx.EditMessageText(Format("Selected option: <b>{}</b>", data)).
 			HTML().
 			Preview(preview.New().URL("https://enetx.surf").Above()).
 			Send().Err()

@@ -23,7 +23,7 @@ func main() {
 
 		userID := ctx.EffectiveMessage.ReplyToMessage.From.Id
 
-		ctx.Ban(userID).For(time.Hour).Send()
+		ctx.BanChatMember(userID).For(time.Hour).Send()
 
 		return ctx.Reply("User has been banned for 1 hour.").Send().Err()
 	})

@@ -59,11 +59,11 @@ func main() {
 				}
 			})
 
-			return ctx.EditMarkup(markup).Send().Err()
+			return ctx.EditMessageReplyMarkup(markup).Send().Err()
 		}
 
 		// Unknown button
-		return ctx.AnswerCallback("Unknown fruit").Send().Err()
+		return ctx.AnswerCallbackQuery("Unknown fruit").Send().Err()
 	})
 
 	b.Polling().Start()

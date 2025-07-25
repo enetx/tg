@@ -19,13 +19,13 @@ func main() {
 			Send()
 
 		// Delete original /start message
-		return ctx.Delete().Send().Err()
+		return ctx.DeleteMessage().Send().Err()
 	})
 
 	// Callback query handler
 	b.On.Callback.Equal("start_callback", func(ctx *ctx.Context) error {
-		ctx.AnswerCallback("You pressed a button!").Alert().Send()
-		return ctx.EditText("You edited the start message.").Send().Err()
+		ctx.AnswerCallbackQuery("You pressed a button!").Alert().Send()
+		return ctx.EditMessageText("You edited the start message.").Send().Err()
 	})
 
 	// Start polling

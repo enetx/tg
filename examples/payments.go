@@ -17,7 +17,7 @@ func main() {
 
 		ctx.SendMessage("Welcome! Here's your invoice.").Send()
 
-		return ctx.Invoice("Digital Product", "A cool digital item.", "invoice_payload_123", "XTR").
+		return ctx.SendInvoice("Digital Product", "A cool digital item.", "invoice_payload_123", "XTR").
 			Price("Cool item", 1).
 			Protect().
 			// Markup(keyboard.Inline().Pay("Buy with 100 ⭐")).
@@ -51,8 +51,8 @@ func main() {
 	b.On.PreCheckout.Any(func(ctx *ctx.Context) error {
 		// you can validate payload/user here if needed
 
-		// return ctx.AnswerPreCheckout().Error("Payment declined").Send().Err()
-		return ctx.AnswerPreCheckout().Ok().Send().Err()
+		// return ctx.AnswerPreCheckoutQuery().Error("Payment declined").Send().Err()
+		return ctx.AnswerPreCheckoutQuery().Ok().Send().Err()
 	})
 
 	b.On.Message.SuccessfulPayment(func(ctx *ctx.Context) error {

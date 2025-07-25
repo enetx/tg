@@ -20,7 +20,7 @@ func main() {
 			Send()
 
 		// Delete original /start message
-		return ctx.Delete().Send().Err()
+		return ctx.DeleteMessage().Send().Err()
 	})
 
 	b.Polling().DropPendingUpdates().Start()

@@ -29,6 +29,7 @@ func main() {
 		if result.Ok() {
 			return ctx.Reply("User " + args[0] + " verified successfully!").Send().Err()
 		}
+
 		return ctx.Reply("User " + args[0] + " not verified.").Send().Err()
 	})
 
@@ -69,6 +70,7 @@ func main() {
 		if result.Ok() {
 			return ctx.Reply("User " + args[0] + " verification removed!").Send().Err()
 		}
+
 		return ctx.Reply("Failed to remove user " + args[0] + " verification.").Send().Err()
 	})
 
@@ -89,6 +91,7 @@ func main() {
 		if result.Ok() {
 			return ctx.Reply("Chat " + args[0] + " verification removed!").Send().Err()
 		}
+
 		return ctx.Reply("Failed to remove chat " + args[0] + " verification.").Send().Err()
 	})
 }

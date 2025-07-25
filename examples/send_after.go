@@ -21,13 +21,13 @@ func main() {
 		// Schedule a second message to be sent after 3 seconds,
 		// and automatically delete it 5 seconds after it is sent
 		ctx.SendMessage("This message will self-destruct in 5 seconds.").
-			After(time.Second * 3).       // Delay sending by 3 seconds
-			DeleteAfter(time.Second * 5). // Delete 5 seconds after it is sent
+			After(3 * time.Second).       // Delay sending by 3 seconds
+			DeleteAfter(5 * time.Second). // Delete 5 seconds after it is sent
 			Send()
 
 		// Delete the original /start message (from the user)
 		// This should be done after responding to avoid Telegram resending the update
-		return ctx.Delete().Send().Err()
+		return ctx.DeleteMessage().Send().Err()
 	})
 
 	// Start polling for updates and drop any pending ones from before startup

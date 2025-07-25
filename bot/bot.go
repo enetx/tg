@@ -75,8 +75,8 @@ func (b *Bot) Polling() *Polling {
 }
 
 // Webhook returns a Webhook instance for receiving updates via webhook.
-func (b *Bot) Webhook() *Webhook {
-	return &Webhook{
+func (b *Bot) Webhook() *SetWebhook {
+	return &SetWebhook{
 		bot: b,
 		opt: new(gotgbot.SetWebhookOpts),
 	}
@@ -101,4 +101,132 @@ func (b *Bot) Use(middleware handlers.Handler) *Bot {
 // Middlewares returns the current global middleware stack.
 func (b *Bot) Middlewares() Slice[handlers.Handler] {
 	return b.middlewares
+}
+
+// GetMyDescription creates a new GetMyDescription request to get the bot's description.
+func (b *Bot) GetMyDescription() *GetMyDescription {
+	return &GetMyDescription{
+		bot:  b,
+		opts: new(gotgbot.GetMyDescriptionOpts),
+	}
+}
+
+// GetMyShortDescription creates a new GetMyShortDescription request to get the bot's short description.
+func (b *Bot) GetMyShortDescription() *GetMyShortDescription {
+	return &GetMyShortDescription{
+		bot:  b,
+		opts: new(gotgbot.GetMyShortDescriptionOpts),
+	}
+}
+
+// SetMyDescription creates a new SetMyDescription request to set the bot's description.
+func (b *Bot) SetMyDescription() *SetMyDescription {
+	return &SetMyDescription{
+		bot:  b,
+		opts: new(gotgbot.SetMyDescriptionOpts),
+	}
+}
+
+// SetMyShortDescription creates a new SetMyShortDescription request to set the bot's short description.
+func (b *Bot) SetMyShortDescription() *SetMyShortDescription {
+	return &SetMyShortDescription{
+		bot:  b,
+		opts: new(gotgbot.SetMyShortDescriptionOpts),
+	}
+}
+
+// SetMyName creates a new SetMyName request to set the bot's name.
+func (b *Bot) SetMyName() *SetMyName {
+	return &SetMyName{
+		bot:  b,
+		opts: new(gotgbot.SetMyNameOpts),
+	}
+}
+
+// GetMyName creates a new GetMyName request to get the bot's name.
+func (b *Bot) GetMyName() *GetMyName {
+	return &GetMyName{
+		bot:  b,
+		opts: new(gotgbot.GetMyNameOpts),
+	}
+}
+
+// SetMyCommands sets the list of bot commands.
+func (b *Bot) SetMyCommands() *SetMyCommands {
+	return &SetMyCommands{
+		bot:  b,
+		opts: new(gotgbot.SetMyCommandsOpts),
+	}
+}
+
+// GetMyCommands gets the current list of bot commands.
+func (b *Bot) GetMyCommands() *GetMyCommands {
+	return &GetMyCommands{
+		bot:  b,
+		opts: new(gotgbot.GetMyCommandsOpts),
+	}
+}
+
+// DeleteMyCommands deletes the list of bot commands.
+func (b *Bot) DeleteMyCommands() *DeleteMyCommands {
+	return &DeleteMyCommands{
+		bot:  b,
+		opts: new(gotgbot.DeleteMyCommandsOpts),
+	}
+}
+
+// LogOut creates a new LogOut request to log out from the cloud Bot API server.
+func (b *Bot) LogOut() *LogOut {
+	return &LogOut{
+		bot:  b,
+		opts: new(gotgbot.LogOutOpts),
+	}
+}
+
+// Close creates a new Close request to close the bot instance.
+func (b *Bot) Close() *Close {
+	return &Close{
+		bot:  b,
+		opts: new(gotgbot.CloseOpts),
+	}
+}
+
+// SetMyDefaultAdministratorRights creates a new SetMyDefaultAdministratorRights request.
+func (b *Bot) SetMyDefaultAdministratorRights() *SetMyDefaultAdministratorRights {
+	return &SetMyDefaultAdministratorRights{
+		bot:  b,
+		opts: new(gotgbot.SetMyDefaultAdministratorRightsOpts),
+	}
+}
+
+// GetMyDefaultAdministratorRights creates a new GetMyDefaultAdministratorRights request.
+func (b *Bot) GetMyDefaultAdministratorRights() *GetMyDefaultAdministratorRights {
+	return &GetMyDefaultAdministratorRights{
+		bot:  b,
+		opts: new(gotgbot.GetMyDefaultAdministratorRightsOpts),
+	}
+}
+
+// GetWebhookInfo creates a new GetWebhookInfo request.
+func (b *Bot) GetWebhookInfo() *GetWebhookInfo {
+	return &GetWebhookInfo{
+		bot:  b,
+		opts: new(gotgbot.GetWebhookInfoOpts),
+	}
+}
+
+// DeleteWebhook creates a new DeleteWebhook request.
+func (b *Bot) DeleteWebhook() *DeleteWebhook {
+	return &DeleteWebhook{
+		bot:  b,
+		opts: new(gotgbot.DeleteWebhookOpts),
+	}
+}
+
+// GetMe creates a new GetMe request.
+func (b *Bot) GetMe() *GetMe {
+	return &GetMe{
+		bot:  b,
+		opts: new(gotgbot.GetMeOpts),
+	}
 }

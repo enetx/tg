@@ -32,11 +32,11 @@ func main() {
 	})
 
 	b.On.Callback.Equal("cb_1", func(ctx *ctx.Context) error {
-		return ctx.AnswerCallback("clicked the callback1 button").Send().Err()
+		return ctx.AnswerCallbackQuery("clicked the callback1 button").Send().Err()
 	})
 
 	b.On.Callback.Equal("cb_2", func(ctx *ctx.Context) error {
-		return ctx.AnswerCallback("clicked the callback2 button").Alert().Send().Err()
+		return ctx.AnswerCallbackQuery("clicked the callback2 button").Alert().Send().Err()
 	},
 	)
 

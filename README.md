@@ -136,12 +136,12 @@ b.Command("menu", func(ctx *ctx.Context) error {
 
 // Handle button presses
 b.On.Callback.Equal("opt1", func(ctx *ctx.Context) error {
-    return ctx.Answer("You chose option 1!").Send().Err()
+    return ctx.AnswerCallbackQuery("You chose option 1!").Send().Err()
 })
 
 b.On.Callback.Prefix("opt", func(ctx *ctx.Context) error {
     data := ctx.Update.CallbackQuery.Data
-    return ctx.Answer("You clicked: " + String(data)).Alert().Send().Err()
+    return ctx.AnswerCallbackQuery("You clicked: " + String(data)).Alert().Send().Err()
 })
 ```
 
@@ -160,7 +160,7 @@ b.On.Callback.Equal("edit", func(ctx *ctx.Context) error {
             }
         })
 
-    return ctx.EditMarkup(markup).Send().Err()
+    return ctx.EditMessageReplyMarkup(markup).Send().Err()
 })
 ```
 
@@ -209,7 +209,7 @@ b.Command("video", func(ctx *ctx.Context) error {
     return ctx.SendVideo("video.mp4").
         Caption("Cool video").
         Spoiler().
-        Timeout(time.Minute * 3). // Custom timeout
+        Timeout(3 * time.Minute). // Custom timeout
         ApplyMetadata().          // Extract video info (ffprobe)
         GenerateThumbnail().      // Auto-generate thumbnail (ffmpeg)
         Send().Err()
@@ -220,7 +220,7 @@ b.Command("audio", func(ctx *ctx.Context) error {
     return ctx.SendAudio("song.mp3").
         Title("Song Title").
         Performer("Artist Name").
-        Duration(180).
+        Duration(180 * time.Second).
         Send().Err()
 })
 ```
@@ -602,7 +602,7 @@ b.Command("edit", func(ctx *ctx.Context) error {
     msg := ctx.Reply("Original message").Send()
 
     // Edit it
-    return ctx.EditText(msg.MessageID, "Edited message").Send().Err()
+    return ctx.EditMessageText("Edited message").MessageID(msg.Ok().MessageId).Send().Err()
 })
 
 b.Command("delete", func(ctx *ctx.Context) error {

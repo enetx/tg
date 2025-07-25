@@ -13,7 +13,7 @@ func main() {
 
 	// Set basic commands for all users
 	b.Command("setcommands", func(ctx *ctx.Context) error {
-		result := ctx.SetMyCommands().
+		result := b.SetMyCommands().
 			AddCommand("start", "Start the bot").
 			AddCommand("help", "Get help information").
 			AddCommand("settings", "Bot settings").
@@ -30,7 +30,7 @@ func main() {
 
 	// Set commands for private chats only
 	b.Command("setprivatecommands", func(ctx *ctx.Context) error {
-		result := ctx.SetMyCommands().
+		result := b.SetMyCommands().
 			AddCommand("profile", "View your profile").
 			AddCommand("notifications", "Manage notifications").
 			AddCommand("privacy", "Privacy settings").
@@ -46,7 +46,7 @@ func main() {
 
 	// Set commands for group chats only
 	b.Command("setgroupcommands", func(ctx *ctx.Context) error {
-		result := ctx.SetMyCommands().
+		result := b.SetMyCommands().
 			AddCommand("rules", "Show group rules").
 			AddCommand("stats", "Group statistics").
 			AddCommand("poll", "Create a poll").
@@ -63,7 +63,7 @@ func main() {
 
 	// Set admin-only commands
 	b.Command("setadmincommands", func(ctx *ctx.Context) error {
-		result := ctx.SetMyCommands().
+		result := b.SetMyCommands().
 			AddCommand("ban", "Ban a user").
 			AddCommand("unban", "Unban a user").
 			AddCommand("promote", "Promote to admin").
@@ -88,7 +88,7 @@ func main() {
 
 		chatID := args[0].ToInt().Unwrap().Int64()
 
-		result := ctx.SetMyCommands().
+		result := b.SetMyCommands().
 			AddCommand("welcome", "Set welcome message").
 			AddCommand("goodbye", "Set goodbye message").
 			AddCommand("customrule", "Add custom rule").
@@ -112,7 +112,7 @@ func main() {
 		chatID := args[0].ToInt().Unwrap().Int64()
 		userID := args[1].ToInt().Unwrap().Int64()
 
-		result := ctx.SetMyCommands().
+		result := b.SetMyCommands().
 			AddCommand("vip", "VIP user features").
 			AddCommand("premium", "Premium commands").
 			AddCommand("special", "Special user actions").
@@ -127,34 +127,34 @@ func main() {
 	})
 
 	// Set multilingual commands
-	b.Command("setlangcommands", func(c *ctx.Context) error {
-		args := c.Args()
+	b.Command("setlangcommands", func(ctx *ctx.Context) error {
+		args := ctx.Args()
 		if args.Len() < 1 {
-			return c.Reply("Usage: /setlangcommands <language_code> (e.g. ru, es, fr)").Send().Err()
+			return ctx.Reply("Usage: /setlangcommands <language_code> (e.g. ru, es, fr)").Send().Err()
 		}
 
 		languageCode := args[0]
 
-		var commands *ctx.SetMyCommands
+		var commands *bot.SetMyCommands
 
 		switch languageCode.Std() {
 		case "ru":
-			commands = c.SetMyCommands().
+			commands = b.SetMyCommands().
 				AddCommand("start", "Запустить бота").
 				AddCommand("pomosch", "Получить помощь").
 				AddCommand("nastroyki", "Настройки бота")
 		case "es":
-			commands = c.SetMyCommands().
+			commands = b.SetMyCommands().
 				AddCommand("start", "Iniciar el bot").
 				AddCommand("ayuda", "Obtener ayuda").
 				AddCommand("configuracion", "Configuración del bot")
 		case "fr":
-			commands = c.SetMyCommands().
+			commands = b.SetMyCommands().
 				AddCommand("start", "Démarrer le bot").
 				AddCommand("aide", "Obtenir de l'aide").
 				AddCommand("parametres", "Paramètres du bot")
 		default:
-			return c.Reply("Unsupported language code. Use: ru, es, fr").Send().Err()
+			return ctx.Reply("Unsupported language code. Use: ru, es, fr").Send().Err()
 		}
 
 		result := commands.
@@ -166,12 +166,12 @@ func main() {
 			return result.Err()
 		}
 
-		return c.Reply("Commands set for language: " + languageCode).Send().Err()
+		return ctx.Reply("Commands set for language: " + languageCode).Send().Err()
 	})
 
 	// Get current commands
 	b.Command("getcommands", func(ctx *ctx.Context) error {
-		result := ctx.GetMyCommands().
+		result := b.GetMyCommands().
 			ScopeDefault().
 			Send()
 
@@ -194,7 +194,7 @@ func main() {
 
 	// Get commands for specific scope
 	b.Command("getgroupcommands", func(ctx *ctx.Context) error {
-		result := ctx.GetMyCommands().
+		result := b.GetMyCommands().
 			ScopeAllGroupChats().
 			Send()
 
@@ -224,7 +224,7 @@ func main() {
 
 		languageCode := args[0]
 
-		result := ctx.GetMyCommands().
+		result := b.GetMyCommands().
 			LanguageCode(languageCode).
 			ScopeDefault().
 			Send()
@@ -248,7 +248,7 @@ func main() {
 
 	// Delete all commands
 	b.Command("deletecommands", func(ctx *ctx.Context) error {
-		result := ctx.DeleteMyCommands().
+		result := b.DeleteMyCommands().
 			ScopeDefault().
 			Send()
 
@@ -261,7 +261,7 @@ func main() {
 
 	// Delete group commands
 	b.Command("deletegroupcommands", func(ctx *ctx.Context) error {
-		result := ctx.DeleteMyCommands().
+		result := b.DeleteMyCommands().
 			ScopeAllGroupChats().
 			Send()
 
@@ -274,7 +274,7 @@ func main() {
 
 	// Delete admin commands
 	b.Command("deleteadmincommands", func(ctx *ctx.Context) error {
-		result := ctx.DeleteMyCommands().
+		result := b.DeleteMyCommands().
 			ScopeAllChatAdministrators().
 			Send()
 
@@ -294,7 +294,7 @@ func main() {
 
 		languageCode := args[0]
 
-		result := ctx.DeleteMyCommands().
+		result := b.DeleteMyCommands().
 			LanguageCode(languageCode).
 			ScopeDefault().
 			Send()
@@ -406,7 +406,7 @@ func main() {
 	// Advanced: Set comprehensive command structure
 	b.Command("setupbot", func(ctx *ctx.Context) error {
 		// Set default commands
-		defaultResult := ctx.SetMyCommands().
+		defaultResult := b.SetMyCommands().
 			AddCommand("start", "Start the bot").
 			AddCommand("help", "Get help").
 			AddCommand("about", "About this bot").
@@ -418,7 +418,7 @@ func main() {
 		}
 
 		// Set private commands
-		privateResult := ctx.SetMyCommands().
+		privateResult := b.SetMyCommands().
 			AddCommand("profile", "Your profile").
 			AddCommand("settings", "Personal settings").
 			AddCommand("notifications", "Notification settings").
@@ -430,7 +430,7 @@ func main() {
 		}
 
 		// Set group commands
-		groupResult := ctx.SetMyCommands().
+		groupResult := b.SetMyCommands().
 			AddCommand("rules", "Group rules").
 			AddCommand("stats", "Group statistics").
 			AddCommand("poll", "Create poll").
@@ -442,7 +442,7 @@ func main() {
 		}
 
 		// Set admin commands
-		adminResult := ctx.SetMyCommands().
+		adminResult := b.SetMyCommands().
 			AddCommand("ban", "Ban user").
 			AddCommand("unban", "Unban user").
 			AddCommand("promote", "Promote user").
@@ -474,15 +474,15 @@ func main() {
 	// Command to reset everything
 	b.Command("resetcommands", func(c *ctx.Context) error {
 		// Delete all command scopes
-		scopes := []func(c *ctx.Context) *ctx.DeleteMyCommands{
-			func(c *ctx.Context) *ctx.DeleteMyCommands { return c.DeleteMyCommands().ScopeDefault() },
-			func(c *ctx.Context) *ctx.DeleteMyCommands { return c.DeleteMyCommands().ScopeAllPrivateChats() },
-			func(c *ctx.Context) *ctx.DeleteMyCommands { return c.DeleteMyCommands().ScopeAllGroupChats() },
-			func(c *ctx.Context) *ctx.DeleteMyCommands { return c.DeleteMyCommands().ScopeAllChatAdministrators() },
+		scopes := []func(b *bot.Bot) *bot.DeleteMyCommands{
+			func(b *bot.Bot) *bot.DeleteMyCommands { return b.DeleteMyCommands().ScopeDefault() },
+			func(b *bot.Bot) *bot.DeleteMyCommands { return b.DeleteMyCommands().ScopeAllPrivateChats() },
+			func(b *bot.Bot) *bot.DeleteMyCommands { return b.DeleteMyCommands().ScopeAllGroupChats() },
+			func(b *bot.Bot) *bot.DeleteMyCommands { return b.DeleteMyCommands().ScopeAllChatAdministrators() },
 		}
 
 		for _, scopeFunc := range scopes {
-			result := scopeFunc(c).Send()
+			result := scopeFunc(b).Send()
 			if result.IsErr() {
 				return result.Err()
 			}

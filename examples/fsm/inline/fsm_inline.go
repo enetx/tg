@@ -153,7 +153,7 @@ func main() {
 	b.On.Any(func(ctx *ctx.Context) error {
 		// If the update is a text message (not a callback), delete it.
 		if ctx.Callback == nil {
-			return ctx.Delete().Send().Err()
+			return ctx.DeleteMessage().Send().Err()
 		}
 		// Ignore any other types of updates.
 		return nil

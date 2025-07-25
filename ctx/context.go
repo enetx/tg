@@ -45,36 +45,54 @@ func New(bot core.BotAPI, raw *ext.Context) *Context {
 	}
 }
 
-// Ban creates a new Ban request to ban a user from the chat.
-func (ctx *Context) Ban(userID int64) *Ban {
-	return &Ban{
+// BanChatMember creates a new BanChatMember request to ban a user from the chat.
+func (ctx *Context) BanChatMember(userID int64) *BanChatMember {
+	return &BanChatMember{
 		ctx:    ctx,
 		userID: userID,
 		opts:   new(gotgbot.BanChatMemberOpts),
 	}
 }
 
-// Unban creates a new Unban request to unban a user from the chat.
-func (ctx *Context) Unban(userID int64) *Unban {
-	return &Unban{
+// BanChatSenderChat creates a new BanChatSenderChat request to ban a sender chat.
+func (ctx *Context) BanChatSenderChat(senderChatID int64) *BanChatSenderChat {
+	return &BanChatSenderChat{
+		ctx:          ctx,
+		senderChatID: senderChatID,
+		opts:         new(gotgbot.BanChatSenderChatOpts),
+	}
+}
+
+// UnbanChatSenderChat creates a new UnbanChatSenderChat request to unban a sender chat.
+func (ctx *Context) UnbanChatSenderChat(senderChatID int64) *UnbanChatSenderChat {
+	return &UnbanChatSenderChat{
+		ctx:          ctx,
+		senderChatID: senderChatID,
+		opts:         new(gotgbot.UnbanChatSenderChatOpts),
+	}
+}
+
+// UnbanChatMember creates a new UnbanChatMember request to unban a user from the chat.
+func (ctx *Context) UnbanChatMember(userID int64) *UnbanChatMember {
+	return &UnbanChatMember{
 		ctx:    ctx,
 		userID: userID,
 		opts:   new(gotgbot.UnbanChatMemberOpts),
 	}
 }
 
-// Restrict creates a new Restrict request to restrict a user's permissions in the chat.
-func (ctx *Context) Restrict(userID int64) *Restrict {
-	return &Restrict{
+// RestrictChatMember creates a new RestrictChatMember request to restrict a user's permissions in the chat.
+func (ctx *Context) RestrictChatMember(userID int64) *RestrictChatMember {
+	return &RestrictChatMember{
 		ctx:    ctx,
 		userID: userID,
 		opts:   new(gotgbot.RestrictChatMemberOpts),
 	}
 }
 
-// Promote creates a new Promote request to promote a user to administrator in the chat.
-func (ctx *Context) Promote(userID int64) *Promote {
-	return &Promote{
+// PromoteChatMember creates a new PromoteChatMember request to promote a user to administrator in the chat.
+func (ctx *Context) PromoteChatMember(userID int64) *PromoteChatMember {
+	return &PromoteChatMember{
 		ctx:    ctx,
 		userID: userID,
 		opts:   new(gotgbot.PromoteChatMemberOpts),
@@ -90,12 +108,91 @@ func (ctx *Context) SendPoll(question String) *SendPoll {
 	}
 }
 
+// GiftPremiumSubscription creates a new GiftPremiumSubscription request.
+func (ctx *Context) GiftPremiumSubscription(userID, monthCount, starCount int64) *GiftPremiumSubscription {
+	return &GiftPremiumSubscription{
+		ctx:        ctx,
+		userID:     userID,
+		monthCount: monthCount,
+		starCount:  starCount,
+		opts:       new(gotgbot.GiftPremiumSubscriptionOpts),
+	}
+}
+
 // Reply creates a new Reply request that replies to the current message.
 func (ctx *Context) Reply(text String) *Reply {
 	return &Reply{
 		ctx:  ctx,
 		text: text,
 		opts: new(gotgbot.SendMessageOpts),
+	}
+}
+
+// EditMessageLiveLocation creates a new EditMessageLiveLocation request.
+func (ctx *Context) EditMessageLiveLocation(latitude, longitude float64) *EditMessageLiveLocation {
+	return &EditMessageLiveLocation{
+		ctx:       ctx,
+		latitude:  latitude,
+		longitude: longitude,
+		opts:      new(gotgbot.EditMessageLiveLocationOpts),
+	}
+}
+
+// StopMessageLiveLocation creates a new StopMessageLiveLocation request.
+func (ctx *Context) StopMessageLiveLocation() *StopMessageLiveLocation {
+	return &StopMessageLiveLocation{
+		ctx:  ctx,
+		opts: new(gotgbot.StopMessageLiveLocationOpts),
+	}
+}
+
+// GetUserChatBoosts creates a new GetUserChatBoosts request.
+func (ctx *Context) GetUserChatBoosts(userID int64) *GetUserChatBoosts {
+	return &GetUserChatBoosts{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.GetUserChatBoostsOpts),
+	}
+}
+
+// SavePreparedInlineMessage creates a new SavePreparedInlineMessage request.
+func (ctx *Context) SavePreparedInlineMessage(
+	userID int64,
+	result gotgbot.InlineQueryResult,
+) *SavePreparedInlineMessage {
+	return &SavePreparedInlineMessage{
+		ctx:    ctx,
+		userID: userID,
+		result: result,
+		opts:   new(gotgbot.SavePreparedInlineMessageOpts),
+	}
+}
+
+// CreateChatSubscriptionInviteLink creates a new CreateChatSubscriptionInviteLink request.
+// subscriptionPeriod must be 2592000 (30 days), subscriptionPrice is 1-10000 stars.
+func (ctx *Context) CreateChatSubscriptionInviteLink(period, price int64) *CreateChatSubscriptionInviteLink {
+	return &CreateChatSubscriptionInviteLink{
+		ctx:                ctx,
+		subscriptionPeriod: period,
+		subscriptionPrice:  price,
+		opts:               new(gotgbot.CreateChatSubscriptionInviteLinkOpts),
+	}
+}
+
+// EditChatSubscriptionInviteLink creates a new EditChatSubscriptionInviteLink request.
+func (ctx *Context) EditChatSubscriptionInviteLink(inviteLink String) *EditChatSubscriptionInviteLink {
+	return &EditChatSubscriptionInviteLink{
+		ctx:        ctx,
+		inviteLink: inviteLink,
+		opts:       new(gotgbot.EditChatSubscriptionInviteLinkOpts),
+	}
+}
+
+// StopPoll creates a new StopPoll request.
+func (ctx *Context) StopPoll() *StopPoll {
+	return &StopPoll{
+		ctx:  ctx,
+		opts: new(gotgbot.StopPollOpts),
 	}
 }
 
@@ -292,9 +389,9 @@ func (ctx *Context) SendContact(phoneNumber, firstName String) *SendContact {
 	}
 }
 
-// Forward creates a new Forward request to forward a message.
-func (ctx *Context) Forward(fromChatID, messageID int64) *Forward {
-	return &Forward{
+// ForwardMessage creates a new ForwardMessage request to forward a message.
+func (ctx *Context) ForwardMessage(fromChatID, messageID int64) *ForwardMessage {
+	return &ForwardMessage{
 		ctx:        ctx,
 		fromChatID: fromChatID,
 		messageID:  messageID,
@@ -302,9 +399,9 @@ func (ctx *Context) Forward(fromChatID, messageID int64) *Forward {
 	}
 }
 
-// Copy creates a new Copy request to copy a message.
-func (ctx *Context) Copy(fromChatID, messageID int64) *Copy {
-	return &Copy{
+// CopyMessage creates a new CopyMessage request to copy a message.
+func (ctx *Context) CopyMessage(fromChatID, messageID int64) *CopyMessage {
+	return &CopyMessage{
 		ctx:        ctx,
 		fromChatID: fromChatID,
 		messageID:  messageID,
@@ -312,26 +409,43 @@ func (ctx *Context) Copy(fromChatID, messageID int64) *Copy {
 	}
 }
 
-// EditMarkup creates a new EditMarkup request to edit a message's reply markup.
-func (ctx *Context) EditMarkup(kb keyboard.KeyboardBuilder) *EditMarkup {
-	return &EditMarkup{
+// EditMessageReplyMarkup creates a new EditMessageReplyMarkup request to edit a message's reply markup.
+func (ctx *Context) EditMessageReplyMarkup(kb keyboard.KeyboardBuilder) *EditMessageReplyMarkup {
+	return &EditMessageReplyMarkup{
 		ctx:  ctx,
 		kb:   kb,
 		opts: new(gotgbot.EditMessageReplyMarkupOpts),
 	}
 }
 
-// EditText creates a new EditText request to edit a message's text.
-func (ctx *Context) EditText(text String) *EditText {
-	return &EditText{
+// EditMessageCaption creates a new EditMessageCaption request to edit a message's caption.
+func (ctx *Context) EditMessageCaption(caption String) *EditMessageCaption {
+	return &EditMessageCaption{
+		ctx:  ctx,
+		opts: &gotgbot.EditMessageCaptionOpts{Caption: caption.Std()},
+	}
+}
+
+// EditMessageMedia creates a new EditMessageMedia request to edit message media.
+func (ctx *Context) EditMessageMedia(media gotgbot.InputMedia) *EditMessageMedia {
+	return &EditMessageMedia{
+		ctx:   ctx,
+		media: media,
+		opts:  new(gotgbot.EditMessageMediaOpts),
+	}
+}
+
+// EditMessageText creates a new EditMessageText request to edit a message's text.
+func (ctx *Context) EditMessageText(text String) *EditMessageText {
+	return &EditMessageText{
 		ctx:  ctx,
 		text: text,
 		opts: new(gotgbot.EditMessageTextOpts),
 	}
 }
 
-// AnswerCallback creates a new AnswerCallback request to answer a callback query.
-func (ctx *Context) AnswerCallback(text String) *AnswerCallbackQuery {
+// AnswerCallbackQuery creates a new AnswerCallbackQuery request to answer a callback query.
+func (ctx *Context) AnswerCallbackQuery(text String) *AnswerCallbackQuery {
 	return &AnswerCallbackQuery{
 		ctx:  ctx,
 		text: text,
@@ -347,9 +461,9 @@ func (ctx *Context) SendDice() *SendDice {
 	}
 }
 
-// Invoice creates a new Invoice request to send an invoice for payment.
-func (ctx *Context) Invoice(title, desc, payload, currency String) *Invoice {
-	return &Invoice{
+// SendInvoice creates a new SendInvoice request to send an invoice for payment.
+func (ctx *Context) SendInvoice(title, desc, payload, currency String) *SendInvoice {
+	return &SendInvoice{
 		ctx:      ctx,
 		title:    title,
 		desc:     desc,
@@ -360,11 +474,20 @@ func (ctx *Context) Invoice(title, desc, payload, currency String) *Invoice {
 	}
 }
 
-// AnswerPreCheckout creates a new AnswerPreCheckout request to answer a pre-checkout query.
-func (ctx *Context) AnswerPreCheckout() *AnswerPreCheckoutQuery {
+// AnswerPreCheckoutQuery creates a new AnswerPreCheckoutQuery request to answer a pre-checkout query.
+func (ctx *Context) AnswerPreCheckoutQuery() *AnswerPreCheckoutQuery {
 	return &AnswerPreCheckoutQuery{
 		ctx:  ctx,
 		opts: new(gotgbot.AnswerPreCheckoutQueryOpts),
+	}
+}
+
+// AnswerShippingQuery creates a new AnswerShippingQuery request to answer a shipping query.
+func (ctx *Context) AnswerShippingQuery() *AnswerShippingQuery {
+	return &AnswerShippingQuery{
+		ctx:     ctx,
+		options: NewSlice[gotgbot.ShippingOption](),
+		opts:    new(gotgbot.AnswerShippingQueryOpts),
 	}
 }
 
@@ -396,6 +519,18 @@ func (ctx *Context) ConvertGiftToStars(businessConnectionID, ownedGiftID String)
 	}
 }
 
+// CreateInvoiceLink creates a new CreateInvoiceLink request to create an invoice link.
+func (ctx *Context) CreateInvoiceLink(title, desc, payload, currency String) *CreateInvoiceLink {
+	return &CreateInvoiceLink{
+		ctx:      ctx,
+		title:    title,
+		desc:     desc,
+		payload:  payload,
+		currency: currency,
+		opts:     new(gotgbot.CreateInvoiceLinkOpts),
+	}
+}
+
 // TransferGift creates a TransferGift request builder.
 func (ctx *Context) TransferGift(businessConnectionID, ownedGiftID String, newOwnerChatID int64) *TransferGift {
 	return &TransferGift{
@@ -422,6 +557,14 @@ func (ctx *Context) GetAvailableGifts() *GetAvailableGifts {
 	return &GetAvailableGifts{
 		ctx:  ctx,
 		opts: new(gotgbot.GetAvailableGiftsOpts),
+	}
+}
+
+// GetForumTopicIconStickers gets custom emoji stickers that can be used as forum topic icons.
+func (ctx *Context) GetForumTopicIconStickers() *GetForumTopicIconStickers {
+	return &GetForumTopicIconStickers{
+		ctx:  ctx,
+		opts: new(gotgbot.GetForumTopicIconStickersOpts),
 	}
 }
 
@@ -547,17 +690,17 @@ func (ctx *Context) MediaGroup() *MediaGroup {
 	}
 }
 
-// ChatAction creates a new ChatAction request to send a chat action.
-func (ctx *Context) ChatAction() *ChatAction {
-	return &ChatAction{
+// SendChatAction creates a new SendChatAction request to send a chat action.
+func (ctx *Context) SendChatAction() *SendChatAction {
+	return &SendChatAction{
 		ctx:  ctx,
 		opts: new(gotgbot.SendChatActionOpts),
 	}
 }
 
-// Delete creates a new Delete request to delete a message.
-func (ctx *Context) Delete() *Delete {
-	return &Delete{
+// DeleteMessage creates a new DeleteMessage request to delete a message.
+func (ctx *Context) DeleteMessage() *DeleteMessage {
+	return &DeleteMessage{
 		ctx:  ctx,
 		opts: new(gotgbot.DeleteMessageOpts),
 	}
@@ -664,6 +807,30 @@ func (ctx *Context) CloseGeneralForumTopic() *CloseGeneralForumTopic {
 	}
 }
 
+// HideGeneralForumTopic hides the general forum topic.
+func (ctx *Context) HideGeneralForumTopic() *HideGeneralForumTopic {
+	return &HideGeneralForumTopic{
+		ctx:  ctx,
+		opts: new(gotgbot.HideGeneralForumTopicOpts),
+	}
+}
+
+// UnhideGeneralForumTopic unhides the general forum topic.
+func (ctx *Context) UnhideGeneralForumTopic() *UnhideGeneralForumTopic {
+	return &UnhideGeneralForumTopic{
+		ctx:  ctx,
+		opts: new(gotgbot.UnhideGeneralForumTopicOpts),
+	}
+}
+
+// ReopenGeneralForumTopic reopens the general forum topic.
+func (ctx *Context) ReopenGeneralForumTopic() *ReopenGeneralForumTopic {
+	return &ReopenGeneralForumTopic{
+		ctx:  ctx,
+		opts: new(gotgbot.ReopenGeneralForumTopicOpts),
+	}
+}
+
 // SetChatTitle creates a new SetChatTitle request.
 func (ctx *Context) SetChatTitle(title String) *SetChatTitle {
 	return &SetChatTitle{
@@ -751,11 +918,45 @@ func (ctx *Context) UnpinAllChatMessages() *UnpinAllChatMessages {
 	}
 }
 
+// UnpinAllForumTopicMessages unpins all messages in a forum topic.
+func (ctx *Context) UnpinAllForumTopicMessages(messageThreadID int64) *UnpinAllForumTopicMessages {
+	return &UnpinAllForumTopicMessages{
+		ctx:             ctx,
+		messageThreadID: messageThreadID,
+		opts:            new(gotgbot.UnpinAllForumTopicMessagesOpts),
+	}
+}
+
+// UnpinAllGeneralForumTopicMessages unpins all messages in the general forum topic.
+func (ctx *Context) UnpinAllGeneralForumTopicMessages() *UnpinAllGeneralForumTopicMessages {
+	return &UnpinAllGeneralForumTopicMessages{
+		ctx:  ctx,
+		opts: new(gotgbot.UnpinAllGeneralForumTopicMessagesOpts),
+	}
+}
+
+// GetChat creates a new GetChat request to get chat information.
+func (ctx *Context) GetChat() *GetChat {
+	return &GetChat{
+		ctx:  ctx,
+		opts: new(gotgbot.GetChatOpts),
+	}
+}
+
 // GetChatAdministrators creates a new GetChatAdministrators request.
 func (ctx *Context) GetChatAdministrators() *GetChatAdministrators {
 	return &GetChatAdministrators{
 		ctx:  ctx,
 		opts: new(gotgbot.GetChatAdministratorsOpts),
+	}
+}
+
+// GetChatMember creates a new GetChatMember request to get information about a chat member.
+func (ctx *Context) GetChatMember(userID int64) *GetChatMember {
+	return &GetChatMember{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.GetChatMemberOpts),
 	}
 }
 
@@ -825,6 +1026,50 @@ func (ctx *Context) SetStickerPositionInSet(sticker String, position int64) *Set
 	}
 }
 
+// ReplaceStickerInSet replaces a sticker in a sticker set.
+func (ctx *Context) ReplaceStickerInSet(
+	userID int64,
+	name, oldSticker String,
+	sticker gotgbot.InputSticker,
+) *ReplaceStickerInSet {
+	return &ReplaceStickerInSet{
+		ctx:        ctx,
+		userID:     userID,
+		name:       name,
+		oldSticker: oldSticker,
+		sticker:    sticker,
+		opts:       new(gotgbot.ReplaceStickerInSetOpts),
+	}
+}
+
+// SetCustomEmojiStickerSetThumbnail sets the thumbnail of a custom emoji sticker set.
+func (ctx *Context) SetCustomEmojiStickerSetThumbnail(name String) *SetCustomEmojiStickerSetThumbnail {
+	return &SetCustomEmojiStickerSetThumbnail{
+		ctx:  ctx,
+		name: name,
+		opts: new(gotgbot.SetCustomEmojiStickerSetThumbnailOpts),
+	}
+}
+
+// SetStickerSetTitle sets the title of a sticker set.
+func (ctx *Context) SetStickerSetTitle(name, title String) *SetStickerSetTitle {
+	return &SetStickerSetTitle{
+		ctx:   ctx,
+		name:  name,
+		title: title,
+		opts:  new(gotgbot.SetStickerSetTitleOpts),
+	}
+}
+
+// SetUserEmojiStatus sets the emoji status for a user.
+func (ctx *Context) SetUserEmojiStatus(userID int64) *SetUserEmojiStatus {
+	return &SetUserEmojiStatus{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.SetUserEmojiStatusOpts),
+	}
+}
+
 // SetStickerEmojiList sets the emoji list for a sticker.
 func (ctx *Context) SetStickerEmojiList(sticker String) *SetStickerEmojiList {
 	return &SetStickerEmojiList{
@@ -878,30 +1123,6 @@ func (ctx *Context) GetCustomEmojiStickers(ids Slice[String]) *GetCustomEmojiSti
 		ctx:            ctx,
 		customEmojiIDs: ids,
 		opts:           new(gotgbot.GetCustomEmojiStickersOpts),
-	}
-}
-
-// SetMyCommands sets the list of bot commands.
-func (ctx *Context) SetMyCommands() *SetMyCommands {
-	return &SetMyCommands{
-		ctx:  ctx,
-		opts: new(gotgbot.SetMyCommandsOpts),
-	}
-}
-
-// GetMyCommands gets the current list of bot commands.
-func (ctx *Context) GetMyCommands() *GetMyCommands {
-	return &GetMyCommands{
-		ctx:  ctx,
-		opts: new(gotgbot.GetMyCommandsOpts),
-	}
-}
-
-// DeleteMyCommands deletes the list of bot commands.
-func (ctx *Context) DeleteMyCommands() *DeleteMyCommands {
-	return &DeleteMyCommands{
-		ctx:  ctx,
-		opts: new(gotgbot.DeleteMyCommandsOpts),
 	}
 }
 
@@ -1085,7 +1306,7 @@ func (ctx *Context) DeleteChatStickerSet() *DeleteChatStickerSet {
 }
 
 // AnswerWebAppQuery answers a web app query.
-func (ctx *Context) AnswerWebApp(webAppQueryID String, result gotgbot.InlineQueryResult) *AnswerWebAppQuery {
+func (ctx *Context) AnswerWebAppQuery(webAppQueryID String, result gotgbot.InlineQueryResult) *AnswerWebAppQuery {
 	return &AnswerWebAppQuery{
 		ctx:           ctx,
 		webAppQueryID: webAppQueryID,
@@ -1103,6 +1324,43 @@ func (ctx *Context) SetMessageReaction(messageID int64) *SetMessageReaction {
 	}
 }
 
+// AnswerInlineQuery answers an inline query.
+func (ctx *Context) AnswerInlineQuery(inlineQueryID String) *AnswerInlineQuery {
+	return &AnswerInlineQuery{
+		ctx:           ctx,
+		inlineQueryID: inlineQueryID,
+		results:       NewSlice[gotgbot.InlineQueryResult](),
+		opts:          new(gotgbot.AnswerInlineQueryOpts),
+	}
+}
+
+// GetUserProfilePhotos gets user profile photos.
+func (ctx *Context) GetUserProfilePhotos(userID int64) *GetUserProfilePhotos {
+	return &GetUserProfilePhotos{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.GetUserProfilePhotosOpts),
+	}
+}
+
+// ExportChatInviteLink exports a basic chat invite link.
+func (ctx *Context) ExportChatInviteLink() *ExportChatInviteLink {
+	return &ExportChatInviteLink{
+		ctx:  ctx,
+		opts: new(gotgbot.ExportChatInviteLinkOpts),
+	}
+}
+
+// SetPassportDataErrors sets passport data errors for the specified user.
+func (ctx *Context) SetPassportDataErrors(userID int64) *SetPassportDataErrors {
+	return &SetPassportDataErrors{
+		ctx:    ctx,
+		userID: userID,
+		errors: NewSlice[gotgbot.PassportElementError](),
+		opts:   new(gotgbot.SetPassportDataErrorsOpts),
+	}
+}
+
 func (ctx *Context) timers(
 	after Option[time.Duration],
 	deleteAfter Option[time.Duration],
@@ -1113,7 +1371,7 @@ func (ctx *Context) timers(
 			<-time.After(after.Some())
 			msg := send()
 			if msg.IsOk() && deleteAfter.IsSome() {
-				ctx.Delete().MessageID(msg.Ok().MessageId).After(deleteAfter.Some()).Send()
+				ctx.DeleteMessage().MessageID(msg.Ok().MessageId).After(deleteAfter.Some()).Send()
 			}
 		}()
 
@@ -1123,7 +1381,7 @@ func (ctx *Context) timers(
 	msg := send()
 
 	if msg.IsOk() && deleteAfter.IsSome() {
-		ctx.Delete().MessageID(msg.Ok().MessageId).After(deleteAfter.Some()).Send()
+		ctx.DeleteMessage().MessageID(msg.Ok().MessageId).After(deleteAfter.Some()).Send()
 	}
 
 	return msg

@@ -70,7 +70,7 @@ func main() {
 	// Handle callback button press
 	b.On.Callback.Equal(CallbackButton, func(tgctx *ctx.Context) error {
 		url := Format(furl, tgctx.Bot, UsingKeyboard)
-		return tgctx.Answer("").URL(url).Send().Err()
+		return tgctx.AnswerCallbackQuery("").URL(url).Send().Err()
 	})
 
 	// Start polling for updates

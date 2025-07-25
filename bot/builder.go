@@ -75,13 +75,27 @@ func (b *BotBuilder) Build() Result[*Bot] {
 		BotClient: b.opts.BotClient,
 	}
 
+	bot := &Bot{
+		token:      b.token,
+		raw:        raw,
+		dispatcher: ext.NewDispatcher(nil),
+	}
+
+	bot.updater = ext.NewUpdater(bot.dispatcher, nil)
+	bot.On = handlers.NewHandlers(bot)
+
 	if !b.opts.DisableTokenCheck {
-		user, err := raw.GetMe(&gotgbot.GetMeOpts{RequestOpts: b.opts.RequestOpts})
-		if err != nil {
-			return Err[*Bot](fmt.Errorf("failed to check bot token: %w", err))
+		user := bot.GetMe()
+		if b.opts.RequestOpts != nil {
+			user = user.Timeout(b.opts.RequestOpts.Timeout).APIURL(String(b.opts.RequestOpts.APIURL))
+		}
+		
+		result := user.Send()
+		if result.IsErr() {
+			return Err[*Bot](fmt.Errorf("failed to check bot token: %w", result.Err()))
 		}
 
-		raw.User = *user
+		raw.User = *result.Ok()
 	} else {
 		split := b.token.Split(":").Collect()
 		if split.Len().Ne(2) {
@@ -100,15 +114,6 @@ func (b *BotBuilder) Build() Result[*Bot] {
 			Username:  "<unknown>",
 		}
 	}
-
-	bot := &Bot{
-		token:      b.token,
-		raw:        raw,
-		dispatcher: ext.NewDispatcher(nil),
-	}
-
-	bot.updater = ext.NewUpdater(bot.dispatcher, nil)
-	bot.On = handlers.NewHandlers(bot)
 
 	return Ok(bot)
 }

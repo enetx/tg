@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
@@ -20,7 +22,7 @@ func main() {
 		return ctx.PostPhotoStory("your_business_connection_id", "photo.jpg").
 			Caption("Amazing photo story!").
 			HTML().
-			ActivePeriod(86400). // 24 hours
+			ActiveFor(24 * time.Hour). // 24 hours
 			PostToChatPage().
 			Send().Err()
 	})

@@ -38,7 +38,7 @@ func main() {
 			}
 		})
 
-		return ctx.EditMarkup(markup).Send().Err()
+		return ctx.EditMessageReplyMarkup(markup).Send().Err()
 	})
 
 	// Handle toggle for Banan button
@@ -52,7 +52,7 @@ func main() {
 			}
 		})
 
-		return ctx.EditMarkup(markup).Send().Err()
+		return ctx.EditMessageReplyMarkup(markup).Send().Err()
 	})
 
 	b.Polling().DropPendingUpdates().Start()

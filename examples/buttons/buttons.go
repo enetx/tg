@@ -26,11 +26,11 @@ func main() {
 	})
 
 	b.On.Callback.Equal("cb_1", func(ctx *ctx.Context) error {
-		return ctx.AnswerCallback("clicked the callback1 button").Send().Err()
+		return ctx.AnswerCallbackQuery("clicked the callback1 button").Send().Err()
 	})
 
 	b.On.Callback.Equal("cb_2", func(ctx *ctx.Context) error {
-		return ctx.AnswerCallback("clicked the callback2 button").Alert().Send().Err()
+		return ctx.AnswerCallbackQuery("clicked the callback2 button").Alert().Send().Err()
 	})
 
 	b.On.Callback.Equal("edit_cb1", func(ctx *ctx.Context) error {
@@ -44,7 +44,7 @@ func main() {
 				}
 			})
 
-		return ctx.EditMarkup(markup).Send().Err()
+		return ctx.EditMessageReplyMarkup(markup).Send().Err()
 	})
 
 	b.On.Callback.Equal("delete_cb1", func(ctx *ctx.Context) error {
@@ -61,11 +61,11 @@ func main() {
 				}
 			})
 
-		return ctx.EditMarkup(markup).Send().Err()
+		return ctx.EditMessageReplyMarkup(markup).Send().Err()
 	})
 
 	b.On.Callback.Equal("clear", func(ctx *ctx.Context) error {
-		return ctx.EditMarkup(nil).Send().Err()
+		return ctx.EditMessageReplyMarkup(nil).Send().Err()
 	})
 
 	b.Polling().AllowedUpdates().Start()

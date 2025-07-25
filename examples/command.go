@@ -13,9 +13,15 @@ func main() {
 
 	// /start command - responds to !start as well, works on edited messages
 	b.Command("start", func(ctx *ctx.Context) error { return ctx.SendMessage("Start command triggered!").Send().Err() }).
-		Triggers('!').  // reacts to commands starting with '!', e.g. !start
-		AllowEdited().  // allows handling of edited messages
-		AllowChannel(). // allows handling of messages from channels
+
+		// reacts to commands starting with '!', e.g. !start
+		Triggers('!').
+
+		// allows handling of edited messages
+		AllowEdited().
+
+		// allows handling of messages from channels
+		AllowChannel().
 		Register()
 
 	// /announce command - works in channels

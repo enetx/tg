@@ -26,7 +26,7 @@ func main() {
 		}
 
 		// Invoice with timeout
-		ctx.Invoice("Test Product", "Test Description", "test_payload", "USD").
+		ctx.SendInvoice("Test Product", "Test Description", "test_payload", "USD").
 			Price("Product", 100).
 			Timeout(15 * time.Second).
 			APIURL("https://custom.api.telegram.org/bot" + token).
