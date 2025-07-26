@@ -14,6 +14,13 @@ type VerifyChat struct {
 	opts   *gotgbot.VerifyChatOpts
 }
 
+// CustomDescription for the verification; 0-70 characters.
+// Must be empty if the organization isn't allowed to provide a custom verification description.
+func (vc *VerifyChat) CustomDescription(description String) *VerifyChat {
+	vc.opts.CustomDescription = description.Std()
+	return vc
+}
+
 // Timeout sets a custom timeout for this request.
 func (vc *VerifyChat) Timeout(duration time.Duration) *VerifyChat {
 	if vc.opts.RequestOpts == nil {

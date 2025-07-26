@@ -633,7 +633,7 @@ if err := ctx.Reply("Hello").Send().Err(); err != nil {
 }
 
 // Or chain with result handling
-result := ctx.Photo("image.jpg").Send()
+result := ctx.SendPhoto("image.jpg").Send()
 if result.IsErr() {
     log.Printf("Failed to send photo: %v", result.Err())
 }

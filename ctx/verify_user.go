@@ -14,6 +14,13 @@ type VerifyUser struct {
 	opts   *gotgbot.VerifyUserOpts
 }
 
+// CustomDescription for the verification; 0-70 characters.
+// Must be empty if the organization isn't allowed to provide a custom verification description.
+func (vu *VerifyUser) CustomDescription(description String) *VerifyUser {
+	vu.opts.CustomDescription = description.Std()
+	return vu
+}
+
 // Timeout sets a custom timeout for this request.
 func (vu *VerifyUser) Timeout(duration time.Duration) *VerifyUser {
 	if vu.opts.RequestOpts == nil {
