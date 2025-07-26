@@ -121,7 +121,7 @@ func (sv *SendVideo) Protect() *SendVideo {
 }
 
 // Markup sets the reply markup keyboard for the video message.
-func (sv *SendVideo) Markup(kb keyboard.KeyboardBuilder) *SendVideo {
+func (sv *SendVideo) Markup(kb keyboard.Keyboard) *SendVideo {
 	sv.opts.ReplyMarkup = kb.Markup()
 	return sv
 }

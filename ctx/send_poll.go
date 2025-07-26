@@ -149,7 +149,7 @@ func (sp *SendPoll) Closed() *SendPoll {
 }
 
 // Markup sets the reply markup keyboard for the poll.
-func (sp *SendPoll) Markup(kb keyboard.KeyboardBuilder) *SendPoll {
+func (sp *SendPoll) Markup(kb keyboard.Keyboard) *SendPoll {
 	sp.opts.ReplyMarkup = kb.Markup()
 	return sp
 }

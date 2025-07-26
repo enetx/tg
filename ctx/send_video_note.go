@@ -45,7 +45,7 @@ func (svn *SendVideoNote) Protect() *SendVideoNote {
 }
 
 // Markup sets the reply markup keyboard for the video note message.
-func (svn *SendVideoNote) Markup(kb keyboard.KeyboardBuilder) *SendVideoNote {
+func (svn *SendVideoNote) Markup(kb keyboard.Keyboard) *SendVideoNote {
 	svn.opts.ReplyMarkup = kb.Markup()
 	return svn
 }

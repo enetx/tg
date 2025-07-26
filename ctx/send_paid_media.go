@@ -278,7 +278,7 @@ func (spm *SendPaidMedia) ReplyTo(messageID int64) *SendPaidMedia {
 }
 
 // Markup sets the reply markup keyboard.
-func (spm *SendPaidMedia) Markup(kb keyboard.KeyboardBuilder) *SendPaidMedia {
+func (spm *SendPaidMedia) Markup(kb keyboard.Keyboard) *SendPaidMedia {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
 		spm.opts.ReplyMarkup = markup
 	}

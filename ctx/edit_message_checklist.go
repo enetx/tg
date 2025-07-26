@@ -67,7 +67,7 @@ func (emc *EditMessageChecklist) OthersCanMarkTasksAsDone() *EditMessageChecklis
 }
 
 // Markup sets the reply markup keyboard for the checklist message.
-func (emc *EditMessageChecklist) Markup(kb keyboard.KeyboardBuilder) *EditMessageChecklist {
+func (emc *EditMessageChecklist) Markup(kb keyboard.Keyboard) *EditMessageChecklist {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
 		emc.opts.ReplyMarkup = markup
 	}

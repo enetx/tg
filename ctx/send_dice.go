@@ -96,7 +96,7 @@ func (sd *SendDice) ReplyTo(id int64) *SendDice {
 }
 
 // Markup sets the reply markup keyboard for the dice message.
-func (sd *SendDice) Markup(kb keyboard.KeyboardBuilder) *SendDice {
+func (sd *SendDice) Markup(kb keyboard.Keyboard) *SendDice {
 	sd.opts.ReplyMarkup = kb.Markup()
 	return sd
 }

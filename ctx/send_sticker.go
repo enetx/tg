@@ -44,7 +44,7 @@ func (ss *SendSticker) Protect() *SendSticker {
 }
 
 // Markup sets the reply markup keyboard for the sticker message.
-func (ss *SendSticker) Markup(kb keyboard.KeyboardBuilder) *SendSticker {
+func (ss *SendSticker) Markup(kb keyboard.Keyboard) *SendSticker {
 	ss.opts.ReplyMarkup = kb.Markup()
 	return ss
 }

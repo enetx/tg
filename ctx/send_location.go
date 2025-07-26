@@ -43,7 +43,7 @@ func (sl *SendLocation) Protect() *SendLocation {
 }
 
 // Markup sets the reply markup keyboard for the location message.
-func (sl *SendLocation) Markup(kb keyboard.KeyboardBuilder) *SendLocation {
+func (sl *SendLocation) Markup(kb keyboard.Keyboard) *SendLocation {
 	sl.opts.ReplyMarkup = kb.Markup()
 	return sl
 }

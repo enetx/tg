@@ -43,7 +43,7 @@ func (sc *SendContact) Protect() *SendContact {
 }
 
 // Markup sets the reply markup keyboard for the contact message.
-func (sc *SendContact) Markup(kb keyboard.KeyboardBuilder) *SendContact {
+func (sc *SendContact) Markup(kb keyboard.Keyboard) *SendContact {
 	sc.opts.ReplyMarkup = kb.Markup()
 	return sc
 }

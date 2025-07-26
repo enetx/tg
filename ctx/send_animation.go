@@ -70,7 +70,7 @@ func (sa *SendAnimation) Protect() *SendAnimation {
 }
 
 // Markup sets the reply markup keyboard for the animation message.
-func (sa *SendAnimation) Markup(kb keyboard.KeyboardBuilder) *SendAnimation {
+func (sa *SendAnimation) Markup(kb keyboard.Keyboard) *SendAnimation {
 	sa.opts.ReplyMarkup = kb.Markup()
 	return sa
 }

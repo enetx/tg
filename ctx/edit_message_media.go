@@ -42,7 +42,7 @@ func (emm *EditMessageMedia) Business(id String) *EditMessageMedia {
 }
 
 // ReplyMarkup sets the inline keyboard markup for the message.
-func (emm *EditMessageMedia) ReplyMarkup(kb keyboard.KeyboardBuilder) *EditMessageMedia {
+func (emm *EditMessageMedia) ReplyMarkup(kb keyboard.Keyboard) *EditMessageMedia {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
 		emm.opts.ReplyMarkup = markup
 	}

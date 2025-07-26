@@ -75,7 +75,7 @@ func (sm *SendMessage) ReplyTo(messageID int64) *SendMessage {
 }
 
 // Markup sets the reply markup keyboard for the message.
-func (sm *SendMessage) Markup(kb keyboard.KeyboardBuilder) *SendMessage {
+func (sm *SendMessage) Markup(kb keyboard.Keyboard) *SendMessage {
 	sm.opts.ReplyMarkup = kb.Markup()
 	return sm
 }

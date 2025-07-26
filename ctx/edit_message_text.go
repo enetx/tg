@@ -83,7 +83,7 @@ func (emt *EditMessageText) APIURL(url String) *EditMessageText {
 }
 
 // Markup sets the reply markup keyboard for the edited message.
-func (emt *EditMessageText) Markup(kb keyboard.KeyboardBuilder) *EditMessageText {
+func (emt *EditMessageText) Markup(kb keyboard.Keyboard) *EditMessageText {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
 		emt.opts.ReplyMarkup = markup
 	}

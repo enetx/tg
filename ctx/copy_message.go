@@ -69,7 +69,7 @@ func (c *CopyMessage) Protect() *CopyMessage {
 }
 
 // Markup sets the reply markup keyboard for the copied message.
-func (c *CopyMessage) Markup(kb keyboard.KeyboardBuilder) *CopyMessage {
+func (c *CopyMessage) Markup(kb keyboard.Keyboard) *CopyMessage {
 	c.opts.ReplyMarkup = kb.Markup()
 	return c
 }

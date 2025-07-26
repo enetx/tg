@@ -72,7 +72,7 @@ func (emc *EditMessageCaption) ShowCaptionAboveMedia() *EditMessageCaption {
 }
 
 // Markup sets the inline keyboard markup for the message.
-func (emc *EditMessageCaption) Markup(kb keyboard.KeyboardBuilder) *EditMessageCaption {
+func (emc *EditMessageCaption) Markup(kb keyboard.Keyboard) *EditMessageCaption {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
 		emc.opts.ReplyMarkup = markup
 	}

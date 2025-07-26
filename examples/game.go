@@ -154,11 +154,11 @@ func main() {
 
 		// Then create their achievement checklist
 		checklistResult := ctx.SendChecklist(businessConnectionID, args[1]+" Achievements").
-			AddTask("Complete first game").
-			AddTask("Reach 1000 points").
-			AddTask("Win 5 games in a row").
-			AddTask("Get verified status").
-			AddTask("Unlock special features").
+			Task("Complete first game").Add().
+			Task("Reach 1000 points").Add().
+			Task("Win 5 games in a row").Add().
+			Task("Get verified status").Add().
+			Task("Unlock special features").Add().
 			OthersCanMarkTasksAsDone().
 			Send()
 

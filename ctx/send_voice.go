@@ -69,7 +69,7 @@ func (sv *SendVoice) Protect() *SendVoice {
 }
 
 // Markup sets the reply markup keyboard for the voice message.
-func (sv *SendVoice) Markup(kb keyboard.KeyboardBuilder) *SendVoice {
+func (sv *SendVoice) Markup(kb keyboard.Keyboard) *SendVoice {
 	sv.opts.ReplyMarkup = kb.Markup()
 	return sv
 }

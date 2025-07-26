@@ -150,7 +150,7 @@ func (si *SendInvoice) ReplyTo(messageID int64) *SendInvoice {
 }
 
 // Markup sets the reply markup keyboard for the invoice message.
-func (si *SendInvoice) Markup(kb keyboard.KeyboardBuilder) *SendInvoice {
+func (si *SendInvoice) Markup(kb keyboard.Keyboard) *SendInvoice {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
 		si.opts.ReplyMarkup = markup
 	}

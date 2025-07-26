@@ -366,6 +366,11 @@ func (h *MessageHandlers) Business(fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.BusinessConnectionId != "" }, fn)
 }
 
+// WebAppData handles messages that contain web app data.
+func (h *MessageHandlers) WebAppData(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.WebAppData != nil }, fn)
+}
+
 // Entity handles messages that contain the specified entity type.
 func (h *MessageHandlers) Entity(entType entity.EntityType, fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool {

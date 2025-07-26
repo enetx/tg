@@ -1,5 +1,7 @@
 package updates
 
+import . "github.com/enetx/g"
+
 // UpdateType enumerates all supported Telegram update types.
 //
 // See: https://core.telegram.org/bots/api#update
@@ -74,4 +76,27 @@ func (u UpdateType) String() string {
 	default:
 		return "unknown"
 	}
+}
+
+var All = Slice[UpdateType]{
+	Message,
+	EditedMessage,
+	ChannelPost,
+	EditedChannelPost,
+	InlineQuery,
+	ChosenInlineResult,
+	CallbackQuery,
+	ShippingQuery,
+	PreCheckoutQuery,
+	Poll,
+	PollAnswer,
+	MyChatMember,
+	ChatMember,
+	ChatJoinRequest,
+	MessageReaction,
+	MessageReactionCount,
+	BusinessConnection,
+	BusinessMessage,
+	EditedBusinessMessage,
+	DeletedBusinessMessages,
 }

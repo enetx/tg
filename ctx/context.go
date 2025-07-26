@@ -7,6 +7,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/core"
+	"github.com/enetx/tg/inline"
 	"github.com/enetx/tg/internal/tgfile"
 	"github.com/enetx/tg/keyboard"
 )
@@ -156,10 +157,7 @@ func (ctx *Context) GetUserChatBoosts(userID int64) *GetUserChatBoosts {
 }
 
 // SavePreparedInlineMessage creates a new SavePreparedInlineMessage request.
-func (ctx *Context) SavePreparedInlineMessage(
-	userID int64,
-	result gotgbot.InlineQueryResult,
-) *SavePreparedInlineMessage {
+func (ctx *Context) SavePreparedInlineMessage(userID int64, result inline.QueryResult) *SavePreparedInlineMessage {
 	return &SavePreparedInlineMessage{
 		ctx:    ctx,
 		userID: userID,
@@ -410,7 +408,7 @@ func (ctx *Context) CopyMessage(fromChatID, messageID int64) *CopyMessage {
 }
 
 // EditMessageReplyMarkup creates a new EditMessageReplyMarkup request to edit a message's reply markup.
-func (ctx *Context) EditMessageReplyMarkup(kb keyboard.KeyboardBuilder) *EditMessageReplyMarkup {
+func (ctx *Context) EditMessageReplyMarkup(kb keyboard.Keyboard) *EditMessageReplyMarkup {
 	return &EditMessageReplyMarkup{
 		ctx:  ctx,
 		kb:   kb,
@@ -1306,7 +1304,7 @@ func (ctx *Context) DeleteChatStickerSet() *DeleteChatStickerSet {
 }
 
 // AnswerWebAppQuery answers a web app query.
-func (ctx *Context) AnswerWebAppQuery(webAppQueryID String, result gotgbot.InlineQueryResult) *AnswerWebAppQuery {
+func (ctx *Context) AnswerWebAppQuery(webAppQueryID String, result inline.QueryResult) *AnswerWebAppQuery {
 	return &AnswerWebAppQuery{
 		ctx:           ctx,
 		webAppQueryID: webAppQueryID,

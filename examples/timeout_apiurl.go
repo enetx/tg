@@ -55,7 +55,7 @@ func main() {
 			APIURL("https://custom.api.telegram.org/bot" + token).
 			Send()
 
-		account.Balance().Get().
+		account.Balance().GetStarBalance().
 			Timeout(15 * time.Second).
 			APIURL("https://custom.api.telegram.org/bot" + token).
 			Send()

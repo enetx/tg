@@ -438,7 +438,7 @@ b.On.BusinessConnection.Enabled(func(ctx *ctx.Context) error {
     conn := ctx.Update.BusinessConnection
 
     // Configure business account
-    return ctx.SetBusinessAccountName(String(conn.Id), "My Business").
+    return ctx.Business(String(conn.Id)).SetName("My Business").
         LastName("LLC").
         Send().Err()
 })
@@ -457,11 +457,11 @@ b.On.DeletedBusinessMessages.Any(func(ctx *ctx.Context) error {
 
 // Manage business account settings
 b.Command("business_setup", func(ctx *ctx.Context) error {
-    connectionId := "your_connection_id"
+    connectionId := String("your_connection_id")
 
     // Set profile information
-    err := ctx.SetBusinessAccountBio(connectionId).
-        Bio("Professional business account").
+    err := ctx.Business(connectionId).
+        SetBio("Professional business account").
         Send().Err()
 
     if err != nil {
@@ -469,9 +469,9 @@ b.Command("business_setup", func(ctx *ctx.Context) error {
     }
 
     // Check star balance
-    balance := ctx.GetBusinessAccountStarBalance(connectionId).Send()
+    balance := ctx.Business(connectionId).Balance().GetStarBalance().Send()
     if balance.IsOk() {
-        return ctx.Reply("Stars balance: " + String(balance.Ok().StarCount)).Send().Err()
+        return ctx.Reply("Stars balance: " + String(balance.Ok().Amount)).Send().Err()
     }
 
     return ctx.Reply("Business account configured").Send().Err()
@@ -606,7 +606,7 @@ b.Command("edit", func(ctx *ctx.Context) error {
 })
 
 b.Command("delete", func(ctx *ctx.Context) error {
-    return ctx.Delete().Send().Err()
+    return ctx.DeleteMessage().Send().Err()
 })
 ```
 

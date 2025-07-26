@@ -82,7 +82,7 @@ func main() {
 		}
 
 		// Example: Get star balance
-		if result := account.Balance().Get().Send(); result.IsOk() {
+		if result := account.Balance().GetStarBalance().Send(); result.IsOk() {
 			stars := result.Ok()
 			return ctx.Reply(Format("Business star balance: {} stars", stars.Amount)).Send().Err()
 		}
@@ -95,7 +95,7 @@ func main() {
 		account := ctx.Business("your_business_connection_id")
 
 		// Get current balance
-		result := account.Balance().Get().Send()
+		result := account.Balance().GetStarBalance().Send()
 		if result.IsErr() {
 			return ctx.Reply("Failed to get star balance").Send().Err()
 		}

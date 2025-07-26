@@ -5,13 +5,14 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/inline"
 )
 
 // AnswerWebAppQuery represents a request to answer a web app query.
 type AnswerWebAppQuery struct {
 	ctx           *Context
 	webAppQueryID String
-	result        gotgbot.InlineQueryResult
+	result        inline.QueryResult
 	opts          *gotgbot.AnswerWebAppQueryOpts
 	err           error
 }
@@ -40,5 +41,9 @@ func (awaq *AnswerWebAppQuery) APIURL(url String) *AnswerWebAppQuery {
 
 // Send answers the web app query and returns the result.
 func (awaq *AnswerWebAppQuery) Send() Result[*gotgbot.SentWebAppMessage] {
-	return ResultOf(awaq.ctx.Bot.Raw().AnswerWebAppQuery(awaq.webAppQueryID.Std(), awaq.result, awaq.opts))
+	return ResultOf(awaq.ctx.Bot.Raw().AnswerWebAppQuery(
+		awaq.webAppQueryID.Std(),
+		awaq.result.Build(),
+		awaq.opts,
+	))
 }

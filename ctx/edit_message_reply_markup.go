@@ -11,7 +11,7 @@ import (
 type EditMessageReplyMarkup struct {
 	ctx       *Context
 	opts      *gotgbot.EditMessageReplyMarkupOpts
-	kb        keyboard.KeyboardBuilder
+	kb        keyboard.Keyboard
 	chatID    Option[int64]
 	messageID Option[int64]
 }

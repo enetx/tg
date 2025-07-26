@@ -5,13 +5,14 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/inline"
 )
 
 // SavePreparedInlineMessage represents a request to save prepared inline message.
 type SavePreparedInlineMessage struct {
 	ctx    *Context
 	userID int64
-	result gotgbot.InlineQueryResult
+	result inline.QueryResult
 	opts   *gotgbot.SavePreparedInlineMessageOpts
 }
 
@@ -63,5 +64,9 @@ func (spim *SavePreparedInlineMessage) APIURL(url String) *SavePreparedInlineMes
 
 // Send saves the prepared inline message.
 func (spim *SavePreparedInlineMessage) Send() Result[*gotgbot.PreparedInlineMessage] {
-	return ResultOf(spim.ctx.Bot.Raw().SavePreparedInlineMessage(spim.userID, spim.result, spim.opts))
+	return ResultOf(spim.ctx.Bot.Raw().SavePreparedInlineMessage(
+		spim.userID,
+		spim.result.Build(),
+		spim.opts,
+	))
 }

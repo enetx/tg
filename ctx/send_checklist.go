@@ -74,7 +74,7 @@ func (sc *SendChecklist) Protect() *SendChecklist {
 }
 
 // Markup sets the reply markup keyboard for the checklist message.
-func (sc *SendChecklist) Markup(kb keyboard.KeyboardBuilder) *SendChecklist {
+func (sc *SendChecklist) Markup(kb keyboard.Keyboard) *SendChecklist {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
 		sc.opts.ReplyMarkup = markup
 	}

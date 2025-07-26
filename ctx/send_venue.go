@@ -45,7 +45,7 @@ func (sv *SendVenue) Protect() *SendVenue {
 }
 
 // Markup sets the reply markup keyboard for the venue message.
-func (sv *SendVenue) Markup(kb keyboard.KeyboardBuilder) *SendVenue {
+func (sv *SendVenue) Markup(kb keyboard.Keyboard) *SendVenue {
 	sv.opts.ReplyMarkup = kb.Markup()
 	return sv
 }

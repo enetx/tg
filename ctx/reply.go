@@ -68,7 +68,7 @@ func (r *Reply) ReplyTo(id int64) *Reply {
 }
 
 // Markup sets the reply markup keyboard for the reply message.
-func (r *Reply) Markup(kb keyboard.KeyboardBuilder) *Reply {
+func (r *Reply) Markup(kb keyboard.Keyboard) *Reply {
 	r.opts.ReplyMarkup = kb.Markup()
 	return r
 }
@@ -98,8 +98,8 @@ func (r *Reply) RemoveKeyboard() *Reply {
 }
 
 // Preview sets link preview options for the reply.
-func (r *Reply) Preview(preview *preview.Preview) *Reply {
-	r.opts.LinkPreviewOptions = preview.Std()
+func (r *Reply) Preview(p *preview.Preview) *Reply {
+	r.opts.LinkPreviewOptions = p.Std()
 	return r
 }
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/inline"
 )
 
 // AnswerInlineQuery represents a request to answer an inline query.
@@ -15,15 +16,18 @@ type AnswerInlineQuery struct {
 	opts          *gotgbot.AnswerInlineQueryOpts
 }
 
-// Results sets the results for the inline query.
-func (aiq *AnswerInlineQuery) Results(results Slice[gotgbot.InlineQueryResult]) *AnswerInlineQuery {
-	aiq.results = results
+// AddResult adds a single result builder to the inline query.
+func (aiq *AnswerInlineQuery) AddResult(result inline.QueryResult) *AnswerInlineQuery {
+	aiq.results.Push(result.Build())
 	return aiq
 }
 
-// AddResult adds a single result to the inline query.
-func (aiq *AnswerInlineQuery) AddResult(result gotgbot.InlineQueryResult) *AnswerInlineQuery {
-	aiq.results = aiq.results.Append(result)
+// AddBuilders adds multiple result builders to the inline query.
+func (aiq *AnswerInlineQuery) Results(results ...inline.QueryResult) *AnswerInlineQuery {
+	for _, builder := range results {
+		aiq.results.Push(builder.Build())
+	}
+
 	return aiq
 }
 
@@ -33,7 +37,7 @@ func (aiq *AnswerInlineQuery) CacheFor(duration time.Duration) *AnswerInlineQuer
 	return aiq
 }
 
-// IsPersonal sets whether results may be cached on the server side only for the user that sent the query.
+// Personal sets that results may be cached on the server side only for the user that sent the query.
 func (aiq *AnswerInlineQuery) Personal() *AnswerInlineQuery {
 	aiq.opts.IsPersonal = true
 	return aiq

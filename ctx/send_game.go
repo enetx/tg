@@ -67,7 +67,7 @@ func (sg *SendGame) ReplyTo(messageID int64) *SendGame {
 }
 
 // Markup sets the reply markup keyboard for the game message.
-func (sg *SendGame) Markup(kb keyboard.KeyboardBuilder) *SendGame {
+func (sg *SendGame) Markup(kb keyboard.Keyboard) *SendGame {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
 		sg.opts.ReplyMarkup = markup
 	}

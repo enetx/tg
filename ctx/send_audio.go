@@ -70,7 +70,7 @@ func (sa *SendAudio) Protect() *SendAudio {
 }
 
 // Markup sets the reply markup keyboard for the audio message.
-func (sa *SendAudio) Markup(kb keyboard.KeyboardBuilder) *SendAudio {
+func (sa *SendAudio) Markup(kb keyboard.Keyboard) *SendAudio {
 	sa.opts.ReplyMarkup = kb.Markup()
 	return sa
 }

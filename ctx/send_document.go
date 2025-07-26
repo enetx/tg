@@ -70,7 +70,7 @@ func (sd *SendDocument) Protect() *SendDocument {
 }
 
 // Markup sets the reply markup keyboard for the document message.
-func (sd *SendDocument) Markup(kb keyboard.KeyboardBuilder) *SendDocument {
+func (sd *SendDocument) Markup(kb keyboard.Keyboard) *SendDocument {
 	sd.opts.ReplyMarkup = kb.Markup()
 	return sd
 }

@@ -69,7 +69,7 @@ func (sp *SendPhoto) Protect() *SendPhoto {
 }
 
 // Markup sets the reply markup keyboard for the photo message.
-func (sp *SendPhoto) Markup(kb keyboard.KeyboardBuilder) *SendPhoto {
+func (sp *SendPhoto) Markup(kb keyboard.Keyboard) *SendPhoto {
 	sp.opts.ReplyMarkup = kb.Markup()
 	return sp
 }

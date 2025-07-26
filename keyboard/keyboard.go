@@ -4,13 +4,13 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
 
-// KeyboardBuilder represents any type that can produce a gotgbot.ReplyMarkup.
-type KeyboardBuilder interface{ Markup() gotgbot.ReplyMarkup }
+// Keyboard represents any type that can produce a gotgbot.ReplyMarkup.
+type Keyboard interface{ Markup() gotgbot.ReplyMarkup }
 
 // Compile-time interface checks
 var (
-	_ KeyboardBuilder = (*InlineKeyboard)(nil)
-	_ KeyboardBuilder = (*ReplyKeyboard)(nil)
+	_ Keyboard = (*InlineKeyboard)(nil)
+	_ Keyboard = (*ReplyKeyboard)(nil)
 )
 
 // Inline creates a new InlineKeyboard builder.

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
@@ -26,7 +28,7 @@ func main() {
 			Video(video).
 			ApplyMetadata().
 			Streamable().
-			StartTimestamp(10).
+			StartAt(10 * time.Second).
 			GenerateThumbnail().
 			Add().
 			Caption("HD Premium Video with builder pattern and auto metadata!").
