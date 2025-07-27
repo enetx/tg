@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -86,7 +86,7 @@ func (p *Photo) Markup(kb keyboard.Keyboard) *Photo {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the photo.
-func (p *Photo) InputMessageContent(message content.Content) *Photo {
+func (p *Photo) InputMessageContent(message input.MessageContent) *Photo {
 	p.inline.InputMessageContent = message.Build()
 	return p
 }

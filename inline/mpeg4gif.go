@@ -6,7 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -94,7 +94,7 @@ func (m *Mpeg4Gif) Markup(kb keyboard.Keyboard) *Mpeg4Gif {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the MPEG4 GIF.
-func (m *Mpeg4Gif) InputMessageContent(message content.Content) *Mpeg4Gif {
+func (m *Mpeg4Gif) InputMessageContent(message input.MessageContent) *Mpeg4Gif {
 	m.inline.InputMessageContent = message.Build()
 	return m
 }

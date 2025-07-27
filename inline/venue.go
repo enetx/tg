@@ -3,7 +3,7 @@ package inline
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -75,7 +75,7 @@ func (v *Venue) ThumbnailSize(width, height int64) *Venue {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the venue.
-func (v *Venue) InputMessageContent(message content.Content) *Venue {
+func (v *Venue) InputMessageContent(message input.MessageContent) *Venue {
 	v.inline.InputMessageContent = message.Build()
 	return v
 }

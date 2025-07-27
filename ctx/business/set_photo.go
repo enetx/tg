@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/input"
 )
 
 // SetPhoto is a request builder for setting the business account profile photo.
@@ -46,7 +47,7 @@ func (sp *SetPhoto) APIURL(url String) *SetPhoto {
 func (sp *SetPhoto) Send() Result[bool] {
 	return ResultOf(sp.account.bot.Raw().SetBusinessAccountProfilePhoto(
 		sp.account.connID.Std(),
-		gotgbot.InputProfilePhotoStatic{Photo: sp.photo.Std()},
+		input.NewProfilePhotoStatic(sp.photo).Build(),
 		sp.opts,
 	))
 }

@@ -8,6 +8,7 @@ import (
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/core"
 	"github.com/enetx/tg/inline"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/internal/tgfile"
 	"github.com/enetx/tg/keyboard"
 )
@@ -425,7 +426,7 @@ func (ctx *Context) EditMessageCaption(caption String) *EditMessageCaption {
 }
 
 // EditMessageMedia creates a new EditMessageMedia request to edit message media.
-func (ctx *Context) EditMessageMedia(media gotgbot.InputMedia) *EditMessageMedia {
+func (ctx *Context) EditMessageMedia(media input.Media) *EditMessageMedia {
 	return &EditMessageMedia{
 		ctx:   ctx,
 		media: media,

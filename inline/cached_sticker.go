@@ -3,7 +3,7 @@ package inline
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -34,7 +34,7 @@ func (c *CachedSticker) Markup(kb keyboard.Keyboard) *CachedSticker {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the sticker.
-func (c *CachedSticker) InputMessageContent(message content.Content) *CachedSticker {
+func (c *CachedSticker) InputMessageContent(message input.MessageContent) *CachedSticker {
 	c.inline.InputMessageContent = message.Build()
 	return c
 }

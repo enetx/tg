@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -59,7 +59,7 @@ func (c *CachedAudio) Markup(kb keyboard.Keyboard) *CachedAudio {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the audio.
-func (c *CachedAudio) InputMessageContent(message content.Content) *CachedAudio {
+func (c *CachedAudio) InputMessageContent(message input.MessageContent) *CachedAudio {
 	c.inline.InputMessageContent = message.Build()
 	return c
 }

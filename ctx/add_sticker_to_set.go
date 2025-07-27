@@ -18,7 +18,7 @@ type AddStickerToSet struct {
 
 // File sets the sticker file.
 func (ats *AddStickerToSet) File(filename String) *AddStickerToSet {
-	ats.sticker.Sticker = string(filename)
+	ats.sticker.Sticker = filename.Std()
 	return ats
 }
 

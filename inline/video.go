@@ -6,7 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -90,7 +90,7 @@ func (v *Video) Markup(kb keyboard.Keyboard) *Video {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the video.
-func (v *Video) InputMessageContent(message content.Content) *Video {
+func (v *Video) InputMessageContent(message input.MessageContent) *Video {
 	v.inline.InputMessageContent = message.Build()
 	return v
 }

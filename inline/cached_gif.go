@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -71,7 +71,7 @@ func (c *CachedGif) Markup(kb keyboard.Keyboard) *CachedGif {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the GIF.
-func (c *CachedGif) InputMessageContent(message content.Content) *CachedGif {
+func (c *CachedGif) InputMessageContent(message input.MessageContent) *CachedGif {
 	c.inline.InputMessageContent = message.Build()
 	return c
 }

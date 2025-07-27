@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/input"
 )
 
 // CreateNewStickerSet represents a request to create a new sticker set.
@@ -20,7 +21,7 @@ type CreateNewStickerSet struct {
 // StickerBuilder represents a builder for individual stickers.
 type StickerBuilder struct {
 	parent  *CreateNewStickerSet
-	sticker gotgbot.InputSticker
+	sticker *input.Sticker
 }
 
 // StickerType sets the type of stickers in the set.
@@ -37,11 +38,7 @@ func (cns *CreateNewStickerSet) NeedsRepainting() *CreateNewStickerSet {
 
 // Sticker creates a new sticker builder for configuring individual sticker properties.
 func (cns *CreateNewStickerSet) Sticker(filename, format String, emojiList Slice[String]) *StickerBuilder {
-	sticker := gotgbot.InputSticker{
-		Sticker:   filename.Std(),
-		Format:    format.Std(),
-		EmojiList: emojiList.ToStringSlice(),
-	}
+	sticker := input.NewSticker(filename, format, emojiList)
 
 	return &StickerBuilder{
 		parent:  cns,
@@ -51,25 +48,27 @@ func (cns *CreateNewStickerSet) Sticker(filename, format String, emojiList Slice
 
 // Keywords sets search keywords for the sticker.
 func (sb *StickerBuilder) Keywords(keywords Slice[String]) *StickerBuilder {
-	sb.sticker.Keywords = keywords.ToStringSlice()
+	sb.sticker.Keywords(keywords)
 	return sb
 }
 
 // MaskPosition sets the mask position for mask stickers.
 func (sb *StickerBuilder) MaskPosition(point String, xShift, yShift, scale float64) *StickerBuilder {
-	sb.sticker.MaskPosition = &gotgbot.MaskPosition{
+	maskPosition := &gotgbot.MaskPosition{
 		Point:  point.Std(),
 		XShift: xShift,
 		YShift: yShift,
 		Scale:  scale,
 	}
 
+	sb.sticker.MaskPosition(maskPosition)
+
 	return sb
 }
 
 // Add completes the sticker configuration and adds it to the sticker set.
 func (sb *StickerBuilder) Add() *CreateNewStickerSet {
-	sb.parent.stickers.Push(sb.sticker)
+	sb.parent.stickers.Push(sb.sticker.Build())
 	return sb.parent
 }
 

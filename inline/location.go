@@ -5,7 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -76,7 +76,7 @@ func (l *Location) ThumbnailSize(width, height int64) *Location {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the location.
-func (l *Location) InputMessageContent(message content.Content) *Location {
+func (l *Location) InputMessageContent(message input.MessageContent) *Location {
 	l.inline.InputMessageContent = message.Build()
 	return l
 }

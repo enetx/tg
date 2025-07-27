@@ -3,7 +3,7 @@ package inline
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -13,7 +13,7 @@ type Article struct {
 }
 
 // NewArticle creates a new Article builder with ContentBuilder.
-func NewArticle(id, title g.String, message content.Content) *Article {
+func NewArticle(id, title g.String, message input.MessageContent) *Article {
 	return &Article{
 		inline: &gotgbot.InlineQueryResultArticle{
 			Id:                  id.Std(),

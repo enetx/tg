@@ -6,7 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -68,7 +68,7 @@ func (v *Voice) Markup(kb keyboard.Keyboard) *Voice {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the voice.
-func (v *Voice) InputMessageContent(message content.Content) *Voice {
+func (v *Voice) InputMessageContent(message input.MessageContent) *Voice {
 	v.inline.InputMessageContent = message.Build()
 	return v
 }

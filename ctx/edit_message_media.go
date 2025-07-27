@@ -5,13 +5,14 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
 // EditMessageMedia represents a request to edit message media.
 type EditMessageMedia struct {
 	ctx       *Context
-	media     gotgbot.InputMedia
+	media     input.Media
 	opts      *gotgbot.EditMessageMediaOpts
 	chatID    Option[int64]
 	messageID Option[int64]
@@ -41,8 +42,8 @@ func (emm *EditMessageMedia) Business(id String) *EditMessageMedia {
 	return emm
 }
 
-// ReplyMarkup sets the inline keyboard markup for the message.
-func (emm *EditMessageMedia) ReplyMarkup(kb keyboard.Keyboard) *EditMessageMedia {
+// Markup sets the inline keyboard markup for the message.
+func (emm *EditMessageMedia) Markup(kb keyboard.Keyboard) *EditMessageMedia {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {
 		emm.opts.ReplyMarkup = markup
 	}
@@ -77,6 +78,6 @@ func (emm *EditMessageMedia) Send() Result[*gotgbot.Message] {
 	emm.opts.ChatId = emm.chatID.UnwrapOr(emm.ctx.EffectiveChat.Id)
 	emm.opts.MessageId = emm.messageID.UnwrapOr(emm.ctx.EffectiveMessage.MessageId)
 
-	msg, _, err := emm.ctx.Bot.Raw().EditMessageMedia(emm.media, emm.opts)
+	msg, _, err := emm.ctx.Bot.Raw().EditMessageMedia(emm.media.Build(), emm.opts)
 	return ResultOf(msg, err)
 }

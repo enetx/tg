@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -81,7 +81,7 @@ func (d *Document) ThumbnailSize(width, height int64) *Document {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the document.
-func (d *Document) InputMessageContent(message content.Content) *Document {
+func (d *Document) InputMessageContent(message input.MessageContent) *Document {
 	d.inline.InputMessageContent = message.Build()
 	return d
 }

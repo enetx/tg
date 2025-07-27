@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/input"
 )
 
 // SetAnimatedPhoto is a request builder for setting the business account animated profile photo.
@@ -51,17 +52,15 @@ func (sap *SetAnimatedPhoto) APIURL(url String) *SetAnimatedPhoto {
 
 // Send executes the SetAnimatedPhoto request.
 func (sap *SetAnimatedPhoto) Send() Result[bool] {
-	animated := gotgbot.InputProfilePhotoAnimated{
-		Animation: sap.animation.Std(),
-	}
+	animated := input.NewProfilePhotoAnimated(sap.animation)
 
 	if sap.mainFrameTimestamp.IsSome() {
-		animated.MainFrameTimestamp = sap.mainFrameTimestamp.Some()
+		animated.MainFrameTimestamp(sap.mainFrameTimestamp.Some())
 	}
 
 	return ResultOf(sap.account.bot.Raw().SetBusinessAccountProfilePhoto(
 		sap.account.connID.Std(),
-		animated,
+		animated.Build(),
 		sap.opts,
 	))
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -66,7 +66,7 @@ func (c *CachedDocument) Markup(kb keyboard.Keyboard) *CachedDocument {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the document.
-func (c *CachedDocument) InputMessageContent(message content.Content) *CachedDocument {
+func (c *CachedDocument) InputMessageContent(message input.MessageContent) *CachedDocument {
 	c.inline.InputMessageContent = message.Build()
 	return c
 }

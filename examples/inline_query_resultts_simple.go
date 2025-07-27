@@ -7,7 +7,7 @@ import (
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/inline"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/types/updates"
 )
 
@@ -21,7 +21,7 @@ func main() {
 		query := ctx.Update.InlineQuery.Query
 		queryID := ctx.Update.InlineQuery.Id
 
-		result := inline.NewArticle("id1", "Echo", content.Text(String(query)))
+		result := inline.NewArticle("id1", "Echo", input.NewMessageText(String(query)))
 
 		return ctx.AnswerInlineQuery(String(queryID)).
 			AddResult(result).

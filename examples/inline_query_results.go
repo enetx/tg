@@ -8,7 +8,7 @@ import (
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/inline"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/types/updates"
 )
@@ -56,7 +56,7 @@ func main() {
 			article := inline.NewArticle(
 				"article_1",
 				"Sample Article",
-				content.Text("This is the content of the article"),
+				input.NewMessageText("This is the content of the article"),
 			).
 				Description("A sample article with thumbnail").
 				ThumbnailURL("https://via.placeholder.com/150").
@@ -199,7 +199,7 @@ func main() {
 			article := inline.NewArticle(
 				"article_keyboard",
 				"🎹 Article with Keyboard",
-				content.Text("Click the buttons below:"),
+				input.NewMessageText("Click the buttons below:"),
 			).
 				Description("Interactive article with buttons").
 				ThumbnailURL("https://via.placeholder.com/150x150/4169E1/FFFFFF?text=KB").
@@ -214,14 +214,14 @@ func main() {
 			textArticle := inline.NewArticle(
 				"text_content",
 				"Text Content",
-				content.Text("*Bold text* and _italic text_").Markdown(),
+				input.NewMessageText("*Bold text* and _italic text_").Markdown(),
 			)
 
 			// Location content
 			locationArticle := inline.NewArticle(
 				"location_content",
 				"Send Location",
-				content.Location(51.5074, -0.1278), // London coordinates
+				input.NewMessageLocation(51.5074, -0.1278), // London coordinates
 			).
 				Description("This will send a location instead of text")
 
@@ -229,7 +229,7 @@ func main() {
 			venueArticle := inline.NewArticle(
 				"venue_content",
 				"Send Venue",
-				content.Venue(
+				input.NewMessageVenue(
 					48.8566, 2.3522, // Paris coordinates
 					"Eiffel Tower",
 					"Champ de Mars, 5 Avenue Anatole France, 75007 Paris, France",
@@ -241,7 +241,7 @@ func main() {
 			contactArticle := inline.NewArticle(
 				"contact_content",
 				"Send Contact",
-				content.Contact("+33123456789", "Pierre"),
+				input.NewMessageContact("+33123456789", "Pierre"),
 			).
 				Description("This will send a contact instead of text")
 
@@ -252,7 +252,7 @@ func main() {
 			defaultArticle := inline.NewArticle(
 				"help",
 				"Inline Query Help",
-				content.Text(
+				input.NewMessageText(
 					"Try these queries: article, photo, video, audio, location, venue, contact, game, gif, cached, keyboard, content",
 				),
 			).

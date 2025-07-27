@@ -3,7 +3,7 @@ package inline
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
-	"github.com/enetx/tg/inline/content"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -61,7 +61,7 @@ func (c *Contact) ThumbnailSize(width, height int64) *Contact {
 }
 
 // InputMessageContent sets the content of the message to be sent instead of the contact.
-func (c *Contact) InputMessageContent(message content.Content) *Contact {
+func (c *Contact) InputMessageContent(message input.MessageContent) *Contact {
 	c.inline.InputMessageContent = message.Build()
 	return c
 }
