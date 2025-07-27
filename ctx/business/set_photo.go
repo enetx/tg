@@ -47,7 +47,7 @@ func (sp *SetPhoto) APIURL(url String) *SetPhoto {
 func (sp *SetPhoto) Send() Result[bool] {
 	return ResultOf(sp.account.bot.Raw().SetBusinessAccountProfilePhoto(
 		sp.account.connID.Std(),
-		input.NewProfilePhotoStatic(sp.photo).Build(),
+		input.StaticPhoto(sp.photo).Build(),
 		sp.opts,
 	))
 }

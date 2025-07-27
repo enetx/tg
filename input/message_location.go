@@ -9,8 +9,8 @@ type MessageLocation struct {
 	input *gotgbot.InputLocationMessageContent
 }
 
-// NewMessageLocation creates a new MessageLocation builder with the required fields.
-func NewMessageLocation(latitude, longitude float64) *MessageLocation {
+// Location creates a new MessageLocation builder with the required fields.
+func Location(latitude, longitude float64) *MessageLocation {
 	return &MessageLocation{
 		input: &gotgbot.InputLocationMessageContent{
 			Latitude:  latitude,

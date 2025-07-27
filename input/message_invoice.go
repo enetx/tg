@@ -10,8 +10,8 @@ type MessageInvoice struct {
 	input *gotgbot.InputInvoiceMessageContent
 }
 
-// NewMessageInvoice creates a new MessageInvoice builder with the required fields.
-func NewMessageInvoice(title, description, payload, currency String, prices []gotgbot.LabeledPrice) *MessageInvoice {
+// Invoice creates a new MessageInvoice builder with the required fields.
+func Invoice(title, description, payload, currency String, prices []gotgbot.LabeledPrice) *MessageInvoice {
 	return &MessageInvoice{
 		input: &gotgbot.InputInvoiceMessageContent{
 			Title:       title.Std(),

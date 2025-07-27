@@ -4,6 +4,7 @@ import (
 	"github.com/enetx/tg/areas"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/input"
 )
 
 func main() {
@@ -28,7 +29,7 @@ func main() {
 			Rounded(20.0).        // Add rounded corners
 			UniqueGift()          // Set area type
 
-		return ctx.PostPhotoStory("conn_id", "photo.jpg").
+		return ctx.PostStory("conn_id", input.StoryPhoto("photo.jpg")).
 			Caption("Simplified sizing demo!").
 			Areas(storyAreas).
 			Send().Err()
@@ -50,10 +51,9 @@ func main() {
 			// Custom proportions - wide and short
 			Position(60.0, 70.0).Size(35.0, 10.0).Rotate(30.0).Location()
 
-		return ctx.PostVideoStory("conn_id", "video.mp4").
+		return ctx.PostStory("conn_id", input.StoryVideo("video.mp4").CoverFrameTimestamp(1.5)).
 			Caption("Size comparison!").
 			Areas(storyAreas).
-			CoverFrame(1.5).
 			Send().Err()
 	})
 

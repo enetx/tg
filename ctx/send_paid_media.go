@@ -5,8 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
-	"github.com/enetx/tg/internal/pkg/ffmpeg"
-	"github.com/enetx/tg/internal/tgfile"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -16,10 +15,7 @@ type SendPaidMedia struct {
 	opts      *gotgbot.SendPaidMediaOpts
 	chatID    Option[int64]
 	starCount int64
-	media     Slice[gotgbot.InputPaidMedia]
-	files     Slice[*File]
-	tempfiles Slice[*File]
-	err       error
+	media     Slice[input.PaidMedia]
 }
 
 // To sets the target chat ID for sending paid media.
@@ -29,192 +25,21 @@ func (spm *SendPaidMedia) To(chatID int64) *SendPaidMedia {
 }
 
 // Photo adds a paid photo to the media list.
-func (spm *SendPaidMedia) Photo(filename String) *SendPaidMedia {
-	if spm.err != nil {
-		return spm
+func (spm *SendPaidMedia) Photo(photo input.PaidMedia) *SendPaidMedia {
+	if _, ok := photo.(*input.PaidMediaPhoto); ok {
+		spm.media.Push(photo)
 	}
-
-	result := tgfile.ProcessFile(filename)
-	if result.IsErr() {
-		spm.err = result.Err()
-		return spm
-	}
-
-	spm.files.Push(result.Ok().File)
-	spm.media.Push(gotgbot.InputPaidMediaPhoto{Media: result.Ok().Doc})
 
 	return spm
 }
 
-// PaidVideoBuilder represents a builder for paid video configuration.
-type PaidVideoBuilder struct {
-	parent   *SendPaidMedia
-	video    gotgbot.InputPaidMediaVideo
-	file     *File
-	thumb    *File
-	duration Float
-	err      error
-}
-
-// Width sets the video width.
-func (pvb *PaidVideoBuilder) Width(width int64) *PaidVideoBuilder {
-	pvb.video.Width = width
-	return pvb
-}
-
-// Height sets the video height.
-func (pvb *PaidVideoBuilder) Height(height int64) *PaidVideoBuilder {
-	pvb.video.Height = height
-	return pvb
-}
-
-// Duration sets the video duration.
-func (pvb *PaidVideoBuilder) Duration(duration time.Duration) *PaidVideoBuilder {
-	pvb.video.Duration = int64(duration.Seconds())
-	return pvb
-}
-
-// Streamable enables streaming support for the video.
-func (pvb *PaidVideoBuilder) Streamable() *PaidVideoBuilder {
-	pvb.video.SupportsStreaming = true
-	return pvb
-}
-
-// StartAt sets the video start timestamp from the beginning.
-func (pvb *PaidVideoBuilder) StartAt(offset time.Duration) *PaidVideoBuilder {
-	pvb.video.StartTimestamp = int64(offset.Seconds())
-	return pvb
-}
-
-// Cover sets a cover image for the video.
-func (pvb *PaidVideoBuilder) Cover(filename String) *PaidVideoBuilder {
-	pvb.video.Cover = filename.Std()
-	return pvb
-}
-
-// Thumbnail sets a custom thumbnail for the video.
-func (pvb *PaidVideoBuilder) Thumbnail(filename String) *PaidVideoBuilder {
-	pvb.thumb = NewFile(filename)
-
-	reader := pvb.thumb.Open()
-	if reader.IsErr() {
-		pvb.err = reader.Err()
-		return pvb
+// Video adds a paid video to the media list.
+func (spm *SendPaidMedia) Video(video input.PaidMedia) *SendPaidMedia {
+	if _, ok := video.(*input.PaidMediaVideo); ok {
+		spm.media.Push(video)
 	}
 
-	pvb.video.Thumbnail = gotgbot.InputFileByReader(pvb.thumb.Name().Std(), reader.Ok().Std())
-	pvb.parent.files.Push(pvb.thumb)
-
-	return pvb
-}
-
-// ApplyMetadata automatically extracts and applies video metadata (duration, width, height).
-func (pvb *PaidVideoBuilder) ApplyMetadata() *PaidVideoBuilder {
-	if pvb.file == nil {
-		pvb.err = Errorf("video file is not set")
-		return pvb
-	}
-
-	path := pvb.file.Path()
-	if path.IsErr() {
-		pvb.err = path.Err()
-		return pvb
-	}
-
-	meta := ffmpeg.GetVideoMetadata(path.Ok())
-	if meta.IsErr() {
-		pvb.err = meta.Err()
-		return pvb
-	}
-
-	info := meta.Ok()
-
-	pvb.duration = info.Duration.ToFloat().UnwrapOrDefault()
-	pvb.Width(info.Width)
-	pvb.Height(info.Height)
-
-	if !pvb.duration.IsZero() {
-		pvb.Duration(time.Duration(pvb.duration) * time.Second)
-	}
-
-	return pvb
-}
-
-// GenerateThumbnail automatically generates a thumbnail from the video at the specified seek time.
-func (pvb *PaidVideoBuilder) GenerateThumbnail(seek ...String) *PaidVideoBuilder {
-	if pvb.file == nil {
-		pvb.err = Errorf("video file is not set")
-		return pvb
-	}
-
-	path := pvb.file.Path()
-	if path.IsErr() {
-		pvb.err = path.Err()
-		return pvb
-	}
-
-	if pvb.duration.IsZero() {
-		pvb.err = Errorf("duration not set, call ApplyMetadata() first")
-		return pvb
-	}
-
-	var seekTime String
-
-	if len(seek) != 0 {
-		seekTime = seek[0]
-	} else {
-		seekTime = pvb.duration.Div(2).Max(1.0).RoundDecimal(3).String()
-	}
-
-	thumb := ffmpeg.GenerateThumbnail(path.Ok(), seekTime)
-	if thumb.IsErr() {
-		pvb.err = thumb.Err()
-		return pvb
-	}
-
-	pvb.thumb = thumb.Ok()
-
-	reader := pvb.thumb.Open()
-	if reader.IsErr() {
-		pvb.err = reader.Err()
-		return pvb
-	}
-
-	pvb.video.Thumbnail = gotgbot.InputFileByReader(pvb.thumb.Name().Std(), reader.Ok().Std())
-	pvb.parent.tempfiles.Push(pvb.thumb)
-
-	return pvb
-}
-
-// Add completes the video configuration and adds it to the media list.
-func (pvb *PaidVideoBuilder) Add() *SendPaidMedia {
-	if pvb.err != nil {
-		pvb.parent.err = pvb.err
-		return pvb.parent
-	}
-
-	pvb.parent.files.Push(pvb.file)
-	pvb.parent.media.Push(pvb.video)
-
-	return pvb.parent
-}
-
-// Video creates a new paid video builder.
-func (spm *SendPaidMedia) Video(filename String) *PaidVideoBuilder {
-	if spm.err != nil {
-		return &PaidVideoBuilder{parent: spm, err: spm.err}
-	}
-
-	result := tgfile.ProcessFile(filename)
-	if result.IsErr() {
-		return &PaidVideoBuilder{parent: spm, err: result.Err()}
-	}
-
-	return &PaidVideoBuilder{
-		parent: spm,
-		video:  gotgbot.InputPaidMediaVideo{Media: result.Ok().Doc},
-		file:   result.Ok().File,
-	}
+	return spm
 }
 
 // Business sets the business connection ID for the paid media.
@@ -310,10 +135,6 @@ func (spm *SendPaidMedia) APIURL(url String) *SendPaidMedia {
 
 // Send sends the paid media and returns the message.
 func (spm *SendPaidMedia) Send() Result[*gotgbot.Message] {
-	if spm.err != nil {
-		return Err[*gotgbot.Message](spm.err)
-	}
-
 	if spm.media.Empty() {
 		return Err[*gotgbot.Message](Errorf("no paid media specified"))
 	}
@@ -326,18 +147,8 @@ func (spm *SendPaidMedia) Send() Result[*gotgbot.Message] {
 		return Err[*gotgbot.Message](Errorf("star count must be between 1-10000, got {}", spm.starCount))
 	}
 
-	defer func() {
-		spm.files.Iter().ForEach(func(file *File) {
-			file.Close()
-		})
-
-		spm.tempfiles.Iter().ForEach(func(file *File) {
-			file.Close()
-			file.Remove()
-		})
-	}()
-
 	chatID := spm.chatID.UnwrapOr(spm.ctx.EffectiveChat.Id)
+	media := TransformSlice(spm.media, input.PaidMedia.Build)
 
-	return ResultOf(spm.ctx.Bot.Raw().SendPaidMedia(chatID, spm.starCount, spm.media, spm.opts))
+	return ResultOf(spm.ctx.Bot.Raw().SendPaidMedia(chatID, spm.starCount, media, spm.opts))
 }

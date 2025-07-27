@@ -6,6 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/entities"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/types/effects"
 )
@@ -14,7 +15,7 @@ type SendPoll struct {
 	ctx         *Context
 	question    String
 	chatID      Option[int64]
-	options     Slice[gotgbot.InputPollOption]
+	options     Slice[input.PollOption]
 	after       Option[time.Duration]
 	deleteAfter Option[time.Duration]
 	opts        *gotgbot.SendPollOpts
@@ -51,9 +52,8 @@ func (sp *SendPoll) To(id int64) *SendPoll {
 }
 
 // Option adds a poll option with the specified text.
-func (sp *SendPoll) Option(text String) *SendPoll {
-	opt := gotgbot.InputPollOption{Text: text.Std()}
-	sp.options.Push(opt)
+func (sp *SendPoll) Option(option input.PollOption) *SendPoll {
+	sp.options.Push(option)
 	return sp
 }
 
@@ -186,6 +186,8 @@ func (sp *SendPoll) APIURL(url String) *SendPoll {
 func (sp *SendPoll) Send() Result[*gotgbot.Message] {
 	return sp.ctx.timers(sp.after, sp.deleteAfter, func() Result[*gotgbot.Message] {
 		chatID := sp.chatID.UnwrapOr(sp.ctx.EffectiveChat.Id)
-		return ResultOf(sp.ctx.Bot.Raw().SendPoll(chatID, sp.question.Std(), sp.options, sp.opts))
+		options := TransformSlice(sp.options, input.PollOption.Build)
+
+		return ResultOf(sp.ctx.Bot.Raw().SendPoll(chatID, sp.question.Std(), options, sp.opts))
 	})
 }

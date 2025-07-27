@@ -4,6 +4,7 @@ import (
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/file"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
@@ -37,9 +38,10 @@ func main() {
 	// Handle callback to change to video
 	b.On.Callback.Equal("change_video", func(ctx *ctx.Context) error {
 		result := ctx.EditMessageMedia(
-			input.Video("https://sample-videos.com/zip/10/mp4/SampleVideo_360x240_1mb.mp4").
+			input.Video(file.Input("https://filesamples.com/samples/video/mp4/sample_640x360.mp4").Ok()).
 				Caption("🎥 <b>Changed to Video!</b>\n\nThis message media has been updated using EditMessageMedia.\n\n📋 <b>Features:</b>\n• Media type changed from photo to video\n• Caption updated with HTML formatting\n• Inline keyboard preserved").
-				HTML()).
+				HTML(),
+		).
 			Markup(
 				keyboard.Inline().
 					Text("🔙 Back to Photo", "back_photo").
@@ -49,7 +51,7 @@ func main() {
 			Send()
 
 		if result.IsErr() {
-			return ctx.AnswerCallbackQuery("Failed to change to video").Send().Err()
+			return ctx.AnswerCallbackQuery(Format("Failed to change to video: {}", result.Err())).Send().Err()
 		}
 
 		return ctx.AnswerCallbackQuery("Changed to video! 🎥").Send().Err()
@@ -58,7 +60,7 @@ func main() {
 	// Handle callback to change to audio
 	b.On.Callback.Equal("change_audio", func(ctx *ctx.Context) error {
 		result := ctx.EditMessageMedia(
-			input.Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.wav").
+			input.Audio(file.Input("https://www.soundjay.com/misc/sounds/bell-ringing-05.wav").Ok()).
 				Caption("🎵 <b>Changed to Audio!</b>\n\nNow this is an audio file with a caption.").
 				HTML().
 				Title("Sample Bell Sound").
@@ -81,7 +83,7 @@ func main() {
 	// Handle callback to change to document
 	b.On.Callback.Equal("change_document", func(ctx *ctx.Context) error {
 		result := ctx.EditMessageMedia(
-			input.Document("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf").
+			input.Document(file.Input("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf").Ok()).
 				Caption("📄 <b>Changed to Document!</b>\n\nThis is now a PDF document instead of the original photo.").
 				HTML()).
 			Markup(
@@ -102,7 +104,7 @@ func main() {
 	// Handle callback to change to animation
 	b.On.Callback.Equal("change_animation", func(ctx *ctx.Context) error {
 		result := ctx.EditMessageMedia(
-			input.Animation("https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif").
+			input.Animation(file.Input("https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif").Ok()).
 				Caption("🎬 <b>Changed to Animation!</b>\n\nNow showing an animated GIF instead!").
 				HTML()).
 			Markup(
@@ -123,7 +125,7 @@ func main() {
 	// Handle callback to go back to original photo
 	b.On.Callback.Equal("back_photo", func(ctx *ctx.Context) error {
 		result := ctx.EditMessageMedia(
-			input.Photo("https://picsum.photos/800/600").
+			input.Photo(file.Input("https://picsum.photos/800/600").Ok()).
 				Caption("🖼 <b>Back to Original Photo</b>\n\nReturned to the original photo media.").
 				HTML()).
 			Markup(
@@ -161,23 +163,23 @@ func main() {
 
 		switch mediaType.Std() {
 		case "photo":
-			media = input.Photo(mediaSource).
+			media = input.Photo(file.Input(mediaSource).Ok()).
 				Caption("🖼 Photo updated via command").
 				HTML()
 		case "video":
-			media = input.Video(mediaSource).
+			media = input.Video(file.Input(mediaSource).Ok()).
 				Caption("🎥 Video updated via command").
 				HTML()
 		case "audio":
-			media = input.Audio(mediaSource).
+			media = input.Audio(file.Input(mediaSource).Ok()).
 				Caption("🎵 Audio updated via command").
 				HTML()
 		case "document":
-			media = input.Document(mediaSource).
+			media = input.Document(file.Input(mediaSource).Ok()).
 				Caption("📄 Document updated via command").
 				HTML()
 		case "animation":
-			media = input.Animation(mediaSource).
+			media = input.Animation(file.Input(mediaSource).Ok()).
 				Caption("🎬 Animation updated via command").
 				HTML()
 		default:
@@ -226,11 +228,11 @@ To test business connection media editing:
 
 		switch mediaType.Std() {
 		case "photo":
-			media = input.Photo(mediaSource).
+			media = input.Photo(file.Input(mediaSource).Ok()).
 				Caption("💼 Business photo updated!").
 				HTML()
 		case "video":
-			media = input.Video(mediaSource).
+			media = input.Video(file.Input(mediaSource).Ok()).
 				Caption("💼 Business video updated!").
 				HTML()
 		default:

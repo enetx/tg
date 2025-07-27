@@ -10,8 +10,8 @@ type MessageVenue struct {
 	input *gotgbot.InputVenueMessageContent
 }
 
-// NewMessageVenue creates a new MessageVenue builder with the required fields.
-func NewMessageVenue(latitude, longitude float64, title, address String) *MessageVenue {
+// Venue creates a new MessageVenue builder with the required fields.
+func Venue(latitude, longitude float64, title, address String) *MessageVenue {
 	return &MessageVenue{
 		input: &gotgbot.InputVenueMessageContent{
 			Latitude:  latitude,

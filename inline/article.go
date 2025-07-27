@@ -7,14 +7,14 @@ import (
 	"github.com/enetx/tg/keyboard"
 )
 
-// Article represents an inline query result article builder.
-type Article struct {
+// InlineArticle represents an inline query result article builder.
+type InlineArticle struct {
 	inline *gotgbot.InlineQueryResultArticle
 }
 
-// NewArticle creates a new Article builder with ContentBuilder.
-func NewArticle(id, title g.String, message input.MessageContent) *Article {
-	return &Article{
+// Article creates a new Article builder with ContentBuilder.
+func Article(id, title g.String, message input.MessageContent) *InlineArticle {
+	return &InlineArticle{
 		inline: &gotgbot.InlineQueryResultArticle{
 			Id:                  id.Std(),
 			Title:               title.Std(),
@@ -24,25 +24,25 @@ func NewArticle(id, title g.String, message input.MessageContent) *Article {
 }
 
 // URL sets the URL associated with the article.
-func (a *Article) URL(url g.String) *Article {
+func (a *InlineArticle) URL(url g.String) *InlineArticle {
 	a.inline.Url = url.Std()
 	return a
 }
 
 // Description sets the short description of the article.
-func (a *Article) Description(desc g.String) *Article {
+func (a *InlineArticle) Description(desc g.String) *InlineArticle {
 	a.inline.Description = desc.Std()
 	return a
 }
 
 // ThumbnailURL sets the URL of the thumbnail for the article.
-func (a *Article) ThumbnailURL(url g.String) *Article {
+func (a *InlineArticle) ThumbnailURL(url g.String) *InlineArticle {
 	a.inline.ThumbnailUrl = url.Std()
 	return a
 }
 
 // ThumbnailSize sets the thumbnail width and height.
-func (a *Article) ThumbnailSize(width, height int64) *Article {
+func (a *InlineArticle) ThumbnailSize(width, height int64) *InlineArticle {
 	a.inline.ThumbnailWidth = width
 	a.inline.ThumbnailHeight = height
 
@@ -50,7 +50,7 @@ func (a *Article) ThumbnailSize(width, height int64) *Article {
 }
 
 // Markup sets the inline keyboard attached to the message.
-func (a *Article) Markup(kb keyboard.Keyboard) *Article {
+func (a *InlineArticle) Markup(kb keyboard.Keyboard) *InlineArticle {
 	if markup := kb.Markup(); markup != nil {
 		if ikm, ok := markup.(gotgbot.InlineKeyboardMarkup); ok {
 			a.inline.ReplyMarkup = &ikm
@@ -61,6 +61,6 @@ func (a *Article) Markup(kb keyboard.Keyboard) *Article {
 }
 
 // Build creates the gotgbot.InlineQueryResultArticle.
-func (a *Article) Build() gotgbot.InlineQueryResult {
+func (a *InlineArticle) Build() gotgbot.InlineQueryResult {
 	return *a.inline
 }

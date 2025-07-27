@@ -10,8 +10,8 @@ type ProfilePhotoStatic struct {
 	input *gotgbot.InputProfilePhotoStatic
 }
 
-// NewProfilePhotoStatic creates a new ProfilePhotoStatic builder with the required fields.
-func NewProfilePhotoStatic(photo String) *ProfilePhotoStatic {
+// StaticPhoto creates a new ProfilePhotoStatic builder with the required fields.
+func StaticPhoto(photo String) *ProfilePhotoStatic {
 	return &ProfilePhotoStatic{
 		input: &gotgbot.InputProfilePhotoStatic{
 			Photo: photo.Std(),

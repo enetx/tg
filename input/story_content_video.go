@@ -10,8 +10,8 @@ type StoryContentVideo struct {
 	input *gotgbot.InputStoryContentVideo
 }
 
-// NewStoryContentVideo creates a new StoryContentVideo builder with the required fields.
-func NewStoryContentVideo(video String) *StoryContentVideo {
+// StoryVideo creates a new StoryContentVideo builder with the required fields.
+func StoryVideo(video String) *StoryContentVideo {
 	return &StoryContentVideo{
 		input: &gotgbot.InputStoryContentVideo{
 			Video: video.Std(),

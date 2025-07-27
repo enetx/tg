@@ -4,6 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/entities"
+	"github.com/enetx/tg/file"
 )
 
 // MediaDocument represents an input media document builder.
@@ -11,11 +12,11 @@ type MediaDocument struct {
 	input *gotgbot.InputMediaDocument
 }
 
-// NewMediaDocument creates a new MediaDocument builder with the required fields.
-func NewMediaDocument(media String) *MediaDocument {
+// Document creates a new MediaDocument builder with the required fields.
+func Document(media file.File) *MediaDocument {
 	return &MediaDocument{
 		input: &gotgbot.InputMediaDocument{
-			Media: gotgbot.InputFileByURL(media.Std()),
+			Media: media.Doc,
 		},
 	}
 }

@@ -26,3 +26,8 @@ type ProfilePhoto interface {
 type StoryContent interface {
 	Build() gotgbot.InputStoryContent
 }
+
+// PollOption represents an interface for input poll option builders.
+type PollOption interface {
+	Build() gotgbot.InputPollOption
+}

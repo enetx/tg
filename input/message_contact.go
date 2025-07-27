@@ -10,8 +10,8 @@ type MessageContact struct {
 	input *gotgbot.InputContactMessageContent
 }
 
-// NewMessageContact creates a new MessageContact builder with the required fields.
-func NewMessageContact(phoneNumber, firstName String) *MessageContact {
+// Contact creates a new MessageContact builder with the required fields.
+func Contact(phoneNumber, firstName String) *MessageContact {
 	return &MessageContact{
 		input: &gotgbot.InputContactMessageContent{
 			PhoneNumber: phoneNumber.Std(),

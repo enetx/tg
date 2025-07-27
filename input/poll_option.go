@@ -6,14 +6,14 @@ import (
 	"github.com/enetx/tg/entities"
 )
 
-// PollOption represents an input poll option builder.
-type PollOption struct {
+// PollChoice represents an input poll option builder.
+type PollChoice struct {
 	input *gotgbot.InputPollOption
 }
 
-// NewPollOption creates a new PollOption builder.
-func NewPollOption(text String) *PollOption {
-	return &PollOption{
+// Choice creates a new PollOption builder.
+func Choice(text String) *PollChoice {
+	return &PollChoice{
 		input: &gotgbot.InputPollOption{
 			Text: text.Std(),
 		},
@@ -21,24 +21,24 @@ func NewPollOption(text String) *PollOption {
 }
 
 // HTML sets parse mode to HTML for the option text.
-func (po *PollOption) HTML() *PollOption {
+func (po *PollChoice) HTML() *PollChoice {
 	po.input.TextParseMode = "HTML"
 	return po
 }
 
 // Markdown sets parse mode to MarkdownV2 for the option text.
-func (po *PollOption) Markdown() *PollOption {
+func (po *PollChoice) Markdown() *PollChoice {
 	po.input.TextParseMode = "MarkdownV2"
 	return po
 }
 
 // TextEntities sets the message entities for the option text.
-func (po *PollOption) TextEntities(e entities.Entities) *PollOption {
+func (po *PollChoice) TextEntities(e entities.Entities) *PollChoice {
 	po.input.TextEntities = e.Std()
 	return po
 }
 
-// Build returns the gotgbot.InputPollOption directly as it's not an interface.
-func (po *PollOption) BuildOption() *gotgbot.InputPollOption {
-	return po.input
+// Build creates the  gotgbot.InputPollOption.
+func (po *PollChoice) Build() gotgbot.InputPollOption {
+	return *po.input
 }

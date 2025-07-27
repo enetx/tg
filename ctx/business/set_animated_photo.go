@@ -52,7 +52,7 @@ func (sap *SetAnimatedPhoto) APIURL(url String) *SetAnimatedPhoto {
 
 // Send executes the SetAnimatedPhoto request.
 func (sap *SetAnimatedPhoto) Send() Result[bool] {
-	animated := input.NewProfilePhotoAnimated(sap.animation)
+	animated := input.AnimatedPhoto(sap.animation)
 
 	if sap.mainFrameTimestamp.IsSome() {
 		animated.MainFrameTimestamp(sap.mainFrameTimestamp.Some())

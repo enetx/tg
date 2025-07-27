@@ -53,11 +53,12 @@ func main() {
 			"A test product for shipping demo",
 			"test-payload",
 			"USD",
-		).Price("Test Product", 1500). // $15.00
-						ProviderToken("284685532:TEST:your_test_token").
-						StartParameter("test_shipping").
-						NeedShipping().
-						Send().Err()
+		).
+			Price("Test Product", 1500). // $15.00
+			ProviderToken("284685532:TEST:your_test_token").
+			StartParameter("test_shipping").
+			NeedShipping().
+			Send().Err()
 	})
 
 	// More advanced shipping example
@@ -67,14 +68,15 @@ func main() {
 			"Premium package with multiple shipping options",
 			"premium-payload",
 			"USD",
-		).Price("Premium Package", 5000). // $50.00
-							Price("Gift Wrapping", 300). // $3.00
-							ProviderToken("284685532:TEST:your_test_token").
-							StartParameter("premium_shipping").
-							NeedShipping().
-							NeedName().
-							NeedPhone().
-							Send().Err()
+		).
+			Price("Premium Package", 5000). // $50.00
+			Price("Gift Wrapping", 300).    // $3.00
+			ProviderToken("284685532:TEST:your_test_token").
+			StartParameter("premium_shipping").
+			NeedShipping().
+			NeedName().
+			NeedPhone().
+			Send().Err()
 	})
 
 	// Advanced shipping handler with weight-based pricing

@@ -4,19 +4,19 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/entities"
+	"github.com/enetx/tg/file"
 )
 
 // MediaAnimation represents an input media animation builder.
 type MediaAnimation struct {
 	input *gotgbot.InputMediaAnimation
-	file  *File
 }
 
-// NewMediaAnimation creates a new MediaAnimation builder with the required fields.
-func NewMediaAnimation(media String) *MediaAnimation {
+// Animation creates a new MediaAnimation builder with the required fields.
+func Animation(media file.File) *MediaAnimation {
 	return &MediaAnimation{
 		input: &gotgbot.InputMediaAnimation{
-			Media: gotgbot.InputFileByURL(media.Std()),
+			Media: media.Doc,
 		},
 	}
 }

@@ -3,6 +3,7 @@ package input
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
+	"github.com/enetx/tg/file"
 )
 
 // PaidMediaVideo represents an input paid media video builder.
@@ -10,13 +11,19 @@ type PaidMediaVideo struct {
 	input *gotgbot.InputPaidMediaVideo
 }
 
-// NewPaidMediaVideo creates a new PaidMediaVideo builder with the required fields.
-func NewPaidMediaVideo(media String) *PaidMediaVideo {
+// PaidVideo creates a new PaidMediaVideo builder with the required fields.
+func PaidVideo(media file.File) *PaidMediaVideo {
 	return &PaidMediaVideo{
 		input: &gotgbot.InputPaidMediaVideo{
-			Media: gotgbot.InputFileByURL(media.Std()),
+			Media: media.Doc,
 		},
 	}
+}
+
+// Cover sets a cover image for the video.
+func (pmv *PaidMediaVideo) Cover(cover String) *PaidMediaVideo {
+	pmv.input.Cover = cover.Std()
+	return pmv
 }
 
 // Thumbnail sets the thumbnail for the video using an InputFile.
@@ -41,6 +48,12 @@ func (pmv *PaidMediaVideo) Height(height int64) *PaidMediaVideo {
 // Duration sets the video duration in seconds.
 func (pmv *PaidMediaVideo) Duration(duration int64) *PaidMediaVideo {
 	pmv.input.Duration = duration
+	return pmv
+}
+
+// StartTimestamp sets the video start timestamp from the beginning..
+func (pmv *PaidMediaVideo) StartTimestamp(timestamp int64) *PaidMediaVideo {
+	pmv.input.StartTimestamp = timestamp
 	return pmv
 }
 

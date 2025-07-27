@@ -6,6 +6,7 @@ import (
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -16,10 +17,10 @@ func main() {
 	// Create poll with stop button
 	createPoll := func(ctx *ctx.Context) {
 		ctx.SendPoll("🚀 What's your favorite programming language?").
-			Option("Go").
-			Option("Python").
-			Option("JavaScript").
-			Option("Rust").
+			Option(input.Choice("Go")).
+			Option(input.Choice("Python")).
+			Option(input.Choice("JavaScript")).
+			Option(input.Choice("Rust")).
 			Anonymous().
 			MultipleAnswers().
 			Markup(
@@ -37,9 +38,9 @@ func main() {
 	// Poll command creates poll with auto-stop
 	b.Command("poll", func(ctx *ctx.Context) error {
 		result := ctx.SendPoll("⏱️ Quick poll (auto-stops in 5 seconds)").
-			Option("Option A").
-			Option("Option B").
-			Option("Option C").
+			Option(input.Choice("Option A")).
+			Option(input.Choice("Option B")).
+			Option(input.Choice("Option C")).
 			Send()
 
 		if result.IsOk() {

@@ -4,6 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/entities"
+	"github.com/enetx/tg/file"
 )
 
 // MediaPhoto represents an input media photo builder.
@@ -11,11 +12,11 @@ type MediaPhoto struct {
 	input *gotgbot.InputMediaPhoto
 }
 
-// NewMediaPhoto creates a new MediaPhoto builder with the required fields.
-func NewMediaPhoto(media String) *MediaPhoto {
+// Photo creates a new MediaPhoto builder with the required fields.
+func Photo(media file.File) *MediaPhoto {
 	return &MediaPhoto{
 		input: &gotgbot.InputMediaPhoto{
-			Media: gotgbot.InputFileByURL(media.Std()),
+			Media: media.Doc,
 		},
 	}
 }

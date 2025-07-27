@@ -12,8 +12,8 @@ type MessageText struct {
 	input *gotgbot.InputTextMessageContent
 }
 
-// NewMessageText creates a new MessageText builder with the required fields.
-func NewMessageText(messageText String) *MessageText {
+// Text creates a new MessageText builder with the required fields.
+func Text(messageText String) *MessageText {
 	return &MessageText{
 		input: &gotgbot.InputTextMessageContent{
 			MessageText: messageText.Std(),

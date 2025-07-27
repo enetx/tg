@@ -10,8 +10,8 @@ type StoryContentPhoto struct {
 	input *gotgbot.InputStoryContentPhoto
 }
 
-// NewStoryContentPhoto creates a new StoryContentPhoto builder with the required fields.
-func NewStoryContentPhoto(photo String) *StoryContentPhoto {
+// StoryPhoto creates a new StoryContentPhoto builder with the required fields.
+func StoryPhoto(photo String) *StoryContentPhoto {
 	return &StoryContentPhoto{
 		input: &gotgbot.InputStoryContentPhoto{
 			Photo: photo.Std(),

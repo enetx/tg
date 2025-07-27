@@ -4,6 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/entities"
+	"github.com/enetx/tg/file"
 )
 
 // MediaAudio represents an input media audio builder.
@@ -11,11 +12,11 @@ type MediaAudio struct {
 	input *gotgbot.InputMediaAudio
 }
 
-// NewMediaAudio creates a new MediaAudio builder with the required fields.
-func NewMediaAudio(media String) *MediaAudio {
+// Audio creates a new MediaAudio builder with the required fields.
+func Audio(media file.File) *MediaAudio {
 	return &MediaAudio{
 		input: &gotgbot.InputMediaAudio{
-			Media: gotgbot.InputFileByURL(media.Std()),
+			Media: media.Doc,
 		},
 	}
 }

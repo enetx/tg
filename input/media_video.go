@@ -4,6 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/entities"
+	"github.com/enetx/tg/file"
 )
 
 // MediaVideo represents an input media video builder.
@@ -11,13 +12,19 @@ type MediaVideo struct {
 	input *gotgbot.InputMediaVideo
 }
 
-// NewMediaVideo creates a new MediaVideo builder with the required fields.
-func NewMediaVideo(media String) *MediaVideo {
+// Video creates a new MediaVideo builder with the required fields.
+func Video(media file.File) *MediaVideo {
 	return &MediaVideo{
 		input: &gotgbot.InputMediaVideo{
-			Media: gotgbot.InputFileByURL(media.Std()),
+			Media: media.Doc,
 		},
 	}
+}
+
+// Cover sets a cover image for the video.
+func (mv *MediaVideo) Cover(cover String) *MediaVideo {
+	mv.input.Cover = cover.Std()
+	return mv
 }
 
 // Thumbnail sets the thumbnail for the video using an InputFile.
@@ -67,6 +74,12 @@ func (mv *MediaVideo) Size(width, height int64) *MediaVideo {
 // Duration sets the video duration in seconds.
 func (mv *MediaVideo) Duration(duration int64) *MediaVideo {
 	mv.input.Duration = duration
+	return mv
+}
+
+// StartTimestamp sets the video start timestamp from the beginning..
+func (mv *MediaVideo) StartTimestamp(timestamp int64) *MediaVideo {
+	mv.input.StartTimestamp = timestamp
 	return mv
 }
 

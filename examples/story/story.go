@@ -5,6 +5,7 @@ import (
 
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/input"
 )
 
 func main() {
@@ -19,7 +20,9 @@ func main() {
 	// Photo story command
 	b.Command("photostory", func(ctx *ctx.Context) error {
 		// Simple usage - just pass filename/URL as string
-		return ctx.PostPhotoStory("your_business_connection_id", "photo.jpg").
+		photo := input.StoryPhoto("photo.jpg")
+
+		return ctx.PostStory("your_business_connection_id", photo).
 			Caption("Amazing photo story!").
 			HTML().
 			ActiveFor(24 * time.Hour). // 24 hours
@@ -29,10 +32,12 @@ func main() {
 
 	// Video story command
 	b.Command("videostory", func(ctx *ctx.Context) error {
-		return ctx.PostVideoStory("your_business_connection_id", "video.mp4").
+		video := input.StoryVideo("video.mp4").
+			CoverFrameTimestamp(2.5) // Cover at 2.5 seconds
+
+		return ctx.PostStory("your_business_connection_id", video).
 			Caption("Epic video!").
 			HTML().
-			CoverFrame(2.5). // Cover at 2.5 seconds
 			Send().Err()
 	})
 

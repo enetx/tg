@@ -10,8 +10,8 @@ type ProfilePhotoAnimated struct {
 	input *gotgbot.InputProfilePhotoAnimated
 }
 
-// NewProfilePhotoAnimated creates a new ProfilePhotoAnimated builder with the required fields.
-func NewProfilePhotoAnimated(animation String) *ProfilePhotoAnimated {
+// AnimatedPhoto creates a new ProfilePhotoAnimated builder with the required fields.
+func AnimatedPhoto(animation String) *ProfilePhotoAnimated {
 	return &ProfilePhotoAnimated{
 		input: &gotgbot.InputProfilePhotoAnimated{
 			Animation: animation.Std(),

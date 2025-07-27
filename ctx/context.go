@@ -7,9 +7,9 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/core"
+	"github.com/enetx/tg/file"
 	"github.com/enetx/tg/inline"
 	"github.com/enetx/tg/input"
-	"github.com/enetx/tg/internal/tgfile"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -211,7 +211,7 @@ func (ctx *Context) SendDocument(filename String) *SendDocument {
 		opts: new(gotgbot.SendDocumentOpts),
 	}
 
-	result := tgfile.ProcessFile(filename)
+	result := file.Input(filename)
 	if result.IsErr() {
 		d.err = result.Err()
 		return d
@@ -230,7 +230,7 @@ func (ctx *Context) SendAudio(filename String) *SendAudio {
 		opts: new(gotgbot.SendAudioOpts),
 	}
 
-	result := tgfile.ProcessFile(filename)
+	result := file.Input(filename)
 	if result.IsErr() {
 		a.err = result.Err()
 		return a
@@ -249,7 +249,7 @@ func (ctx *Context) SendPhoto(filename String) *SendPhoto {
 		opts: new(gotgbot.SendPhotoOpts),
 	}
 
-	result := tgfile.ProcessFile(filename)
+	result := file.Input(filename)
 	if result.IsErr() {
 		p.err = result.Err()
 		return p
@@ -268,7 +268,7 @@ func (ctx *Context) SendVideo(filename String) *SendVideo {
 		opts: new(gotgbot.SendVideoOpts),
 	}
 
-	result := tgfile.ProcessFile(filename)
+	result := file.Input(filename)
 	if result.IsErr() {
 		v.err = result.Err()
 		return v
@@ -287,7 +287,7 @@ func (ctx *Context) SendVoice(filename String) *SendVoice {
 		opts: new(gotgbot.SendVoiceOpts),
 	}
 
-	result := tgfile.ProcessFile(filename)
+	result := file.Input(filename)
 	if result.IsErr() {
 		v.err = result.Err()
 		return v
@@ -306,7 +306,7 @@ func (ctx *Context) SendVideoNote(filename String) *SendVideoNote {
 		opts: new(gotgbot.SendVideoNoteOpts),
 	}
 
-	result := tgfile.ProcessFile(filename)
+	result := file.Input(filename)
 	if result.IsErr() {
 		vn.err = result.Err()
 		return vn
@@ -325,7 +325,7 @@ func (ctx *Context) SendAnimation(filename String) *SendAnimation {
 		opts: new(gotgbot.SendAnimationOpts),
 	}
 
-	result := tgfile.ProcessFile(filename)
+	result := file.Input(filename)
 	if result.IsErr() {
 		a.err = result.Err()
 		return a
@@ -344,7 +344,7 @@ func (ctx *Context) SendSticker(filename String) *SendSticker {
 		opts: new(gotgbot.SendStickerOpts),
 	}
 
-	result := tgfile.ProcessFile(filename)
+	result := file.Input(filename)
 	if result.IsErr() {
 		s.err = result.Err()
 		return s
@@ -598,59 +598,25 @@ func (ctx *Context) EditUserStarSubscription(
 	}
 }
 
-// PostPhotoStory creates a new PostStory request for posting a photo story.
-func (ctx *Context) PostPhotoStory(businessConnectionID, filename String) *PostStory {
+// PostStory creates a new PostStory request for posting a photo story.
+func (ctx *Context) PostStory(businessConnectionID String, input input.StoryContent) *PostStory {
 	return &PostStory{
 		ctx:                  ctx,
 		businessConnectionID: businessConnectionID,
 		activePeriod:         86400, // Default 24 hours
 		opts:                 new(gotgbot.PostStoryOpts),
-		storyType:            "photo",
-		content: &gotgbot.InputStoryContentPhoto{
-			Photo: filename.Std(),
-		},
-	}
-}
-
-// PostVideoStory creates a new PostStory request for posting a video story.
-func (ctx *Context) PostVideoStory(businessConnectionID, filename String) *PostStory {
-	return &PostStory{
-		ctx:                  ctx,
-		businessConnectionID: businessConnectionID,
-		activePeriod:         86400, // Default 24 hours
-		opts:                 new(gotgbot.PostStoryOpts),
-		storyType:            "video",
-		content: &gotgbot.InputStoryContentVideo{
-			Video: filename.Std(),
-		},
+		content:              input,
 	}
 }
 
 // EditPhotoStory creates a new EditStory request for editing a photo story.
-func (ctx *Context) EditPhotoStory(businessConnectionID String, storyID int64, filename String) *EditStory {
+func (ctx *Context) EditStory(businessConnectionID String, storyID int64, input input.StoryContent) *EditStory {
 	return &EditStory{
 		ctx:                  ctx,
 		businessConnectionID: businessConnectionID,
 		storyID:              storyID,
 		opts:                 new(gotgbot.EditStoryOpts),
-		storyType:            "photo",
-		content: &gotgbot.InputStoryContentPhoto{
-			Photo: filename.Std(),
-		},
-	}
-}
-
-// EditVideoStory creates a new EditStory request for editing a video story.
-func (ctx *Context) EditVideoStory(businessConnectionID String, storyID int64, filename String) *EditStory {
-	return &EditStory{
-		ctx:                  ctx,
-		businessConnectionID: businessConnectionID,
-		storyID:              storyID,
-		opts:                 new(gotgbot.EditStoryOpts),
-		storyType:            "video",
-		content: &gotgbot.InputStoryContentVideo{
-			Video: filename.Std(),
-		},
+		content:              input,
 	}
 }
 
@@ -683,8 +649,7 @@ func (ctx *Context) Args() Slice[String] {
 func (ctx *Context) MediaGroup() *MediaGroup {
 	return &MediaGroup{
 		ctx:   ctx,
-		media: NewSlice[gotgbot.InputMedia](),
-		files: NewSlice[*File](),
+		media: NewSlice[input.Media](),
 		opts:  new(gotgbot.SendMediaGroupOpts),
 	}
 }
@@ -737,9 +702,7 @@ func (ctx *Context) SendPaidMedia(starCount int64) *SendPaidMedia {
 	return &SendPaidMedia{
 		ctx:       ctx,
 		starCount: starCount,
-		media:     NewSlice[gotgbot.InputPaidMedia](),
-		files:     NewSlice[*File](),
-		tempfiles: NewSlice[*File](),
+		media:     NewSlice[input.PaidMedia](),
 		opts:      new(gotgbot.SendPaidMediaOpts),
 	}
 }
@@ -854,7 +817,7 @@ func (ctx *Context) SetChatPhoto(filename String) *SetChatPhoto {
 		opts: new(gotgbot.SetChatPhotoOpts),
 	}
 
-	result := tgfile.ProcessFile(filename)
+	result := file.Input(filename)
 	if result.IsErr() {
 		p.err = result.Err()
 		return p

@@ -53,10 +53,10 @@ func main() {
 		switch {
 		case query == "article":
 			// Article result example
-			article := inline.NewArticle(
+			article := inline.Article(
 				"article_1",
 				"Sample Article",
-				input.NewMessageText("This is the content of the article"),
+				input.Text("This is the content of the article"),
 			).
 				Description("A sample article with thumbnail").
 				ThumbnailURL("https://via.placeholder.com/150").
@@ -196,10 +196,10 @@ func main() {
 				Text("Option 2", "opt2")
 
 			// Create article with inline keyboard
-			article := inline.NewArticle(
+			article := inline.Article(
 				"article_keyboard",
 				"🎹 Article with Keyboard",
-				input.NewMessageText("Click the buttons below:"),
+				input.Text("Click the buttons below:"),
 			).
 				Description("Interactive article with buttons").
 				ThumbnailURL("https://via.placeholder.com/150x150/4169E1/FFFFFF?text=KB").
@@ -211,25 +211,25 @@ func main() {
 			// Different input message content types
 
 			// Text content
-			textArticle := inline.NewArticle(
+			textArticle := inline.Article(
 				"text_content",
 				"Text Content",
-				input.NewMessageText("*Bold text* and _italic text_").Markdown(),
+				input.Text("*Bold text* and _italic text_").Markdown(),
 			)
 
 			// Location content
-			locationArticle := inline.NewArticle(
+			locationArticle := inline.Article(
 				"location_content",
 				"Send Location",
-				input.NewMessageLocation(51.5074, -0.1278), // London coordinates
+				input.Location(51.5074, -0.1278), // London coordinates
 			).
 				Description("This will send a location instead of text")
 
 			// Venue content
-			venueArticle := inline.NewArticle(
+			venueArticle := inline.Article(
 				"venue_content",
 				"Send Venue",
-				input.NewMessageVenue(
+				input.Venue(
 					48.8566, 2.3522, // Paris coordinates
 					"Eiffel Tower",
 					"Champ de Mars, 5 Avenue Anatole France, 75007 Paris, France",
@@ -238,10 +238,10 @@ func main() {
 				Description("This will send a venue instead of text")
 
 			// Contact content
-			contactArticle := inline.NewArticle(
+			contactArticle := inline.Article(
 				"contact_content",
 				"Send Contact",
-				input.NewMessageContact("+33123456789", "Pierre"),
+				input.Contact("+33123456789", "Pierre"),
 			).
 				Description("This will send a contact instead of text")
 
@@ -249,10 +249,10 @@ func main() {
 
 		default:
 			// Default results for empty or unknown query
-			defaultArticle := inline.NewArticle(
+			defaultArticle := inline.Article(
 				"help",
 				"Inline Query Help",
-				input.NewMessageText(
+				input.Text(
 					"Try these queries: article, photo, video, audio, location, venue, contact, game, gif, cached, keyboard, content",
 				),
 			).

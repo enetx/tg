@@ -6,6 +6,7 @@ import (
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/types/effects"
 )
@@ -16,9 +17,9 @@ func main() {
 
 	quiz := func(ctx *ctx.Context) *ctx.SendPoll {
 		return ctx.SendPoll("🧠 Choose the correct option:").
-			Option("Option A").
-			Option("Option B").
-			Option("Option C").
+			Option(input.Choice("Option A")).
+			Option(input.Choice("Option B")).
+			Option(input.Choice("Option C")).
 			Quiz(1). // Correct option is index 1 (Option B)
 			Explanation("<i>Correct answer is B because it's awesome.</i>").
 			ExplanationHTML().          // Explanation in HTML

@@ -7,16 +7,16 @@ import (
 	. "github.com/enetx/g"
 	"github.com/enetx/tg/areas"
 	"github.com/enetx/tg/entities"
+	"github.com/enetx/tg/input"
 )
 
 // PostStory represents a request to post a story to a business account.
 type PostStory struct {
 	ctx                  *Context
 	businessConnectionID String
-	content              gotgbot.InputStoryContent
+	content              input.StoryContent
 	activePeriod         int64
 	opts                 *gotgbot.PostStoryOpts
-	storyType            string
 }
 
 // Caption sets the story caption text.
@@ -67,17 +67,6 @@ func (ps *PostStory) Protect() *PostStory {
 	return ps
 }
 
-// CoverFrame sets the cover frame timestamp for video stories (0-60 seconds).
-func (ps *PostStory) CoverFrame(timestamp float64) *PostStory {
-	if ps.storyType == "video" {
-		if videoContent, ok := ps.content.(*gotgbot.InputStoryContentVideo); ok {
-			videoContent.CoverFrameTimestamp = timestamp
-		}
-	}
-
-	return ps
-}
-
 // Timeout sets a custom timeout for this request.
 func (ps *PostStory) Timeout(duration time.Duration) *PostStory {
 	if ps.opts.RequestOpts == nil {
@@ -104,7 +93,7 @@ func (ps *PostStory) APIURL(url String) *PostStory {
 func (ps *PostStory) Send() Result[*gotgbot.Story] {
 	return ResultOf(ps.ctx.Bot.Raw().PostStory(
 		ps.businessConnectionID.Std(),
-		ps.content,
+		ps.content.Build(),
 		ps.activePeriod,
 		ps.opts,
 	))
