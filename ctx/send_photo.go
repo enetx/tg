@@ -38,6 +38,12 @@ func (sp *SendPhoto) DeleteAfter(duration time.Duration) *SendPhoto {
 	return sp
 }
 
+// Spoiler marks the photo as a spoiler.
+func (sp *SendPhoto) Spoiler() *SendPhoto {
+	sp.opts.HasSpoiler = true
+	return sp
+}
+
 // Caption sets the caption text for the photo.
 func (sp *SendPhoto) Caption(caption String) *SendPhoto {
 	sp.opts.Caption = caption.Std()

@@ -21,6 +21,7 @@ func main() {
 
 		stars := args[0].ToInt().Unwrap().Int64()
 		photo := file.Input(args[1]).Unwrap()
+
 		defer photo.File.Close()
 
 		result := ctx.SendPaidMedia(stars).
@@ -44,6 +45,7 @@ func main() {
 
 		stars := args[0].ToInt().Unwrap().Int64()
 		video := file.Input(args[1]).Unwrap()
+
 		defer video.File.Close()
 
 		result := ctx.SendPaidMedia(stars).
