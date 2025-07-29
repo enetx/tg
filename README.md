@@ -4,6 +4,10 @@
 
 Modern and elegant wrapper around [gotgbot](https://github.com/PaulSonOfLars/gotgbot) with convenient API and functional programming style support.
 
+## Video Demo
+
+[![TG Framework Demo](https://img.youtube.com/vi/Mb8y4hDj7so/0.jpg)](https://www.youtube.com/watch?v=Mb8y4hDj7so)
+
 ## Features
 
 - 🚀 **Simple and intuitive API** with method chaining support

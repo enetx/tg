@@ -4,9 +4,6 @@
 package main
 
 import (
-	"log"
-	"os"
-
 	. "github.com/enetx/g"
 	"github.com/enetx/g/cmp"
 	"github.com/enetx/tg/bot"
@@ -112,10 +109,12 @@ var userSessions = NewMap[int64, *UserSession]()
 
 func main() {
 	// Get bot token from environment
-	token := os.Getenv("BOT_TOKEN")
-	if token == "" {
-		log.Fatal("BOT_TOKEN environment variable is required")
-	}
+	// token := os.Getenv("BOT_TOKEN")
+	// if token == "" {
+	// 	log.Fatal("BOT_TOKEN environment variable is required")
+	// }
+
+	token := NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 
 	// Create bot instance
 	botInstance = bot.New(token).Build().Unwrap()
