@@ -1,6 +1,8 @@
 package input
 
 import (
+	"time"
+
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/file"
@@ -12,7 +14,7 @@ type PaidMediaVideo struct {
 }
 
 // PaidVideo creates a new PaidMediaVideo builder with the required fields.
-func PaidVideo(media file.File) *PaidMediaVideo {
+func PaidVideo(media file.InputFile) *PaidMediaVideo {
 	return &PaidMediaVideo{
 		input: &gotgbot.InputPaidMediaVideo{
 			Media: media.Doc,
@@ -27,9 +29,8 @@ func (pmv *PaidMediaVideo) Cover(cover g.String) *PaidMediaVideo {
 }
 
 // Thumbnail sets the thumbnail for the video using an InputFile.
-// Note: Thumbnails must be uploaded files, not URLs.
-func (pmv *PaidMediaVideo) Thumbnail(thumbnail gotgbot.InputFile) *PaidMediaVideo {
-	pmv.input.Thumbnail = thumbnail
+func (pmv *PaidMediaVideo) Thumbnail(thumbnail file.InputFile) *PaidMediaVideo {
+	pmv.input.Thumbnail = thumbnail.Doc.(gotgbot.InputFile)
 	return pmv
 }
 
@@ -46,19 +47,19 @@ func (pmv *PaidMediaVideo) Height(height int64) *PaidMediaVideo {
 }
 
 // Duration sets the video duration in seconds.
-func (pmv *PaidMediaVideo) Duration(duration int64) *PaidMediaVideo {
-	pmv.input.Duration = duration
+func (pmv *PaidMediaVideo) Duration(duration time.Duration) *PaidMediaVideo {
+	pmv.input.Duration = int64(duration.Seconds())
 	return pmv
 }
 
-// StartTimestamp sets the video start timestamp from the beginning.
-func (pmv *PaidMediaVideo) StartTimestamp(timestamp int64) *PaidMediaVideo {
-	pmv.input.StartTimestamp = timestamp
+// StartAt sets the video start timestamp from the beginning.
+func (pmv *PaidMediaVideo) StartAt(offset time.Duration) *PaidMediaVideo {
+	pmv.input.StartTimestamp = int64(offset.Seconds())
 	return pmv
 }
 
-// SupportsStreaming sets whether the video supports streaming.
-func (pmv *PaidMediaVideo) SupportsStreaming() *PaidMediaVideo {
+// Streaming sets whether the video supports streaming.
+func (pmv *PaidMediaVideo) Streaming() *PaidMediaVideo {
 	pmv.input.SupportsStreaming = true
 	return pmv
 }

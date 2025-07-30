@@ -13,7 +13,7 @@ type MediaPhoto struct {
 }
 
 // Photo creates a new MediaPhoto builder with the required fields.
-func Photo(media file.File) *MediaPhoto {
+func Photo(media file.InputFile) *MediaPhoto {
 	return &MediaPhoto{
 		input: &gotgbot.InputMediaPhoto{
 			Media: media.Doc,
@@ -51,8 +51,8 @@ func (mp *MediaPhoto) ShowCaptionAboveMedia() *MediaPhoto {
 	return mp
 }
 
-// HasSpoiler sets whether the photo has a spoiler.
-func (mp *MediaPhoto) HasSpoiler() *MediaPhoto {
+// Spoiler sets whether the photo has a spoiler.
+func (mp *MediaPhoto) Spoiler() *MediaPhoto {
 	mp.input.HasSpoiler = true
 	return mp
 }

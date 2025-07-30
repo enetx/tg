@@ -13,7 +13,7 @@ type MediaDocument struct {
 }
 
 // Document creates a new MediaDocument builder with the required fields.
-func Document(media file.File) *MediaDocument {
+func Document(media file.InputFile) *MediaDocument {
 	return &MediaDocument{
 		input: &gotgbot.InputMediaDocument{
 			Media: media.Doc,
@@ -21,10 +21,9 @@ func Document(media file.File) *MediaDocument {
 	}
 }
 
-// Thumbnail sets the thumbnail for the document using an InputFile.
-// Note: Thumbnails must be uploaded files, not URLs.
-func (md *MediaDocument) Thumbnail(thumbnail gotgbot.InputFile) *MediaDocument {
-	md.input.Thumbnail = thumbnail
+// Thumbnail sets the thumbnail for the document using an File.
+func (md *MediaDocument) Thumbnail(thumbnail file.InputFile) *MediaDocument {
+	md.input.Thumbnail = thumbnail.Doc.(gotgbot.InputFile)
 	return md
 }
 

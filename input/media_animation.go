@@ -1,6 +1,8 @@
 package input
 
 import (
+	"time"
+
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
@@ -13,7 +15,7 @@ type MediaAnimation struct {
 }
 
 // Animation creates a new MediaAnimation builder with the required fields.
-func Animation(media file.File) *MediaAnimation {
+func Animation(media file.InputFile) *MediaAnimation {
 	return &MediaAnimation{
 		input: &gotgbot.InputMediaAnimation{
 			Media: media.Doc,
@@ -22,9 +24,8 @@ func Animation(media file.File) *MediaAnimation {
 }
 
 // Thumbnail sets the thumbnail for the animation using an InputFile.
-// Note: Thumbnails must be uploaded files, not URLs.
-func (ma *MediaAnimation) Thumbnail(thumbnail gotgbot.InputFile) *MediaAnimation {
-	ma.input.Thumbnail = thumbnail
+func (ma *MediaAnimation) Thumbnail(thumbnail file.InputFile) *MediaAnimation {
+	ma.input.Thumbnail = thumbnail.Doc.(gotgbot.InputFile)
 	return ma
 }
 
@@ -67,13 +68,13 @@ func (ma *MediaAnimation) Size(width, height int64) *MediaAnimation {
 }
 
 // Duration sets the animation duration in seconds.
-func (ma *MediaAnimation) Duration(duration int64) *MediaAnimation {
-	ma.input.Duration = duration
+func (ma *MediaAnimation) Duration(duration time.Duration) *MediaAnimation {
+	ma.input.Duration = int64(duration.Seconds())
 	return ma
 }
 
-// HasSpoiler sets whether the animation has a spoiler.
-func (ma *MediaAnimation) HasSpoiler() *MediaAnimation {
+// Spoiler sets whether the animation has a spoiler.
+func (ma *MediaAnimation) Spoiler() *MediaAnimation {
 	ma.input.HasSpoiler = true
 	return ma
 }

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
@@ -252,6 +254,7 @@ Try these commands to create different types of invoice links:
 			Send()
 
 		if result.IsErr() {
+			fmt.Println(result.Err())
 			return ctx.AnswerCallbackQuery("Failed to create demo link").Send().Err()
 		}
 

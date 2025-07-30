@@ -1,6 +1,8 @@
 package input
 
 import (
+	"time"
+
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
@@ -13,7 +15,7 @@ type MediaAudio struct {
 }
 
 // Audio creates a new MediaAudio builder with the required fields.
-func Audio(media file.File) *MediaAudio {
+func Audio(media file.InputFile) *MediaAudio {
 	return &MediaAudio{
 		input: &gotgbot.InputMediaAudio{
 			Media: media.Doc,
@@ -22,9 +24,8 @@ func Audio(media file.File) *MediaAudio {
 }
 
 // Thumbnail sets the thumbnail for the audio using an InputFile.
-// Note: Thumbnails must be uploaded files, not URLs.
-func (ma *MediaAudio) Thumbnail(thumbnail gotgbot.InputFile) *MediaAudio {
-	ma.input.Thumbnail = thumbnail
+func (ma *MediaAudio) Thumbnail(thumbnail file.InputFile) *MediaAudio {
+	ma.input.Thumbnail = thumbnail.Doc.(gotgbot.InputFile)
 	return ma
 }
 
@@ -53,8 +54,8 @@ func (ma *MediaAudio) CaptionEntities(e entities.Entities) *MediaAudio {
 }
 
 // Duration sets the audio duration in seconds.
-func (ma *MediaAudio) Duration(duration int64) *MediaAudio {
-	ma.input.Duration = duration
+func (ma *MediaAudio) Duration(duration time.Duration) *MediaAudio {
+	ma.input.Duration = int64(duration.Seconds())
 	return ma
 }
 

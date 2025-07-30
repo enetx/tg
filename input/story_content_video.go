@@ -1,6 +1,8 @@
 package input
 
 import (
+	"time"
+
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 )
@@ -19,15 +21,15 @@ func StoryVideo(video g.String) *StoryContentVideo {
 	}
 }
 
-// Duration sets the precise duration of the video in seconds (0-60).
-func (scv *StoryContentVideo) Duration(duration float64) *StoryContentVideo {
-	scv.input.Duration = duration
+// Duration sets the precise duration of the video in seconds.
+func (scv *StoryContentVideo) Duration(duration time.Duration) *StoryContentVideo {
+	scv.input.Duration = duration.Seconds()
 	return scv
 }
 
 // CoverFrameTimestamp sets the timestamp in seconds of the frame to use as static cover.
-func (scv *StoryContentVideo) CoverFrameTimestamp(timestamp float64) *StoryContentVideo {
-	scv.input.CoverFrameTimestamp = timestamp
+func (scv *StoryContentVideo) CoverFrameTimestamp(timestamp time.Duration) *StoryContentVideo {
+	scv.input.CoverFrameTimestamp = timestamp.Seconds()
 	return scv
 }
 

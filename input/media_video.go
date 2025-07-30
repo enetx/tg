@@ -1,6 +1,8 @@
 package input
 
 import (
+	"time"
+
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
@@ -13,7 +15,7 @@ type MediaVideo struct {
 }
 
 // Video creates a new MediaVideo builder with the required fields.
-func Video(media file.File) *MediaVideo {
+func Video(media file.InputFile) *MediaVideo {
 	return &MediaVideo{
 		input: &gotgbot.InputMediaVideo{
 			Media: media.Doc,
@@ -28,9 +30,8 @@ func (mv *MediaVideo) Cover(cover g.String) *MediaVideo {
 }
 
 // Thumbnail sets the thumbnail for the video using an InputFile.
-// Note: Thumbnails must be uploaded files, not URLs.
-func (mv *MediaVideo) Thumbnail(thumbnail gotgbot.InputFile) *MediaVideo {
-	mv.input.Thumbnail = thumbnail
+func (mv *MediaVideo) Thumbnail(thumbnail file.InputFile) *MediaVideo {
+	mv.input.Thumbnail = thumbnail.Doc.(gotgbot.InputFile)
 	return mv
 }
 
@@ -72,25 +73,25 @@ func (mv *MediaVideo) Size(width, height int64) *MediaVideo {
 }
 
 // Duration sets the video duration in seconds.
-func (mv *MediaVideo) Duration(duration int64) *MediaVideo {
-	mv.input.Duration = duration
+func (mv *MediaVideo) Duration(duration time.Duration) *MediaVideo {
+	mv.input.Duration = int64(duration.Seconds())
 	return mv
 }
 
-// StartTimestamp sets the video start timestamp from the beginning.
-func (mv *MediaVideo) StartTimestamp(timestamp int64) *MediaVideo {
-	mv.input.StartTimestamp = timestamp
+// StartAt sets the video start timestamp from the beginning.
+func (mv *MediaVideo) StartAt(offset time.Duration) *MediaVideo {
+	mv.input.StartTimestamp = int64(offset.Seconds())
 	return mv
 }
 
-// SupportsStreaming sets whether the video supports streaming.
-func (mv *MediaVideo) SupportsStreaming() *MediaVideo {
+// Streamable enables streaming support for the video.
+func (mv *MediaVideo) Streamable() *MediaVideo {
 	mv.input.SupportsStreaming = true
 	return mv
 }
 
-// HasSpoiler sets whether the video has a spoiler.
-func (mv *MediaVideo) HasSpoiler() *MediaVideo {
+// Spoiler sets whether the video has a spoiler.
+func (mv *MediaVideo) Spoiler() *MediaVideo {
 	mv.input.HasSpoiler = true
 	return mv
 }

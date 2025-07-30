@@ -17,8 +17,8 @@ type SetAnimatedPhoto struct {
 }
 
 // MainFrame sets the timestamp in seconds of the frame that will be used as the static profile photo.
-func (sap *SetAnimatedPhoto) MainFrame(timestamp float64) *SetAnimatedPhoto {
-	sap.mainFrameTimestamp = g.Some(timestamp)
+func (sap *SetAnimatedPhoto) MainFrame(timestamp time.Duration) *SetAnimatedPhoto {
+	sap.mainFrameTimestamp = g.Some(timestamp.Seconds())
 	return sap
 }
 

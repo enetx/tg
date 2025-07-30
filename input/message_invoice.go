@@ -11,16 +11,21 @@ type MessageInvoice struct {
 }
 
 // Invoice creates a new MessageInvoice builder with the required fields.
-func Invoice(title, description, payload, currency g.String, prices g.Slice[gotgbot.LabeledPrice]) *MessageInvoice {
+func Invoice(title, description, payload, currency g.String) *MessageInvoice {
 	return &MessageInvoice{
 		input: &gotgbot.InputInvoiceMessageContent{
 			Title:       title.Std(),
 			Description: description.Std(),
 			Payload:     payload.Std(),
 			Currency:    currency.Std(),
-			Prices:      prices,
 		},
 	}
+}
+
+// Price adds a labeled price item to the invoice.
+func (mi *MessageInvoice) Price(label g.String, amount int64) *MessageInvoice {
+	mi.input.Prices = append(mi.input.Prices, gotgbot.LabeledPrice{Label: label.Std(), Amount: amount})
+	return mi
 }
 
 // ProviderToken sets the payment provider token.
@@ -29,15 +34,15 @@ func (mi *MessageInvoice) ProviderToken(token g.String) *MessageInvoice {
 	return mi
 }
 
-// MaxTipAmount sets the maximum accepted amount for tips in the smallest currency unit.
-func (mi *MessageInvoice) MaxTipAmount(amount int64) *MessageInvoice {
+// MaxTip sets the maximum accepted amount for tips in the smallest currency unit.
+func (mi *MessageInvoice) MaxTip(amount int64) *MessageInvoice {
 	mi.input.MaxTipAmount = amount
 	return mi
 }
 
-// SuggestedTipAmounts sets suggested amounts of tip in the smallest currency unit.
-func (mi *MessageInvoice) SuggestedTipAmounts(amounts g.Slice[int64]) *MessageInvoice {
-	mi.input.SuggestedTipAmounts = amounts
+// SuggestedTips sets suggested amounts of tip in the smallest currency unit.
+func (mi *MessageInvoice) SuggestedTips(tips ...int64) *MessageInvoice {
+	mi.input.SuggestedTipAmounts = tips
 	return mi
 }
 
@@ -47,27 +52,13 @@ func (mi *MessageInvoice) ProviderData(data g.String) *MessageInvoice {
 	return mi
 }
 
-// PhotoURL sets the URL of the product photo for the invoice.
-func (mi *MessageInvoice) PhotoURL(url g.String) *MessageInvoice {
+// Photo sets the product photo URL and dimensions.
+func (mi *MessageInvoice) Photo(url g.String, size, width, height int64) *MessageInvoice {
 	mi.input.PhotoUrl = url.Std()
-	return mi
-}
-
-// PhotoSize sets the photo size in bytes.
-func (mi *MessageInvoice) PhotoSize(size int64) *MessageInvoice {
 	mi.input.PhotoSize = size
-	return mi
-}
-
-// PhotoWidth sets the photo width.
-func (mi *MessageInvoice) PhotoWidth(width int64) *MessageInvoice {
 	mi.input.PhotoWidth = width
-	return mi
-}
-
-// PhotoHeight sets the photo height.
-func (mi *MessageInvoice) PhotoHeight(height int64) *MessageInvoice {
 	mi.input.PhotoHeight = height
+
 	return mi
 }
 
@@ -77,8 +68,8 @@ func (mi *MessageInvoice) NeedName() *MessageInvoice {
 	return mi
 }
 
-// NeedPhoneNumber requests the user's phone number.
-func (mi *MessageInvoice) NeedPhoneNumber() *MessageInvoice {
+// NeedPhone requests the user's phone number.
+func (mi *MessageInvoice) NeedPhone() *MessageInvoice {
 	mi.input.NeedPhoneNumber = true
 	return mi
 }
@@ -89,26 +80,26 @@ func (mi *MessageInvoice) NeedEmail() *MessageInvoice {
 	return mi
 }
 
-// NeedShippingAddress requests the user's shipping address.
-func (mi *MessageInvoice) NeedShippingAddress() *MessageInvoice {
+// NeedShipping requests the user's shipping address.
+func (mi *MessageInvoice) NeedShipping() *MessageInvoice {
 	mi.input.NeedShippingAddress = true
 	return mi
 }
 
-// SendPhoneNumberToProvider sends the user's phone number to the provider.
-func (mi *MessageInvoice) SendPhoneNumberToProvider() *MessageInvoice {
+// SendPhone sends the user's phone number to the provider.
+func (mi *MessageInvoice) SendPhone() *MessageInvoice {
 	mi.input.SendPhoneNumberToProvider = true
 	return mi
 }
 
-// SendEmailToProvider sends the user's email to the provider.
-func (mi *MessageInvoice) SendEmailToProvider() *MessageInvoice {
+// SendEmail sends the user's email to the provider.
+func (mi *MessageInvoice) SendEmail() *MessageInvoice {
 	mi.input.SendEmailToProvider = true
 	return mi
 }
 
-// IsFlexible makes prices flexible.
-func (mi *MessageInvoice) IsFlexible() *MessageInvoice {
+// Flexible makes prices flexible.
+func (mi *MessageInvoice) Flexible() *MessageInvoice {
 	mi.input.IsFlexible = true
 	return mi
 }
