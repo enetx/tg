@@ -13,7 +13,7 @@ type MediaAudio struct {
 }
 
 // Audio creates a new MediaAudio builder with the required fields.
-func Audio(media file.TgFile) *MediaAudio {
+func Audio(media file.File) *MediaAudio {
 	return &MediaAudio{
 		input: &gotgbot.InputMediaAudio{
 			Media: media.Doc,

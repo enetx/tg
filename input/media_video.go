@@ -13,7 +13,7 @@ type MediaVideo struct {
 }
 
 // Video creates a new MediaVideo builder with the required fields.
-func Video(media file.TgFile) *MediaVideo {
+func Video(media file.File) *MediaVideo {
 	return &MediaVideo{
 		input: &gotgbot.InputMediaVideo{
 			Media: media.Doc,

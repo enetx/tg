@@ -13,7 +13,7 @@ type MediaAnimation struct {
 }
 
 // Animation creates a new MediaAnimation builder with the required fields.
-func Animation(media file.TgFile) *MediaAnimation {
+func Animation(media file.File) *MediaAnimation {
 	return &MediaAnimation{
 		input: &gotgbot.InputMediaAnimation{
 			Media: media.Doc,

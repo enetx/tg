@@ -13,7 +13,7 @@ type MediaDocument struct {
 }
 
 // Document creates a new MediaDocument builder with the required fields.
-func Document(media file.TgFile) *MediaDocument {
+func Document(media file.File) *MediaDocument {
 	return &MediaDocument{
 		input: &gotgbot.InputMediaDocument{
 			Media: media.Doc,

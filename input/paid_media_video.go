@@ -12,7 +12,7 @@ type PaidMediaVideo struct {
 }
 
 // PaidVideo creates a new PaidMediaVideo builder with the required fields.
-func PaidVideo(media file.TgFile) *PaidMediaVideo {
+func PaidVideo(media file.File) *PaidMediaVideo {
 	return &PaidMediaVideo{
 		input: &gotgbot.InputPaidMediaVideo{
 			Media: media.Doc,
