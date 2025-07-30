@@ -1,8 +1,6 @@
 package keyboard
 
-import (
-	"github.com/PaulSonOfLars/gotgbot/v2"
-)
+import "github.com/PaulSonOfLars/gotgbot/v2"
 
 // Keyboard represents any type that can produce a gotgbot.ReplyMarkup.
 type Keyboard interface{ Markup() gotgbot.ReplyMarkup }

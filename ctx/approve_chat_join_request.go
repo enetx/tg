@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // ApproveChatJoinRequest represents a request to approve a chat join request.
@@ -12,12 +12,12 @@ type ApproveChatJoinRequest struct {
 	ctx    *Context
 	userID int64
 	opts   *gotgbot.ApproveChatJoinRequestOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (acjr *ApproveChatJoinRequest) ChatID(chatID int64) *ApproveChatJoinRequest {
-	acjr.chatID = Some(chatID)
+	acjr.chatID = g.Some(chatID)
 	return acjr
 }
 
@@ -33,7 +33,7 @@ func (acjr *ApproveChatJoinRequest) Timeout(duration time.Duration) *ApproveChat
 }
 
 // APIURL sets a custom API URL for this request.
-func (acjr *ApproveChatJoinRequest) APIURL(url String) *ApproveChatJoinRequest {
+func (acjr *ApproveChatJoinRequest) APIURL(url g.String) *ApproveChatJoinRequest {
 	if acjr.opts.RequestOpts == nil {
 		acjr.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,7 +44,7 @@ func (acjr *ApproveChatJoinRequest) APIURL(url String) *ApproveChatJoinRequest {
 }
 
 // Send approves the chat join request and returns the result.
-func (acjr *ApproveChatJoinRequest) Send() Result[bool] {
+func (acjr *ApproveChatJoinRequest) Send() g.Result[bool] {
 	chatID := acjr.chatID.UnwrapOr(acjr.ctx.EffectiveChat.Id)
-	return ResultOf(acjr.ctx.Bot.Raw().ApproveChatJoinRequest(chatID, acjr.userID, acjr.opts))
+	return g.ResultOf(acjr.ctx.Bot.Raw().ApproveChatJoinRequest(chatID, acjr.userID, acjr.opts))
 }

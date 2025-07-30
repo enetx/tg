@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/enetx/fsm"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
@@ -17,11 +17,11 @@ const (
 )
 
 // fsmStore holds the active FSM instance for each user, keyed by their Telegram user ID.
-var fsmStore = NewMapSafe[int64, *fsm.SyncFSM]()
+var fsmStore = g.NewMapSafe[int64, *fsm.SyncFSM]()
 
 func main() {
 	// Load the bot token from a local .env file.
-	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	// Initialize the Telegram bot and its helper components.
 	b := bot.New(token).Build().Unwrap()
 
@@ -61,7 +61,7 @@ func main() {
 		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
 		// Ask the user a yes/no question using a reply keyboard.
-		return tgctx.Reply(Format("Did you <b>{}</b> like writing bots?", name)).
+		return tgctx.Reply(g.Format("Did you <b>{}</b> like writing bots?", name)).
 			HTML().
 			Markup(keyboard.Reply().Row().Text("Yes").Text("No")).
 			Send().Err()
@@ -91,7 +91,7 @@ func main() {
 		// If the user answered "No", the `like` data was never set.
 		// Check for its absence to provide a different summary for the "No" branch.
 		if like.IsNone() {
-			return tgctx.Reply(Format("Not bad, not terrible.\nSee you soon.\n\nSummary:\n- Name: {}\n- Like bots? No", name)).
+			return tgctx.Reply(g.Format("Not bad, not terrible.\nSee you soon.\n\nSummary:\n- Name: {}\n- Like bots? No", name)).
 				RemoveKeyboard().
 				Send().
 				Err()
@@ -101,13 +101,13 @@ func main() {
 		lang := fctx.Input.(string)
 
 		// Add a playful, conditional greeting.
-		var greeting String
+		var greeting g.String
 		if lang == "go" {
 			greeting = "Go? Nice choice – that really makes my circuits light up! 😉\n"
 		}
 
 		// Compose and send the final, detailed summary for the "Yes" branch.
-		return tgctx.Reply(Format("{}<b>Summary:</b>\n- Name: {}\n- Like bots? {}\n- Language: {}", greeting, name, like.Some(), lang)).
+		return tgctx.Reply(g.Format("{}<b>Summary:</b>\n- Name: {}\n- Like bots? {}\n- Language: {}", greeting, name, like.Some(), lang)).
 			HTML().
 			RemoveKeyboard().
 			Send().

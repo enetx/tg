@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // Sticker represents an input sticker builder.
@@ -11,7 +11,7 @@ type Sticker struct {
 }
 
 // NewSticker creates a new Sticker builder.
-func NewSticker(sticker, format String, emojiList Slice[String]) *Sticker {
+func NewSticker(sticker, format g.String, emojiList g.Slice[g.String]) *Sticker {
 	return &Sticker{
 		input: &gotgbot.InputSticker{
 			Sticker:   sticker.Std(),
@@ -28,7 +28,7 @@ func (s *Sticker) MaskPosition(maskPosition *gotgbot.MaskPosition) *Sticker {
 }
 
 // Keywords sets keywords for the sticker.
-func (s *Sticker) Keywords(keywords Slice[String]) *Sticker {
+func (s *Sticker) Keywords(keywords g.Slice[g.String]) *Sticker {
 	s.input.Keywords = keywords.ToStringSlice()
 	return s
 }

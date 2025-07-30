@@ -3,11 +3,11 @@ package entities
 import (
 	"testing"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 func TestEntitiesBasicFormatting(t *testing.T) {
-	text := String("Hello world test")
+	text := g.String("Hello world test")
 
 	entities := New(text).
 		Bold("Hello").
@@ -49,7 +49,7 @@ func TestEntitiesBasicFormatting(t *testing.T) {
 }
 
 func TestEntitiesURL(t *testing.T) {
-	text := String("Click here to visit")
+	text := g.String("Click here to visit")
 
 	entities := New(text).
 		URL("here", "https://example.com")
@@ -70,8 +70,8 @@ func TestEntitiesURL(t *testing.T) {
 }
 
 func TestEntitiesPreFormatted(t *testing.T) {
-	text := String("Check this code: func main() {}")
-	codeText := String("func main() {}")
+	text := g.String("Check this code: func main() {}")
+	codeText := g.String("func main() {}")
 
 	entities := New(text).
 		Pre(codeText, "go")
@@ -92,7 +92,7 @@ func TestEntitiesPreFormatted(t *testing.T) {
 }
 
 func TestEntitiesSpoiler(t *testing.T) {
-	text := String("This is a spoiler text")
+	text := g.String("This is a spoiler text")
 
 	entities := New(text).
 		Spoiler("spoiler")
@@ -109,7 +109,7 @@ func TestEntitiesSpoiler(t *testing.T) {
 }
 
 func TestEntitiesBlockquote(t *testing.T) {
-	text := String("Regular text\nThis is a quote")
+	text := g.String("Regular text\nThis is a quote")
 
 	entities := New(text).
 		Blockquote("This is a quote")
@@ -126,7 +126,7 @@ func TestEntitiesBlockquote(t *testing.T) {
 }
 
 func TestEntitiesMultipleFormatting(t *testing.T) {
-	text := String("Bold italic underline strikethrough")
+	text := g.String("Bold italic underline strikethrough")
 
 	entities := New(text).
 		Bold("Bold").
@@ -149,7 +149,7 @@ func TestEntitiesMultipleFormatting(t *testing.T) {
 }
 
 func TestEntitiesEmpty(t *testing.T) {
-	text := String("No entities here")
+	text := g.String("No entities here")
 
 	entities := New(text)
 	result := entities.Std()
@@ -160,7 +160,7 @@ func TestEntitiesEmpty(t *testing.T) {
 }
 
 func TestEntitiesNonExistentText(t *testing.T) {
-	text := String("Hello world")
+	text := g.String("Hello world")
 
 	entities := New(text).
 		Bold("nonexistent")

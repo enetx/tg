@@ -2,7 +2,7 @@ package bot
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/types/updates"
 )
 
@@ -38,7 +38,10 @@ func (p *Polling) Offset(offset int64) *Polling {
 }
 
 func (p *Polling) AllowedUpdates(upds ...updates.UpdateType) *Polling {
-	p.opts.GetUpdatesOpts.AllowedUpdates = TransformSlice(Slice[updates.UpdateType](upds), updates.UpdateType.String)
+	p.opts.GetUpdatesOpts.AllowedUpdates = g.TransformSlice(
+		g.Slice[updates.UpdateType](upds),
+		updates.UpdateType.String,
+	)
 	return p
 }
 
@@ -47,6 +50,6 @@ func (p *Polling) Start() {
 		panic("failed to start polling: " + err.Error())
 	}
 
-	Println("bot started")
+	g.Println("bot started")
 	p.bot.updater.Idle()
 }

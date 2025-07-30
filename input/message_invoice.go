@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // MessageInvoice represents an input invoice message content builder.
@@ -11,7 +11,7 @@ type MessageInvoice struct {
 }
 
 // Invoice creates a new MessageInvoice builder with the required fields.
-func Invoice(title, description, payload, currency String, prices []gotgbot.LabeledPrice) *MessageInvoice {
+func Invoice(title, description, payload, currency g.String, prices g.Slice[gotgbot.LabeledPrice]) *MessageInvoice {
 	return &MessageInvoice{
 		input: &gotgbot.InputInvoiceMessageContent{
 			Title:       title.Std(),
@@ -24,7 +24,7 @@ func Invoice(title, description, payload, currency String, prices []gotgbot.Labe
 }
 
 // ProviderToken sets the payment provider token.
-func (mi *MessageInvoice) ProviderToken(token String) *MessageInvoice {
+func (mi *MessageInvoice) ProviderToken(token g.String) *MessageInvoice {
 	mi.input.ProviderToken = token.Std()
 	return mi
 }
@@ -36,19 +36,19 @@ func (mi *MessageInvoice) MaxTipAmount(amount int64) *MessageInvoice {
 }
 
 // SuggestedTipAmounts sets suggested amounts of tip in the smallest currency unit.
-func (mi *MessageInvoice) SuggestedTipAmounts(amounts []int64) *MessageInvoice {
+func (mi *MessageInvoice) SuggestedTipAmounts(amounts g.Slice[int64]) *MessageInvoice {
 	mi.input.SuggestedTipAmounts = amounts
 	return mi
 }
 
 // ProviderData sets JSON-encoded data about the invoice.
-func (mi *MessageInvoice) ProviderData(data String) *MessageInvoice {
+func (mi *MessageInvoice) ProviderData(data g.String) *MessageInvoice {
 	mi.input.ProviderData = data.Std()
 	return mi
 }
 
 // PhotoURL sets the URL of the product photo for the invoice.
-func (mi *MessageInvoice) PhotoURL(url String) *MessageInvoice {
+func (mi *MessageInvoice) PhotoURL(url g.String) *MessageInvoice {
 	mi.input.PhotoUrl = url.Std()
 	return mi
 }

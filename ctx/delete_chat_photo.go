@@ -4,19 +4,19 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // DeleteChatPhoto represents a request to delete the chat photo.
 type DeleteChatPhoto struct {
 	ctx    *Context
 	opts   *gotgbot.DeleteChatPhotoOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID for this request.
 func (dcp *DeleteChatPhoto) ChatID(id int64) *DeleteChatPhoto {
-	dcp.chatID = Some(id)
+	dcp.chatID = g.Some(id)
 	return dcp
 }
 
@@ -32,7 +32,7 @@ func (dcp *DeleteChatPhoto) Timeout(duration time.Duration) *DeleteChatPhoto {
 }
 
 // APIURL sets a custom API URL for this request.
-func (dcp *DeleteChatPhoto) APIURL(url String) *DeleteChatPhoto {
+func (dcp *DeleteChatPhoto) APIURL(url g.String) *DeleteChatPhoto {
 	if dcp.opts.RequestOpts == nil {
 		dcp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -43,7 +43,7 @@ func (dcp *DeleteChatPhoto) APIURL(url String) *DeleteChatPhoto {
 }
 
 // Send executes the DeleteChatPhoto request.
-func (dcp *DeleteChatPhoto) Send() Result[bool] {
+func (dcp *DeleteChatPhoto) Send() g.Result[bool] {
 	chatID := dcp.chatID.UnwrapOr(dcp.ctx.EffectiveChat.Id)
-	return ResultOf(dcp.ctx.Bot.Raw().DeleteChatPhoto(chatID, dcp.opts))
+	return g.ResultOf(dcp.ctx.Bot.Raw().DeleteChatPhoto(chatID, dcp.opts))
 }

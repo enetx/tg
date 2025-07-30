@@ -3,13 +3,13 @@ package main
 import (
 	"time"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
 
 func main() {
-	token := String("YOUR_BOT_TOKEN")
+	token := g.String("YOUR_BOT_TOKEN")
 	b := bot.New(token).Build().Unwrap()
 
 	// Demo of Timeout and APIURL methods across different ctx types

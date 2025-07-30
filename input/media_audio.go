@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/file"
 )
@@ -13,7 +13,7 @@ type MediaAudio struct {
 }
 
 // Audio creates a new MediaAudio builder with the required fields.
-func Audio(media file.File) *MediaAudio {
+func Audio(media file.TgFile) *MediaAudio {
 	return &MediaAudio{
 		input: &gotgbot.InputMediaAudio{
 			Media: media.Doc,
@@ -29,7 +29,7 @@ func (ma *MediaAudio) Thumbnail(thumbnail gotgbot.InputFile) *MediaAudio {
 }
 
 // Caption sets the caption for the audio.
-func (ma *MediaAudio) Caption(caption String) *MediaAudio {
+func (ma *MediaAudio) Caption(caption g.String) *MediaAudio {
 	ma.input.Caption = caption.Std()
 	return ma
 }
@@ -59,13 +59,13 @@ func (ma *MediaAudio) Duration(duration int64) *MediaAudio {
 }
 
 // Performer sets the performer of the audio.
-func (ma *MediaAudio) Performer(performer String) *MediaAudio {
+func (ma *MediaAudio) Performer(performer g.String) *MediaAudio {
 	ma.input.Performer = performer.Std()
 	return ma
 }
 
 // Title sets the title of the audio.
-func (ma *MediaAudio) Title(title String) *MediaAudio {
+func (ma *MediaAudio) Title(title g.String) *MediaAudio {
 	ma.input.Title = title.Std()
 	return ma
 }

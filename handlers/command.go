@@ -2,23 +2,23 @@ package handlers
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 )
 
 // Command represents a command handler for bot commands.
 type Command struct {
 	bot          core.BotAPI
-	command      String
+	command      g.String
 	handler      Handler
-	name         String
+	name         g.String
 	triggers     []rune
 	allowEdited  bool
 	allowChannel bool
 }
 
 // NewCommand creates a new command handler for the specified command.
-func NewCommand(bot core.BotAPI, cmd String, handler Handler) *Command {
+func NewCommand(bot core.BotAPI, cmd g.String, handler Handler) *Command {
 	return &Command{
 		bot:          bot,
 		command:      cmd.Lower(),

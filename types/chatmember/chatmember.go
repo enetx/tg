@@ -15,7 +15,7 @@ const (
 	Kicked                                // The user was removed and banned from the chat.
 )
 
-// String returns the canonical string representation used by the Telegram Bot API.
+// g.String returns the canonical string representation used by the Telegram Bot API.
 func (s ChatMemberStatus) String() string {
 	switch s {
 	case Creator:

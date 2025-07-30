@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetGameScore represents a request to set the score for a game.
@@ -13,9 +13,9 @@ type SetGameScore struct {
 	userID          int64
 	score           int64
 	opts            *gotgbot.SetGameScoreOpts
-	chatID          Option[int64]
-	messageID       Option[int64]
-	inlineMessageID Option[String]
+	chatID          g.Option[int64]
+	messageID       g.Option[int64]
+	inlineMessageID g.Option[g.String]
 }
 
 // UserID sets the user ID for the score.
@@ -44,19 +44,19 @@ func (sgs *SetGameScore) DisableEditMessage() *SetGameScore {
 
 // ChatID sets the chat ID where the game message is located.
 func (sgs *SetGameScore) ChatID(chatID int64) *SetGameScore {
-	sgs.chatID = Some(chatID)
+	sgs.chatID = g.Some(chatID)
 	return sgs
 }
 
 // MessageID sets the message ID of the game message.
 func (sgs *SetGameScore) MessageID(messageID int64) *SetGameScore {
-	sgs.messageID = Some(messageID)
+	sgs.messageID = g.Some(messageID)
 	return sgs
 }
 
 // InlineMessageID sets the inline message ID for inline games.
-func (sgs *SetGameScore) InlineMessageID(inlineMessageID String) *SetGameScore {
-	sgs.inlineMessageID = Some(inlineMessageID)
+func (sgs *SetGameScore) InlineMessageID(inlineMessageID g.String) *SetGameScore {
+	sgs.inlineMessageID = g.Some(inlineMessageID)
 	return sgs
 }
 
@@ -72,7 +72,7 @@ func (sgs *SetGameScore) Timeout(duration time.Duration) *SetGameScore {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sgs *SetGameScore) APIURL(url String) *SetGameScore {
+func (sgs *SetGameScore) APIURL(url g.String) *SetGameScore {
 	if sgs.opts.RequestOpts == nil {
 		sgs.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -83,9 +83,9 @@ func (sgs *SetGameScore) APIURL(url String) *SetGameScore {
 }
 
 // Send sets the game score and returns the result.
-func (sgs *SetGameScore) Send() Result[*gotgbot.Message] {
+func (sgs *SetGameScore) Send() g.Result[*gotgbot.Message] {
 	if sgs.score < 0 {
-		return Err[*gotgbot.Message](Errorf("score cannot be negative: {}", sgs.score))
+		return g.Err[*gotgbot.Message](g.Errorf("score cannot be negative: {}", sgs.score))
 	}
 
 	sgs.opts.ChatId = sgs.chatID.UnwrapOr(sgs.ctx.EffectiveChat.Id)
@@ -96,5 +96,5 @@ func (sgs *SetGameScore) Send() Result[*gotgbot.Message] {
 	}
 
 	msg, _, err := sgs.ctx.Bot.Raw().SetGameScore(sgs.userID, sgs.score, sgs.opts)
-	return ResultOf(msg, err)
+	return g.ResultOf(msg, err)
 }

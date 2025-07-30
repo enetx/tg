@@ -11,7 +11,7 @@ type PaidMediaPhoto struct {
 }
 
 // PaidPhoto creates a new PaidMediaPhoto builder with the required fields.
-func PaidPhoto(media file.File) *PaidMediaPhoto {
+func PaidPhoto(media file.TgFile) *PaidMediaPhoto {
 	return &PaidMediaPhoto{
 		input: &gotgbot.InputPaidMediaPhoto{
 			Media: media.Doc,

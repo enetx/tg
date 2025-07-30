@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // DeleteForumTopic represents a request to delete a forum topic.
@@ -12,7 +12,7 @@ type DeleteForumTopic struct {
 	ctx             *Context
 	messageThreadID int64
 	opts            *gotgbot.DeleteForumTopicOpts
-	chatID          Option[int64]
+	chatID          g.Option[int64]
 }
 
 // Timeout sets a custom timeout for this request.
@@ -27,7 +27,7 @@ func (dft *DeleteForumTopic) Timeout(duration time.Duration) *DeleteForumTopic {
 }
 
 // APIURL sets a custom API URL for this request.
-func (dft *DeleteForumTopic) APIURL(url String) *DeleteForumTopic {
+func (dft *DeleteForumTopic) APIURL(url g.String) *DeleteForumTopic {
 	if dft.opts.RequestOpts == nil {
 		dft.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -39,12 +39,12 @@ func (dft *DeleteForumTopic) APIURL(url String) *DeleteForumTopic {
 
 // ChatID sets the target chat ID for this request.
 func (dft *DeleteForumTopic) ChatID(id int64) *DeleteForumTopic {
-	dft.chatID = Some(id)
+	dft.chatID = g.Some(id)
 	return dft
 }
 
 // Send executes the DeleteForumTopic request.
-func (dft *DeleteForumTopic) Send() Result[bool] {
+func (dft *DeleteForumTopic) Send() g.Result[bool] {
 	chatID := dft.chatID.UnwrapOr(dft.ctx.EffectiveChat.Id)
-	return ResultOf(dft.ctx.Bot.Raw().DeleteForumTopic(chatID, dft.messageThreadID, dft.opts))
+	return g.ResultOf(dft.ctx.Bot.Raw().DeleteForumTopic(chatID, dft.messageThreadID, dft.opts))
 }

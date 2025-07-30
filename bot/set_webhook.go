@@ -4,19 +4,19 @@ import (
 	"os"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/types/updates"
 )
 
 type SetWebhook struct {
 	bot    *Bot
-	domain String
-	path   String
+	domain g.String
+	path   g.String
 	opt    *gotgbot.SetWebhookOpts
 	cert   *os.File
 }
 
-func (w *SetWebhook) Certificate(path String) *SetWebhook {
+func (w *SetWebhook) Certificate(path g.String) *SetWebhook {
 	file, err := os.Open(path.Std())
 	if err != nil {
 		panic("failed to open certificate file: " + err.Error())
@@ -28,17 +28,17 @@ func (w *SetWebhook) Certificate(path String) *SetWebhook {
 	return w
 }
 
-func (w *SetWebhook) Domain(s String) *SetWebhook {
+func (w *SetWebhook) Domain(s g.String) *SetWebhook {
 	w.domain = s
 	return w
 }
 
-func (w *SetWebhook) Path(s String) *SetWebhook {
+func (w *SetWebhook) Path(s g.String) *SetWebhook {
 	w.path = s
 	return w
 }
 
-func (w *SetWebhook) SecretToken(s String) *SetWebhook {
+func (w *SetWebhook) SecretToken(s g.String) *SetWebhook {
 	w.opt.SecretToken = s.Std()
 	return w
 }
@@ -53,27 +53,26 @@ func (w *SetWebhook) MaxConnections(n int) *SetWebhook {
 	return w
 }
 
-func (w *SetWebhook) IP(ip String) *SetWebhook {
+func (w *SetWebhook) IP(ip g.String) *SetWebhook {
 	w.opt.IpAddress = ip.Std()
 	return w
 }
 
 func (w *SetWebhook) AllowedUpdates(upds ...updates.UpdateType) *SetWebhook {
-	w.opt.AllowedUpdates = TransformSlice(Slice[updates.UpdateType](upds), updates.UpdateType.String)
+	w.opt.AllowedUpdates = g.TransformSlice(g.Slice[updates.UpdateType](upds), updates.UpdateType.String)
 	return w
 }
 
-func (w *SetWebhook) Register() error {
+func (w *SetWebhook) Register() g.Result[bool] {
 	if w.cert != nil {
 		defer w.cert.Close()
 	}
 
 	if w.domain.Empty() || w.path.Empty() {
-		return Errorf("Webhook domain and path must be set")
+		return g.Err[bool](g.Errorf("Webhook domain and path must be set"))
 	}
 
 	url := w.domain.StripSuffix("/") + "/" + w.path.StripPrefix("/")
 
-	_, err := w.bot.Raw().SetWebhook(url.Std(), w.opt)
-	return err
+	return g.ResultOf(w.bot.Raw().SetWebhook(url.Std(), w.opt))
 }

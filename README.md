@@ -36,7 +36,7 @@ go get github.com/enetx/tg
 package main
 
 import (
-    . "github.com/enetx/g"
+    "github.com/enetx/g"
     "github.com/enetx/tg/bot"
     "github.com/enetx/tg/ctx"
 )
@@ -47,7 +47,7 @@ func main() {
 
     // Handle text messages
     b.On.Message.Text(func(ctx *ctx.Context) error {
-        return ctx.Reply("Echo: " + String(ctx.EffectiveMessage.Text)).Send().Err()
+        return ctx.Reply("Echo: " + g.String(ctx.EffectiveMessage.Text)).Send().Err()
     })
 
     // Handle /start command
@@ -145,7 +145,7 @@ b.On.Callback.Equal("opt1", func(ctx *ctx.Context) error {
 
 b.On.Callback.Prefix("opt", func(ctx *ctx.Context) error {
     data := ctx.Update.CallbackQuery.Data
-    return ctx.AnswerCallbackQuery("You clicked: " + String(data)).Alert().Send().Err()
+    return ctx.AnswerCallbackQuery("You clicked: " + g.String(data)).Alert().Send().Err()
 })
 ```
 
@@ -234,7 +234,10 @@ b.Command("audio", func(ctx *ctx.Context) error {
 Create complex multi-step conversations:
 
 ```go
-import "github.com/enetx/fsm"
+import (
+	"github.com/enetx/fsm"
+	"github.com/enetx/g"
+)
 
 // Define states
 const (
@@ -244,7 +247,7 @@ const (
 )
 
 // Store FSM instances per user
-var fsmStore = NewMapSafe[int64, *fsm.SyncFSM]()
+var fsmStore = g.NewMapSafe[int64, *fsm.SyncFSM]()
 
 func main() {
     b := bot.New(token).Build().Unwrap()
@@ -275,7 +278,7 @@ func main() {
         tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
         defer fsmStore.Delete(tgctx.EffectiveUser.Id)
 
-        return tgctx.Reply(Format("Got name: {} and email: {}", name, email)).Send().Err()
+        return tgctx.Reply(g.Format("Got name: {} and email: {}", name, email)).Send().Err()
     })
 
     // Start FSM
@@ -335,10 +338,10 @@ b.On.Message.SuccessfulPayment(func(ctx *ctx.Context) error {
     chargeID := payment.TelegramPaymentChargeId
 
     // Grant premium access here
-    Println("User {1.FirstName} ({1.Id}) paid {2.TotalAmount} {2.Currency} with payload {2.InvoicePayload}",
+    g.Println("User {1.FirstName} ({1.Id}) paid {2.TotalAmount} {2.Currency} with payload {2.InvoicePayload}",
         user, payment)
 
-    return ctx.SendMessage(Format("Payment complete! Thank you, {}!\nChargeID:\n{}", user.FirstName, chargeID)).
+    return ctx.SendMessage(g.Format("Payment complete! Thank you, {}!\nChargeID:\n{}", user.FirstName, chargeID)).
         Send().Err()
 })
 
@@ -347,7 +350,7 @@ b.Command("refund", func(ctx *ctx.Context) error {
     chargeID := ctx.Args().Get(0).Some()
 
     if result := ctx.RefundStarPayment(chargeID).Send(); result.IsErr() {
-        err := String(result.Err().Error())
+        err := g.String(result.Err().Error())
         if err.Contains("CHARGE_ALREADY_REFUNDED") {
             return ctx.Reply("This payment was already refunded.").Send().Err()
         }
@@ -442,7 +445,7 @@ b.On.BusinessConnection.Enabled(func(ctx *ctx.Context) error {
     conn := ctx.Update.BusinessConnection
 
     // Configure business account
-    return ctx.Business(String(conn.Id)).SetName("My Business").
+    return ctx.Business(g.String(conn.Id)).SetName("My Business").
         LastName("LLC").
         Send().Err()
 })
@@ -461,7 +464,7 @@ b.On.DeletedBusinessMessages.Any(func(ctx *ctx.Context) error {
 
 // Manage business account settings
 b.Command("business_setup", func(ctx *ctx.Context) error {
-    connectionId := String("your_connection_id")
+    connectionId := g.String("your_connection_id")
 
     // Set profile information
     err := ctx.Business(connectionId).
@@ -475,7 +478,7 @@ b.Command("business_setup", func(ctx *ctx.Context) error {
     // Check star balance
     balance := ctx.Business(connectionId).Balance().GetStarBalance().Send()
     if balance.IsOk() {
-        return ctx.Reply("Stars balance: " + String(balance.Ok().Amount)).Send().Err()
+        return ctx.Reply("Stars balance: " + g.String(balance.Ok().Amount)).Send().Err()
     }
 
     return ctx.Reply("Business account configured").Send().Err()
@@ -488,13 +491,13 @@ Format text messages with various entities:
 
 ```go
 import (
-    . "github.com/enetx/g"
+    "github.com/enetx/g"
     "github.com/enetx/tg/entities"
 )
 
 // Basic text formatting
 b.Command("format", func(ctx *ctx.Context) error {
-    text := String("Hello bold italic code")
+    text := g.String("Hello bold italic code")
 
     e := entities.New(text).
         Bold("bold").     // Make "bold" bold
@@ -508,7 +511,7 @@ b.Command("format", func(ctx *ctx.Context) error {
 
 // Links and spoilers
 b.Command("links", func(ctx *ctx.Context) error {
-    text := String("Click here to visit Google")
+    text := g.String("Click here to visit Google")
 
     e := entities.New(text).
         URL("here", "https://google.com"). // "here" as hyperlink
@@ -521,10 +524,10 @@ b.Command("links", func(ctx *ctx.Context) error {
 
 // Code blocks with syntax highlighting
 b.Command("codeblock", func(ctx *ctx.Context) error {
-    code := String(`func main() {
+    code := g.String(`func main() {
     fmt.Println("Hello")
 }`)
-    codeText := Format("Check this Go code:\n{}", code)
+    codeText := g.Format("Check this Go code:\n{}", code)
 
     e := entities.New(codeText).
         Pre(code, "go") // Go code with syntax highlighting
@@ -536,7 +539,7 @@ b.Command("codeblock", func(ctx *ctx.Context) error {
 
 // Multiple formatting types
 b.Command("mixed", func(ctx *ctx.Context) error {
-    text := String("Bold italic underline strikethrough spoiler")
+    text := g.String("Bold italic underline strikethrough spoiler")
 
     e := entities.New(text).
         Bold("Bold").
@@ -552,7 +555,7 @@ b.Command("mixed", func(ctx *ctx.Context) error {
 
 // Blockquotes
 b.Command("quotes", func(ctx *ctx.Context) error {
-    text := String(`Regular text
+    text := g.String(`Regular text
 This is a blockquote
 This is expandable quote`)
 

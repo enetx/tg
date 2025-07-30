@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetAvailableGifts is a request builder for getting available gifts.
@@ -25,7 +25,7 @@ func (gags *GetAvailableGifts) Timeout(duration time.Duration) *GetAvailableGift
 }
 
 // APIURL sets a custom API URL for this request.
-func (gags *GetAvailableGifts) APIURL(url String) *GetAvailableGifts {
+func (gags *GetAvailableGifts) APIURL(url g.String) *GetAvailableGifts {
 	if gags.opts.RequestOpts == nil {
 		gags.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -36,6 +36,6 @@ func (gags *GetAvailableGifts) APIURL(url String) *GetAvailableGifts {
 }
 
 // Send executes the GetAvailableGifts request.
-func (gags *GetAvailableGifts) Send() Result[*gotgbot.Gifts] {
-	return ResultOf(gags.ctx.Bot.Raw().GetAvailableGifts(gags.opts))
+func (gags *GetAvailableGifts) Send() g.Result[*gotgbot.Gifts] {
+	return g.ResultOf(gags.ctx.Bot.Raw().GetAvailableGifts(gags.opts))
 }

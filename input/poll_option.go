@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 )
 
@@ -12,7 +12,7 @@ type PollChoice struct {
 }
 
 // Choice creates a new PollOption builder.
-func Choice(text String) *PollChoice {
+func Choice(text g.String) *PollChoice {
 	return &PollChoice{
 		input: &gotgbot.InputPollOption{
 			Text: text.Std(),

@@ -1,13 +1,13 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Handle shipping queries during payment process
@@ -85,7 +85,7 @@ func main() {
 		address := shipping.ShippingAddress
 
 		// Block certain regions
-		blockedCountries := SliceOf("XX", "YY", "ZZ")
+		blockedCountries := g.SliceOf("XX", "YY", "ZZ")
 		if blockedCountries.Contains(address.CountryCode) {
 			return ctx.AnswerShippingQuery().
 				Error("Sorry, we don't ship to your region").

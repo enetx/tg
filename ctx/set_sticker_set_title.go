@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetStickerSetTitle represents a request to set the title of a sticker set.
 type SetStickerSetTitle struct {
 	ctx   *Context
-	name  String
-	title String
+	name  g.String
+	title g.String
 	opts  *gotgbot.SetStickerSetTitleOpts
 }
 
@@ -27,7 +27,7 @@ func (ssst *SetStickerSetTitle) Timeout(duration time.Duration) *SetStickerSetTi
 }
 
 // APIURL sets a custom API URL for this request.
-func (ssst *SetStickerSetTitle) APIURL(url String) *SetStickerSetTitle {
+func (ssst *SetStickerSetTitle) APIURL(url g.String) *SetStickerSetTitle {
 	if ssst.opts.RequestOpts == nil {
 		ssst.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -38,6 +38,6 @@ func (ssst *SetStickerSetTitle) APIURL(url String) *SetStickerSetTitle {
 }
 
 // Send sets the sticker set title.
-func (ssst *SetStickerSetTitle) Send() Result[bool] {
-	return ResultOf(ssst.ctx.Bot.Raw().SetStickerSetTitle(ssst.name.Std(), ssst.title.Std(), ssst.opts))
+func (ssst *SetStickerSetTitle) Send() g.Result[bool] {
+	return g.ResultOf(ssst.ctx.Bot.Raw().SetStickerSetTitle(ssst.name.Std(), ssst.title.Std(), ssst.opts))
 }

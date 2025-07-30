@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 )
 
@@ -31,9 +31,9 @@ func (h *PreCheckoutHandlers) FromUserID(id int64, fn Handler) *PreCheckoutHandl
 }
 
 // HasPayloadPrefix handles pre-checkout queries where invoice payload starts with the specified prefix.
-func (h *PreCheckoutHandlers) HasPayloadPrefix(prefix String, fn Handler) *PreCheckoutHandlers {
+func (h *PreCheckoutHandlers) HasPayloadPrefix(prefix g.String, fn Handler) *PreCheckoutHandlers {
 	h.handlePreCheckoutQuery(func(p *gotgbot.PreCheckoutQuery) bool {
-		return p != nil && String(p.InvoicePayload).StartsWith(prefix)
+		return p != nil && g.String(p.InvoicePayload).StartsWith(prefix)
 	}, fn)
 	return h
 }

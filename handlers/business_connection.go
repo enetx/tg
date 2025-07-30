@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 )
 
@@ -55,7 +55,7 @@ func (h *BusinessConnection) FromUser(userID int64, fn Handler) *BusinessConnect
 }
 
 // FromUsername handles business connections from a specific username.
-func (h *BusinessConnection) FromUsername(username String, fn Handler) *BusinessConnection {
+func (h *BusinessConnection) FromUsername(username g.String, fn Handler) *BusinessConnection {
 	h.handleBusinessConnection(func(bc *gotgbot.BusinessConnection) bool {
 		return bc.User.Username == username.Std()
 	}, fn)
@@ -63,7 +63,7 @@ func (h *BusinessConnection) FromUsername(username String, fn Handler) *Business
 }
 
 // ConnectionID handles business connections with a specific connection ID.
-func (h *BusinessConnection) ConnectionID(connectionID String, fn Handler) *BusinessConnection {
+func (h *BusinessConnection) ConnectionID(connectionID g.String, fn Handler) *BusinessConnection {
 	h.handleBusinessConnection(func(bc *gotgbot.BusinessConnection) bool {
 		return bc.Id == connectionID.Std()
 	}, fn)

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/types/chataction"
 )
 
@@ -12,12 +12,12 @@ type SendChatAction struct {
 	ctx    *Context
 	action string
 	opts   *gotgbot.SendChatActionOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // To sets the target chat ID for the chat action.
 func (sca *SendChatAction) To(chatID int64) *SendChatAction {
-	sca.chatID = Some(chatID)
+	sca.chatID = g.Some(chatID)
 	return sca
 }
 
@@ -28,7 +28,7 @@ func (sca *SendChatAction) Thread(id int64) *SendChatAction {
 }
 
 // Business sets the business connection ID for the chat action.
-func (sca *SendChatAction) Business(id String) *SendChatAction {
+func (sca *SendChatAction) Business(id g.String) *SendChatAction {
 	sca.opts.BusinessConnectionId = id.Std()
 	return sca
 }
@@ -106,7 +106,7 @@ func (sca *SendChatAction) Timeout(duration time.Duration) *SendChatAction {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sca *SendChatAction) APIURL(url String) *SendChatAction {
+func (sca *SendChatAction) APIURL(url g.String) *SendChatAction {
 	if sca.opts.RequestOpts == nil {
 		sca.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -117,7 +117,7 @@ func (sca *SendChatAction) APIURL(url String) *SendChatAction {
 }
 
 // Send sends the chat action to Telegram and returns the result.
-func (sca *SendChatAction) Send() Result[bool] {
+func (sca *SendChatAction) Send() g.Result[bool] {
 	chatID := sca.chatID.UnwrapOr(sca.ctx.EffectiveChat.Id)
-	return ResultOf(sca.ctx.Bot.Raw().SendChatAction(chatID, sca.action, sca.opts))
+	return g.ResultOf(sca.ctx.Bot.Raw().SendChatAction(chatID, sca.action, sca.opts))
 }

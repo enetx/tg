@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetGameHighScores represents a request to get high scores for a game.
@@ -12,9 +12,9 @@ type GetGameHighScores struct {
 	ctx             *Context
 	userID          int64
 	opts            *gotgbot.GetGameHighScoresOpts
-	chatID          Option[int64]
-	messageID       Option[int64]
-	inlineMessageID Option[String]
+	chatID          g.Option[int64]
+	messageID       g.Option[int64]
+	inlineMessageID g.Option[g.String]
 }
 
 // UserID sets the user ID to get scores for.
@@ -25,19 +25,19 @@ func (gghs *GetGameHighScores) UserID(userID int64) *GetGameHighScores {
 
 // ChatID sets the chat ID where the game message is located.
 func (gghs *GetGameHighScores) ChatID(chatID int64) *GetGameHighScores {
-	gghs.chatID = Some(chatID)
+	gghs.chatID = g.Some(chatID)
 	return gghs
 }
 
 // MessageID sets the message ID of the game message.
 func (gghs *GetGameHighScores) MessageID(messageID int64) *GetGameHighScores {
-	gghs.messageID = Some(messageID)
+	gghs.messageID = g.Some(messageID)
 	return gghs
 }
 
 // InlineMessageID sets the inline message ID for inline games.
-func (gghs *GetGameHighScores) InlineMessageID(inlineMessageID String) *GetGameHighScores {
-	gghs.inlineMessageID = Some(inlineMessageID)
+func (gghs *GetGameHighScores) InlineMessageID(inlineMessageID g.String) *GetGameHighScores {
+	gghs.inlineMessageID = g.Some(inlineMessageID)
 	return gghs
 }
 
@@ -53,7 +53,7 @@ func (gghs *GetGameHighScores) Timeout(duration time.Duration) *GetGameHighScore
 }
 
 // APIURL sets a custom API URL for this request.
-func (gghs *GetGameHighScores) APIURL(url String) *GetGameHighScores {
+func (gghs *GetGameHighScores) APIURL(url g.String) *GetGameHighScores {
 	if gghs.opts.RequestOpts == nil {
 		gghs.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -64,7 +64,7 @@ func (gghs *GetGameHighScores) APIURL(url String) *GetGameHighScores {
 }
 
 // Send gets the game high scores and returns the result.
-func (gghs *GetGameHighScores) Send() Result[Slice[gotgbot.GameHighScore]] {
+func (gghs *GetGameHighScores) Send() g.Result[g.Slice[gotgbot.GameHighScore]] {
 	gghs.opts.ChatId = gghs.chatID.UnwrapOr(gghs.ctx.EffectiveChat.Id)
 	gghs.opts.MessageId = gghs.messageID.UnwrapOr(gghs.ctx.EffectiveMessage.MessageId)
 
@@ -73,5 +73,5 @@ func (gghs *GetGameHighScores) Send() Result[Slice[gotgbot.GameHighScore]] {
 	}
 
 	scores, err := gghs.ctx.Bot.Raw().GetGameHighScores(gghs.userID, gghs.opts)
-	return ResultOf[Slice[gotgbot.GameHighScore]](scores, err)
+	return g.ResultOf[g.Slice[gotgbot.GameHighScore]](scores, err)
 }

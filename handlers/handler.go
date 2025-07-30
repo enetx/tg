@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 	"github.com/enetx/tg/ctx"
 )
@@ -12,7 +12,7 @@ import (
 type Handler func(*ctx.Context) error
 
 // wrap creates a wrapped handler function that applies middlewares and creates a context.
-func wrap(bot core.BotAPI, middlewares Slice[Handler], handler Handler) func(*gotgbot.Bot, *ext.Context) error {
+func wrap(bot core.BotAPI, middlewares g.Slice[Handler], handler Handler) func(*gotgbot.Bot, *ext.Context) error {
 	return func(_ *gotgbot.Bot, ectx *ext.Context) error {
 		c := ctx.New(bot, ectx)
 
@@ -33,8 +33,8 @@ func wrap(bot core.BotAPI, middlewares Slice[Handler], handler Handler) func(*go
 }
 
 // middlewares extracts middleware handlers from the bot API if available.
-func middlewares(api core.BotAPI) Slice[Handler] {
-	if b, ok := api.(interface{ Middlewares() Slice[Handler] }); ok {
+func middlewares(api core.BotAPI) g.Slice[Handler] {
+	if b, ok := api.(interface{ Middlewares() g.Slice[Handler] }); ok {
 		return b.Middlewares()
 	}
 

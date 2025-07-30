@@ -8,7 +8,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 	"github.com/enetx/tg/types/chat"
 	"github.com/enetx/tg/types/entity"
@@ -263,7 +263,7 @@ func (h *MessageHandlers) FromUser(id int64, fn Handler) *MessageHandler {
 }
 
 // FromUsername handles messages from a specific username.
-func (h *MessageHandlers) FromUsername(name String, fn Handler) *MessageHandler {
+func (h *MessageHandlers) FromUsername(name g.String, fn Handler) *MessageHandler {
 	return h.handleMessage(
 		func(msg *gotgbot.Message) bool { return msg.From != nil && msg.From.Username == name.Std() },
 		fn,
@@ -302,23 +302,23 @@ func (h *MessageHandlers) ForwardFromChat(id int64, fn Handler) *MessageHandler 
 }
 
 // Prefix handles messages where text starts with the specified prefix.
-func (h *MessageHandlers) Prefix(prefix String, fn Handler) *MessageHandler {
-	return h.handleMessage(func(msg *gotgbot.Message) bool { return String(msg.GetText()).StartsWith(prefix) }, fn)
+func (h *MessageHandlers) Prefix(prefix g.String, fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return g.String(msg.GetText()).StartsWith(prefix) }, fn)
 }
 
 // Suffix handles messages where text ends with the specified suffix.
-func (h *MessageHandlers) Suffix(suffix String, fn Handler) *MessageHandler {
-	return h.handleMessage(func(msg *gotgbot.Message) bool { return String(msg.GetText()).EndsWith(suffix) }, fn)
+func (h *MessageHandlers) Suffix(suffix g.String, fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return g.String(msg.GetText()).EndsWith(suffix) }, fn)
 }
 
 // Contains handles messages where text contains the specified substring.
-func (h *MessageHandlers) Contains(substr String, fn Handler) *MessageHandler {
-	return h.handleMessage(func(msg *gotgbot.Message) bool { return String(msg.GetText()).Contains(substr) }, fn)
+func (h *MessageHandlers) Contains(substr g.String, fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return g.String(msg.GetText()).Contains(substr) }, fn)
 }
 
 // Equal handles messages where text exactly matches the specified string.
-func (h *MessageHandlers) Equal(str String, fn Handler) *MessageHandler {
-	return h.handleMessage(func(msg *gotgbot.Message) bool { return String(msg.GetText()).Eq(str) }, fn)
+func (h *MessageHandlers) Equal(str g.String, fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return g.String(msg.GetText()).Eq(str) }, fn)
 }
 
 // MatchRegex handles messages where text matches the specified regular expression.
@@ -327,7 +327,7 @@ func (h *MessageHandlers) MatchRegex(pattern *regexp.Regexp, fn Handler) *Messag
 }
 
 // ChatUsername handles messages from a chat with the specified username.
-func (h *MessageHandlers) ChatUsername(name String, fn Handler) *MessageHandler {
+func (h *MessageHandlers) ChatUsername(name g.String, fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.Chat.Username == name.Std() }, fn)
 }
 
@@ -374,7 +374,7 @@ func (h *MessageHandlers) WebAppData(fn Handler) *MessageHandler {
 // Entity handles messages that contain the specified entity type.
 func (h *MessageHandlers) Entity(entType entity.EntityType, fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool {
-		return Slice[gotgbot.MessageEntity](msg.Entities).Iter().
+		return g.Slice[gotgbot.MessageEntity](msg.Entities).Iter().
 			Any(func(ent gotgbot.MessageEntity) bool { return ent.Type == entType.String() })
 	}, fn)
 }
@@ -382,7 +382,7 @@ func (h *MessageHandlers) Entity(entType entity.EntityType, fn Handler) *Message
 // CaptionEntity handles messages that contain the specified entity type in captions.
 func (h *MessageHandlers) CaptionEntity(entType entity.EntityType, fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool {
-		return Slice[gotgbot.MessageEntity](msg.CaptionEntities).Iter().
+		return g.Slice[gotgbot.MessageEntity](msg.CaptionEntities).Iter().
 			Any(func(ent gotgbot.MessageEntity) bool { return ent.Type == entType.String() })
 	}, fn)
 }
@@ -393,28 +393,28 @@ func (h *MessageHandlers) DiceValue(val int64, fn Handler) *MessageHandler {
 }
 
 // SuccessfulPaymentPrefix handles successful payment messages with payload starting with the specified prefix.
-func (h *MessageHandlers) SuccessfulPaymentPrefix(prefix String, fn Handler) *MessageHandler {
+func (h *MessageHandlers) SuccessfulPaymentPrefix(prefix g.String, fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool {
-		return msg.SuccessfulPayment != nil && String(msg.SuccessfulPayment.InvoicePayload).StartsWith(prefix)
+		return msg.SuccessfulPayment != nil && g.String(msg.SuccessfulPayment.InvoicePayload).StartsWith(prefix)
 	}, fn)
 }
 
 // RefundedPaymentPrefix handles refunded payment messages with payload starting with the specified prefix.
-func (h *MessageHandlers) RefundedPaymentPrefix(prefix String, fn Handler) *MessageHandler {
+func (h *MessageHandlers) RefundedPaymentPrefix(prefix g.String, fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool {
-		return msg.RefundedPayment != nil && String(msg.RefundedPayment.InvoicePayload).StartsWith(prefix)
+		return msg.RefundedPayment != nil && g.String(msg.RefundedPayment.InvoicePayload).StartsWith(prefix)
 	}, fn)
 }
 
 // ChecklistTitleContains handles checklist messages where title contains the specified substring.
-func (h *MessageHandlers) ChecklistTitleContains(substr String, fn Handler) *MessageHandler {
+func (h *MessageHandlers) ChecklistTitleContains(substr g.String, fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool {
-		return msg.Checklist != nil && String(msg.Checklist.Title).Contains(substr)
+		return msg.Checklist != nil && g.String(msg.Checklist.Title).Contains(substr)
 	}, fn)
 }
 
 // ChecklistTitleEquals handles checklist messages where title exactly matches the specified string.
-func (h *MessageHandlers) ChecklistTitleEquals(title String, fn Handler) *MessageHandler {
+func (h *MessageHandlers) ChecklistTitleEquals(title g.String, fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool {
 		return msg.Checklist != nil && msg.Checklist.Title == title.Std()
 	}, fn)

@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/input"
 )
 
 // SetPhoto is a request builder for setting the business account profile photo.
 type SetPhoto struct {
 	account *Account
-	photo   String
+	photo   g.String
 	opts    *gotgbot.SetBusinessAccountProfilePhotoOpts
 }
 
@@ -33,7 +33,7 @@ func (sp *SetPhoto) Timeout(duration time.Duration) *SetPhoto {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sp *SetPhoto) APIURL(url String) *SetPhoto {
+func (sp *SetPhoto) APIURL(url g.String) *SetPhoto {
 	if sp.opts.RequestOpts == nil {
 		sp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,8 +44,8 @@ func (sp *SetPhoto) APIURL(url String) *SetPhoto {
 }
 
 // Send executes the SetPhoto request.
-func (sp *SetPhoto) Send() Result[bool] {
-	return ResultOf(sp.account.bot.Raw().SetBusinessAccountProfilePhoto(
+func (sp *SetPhoto) Send() g.Result[bool] {
+	return g.ResultOf(sp.account.bot.Raw().SetBusinessAccountProfilePhoto(
 		sp.account.connID.Std(),
 		input.StaticPhoto(sp.photo).Build(),
 		sp.opts,

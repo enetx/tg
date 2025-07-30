@@ -4,25 +4,25 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // EditChatInviteLink represents a request to edit an existing chat invite link.
 type EditChatInviteLink struct {
 	ctx        *Context
-	inviteLink String
+	inviteLink g.String
 	opts       *gotgbot.EditChatInviteLinkOpts
-	chatID     Option[int64]
+	chatID     g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (ecil *EditChatInviteLink) ChatID(chatID int64) *EditChatInviteLink {
-	ecil.chatID = Some(chatID)
+	ecil.chatID = g.Some(chatID)
 	return ecil
 }
 
 // Name sets the invite link name.
-func (ecil *EditChatInviteLink) Name(name String) *EditChatInviteLink {
+func (ecil *EditChatInviteLink) Name(name g.String) *EditChatInviteLink {
 	ecil.opts.Name = name.Std()
 	return ecil
 }
@@ -63,7 +63,7 @@ func (ecil *EditChatInviteLink) Timeout(duration time.Duration) *EditChatInviteL
 }
 
 // APIURL sets a custom API URL for this request.
-func (ecil *EditChatInviteLink) APIURL(url String) *EditChatInviteLink {
+func (ecil *EditChatInviteLink) APIURL(url g.String) *EditChatInviteLink {
 	if ecil.opts.RequestOpts == nil {
 		ecil.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -74,7 +74,7 @@ func (ecil *EditChatInviteLink) APIURL(url String) *EditChatInviteLink {
 }
 
 // Send edits the chat invite link and returns the result.
-func (ecil *EditChatInviteLink) Send() Result[*gotgbot.ChatInviteLink] {
+func (ecil *EditChatInviteLink) Send() g.Result[*gotgbot.ChatInviteLink] {
 	chatID := ecil.chatID.UnwrapOr(ecil.ctx.EffectiveChat.Id)
-	return ResultOf(ecil.ctx.Bot.Raw().EditChatInviteLink(chatID, ecil.inviteLink.Std(), ecil.opts))
+	return g.ResultOf(ecil.ctx.Bot.Raw().EditChatInviteLink(chatID, ecil.inviteLink.Std(), ecil.opts))
 }

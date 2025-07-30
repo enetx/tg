@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"os/exec"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // VideoMetadata holds structured information about a video file.
 type VideoMetadata struct {
 	Width    int64
 	Height   int64
-	Duration String
+	Duration g.String
 }
 
 // ffprobeOutput defines the structure for parsing the JSON output from ffprobe.
@@ -26,8 +26,8 @@ type ffprobeOutput struct {
 }
 
 // GetVideoMetadata extracts video metadata using the ffprobe command-line tool.
-// It returns a Result containing either the metadata or an error.
-func GetVideoMetadata(videoPath String) Result[*VideoMetadata] {
+// It returns a g.Result containing either the metadata or an error.
+func GetVideoMetadata(videoPath g.String) g.Result[*VideoMetadata] {
 	cmd := exec.Command("ffprobe",
 		"-v", "error", // Only log critical errors from ffprobe.
 		"-print_format", "json",
@@ -41,34 +41,34 @@ func GetVideoMetadata(videoPath String) Result[*VideoMetadata] {
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		return Err[*VideoMetadata](Errorf("failed to run ffprobe: {}, details: {}", err, stderr.String()))
+		return g.Err[*VideoMetadata](g.Errorf("failed to run ffprobe: {}, details: {}", err, stderr.String()))
 	}
 
 	var ffprobeData ffprobeOutput
 	if err := json.Unmarshal(out.Bytes(), &ffprobeData); err != nil {
-		return Err[*VideoMetadata](Errorf("failed to parse ffprobe output: {}", err))
+		return g.Err[*VideoMetadata](g.Errorf("failed to parse ffprobe output: {}", err))
 	}
 
 	if len(ffprobeData.Streams) == 0 {
-		return Err[*VideoMetadata](Errorf("no streams found in file"))
+		return g.Err[*VideoMetadata](g.Errorf("no streams found in file"))
 	}
 
 	for _, stream := range ffprobeData.Streams {
 		if stream.CodecType == "video" {
-			return Ok(
+			return g.Ok(
 				&VideoMetadata{
 					Width:    stream.Width,
 					Height:   stream.Height,
-					Duration: String(stream.Duration),
+					Duration: g.String(stream.Duration),
 				})
 		}
 	}
 
-	return Err[*VideoMetadata](Errorf("video stream not found"))
+	return g.Err[*VideoMetadata](g.Errorf("video stream not found"))
 }
 
 // GenerateThumbnail creates a thumbnail for a video and returns the path to the new file.
-func GenerateThumbnail(videoPath String, seek ...String) Result[*File] {
+func GenerateThumbnail(videoPath g.String, seek ...g.String) g.Result[*g.File] {
 	thumbPath := videoPath + ".jpg"
 
 	seekTime := "00:00:01.000"
@@ -88,8 +88,9 @@ func GenerateThumbnail(videoPath String, seek ...String) Result[*File] {
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		return Err[*File](Errorf("failed to generate thumbnail with ffmpeg: {}, details: {}", err, stderr.String()))
+		return g.Err[*g.File](
+			g.Errorf("failed to generate thumbnail with ffmpeg: {}, details: {}", err, stderr.String()))
 	}
 
-	return Ok(NewFile(thumbPath))
+	return g.Ok(g.NewFile(thumbPath))
 }

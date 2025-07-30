@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetForumTopicIconStickers represents a request to get forum topic icon stickers.
@@ -25,7 +25,7 @@ func (gftis *GetForumTopicIconStickers) Timeout(duration time.Duration) *GetForu
 }
 
 // APIURL sets a custom API URL for this request.
-func (gftis *GetForumTopicIconStickers) APIURL(url String) *GetForumTopicIconStickers {
+func (gftis *GetForumTopicIconStickers) APIURL(url g.String) *GetForumTopicIconStickers {
 	if gftis.opts.RequestOpts == nil {
 		gftis.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -36,6 +36,6 @@ func (gftis *GetForumTopicIconStickers) APIURL(url String) *GetForumTopicIconSti
 }
 
 // Send gets the custom emoji stickers that can be used as forum topic icons.
-func (gftis *GetForumTopicIconStickers) Send() Result[Slice[gotgbot.Sticker]] {
-	return ResultOf[Slice[gotgbot.Sticker]](gftis.ctx.Bot.Raw().GetForumTopicIconStickers(gftis.opts))
+func (gftis *GetForumTopicIconStickers) Send() g.Result[g.Slice[gotgbot.Sticker]] {
+	return g.ResultOf[g.Slice[gotgbot.Sticker]](gftis.ctx.Bot.Raw().GetForumTopicIconStickers(gftis.opts))
 }

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetBio is a request builder for setting the business account bio.
@@ -25,7 +25,7 @@ func (sb *SetBio) Timeout(duration time.Duration) *SetBio {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sb *SetBio) APIURL(url String) *SetBio {
+func (sb *SetBio) APIURL(url g.String) *SetBio {
 	if sb.opts.RequestOpts == nil {
 		sb.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -36,8 +36,8 @@ func (sb *SetBio) APIURL(url String) *SetBio {
 }
 
 // Send executes the SetBio request.
-func (sb *SetBio) Send() Result[bool] {
-	return ResultOf(sb.account.bot.Raw().SetBusinessAccountBio(
+func (sb *SetBio) Send() g.Result[bool] {
+	return g.ResultOf(sb.account.bot.Raw().SetBusinessAccountBio(
 		sb.account.connID.Std(),
 		sb.opts,
 	))

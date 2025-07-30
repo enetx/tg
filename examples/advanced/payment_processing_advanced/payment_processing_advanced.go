@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
@@ -130,7 +130,7 @@ func handleBuyStars(ctx *ctx.Context) error {
 		Send()
 
 	if result.IsErr() {
-		return ctx.Reply(Format("❌ Failed to create star purchase invoice: {}", result.Err())).Send().Err()
+		return ctx.Reply(g.Format("❌ Failed to create star purchase invoice: {}", result.Err())).Send().Err()
 	}
 
 	return ctx.AnswerCallbackQuery("💰 Star purchase invoice created!").Send().Err()
@@ -140,12 +140,12 @@ func handleCheckStarBalance(ctx *ctx.Context) error {
 	// Get current star balance
 	result := ctx.GetMyStarBalance().Send()
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to get star balance: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to get star balance: " + result.Err().Error())).Send().Err()
 	}
 
 	balance := result.Ok()
-	return ctx.Reply(String("💎 <b>Current Star Balance</b>\n\n" +
-		"<b>Available Stars:</b> ⭐ " + Int(balance.Amount).String().Std() + "\n" +
+	return ctx.Reply(g.String("💎 <b>Current Star Balance</b>\n\n" +
+		"<b>Available Stars:</b> ⭐ " + g.Int(balance.Amount).String().Std() + "\n" +
 		"<b>Last Updated:</b> " + time.Now().Format("2006-01-02 15:04:05") + "\n\n" +
 		"<b>Star Usage:</b>\n" +
 		"• Premium features access\n" +
@@ -160,11 +160,11 @@ func handleStarTransactionHistory(ctx *ctx.Context) error {
 	// Get star transaction history
 	result := ctx.GetStarTransactions().Send()
 	if result.IsErr() {
-		return ctx.Reply(Format("❌ Failed to get star transactions: {}", result.Err())).Send().Err()
+		return ctx.Reply(g.Format("❌ Failed to get star transactions: {}", result.Err())).Send().Err()
 	}
 
 	transactions := result.Ok()
-	transactionText := String("📋 <b>Star Transaction History</b>\n\n")
+	transactionText := g.String("📋 <b>Star Transaction History</b>\n\n")
 
 	if len(transactions.Transactions) == 0 {
 		transactionText += "<i>No transactions found.</i>"
@@ -175,9 +175,9 @@ func handleStarTransactionHistory(ctx *ctx.Context) error {
 				break
 			}
 
-			transactionText += "<b>Transaction " + Int(i+1).String() + ":</b>\n"
-			transactionText += "• <b>Amount:</b> ⭐ " + Int(tx.Amount).String() + "\n"
-			transactionText += "• <b>Date:</b> " + String(time.Unix(int64(tx.Date), 0).Format("2006-01-02 15:04")) + "\n"
+			transactionText += "<b>Transaction " + g.Int(i+1).String() + ":</b>\n"
+			transactionText += "• <b>Amount:</b> ⭐ " + g.Int(tx.Amount).String() + "\n"
+			transactionText += "• <b>Date:</b> " + g.String(time.Unix(int64(tx.Date), 0).Format("2006-01-02 15:04")) + "\n"
 			transactionText += "• <b>Type:</b> " + getTransactionType(tx) + "\n\n"
 		}
 	}
@@ -191,7 +191,7 @@ func handleStarTransactionHistory(ctx *ctx.Context) error {
 }
 
 // Helper function to determine transaction type
-func getTransactionType(tx gotgbot.StarTransaction) String {
+func getTransactionType(tx gotgbot.StarTransaction) g.String {
 	if tx.Source != nil {
 		return "Incoming"
 	}
@@ -260,7 +260,7 @@ func handleCreateInvoice(ctx *ctx.Context) error {
 		Send()
 
 	if result.IsErr() {
-		return ctx.Reply(Format("❌ Failed to create invoice: {}", result.Err())).Send().Err()
+		return ctx.Reply(g.Format("❌ Failed to create invoice: {}", result.Err())).Send().Err()
 	}
 
 	return ctx.AnswerCallbackQuery("📄 Premium features invoice created!").Send().Err()
@@ -293,10 +293,10 @@ func handleCreateInvoiceLink(ctx *ctx.Context) error {
 		Send()
 
 	if result.IsErr() {
-		return ctx.Reply(Format("❌ Failed to create invoice link: {}", result.Err())).Send().Err()
+		return ctx.Reply(g.Format("❌ Failed to create invoice link: {}", result.Err())).Send().Err()
 	}
 
-	invoiceLink := String(result.Ok())
+	invoiceLink := g.String(result.Ok())
 
 	return ctx.Reply("🔗 <b>Invoice Link Created</b>\n\n" +
 		"<b>Product:</b> Bot Premium Subscription\n" +
@@ -313,14 +313,14 @@ func handleCreateInvoiceLink(ctx *ctx.Context) error {
 
 func handleRefundPayment(ctx *ctx.Context) error {
 	// Example refund processing (in real implementation, you'd track actual transactions)
-	telegramPaymentChargeID := String("tpc_demo_12345")
+	telegramPaymentChargeID := g.String("tpc_demo_12345")
 
 	result := ctx.RefundStarPayment(telegramPaymentChargeID).Send()
 	if result.IsErr() {
-		return ctx.Reply(Format("❌ Failed to process refund: {}", result.Err())).Send().Err()
+		return ctx.Reply(g.Format("❌ Failed to process refund: {}", result.Err())).Send().Err()
 	}
 
-	return ctx.Reply(String("💸 <b>Refund Processed Successfully</b>\n\n" +
+	return ctx.Reply(g.String("💸 <b>Refund Processed Successfully</b>\n\n" +
 		"<b>Transaction ID:</b> <code>" + telegramPaymentChargeID + "</code>\n" +
 		"<b>Status:</b> ✅ Refunded\n" +
 		"<b>Processing Time:</b> Instant\n\n" +
@@ -391,7 +391,7 @@ func handlePremiumSubscription(ctx *ctx.Context) error {
 		Send()
 
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to create subscription invoice: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to create subscription invoice: " + result.Err().Error())).Send().Err()
 	}
 
 	return ctx.AnswerCallbackQuery("⭐ Premium subscription invoice created!").Send().Err()
@@ -399,7 +399,7 @@ func handlePremiumSubscription(ctx *ctx.Context) error {
 
 func handleManageSubscription(ctx *ctx.Context) error {
 	// In a real implementation, you would fetch actual subscription data
-	return ctx.Reply(String("⚙️ <b>Subscription Management</b>\n\n" +
+	return ctx.Reply(g.String("⚙️ <b>Subscription Management</b>\n\n" +
 		"<b>Current Subscription:</b>\n" +
 		"• <b>Plan:</b> Pro Monthly\n" +
 		"• <b>Status:</b> ✅ Active\n" +
@@ -429,7 +429,7 @@ func handleCancelSubscription(ctx *ctx.Context) error {
 		Text("✅ Confirm Cancellation", "confirm_cancel").
 		Text("❌ Keep Subscription", "subscription_management")
 
-	return ctx.Reply(String("❌ <b>Cancel Subscription</b>\n\n" +
+	return ctx.Reply(g.String("❌ <b>Cancel Subscription</b>\n\n" +
 		"<b>⚠️ Are you sure you want to cancel your subscription?</b>\n\n" +
 		"<b>Current Plan:</b> Pro Monthly ($19.99/month)\n" +
 		"<b>Active Until:</b> " + time.Now().AddDate(0, 1, 0).Format("2006-01-02") + "\n\n" +
@@ -452,7 +452,7 @@ func handleCancelSubscription(ctx *ctx.Context) error {
 
 func handlePaymentHistory(ctx *ctx.Context) error {
 	// In a real implementation, you would fetch actual payment history from database
-	return ctx.Reply(String("📊 <b>Payment History & Analytics</b>\n\n" +
+	return ctx.Reply(g.String("📊 <b>Payment History & Analytics</b>\n\n" +
 		"<b>Recent Transactions:</b>\n\n" +
 		"<b>1. Premium Subscription</b>\n" +
 		"• <b>Date:</b> " + time.Now().AddDate(0, 0, -7).Format("2006-01-02") + "\n" +
@@ -499,7 +499,7 @@ func handlePreCheckoutQuery(ctx *ctx.Context) error {
 
 	// Example validation
 	isValid := true
-	var errorMessage String
+	var errorMessage g.String
 
 	// Simple payload validation
 	if query.InvoicePayload == "" {
@@ -540,7 +540,7 @@ func handleSuccessfulPayment(ctx *ctx.Context) error {
 	// Send confirmation message
 	confirmationText := "🎉 <b>Payment Successful!</b>\n\n" +
 		"<b>Transaction Details:</b>\n" +
-		"• <b>Amount:</b> " + Int(payment.TotalAmount).String().Std() + " " + payment.Currency + "\n" +
+		"• <b>Amount:</b> " + g.Int(payment.TotalAmount).String().Std() + " " + payment.Currency + "\n" +
 		"• <b>Invoice Payload:</b> <code>" + payment.InvoicePayload + "</code>\n" +
 		"• <b>Telegram Payment ID:</b> <code>" + payment.TelegramPaymentChargeId + "</code>\n"
 
@@ -579,7 +579,7 @@ func handleSuccessfulPayment(ctx *ctx.Context) error {
 
 	confirmationText += "\n\n<i>Thank you for your purchase! If you have any questions, contact our support team.</i>"
 
-	return ctx.Reply(String(confirmationText)).HTML().Send().Err()
+	return ctx.Reply(g.String(confirmationText)).HTML().Send().Err()
 }
 
 func handleShippingQuery(ctx *ctx.Context) error {

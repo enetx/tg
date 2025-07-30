@@ -4,28 +4,28 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 )
 
 // SendGift is a request builder for sending gifts.
 type SendGift struct {
 	ctx    *Context
-	giftID String
-	userID Option[int64]
-	chatID Option[int64]
+	giftID g.String
+	userID g.Option[int64]
+	chatID g.Option[int64]
 	opts   *gotgbot.SendGiftOpts
 }
 
 // To sets the target user ID for the gift.
 func (sg *SendGift) To(userID int64) *SendGift {
-	sg.userID = Some(userID)
+	sg.userID = g.Some(userID)
 	return sg
 }
 
 // ToChat sets the target chat ID for the gift.
 func (sg *SendGift) ToChat(chatID int64) *SendGift {
-	sg.chatID = Some(chatID)
+	sg.chatID = g.Some(chatID)
 	return sg
 }
 
@@ -36,7 +36,7 @@ func (sg *SendGift) PayForUpgrade() *SendGift {
 }
 
 // Text sets the text shown with the gift (0-128 characters).
-func (sg *SendGift) Text(text String) *SendGift {
+func (sg *SendGift) Text(text g.String) *SendGift {
 	sg.opts.Text = text.Std()
 	return sg
 }
@@ -71,7 +71,7 @@ func (sg *SendGift) Timeout(duration time.Duration) *SendGift {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sg *SendGift) APIURL(url String) *SendGift {
+func (sg *SendGift) APIURL(url g.String) *SendGift {
 	if sg.opts.RequestOpts == nil {
 		sg.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -82,7 +82,7 @@ func (sg *SendGift) APIURL(url String) *SendGift {
 }
 
 // Send executes the SendGift request.
-func (sg *SendGift) Send() Result[bool] {
+func (sg *SendGift) Send() g.Result[bool] {
 	if sg.userID.IsSome() {
 		sg.opts.UserId = sg.userID.Some()
 	} else if sg.chatID.IsSome() {
@@ -91,5 +91,5 @@ func (sg *SendGift) Send() Result[bool] {
 		sg.opts.UserId = sg.ctx.EffectiveUser.Id
 	}
 
-	return ResultOf(sg.ctx.Bot.Raw().SendGift(sg.giftID.Std(), sg.opts))
+	return g.ResultOf(sg.ctx.Bot.Raw().SendGift(sg.giftID.Std(), sg.opts))
 }

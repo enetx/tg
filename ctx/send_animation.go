@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 )
@@ -13,11 +13,11 @@ type SendAnimation struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendAnimationOpts
-	file        *File
-	thumb       *File
-	chatID      Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	file        *g.File
+	thumb       *g.File
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 	err         error
 }
 
@@ -29,18 +29,18 @@ func (sa *SendAnimation) CaptionEntities(e *entities.Entities) *SendAnimation {
 
 // After schedules the animation to be sent after the specified duration.
 func (sa *SendAnimation) After(duration time.Duration) *SendAnimation {
-	sa.after = Some(duration)
+	sa.after = g.Some(duration)
 	return sa
 }
 
 // DeleteAfter schedules the animation message to be deleted after the specified duration.
 func (sa *SendAnimation) DeleteAfter(duration time.Duration) *SendAnimation {
-	sa.deleteAfter = Some(duration)
+	sa.deleteAfter = g.Some(duration)
 	return sa
 }
 
 // Caption sets the caption text for the animation.
-func (sa *SendAnimation) Caption(caption String) *SendAnimation {
+func (sa *SendAnimation) Caption(caption g.String) *SendAnimation {
 	sa.opts.Caption = caption.Std()
 	return sa
 }
@@ -94,8 +94,8 @@ func (sa *SendAnimation) Height(height int64) *SendAnimation {
 }
 
 // Thumbnail sets a custom thumbnail for the animation.
-func (sa *SendAnimation) Thumbnail(file String) *SendAnimation {
-	sa.thumb = NewFile(file)
+func (sa *SendAnimation) Thumbnail(file g.String) *SendAnimation {
+	sa.thumb = g.NewFile(file)
 
 	reader := sa.thumb.Open()
 	if reader.IsErr() {
@@ -126,7 +126,7 @@ func (sa *SendAnimation) Timeout(duration time.Duration) *SendAnimation {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sa *SendAnimation) APIURL(url String) *SendAnimation {
+func (sa *SendAnimation) APIURL(url g.String) *SendAnimation {
 	if sa.opts.RequestOpts == nil {
 		sa.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -137,7 +137,7 @@ func (sa *SendAnimation) APIURL(url String) *SendAnimation {
 }
 
 // Business sets the business connection ID for the animation message.
-func (sa *SendAnimation) Business(id String) *SendAnimation {
+func (sa *SendAnimation) Business(id g.String) *SendAnimation {
 	sa.opts.BusinessConnectionId = id.Std()
 	return sa
 }
@@ -162,14 +162,14 @@ func (sa *SendAnimation) Spoiler() *SendAnimation {
 
 // To sets the target chat ID for the animation message.
 func (sa *SendAnimation) To(chatID int64) *SendAnimation {
-	sa.chatID = Some(chatID)
+	sa.chatID = g.Some(chatID)
 	return sa
 }
 
 // Send sends the animation message to Telegram and returns the result.
-func (sa *SendAnimation) Send() Result[*gotgbot.Message] {
+func (sa *SendAnimation) Send() g.Result[*gotgbot.Message] {
 	if sa.err != nil {
-		return Err[*gotgbot.Message](sa.err)
+		return g.Err[*gotgbot.Message](sa.err)
 	}
 
 	if sa.file != nil {
@@ -180,8 +180,8 @@ func (sa *SendAnimation) Send() Result[*gotgbot.Message] {
 		defer sa.thumb.Close()
 	}
 
-	return sa.ctx.timers(sa.after, sa.deleteAfter, func() Result[*gotgbot.Message] {
+	return sa.ctx.timers(sa.after, sa.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := sa.chatID.UnwrapOr(sa.ctx.EffectiveChat.Id)
-		return ResultOf(sa.ctx.Bot.Raw().SendAnimation(chatID, sa.doc, sa.opts))
+		return g.ResultOf(sa.ctx.Bot.Raw().SendAnimation(chatID, sa.doc, sa.opts))
 	})
 }

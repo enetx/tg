@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/enetx/fsm"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
@@ -16,11 +16,11 @@ const (
 
 // fsmStore holds the active FSM instance for each user, keyed by their Telegram user ID.
 // This allows each user to have their own independent state in the conversation.
-var fsmStore = NewMapSafe[int64, *fsm.SyncFSM]()
+var fsmStore = g.NewMapSafe[int64, *fsm.SyncFSM]()
 
 func main() {
 	// Load the Telegram bot token from a local .env file.
-	token := NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	// Initialize the Telegram bot and its helper components.
 	b := bot.New(token).Build().Unwrap()
 
@@ -70,7 +70,7 @@ func main() {
 		defer fsmStore.Delete(tgctx.EffectiveUser.Id)
 
 		// Compose and send the final summary message to the user.
-		return tgctx.Reply(Format("Got name: {} and email: {}", name, email)).Send().Err()
+		return tgctx.Reply(g.Format("Got name: {} and email: {}", name, email)).Send().Err()
 	})
 
 	// Command handler for /start, which initializes or resets a user's workflow.

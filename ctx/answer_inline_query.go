@@ -4,15 +4,15 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/inline"
 )
 
 // AnswerInlineQuery represents a request to answer an inline query.
 type AnswerInlineQuery struct {
 	ctx           *Context
-	inlineQueryID String
-	results       Slice[gotgbot.InlineQueryResult]
+	inlineQueryID g.String
+	results       g.Slice[gotgbot.InlineQueryResult]
 	opts          *gotgbot.AnswerInlineQueryOpts
 }
 
@@ -44,13 +44,13 @@ func (aiq *AnswerInlineQuery) Personal() *AnswerInlineQuery {
 }
 
 // NextOffset sets the offset that a client should send in the next query.
-func (aiq *AnswerInlineQuery) NextOffset(nextOffset String) *AnswerInlineQuery {
+func (aiq *AnswerInlineQuery) NextOffset(nextOffset g.String) *AnswerInlineQuery {
 	aiq.opts.NextOffset = nextOffset.Std()
 	return aiq
 }
 
 // ButtonText sets the text of the button that appears at the top of search results.
-func (aiq *AnswerInlineQuery) ButtonText(text String) *AnswerInlineQuery {
+func (aiq *AnswerInlineQuery) ButtonText(text g.String) *AnswerInlineQuery {
 	if aiq.opts.Button == nil {
 		aiq.opts.Button = new(gotgbot.InlineQueryResultsButton)
 	}
@@ -61,7 +61,7 @@ func (aiq *AnswerInlineQuery) ButtonText(text String) *AnswerInlineQuery {
 }
 
 // StartParameter sets the parameter for the start message sent to the bot.
-func (aiq *AnswerInlineQuery) StartParameter(parameter String) *AnswerInlineQuery {
+func (aiq *AnswerInlineQuery) StartParameter(parameter g.String) *AnswerInlineQuery {
 	if aiq.opts.Button == nil {
 		aiq.opts.Button = new(gotgbot.InlineQueryResultsButton)
 	}
@@ -94,7 +94,7 @@ func (aiq *AnswerInlineQuery) Timeout(duration time.Duration) *AnswerInlineQuery
 }
 
 // APIURL sets a custom API URL for this request.
-func (aiq *AnswerInlineQuery) APIURL(url String) *AnswerInlineQuery {
+func (aiq *AnswerInlineQuery) APIURL(url g.String) *AnswerInlineQuery {
 	if aiq.opts.RequestOpts == nil {
 		aiq.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -105,6 +105,6 @@ func (aiq *AnswerInlineQuery) APIURL(url String) *AnswerInlineQuery {
 }
 
 // Send answers the inline query and returns the result.
-func (aiq *AnswerInlineQuery) Send() Result[bool] {
-	return ResultOf(aiq.ctx.Bot.Raw().AnswerInlineQuery(aiq.inlineQueryID.Std(), aiq.results, aiq.opts))
+func (aiq *AnswerInlineQuery) Send() g.Result[bool] {
+	return g.ResultOf(aiq.ctx.Bot.Raw().AnswerInlineQuery(aiq.inlineQueryID.Std(), aiq.results, aiq.opts))
 }

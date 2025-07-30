@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
@@ -18,9 +18,9 @@ func main() {
 			return ctx.Reply("Usage: /deletemessages <message_id1> <message_id2> ...").Send().Err()
 		}
 
-		var messageIDs Slice[int64]
+		var messageIDs g.Slice[int64]
 
-		args.Iter().ForEach(func(arg String) {
+		args.Iter().ForEach(func(arg g.String) {
 			messageIDs.Push(arg.ToInt().Unwrap().Int64())
 		})
 
@@ -56,9 +56,9 @@ func main() {
 
 		seconds := args[0].ToInt().Unwrap()
 
-		var messageIDs Slice[int64]
+		var messageIDs g.Slice[int64]
 
-		args.Iter().Skip(1).ForEach(func(arg String) {
+		args.Iter().Skip(1).ForEach(func(arg g.String) {
 			messageIDs.Push(arg.ToInt().Unwrap().Int64())
 		})
 
@@ -67,7 +67,7 @@ func main() {
 			After(time.Duration(seconds) * time.Second).
 			Send()
 
-		return ctx.Reply(String("Messages scheduled for deletion in " + seconds.String() + " seconds")).
+		return ctx.Reply("Messages scheduled for deletion in " + seconds.String() + " seconds").
 			Send().
 			Err()
 	})

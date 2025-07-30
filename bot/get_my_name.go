@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetMyName represents a request to get the bot's name.
@@ -14,7 +14,7 @@ type GetMyName struct {
 }
 
 // Language sets the language code for getting the name.
-func (gmn *GetMyName) Language(code String) *GetMyName {
+func (gmn *GetMyName) Language(code g.String) *GetMyName {
 	gmn.opts.LanguageCode = code.Std()
 	return gmn
 }
@@ -31,7 +31,7 @@ func (gmn *GetMyName) Timeout(duration time.Duration) *GetMyName {
 }
 
 // APIURL sets a custom API URL for this request.
-func (gmn *GetMyName) APIURL(url String) *GetMyName {
+func (gmn *GetMyName) APIURL(url g.String) *GetMyName {
 	if gmn.opts.RequestOpts == nil {
 		gmn.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -42,6 +42,6 @@ func (gmn *GetMyName) APIURL(url String) *GetMyName {
 }
 
 // Send gets the bot's name and returns the result.
-func (gmn *GetMyName) Send() Result[*gotgbot.BotName] {
-	return ResultOf(gmn.bot.raw.GetMyName(gmn.opts))
+func (gmn *GetMyName) Send() g.Result[*gotgbot.BotName] {
+	return g.ResultOf(gmn.bot.raw.GetMyName(gmn.opts))
 }

@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Set basic commands for all users
@@ -189,7 +189,7 @@ func main() {
 			response += "/" + cmd.Command + " - " + cmd.Description + "\n"
 		}
 
-		return ctx.Reply(String(response)).Send().Err()
+		return ctx.Reply(g.String(response)).Send().Err()
 	})
 
 	// Get commands for specific scope
@@ -212,7 +212,7 @@ func main() {
 			response += "/" + cmd.Command + " - " + cmd.Description + "\n"
 		}
 
-		return ctx.Reply(String(response)).Send().Err()
+		return ctx.Reply(g.String(response)).Send().Err()
 	})
 
 	// Get commands for specific language
@@ -243,7 +243,7 @@ func main() {
 			response += "/" + cmd.Command + " - " + cmd.Description + "\n"
 		}
 
-		return ctx.Reply(String(response)).Send().Err()
+		return ctx.Reply(g.String(response)).Send().Err()
 	})
 
 	// Delete all commands
@@ -400,7 +400,7 @@ func main() {
 			buttonType = "Unknown"
 		}
 
-		return ctx.Reply("Current menu button type: " + String(buttonType)).Send().Err()
+		return ctx.Reply("Current menu button type: " + g.String(buttonType)).Send().Err()
 	})
 
 	// Advanced: Set comprehensive command structure

@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // StoryContentPhoto represents an input story content photo builder.
@@ -11,7 +11,7 @@ type StoryContentPhoto struct {
 }
 
 // StoryPhoto creates a new StoryContentPhoto builder with the required fields.
-func StoryPhoto(photo String) *StoryContentPhoto {
+func StoryPhoto(photo g.String) *StoryContentPhoto {
 	return &StoryContentPhoto{
 		input: &gotgbot.InputStoryContentPhoto{
 			Photo: photo.Std(),

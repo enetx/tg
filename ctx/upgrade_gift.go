@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // UpgradeGift is a request builder for upgrading gifts.
 type UpgradeGift struct {
 	ctx                  *Context
-	businessConnectionID String
-	ownedGiftID          String
+	businessConnectionID g.String
+	ownedGiftID          g.String
 	opts                 *gotgbot.UpgradeGiftOpts
 }
 
@@ -39,7 +39,7 @@ func (ug *UpgradeGift) Timeout(duration time.Duration) *UpgradeGift {
 }
 
 // APIURL sets a custom API URL for this request.
-func (ug *UpgradeGift) APIURL(url String) *UpgradeGift {
+func (ug *UpgradeGift) APIURL(url g.String) *UpgradeGift {
 	if ug.opts.RequestOpts == nil {
 		ug.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -50,8 +50,8 @@ func (ug *UpgradeGift) APIURL(url String) *UpgradeGift {
 }
 
 // Send executes the UpgradeGift request.
-func (ug *UpgradeGift) Send() Result[bool] {
-	return ResultOf(ug.ctx.Bot.Raw().UpgradeGift(
+func (ug *UpgradeGift) Send() g.Result[bool] {
+	return g.ResultOf(ug.ctx.Bot.Raw().UpgradeGift(
 		ug.businessConnectionID.Std(),
 		ug.ownedGiftID.Std(),
 		ug.opts,

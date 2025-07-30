@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetUserEmojiStatus represents a request to set user emoji status.
@@ -15,7 +15,7 @@ type SetUserEmojiStatus struct {
 }
 
 // EmojiStatusCustomEmojiID sets the custom emoji identifier for the status.
-func (sues *SetUserEmojiStatus) EmojiStatusCustomEmojiID(emojiID String) *SetUserEmojiStatus {
+func (sues *SetUserEmojiStatus) EmojiStatusCustomEmojiID(emojiID g.String) *SetUserEmojiStatus {
 	sues.opts.EmojiStatusCustomEmojiId = emojiID.Std()
 	return sues
 }
@@ -56,7 +56,7 @@ func (sues *SetUserEmojiStatus) Timeout(duration time.Duration) *SetUserEmojiSta
 }
 
 // APIURL sets a custom API URL for this request.
-func (sues *SetUserEmojiStatus) APIURL(url String) *SetUserEmojiStatus {
+func (sues *SetUserEmojiStatus) APIURL(url g.String) *SetUserEmojiStatus {
 	if sues.opts.RequestOpts == nil {
 		sues.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -67,6 +67,6 @@ func (sues *SetUserEmojiStatus) APIURL(url String) *SetUserEmojiStatus {
 }
 
 // Send sets the user emoji status.
-func (sues *SetUserEmojiStatus) Send() Result[bool] {
-	return ResultOf(sues.ctx.Bot.Raw().SetUserEmojiStatus(sues.userID, sues.opts))
+func (sues *SetUserEmojiStatus) Send() g.Result[bool] {
+	return g.ResultOf(sues.ctx.Bot.Raw().SetUserEmojiStatus(sues.userID, sues.opts))
 }

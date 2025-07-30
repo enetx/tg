@@ -4,19 +4,19 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetChat represents a request to get chat information.
 type GetChat struct {
 	ctx    *Context
 	opts   *gotgbot.GetChatOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID for this request.
 func (gc *GetChat) ChatID(id int64) *GetChat {
-	gc.chatID = Some(id)
+	gc.chatID = g.Some(id)
 	return gc
 }
 
@@ -32,7 +32,7 @@ func (gc *GetChat) Timeout(duration time.Duration) *GetChat {
 }
 
 // APIURL sets a custom API URL for this request.
-func (gc *GetChat) APIURL(url String) *GetChat {
+func (gc *GetChat) APIURL(url g.String) *GetChat {
 	if gc.opts.RequestOpts == nil {
 		gc.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -43,7 +43,7 @@ func (gc *GetChat) APIURL(url String) *GetChat {
 }
 
 // Send executes the GetChat request and returns full chat information.
-func (gc *GetChat) Send() Result[*gotgbot.ChatFullInfo] {
+func (gc *GetChat) Send() g.Result[*gotgbot.ChatFullInfo] {
 	chatID := gc.chatID.UnwrapOr(gc.ctx.EffectiveChat.Id)
-	return ResultOf(gc.ctx.Bot.Raw().GetChat(chatID, gc.opts))
+	return g.ResultOf(gc.ctx.Bot.Raw().GetChat(chatID, gc.opts))
 }

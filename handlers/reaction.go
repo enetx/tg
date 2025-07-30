@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 )
 
@@ -52,7 +52,7 @@ func (h *ReactionHandlers) ChatID(id int64, fn Handler) *ReactionHandlers {
 }
 
 // NewReactionEmoji handles reactions where the specified emoji was added.
-func (h *ReactionHandlers) NewReactionEmoji(emoji String, fn Handler) *ReactionHandlers {
+func (h *ReactionHandlers) NewReactionEmoji(emoji g.String, fn Handler) *ReactionHandlers {
 	h.handleReaction(func(mru *gotgbot.MessageReactionUpdated) bool {
 		if mru == nil {
 			return false
@@ -71,7 +71,7 @@ func (h *ReactionHandlers) NewReactionEmoji(emoji String, fn Handler) *ReactionH
 }
 
 // OldReactionEmoji handles reactions where the specified emoji was removed.
-func (h *ReactionHandlers) OldReactionEmoji(emoji String, fn Handler) *ReactionHandlers {
+func (h *ReactionHandlers) OldReactionEmoji(emoji g.String, fn Handler) *ReactionHandlers {
 	h.handleReaction(func(mru *gotgbot.MessageReactionUpdated) bool {
 		if mru == nil {
 			return false

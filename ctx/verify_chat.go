@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // VerifyChat represents a request to verify a chat.
@@ -16,7 +16,7 @@ type VerifyChat struct {
 
 // CustomDescription for the verification; 0-70 characters.
 // Must be empty if the organization isn't allowed to provide a custom verification description.
-func (vc *VerifyChat) CustomDescription(description String) *VerifyChat {
+func (vc *VerifyChat) CustomDescription(description g.String) *VerifyChat {
 	vc.opts.CustomDescription = description.Std()
 	return vc
 }
@@ -33,7 +33,7 @@ func (vc *VerifyChat) Timeout(duration time.Duration) *VerifyChat {
 }
 
 // APIURL sets a custom API URL for this request.
-func (vc *VerifyChat) APIURL(url String) *VerifyChat {
+func (vc *VerifyChat) APIURL(url g.String) *VerifyChat {
 	if vc.opts.RequestOpts == nil {
 		vc.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,6 +44,6 @@ func (vc *VerifyChat) APIURL(url String) *VerifyChat {
 }
 
 // Send verifies the chat.
-func (vc *VerifyChat) Send() Result[bool] {
-	return ResultOf(vc.ctx.Bot.Raw().VerifyChat(vc.chatID, vc.opts))
+func (vc *VerifyChat) Send() g.Result[bool] {
+	return g.ResultOf(vc.ctx.Bot.Raw().VerifyChat(vc.chatID, vc.opts))
 }

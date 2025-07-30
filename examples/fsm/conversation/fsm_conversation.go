@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 
 	"github.com/enetx/fsm"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/constants"
@@ -22,11 +22,11 @@ const (
 
 // fsmStore holds the active FSM instance for each user, keyed by their Telegram user ID.
 // This allows each user to have their own independent state in the conversation.
-var fsmStore = NewMapSafe[int64, *fsm.SyncFSM]()
+var fsmStore = g.NewMapSafe[int64, *fsm.SyncFSM]()
 
 func main() {
 	// Load the bot token from a local .env file.
-	token := NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 
 	// Initialize the Telegram bot and its helper components.
 	b := bot.New(token).Build().Unwrap()
@@ -124,7 +124,7 @@ func main() {
 		if photo.IsSome() {
 			if sizes, ok := photo.Some().([]gotgbot.PhotoSize); ok && len(sizes) > 0 {
 				fileID := sizes[len(sizes)-1].FileId
-				tgctx.SendPhoto(String(fileID).Prepend(constants.FileIDPrefix)).Caption("Your photo").Send()
+				tgctx.SendPhoto(g.String(fileID).Prepend(constants.FileIDPrefix)).Caption("Your photo").Send()
 			}
 		}
 
@@ -138,7 +138,7 @@ func main() {
 		// Compose and send the final text summary.
 		summary := "🧾 Summary:\n"
 		summary += "👤 Gender: " + gender.(string) + "\n"
-		tgctx.SendMessage(String(summary)).Send()
+		tgctx.SendMessage(g.String(summary)).Send()
 
 		// Send the final goodbye message.
 		return tgctx.SendMessage("Thank you! I hope we can talk again some day.").Send().Err()

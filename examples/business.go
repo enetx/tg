@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/types/updates"
@@ -18,23 +18,23 @@ func main() {
 		id := conn.Id
 
 		if !conn.IsEnabled {
-			Println("Business account disconnected: {}", user)
+			g.Println("Business account disconnected: {}", user)
 			return nil
 		}
 
-		Println("Business account connected: {}", user)
-		Println("Connection ID: {}", id)
+		g.Println("Business account connected: {}", user)
+		g.Println("Connection ID: {}", id)
 
 		if rights := conn.Rights; rights != nil {
 			switch {
 			case rights.CanEditName:
-				Println("Bot can edit business account name")
+				g.Println("Bot can edit business account name")
 				fallthrough
 			case rights.CanManageStories:
-				Println("Bot can manage stories")
+				g.Println("Bot can manage stories")
 				fallthrough
 			case rights.CanTransferStars:
-				Println("Bot can transfer stars")
+				g.Println("Bot can transfer stars")
 			}
 		}
 
@@ -44,13 +44,13 @@ func main() {
 	// Handle business connection specifically for enabled accounts
 	b.On.BusinessConnection.Enabled(func(ctx *ctx.Context) error {
 		conn := ctx.Update.BusinessConnection
-		Println("New business connection enabled from {}", conn.User.FirstName)
+		g.Println("New business connection enabled from {}", conn.User.FirstName)
 		return nil
 	})
 
 	// Handle business messages (messages from connected business account)
 	b.On.Message.Business(func(ctx *ctx.Context) error {
-		Println("Received business message: {}", ctx.EffectiveMessage.Text)
+		g.Println("Received business message: {}", ctx.EffectiveMessage.Text)
 		return ctx.Reply("Business message received!").Send().Err()
 	})
 
@@ -58,11 +58,11 @@ func main() {
 	b.On.BusinessMessagesDeleted.Any(func(ctx *ctx.Context) error {
 		deleted := ctx.Update.DeletedBusinessMessages
 
-		Println("Messages deleted from business chat {} (connection: {})",
+		g.Println("Messages deleted from business chat {} (connection: {})",
 			deleted.Chat.Title,
 			deleted.BusinessConnectionId)
 
-		Println("Deleted {} messages", len(deleted.MessageIds))
+		g.Println("Deleted {} messages", len(deleted.MessageIds))
 
 		return nil
 	})
@@ -84,7 +84,7 @@ func main() {
 		// Example: Get star balance
 		if result := account.Balance().GetStarBalance().Send(); result.IsOk() {
 			stars := result.Ok()
-			return ctx.Reply(Format("Business star balance: {} stars", stars.Amount)).Send().Err()
+			return ctx.Reply(g.Format("Business star balance: {} stars", stars.Amount)).Send().Err()
 		}
 
 		return ctx.Reply("Business account updated successfully!").Send().Err()
@@ -101,7 +101,7 @@ func main() {
 		}
 
 		balance := result.Ok()
-		return ctx.Reply(Format("Current balance: {} stars", balance.Amount)).Send().Err()
+		return ctx.Reply(g.Format("Current balance: {} stars", balance.Amount)).Send().Err()
 	})
 
 	// Command to read business messages (mark as read)

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // UnpinAllForumTopicMessages represents a request to unpin all messages in a forum topic.
@@ -12,12 +12,12 @@ type UnpinAllForumTopicMessages struct {
 	ctx             *Context
 	messageThreadID int64
 	opts            *gotgbot.UnpinAllForumTopicMessagesOpts
-	chatID          Option[int64]
+	chatID          g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (uaftm *UnpinAllForumTopicMessages) ChatID(chatID int64) *UnpinAllForumTopicMessages {
-	uaftm.chatID = Some(chatID)
+	uaftm.chatID = g.Some(chatID)
 	return uaftm
 }
 
@@ -33,7 +33,7 @@ func (uaftm *UnpinAllForumTopicMessages) Timeout(duration time.Duration) *UnpinA
 }
 
 // APIURL sets a custom API URL for this request.
-func (uaftm *UnpinAllForumTopicMessages) APIURL(url String) *UnpinAllForumTopicMessages {
+func (uaftm *UnpinAllForumTopicMessages) APIURL(url g.String) *UnpinAllForumTopicMessages {
 	if uaftm.opts.RequestOpts == nil {
 		uaftm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,8 +44,8 @@ func (uaftm *UnpinAllForumTopicMessages) APIURL(url String) *UnpinAllForumTopicM
 }
 
 // Send unpins all messages in the forum topic.
-func (uaftm *UnpinAllForumTopicMessages) Send() Result[bool] {
-	return ResultOf(uaftm.ctx.Bot.Raw().UnpinAllForumTopicMessages(
+func (uaftm *UnpinAllForumTopicMessages) Send() g.Result[bool] {
+	return g.ResultOf(uaftm.ctx.Bot.Raw().UnpinAllForumTopicMessages(
 		uaftm.chatID.UnwrapOr(uaftm.ctx.EffectiveChat.Id),
 		uaftm.messageThreadID,
 		uaftm.opts,

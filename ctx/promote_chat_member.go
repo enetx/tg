@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/types/roles"
 )
 
@@ -13,12 +13,12 @@ type PromoteChatMember struct {
 	opts   *gotgbot.PromoteChatMemberOpts
 	roles  bool
 	userID int64
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID for the promote action.
 func (p *PromoteChatMember) ChatID(id int64) *PromoteChatMember {
-	p.chatID = Some(id)
+	p.chatID = g.Some(id)
 	return p
 }
 
@@ -42,7 +42,7 @@ func (p *PromoteChatMember) Timeout(duration time.Duration) *PromoteChatMember {
 }
 
 // APIURL sets a custom API URL for this request.
-func (p *PromoteChatMember) APIURL(url String) *PromoteChatMember {
+func (p *PromoteChatMember) APIURL(url g.String) *PromoteChatMember {
 	if p.opts.RequestOpts == nil {
 		p.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -53,11 +53,11 @@ func (p *PromoteChatMember) APIURL(url String) *PromoteChatMember {
 }
 
 // Send promotes the user to administrator and returns the result.
-func (p *PromoteChatMember) Send() Result[bool] {
+func (p *PromoteChatMember) Send() g.Result[bool] {
 	if !p.roles {
-		return Err[bool](Errorf("roles are required"))
+		return g.Err[bool](g.Errorf("roles are required"))
 	}
 
 	chatID := p.chatID.UnwrapOr(p.ctx.EffectiveChat.Id)
-	return ResultOf(p.ctx.Bot.Raw().PromoteChatMember(chatID, p.userID, p.opts))
+	return g.ResultOf(p.ctx.Bot.Raw().PromoteChatMember(chatID, p.userID, p.opts))
 }

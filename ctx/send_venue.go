@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -12,23 +12,23 @@ type SendVenue struct {
 	ctx         *Context
 	latitude    float64
 	longitude   float64
-	title       String
-	address     String
+	title       g.String
+	address     g.String
 	opts        *gotgbot.SendVenueOpts
-	chatID      Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 }
 
 // After schedules the venue to be sent after the specified duration.
 func (sv *SendVenue) After(duration time.Duration) *SendVenue {
-	sv.after = Some(duration)
+	sv.after = g.Some(duration)
 	return sv
 }
 
 // DeleteAfter schedules the venue message to be deleted after the specified duration.
 func (sv *SendVenue) DeleteAfter(duration time.Duration) *SendVenue {
-	sv.deleteAfter = Some(duration)
+	sv.deleteAfter = g.Some(duration)
 	return sv
 }
 
@@ -51,25 +51,25 @@ func (sv *SendVenue) Markup(kb keyboard.Keyboard) *SendVenue {
 }
 
 // FoursquareID sets the Foursquare identifier of the venue.
-func (sv *SendVenue) FoursquareID(id String) *SendVenue {
+func (sv *SendVenue) FoursquareID(id g.String) *SendVenue {
 	sv.opts.FoursquareId = id.Std()
 	return sv
 }
 
 // FoursquareType sets the Foursquare type of the venue.
-func (sv *SendVenue) FoursquareType(venueType String) *SendVenue {
+func (sv *SendVenue) FoursquareType(venueType g.String) *SendVenue {
 	sv.opts.FoursquareType = venueType.Std()
 	return sv
 }
 
 // GooglePlaceID sets the Google Places identifier of the venue.
-func (sv *SendVenue) GooglePlaceID(id String) *SendVenue {
+func (sv *SendVenue) GooglePlaceID(id g.String) *SendVenue {
 	sv.opts.GooglePlaceId = id.Std()
 	return sv
 }
 
 // GooglePlaceType sets the Google Places type of the venue.
-func (sv *SendVenue) GooglePlaceType(placeType String) *SendVenue {
+func (sv *SendVenue) GooglePlaceType(placeType g.String) *SendVenue {
 	sv.opts.GooglePlaceType = placeType.Std()
 	return sv
 }
@@ -92,7 +92,7 @@ func (sv *SendVenue) Timeout(duration time.Duration) *SendVenue {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sv *SendVenue) APIURL(url String) *SendVenue {
+func (sv *SendVenue) APIURL(url g.String) *SendVenue {
 	if sv.opts.RequestOpts == nil {
 		sv.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -103,7 +103,7 @@ func (sv *SendVenue) APIURL(url String) *SendVenue {
 }
 
 // Business sets the business connection ID for the venue message.
-func (sv *SendVenue) Business(id String) *SendVenue {
+func (sv *SendVenue) Business(id g.String) *SendVenue {
 	sv.opts.BusinessConnectionId = id.Std()
 	return sv
 }
@@ -116,15 +116,15 @@ func (sv *SendVenue) Thread(id int64) *SendVenue {
 
 // To sets the target chat ID for the venue message.
 func (sv *SendVenue) To(chatID int64) *SendVenue {
-	sv.chatID = Some(chatID)
+	sv.chatID = g.Some(chatID)
 	return sv
 }
 
 // Send sends the venue message to Telegram and returns the result.
-func (sv *SendVenue) Send() Result[*gotgbot.Message] {
-	return sv.ctx.timers(sv.after, sv.deleteAfter, func() Result[*gotgbot.Message] {
+func (sv *SendVenue) Send() g.Result[*gotgbot.Message] {
+	return sv.ctx.timers(sv.after, sv.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := sv.chatID.UnwrapOr(sv.ctx.EffectiveChat.Id)
-		return ResultOf(
+		return g.ResultOf(
 			sv.ctx.Bot.Raw().SendVenue(chatID, sv.latitude, sv.longitude, sv.title.Std(), sv.address.Std(), sv.opts),
 		)
 	})

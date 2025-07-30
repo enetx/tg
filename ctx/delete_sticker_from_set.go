@@ -4,13 +4,13 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // DeleteStickerFromSet represents a request to delete a sticker from a set.
 type DeleteStickerFromSet struct {
 	ctx     *Context
-	sticker String
+	sticker g.String
 	opts    *gotgbot.DeleteStickerFromSetOpts
 }
 
@@ -26,7 +26,7 @@ func (dsfs *DeleteStickerFromSet) Timeout(duration time.Duration) *DeleteSticker
 }
 
 // APIURL sets a custom API URL for this request.
-func (dsfs *DeleteStickerFromSet) APIURL(url String) *DeleteStickerFromSet {
+func (dsfs *DeleteStickerFromSet) APIURL(url g.String) *DeleteStickerFromSet {
 	if dsfs.opts.RequestOpts == nil {
 		dsfs.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -37,6 +37,6 @@ func (dsfs *DeleteStickerFromSet) APIURL(url String) *DeleteStickerFromSet {
 }
 
 // Send deletes the sticker from the set.
-func (dsfs *DeleteStickerFromSet) Send() Result[bool] {
-	return ResultOf(dsfs.ctx.Bot.Raw().DeleteStickerFromSet(dsfs.sticker.Std(), dsfs.opts))
+func (dsfs *DeleteStickerFromSet) Send() g.Result[bool] {
+	return g.ResultOf(dsfs.ctx.Bot.Raw().DeleteStickerFromSet(dsfs.sticker.Std(), dsfs.opts))
 }

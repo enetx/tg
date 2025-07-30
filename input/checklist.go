@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // Checklist represents an input checklist builder.
@@ -11,7 +11,7 @@ type Checklist struct {
 }
 
 // NewChecklist creates a new Checklist builder.
-func NewChecklist(title String, tasks []gotgbot.InputChecklistTask) *Checklist {
+func NewChecklist(title g.String, tasks g.Slice[gotgbot.InputChecklistTask]) *Checklist {
 	return &Checklist{
 		input: &gotgbot.InputChecklist{
 			Title: title.Std(),

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/areas"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/input"
@@ -13,14 +13,14 @@ import (
 // EditStory represents a request to edit an existing story.
 type EditStory struct {
 	ctx                  *Context
-	businessConnectionID String
+	businessConnectionID g.String
 	storyID              int64
 	content              input.StoryContent
 	opts                 *gotgbot.EditStoryOpts
 }
 
 // Caption sets the new caption text for the story.
-func (es *EditStory) Caption(caption String) *EditStory {
+func (es *EditStory) Caption(caption g.String) *EditStory {
 	es.opts.Caption = caption.Std()
 	return es
 }
@@ -38,7 +38,7 @@ func (es *EditStory) Markdown() *EditStory {
 }
 
 // ParseMode sets the parse mode for the caption.
-func (es *EditStory) ParseMode(mode String) *EditStory {
+func (es *EditStory) ParseMode(mode g.String) *EditStory {
 	es.opts.ParseMode = mode.Std()
 	return es
 }
@@ -67,7 +67,7 @@ func (es *EditStory) Timeout(duration time.Duration) *EditStory {
 }
 
 // APIURL sets a custom API URL for this request.
-func (es *EditStory) APIURL(url String) *EditStory {
+func (es *EditStory) APIURL(url g.String) *EditStory {
 	if es.opts.RequestOpts == nil {
 		es.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -78,8 +78,8 @@ func (es *EditStory) APIURL(url String) *EditStory {
 }
 
 // Send executes the EditStory request.
-func (es *EditStory) Send() Result[*gotgbot.Story] {
-	return ResultOf(es.ctx.Bot.Raw().EditStory(
+func (es *EditStory) Send() g.Result[*gotgbot.Story] {
+	return g.ResultOf(es.ctx.Bot.Raw().EditStory(
 		es.businessConnectionID.Std(),
 		es.storyID,
 		es.content.Build(),

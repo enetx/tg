@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/g/ref"
 	"github.com/enetx/tg/keyboard"
 )
@@ -15,30 +15,30 @@ type EditMessageLiveLocation struct {
 	latitude  float64
 	longitude float64
 	opts      *gotgbot.EditMessageLiveLocationOpts
-	chatID    Option[int64]
-	messageID Option[int64]
+	chatID    g.Option[int64]
+	messageID g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (emll *EditMessageLiveLocation) ChatID(chatID int64) *EditMessageLiveLocation {
-	emll.chatID = Some(chatID)
+	emll.chatID = g.Some(chatID)
 	return emll
 }
 
 // MessageID sets the target message ID.
 func (emll *EditMessageLiveLocation) MessageID(messageID int64) *EditMessageLiveLocation {
-	emll.messageID = Some(messageID)
+	emll.messageID = g.Some(messageID)
 	return emll
 }
 
 // InlineMessageID sets the inline message ID to edit.
-func (emll *EditMessageLiveLocation) InlineMessageID(id String) *EditMessageLiveLocation {
+func (emll *EditMessageLiveLocation) InlineMessageID(id g.String) *EditMessageLiveLocation {
 	emll.opts.InlineMessageId = id.Std()
 	return emll
 }
 
 // Business sets the business connection ID for the location edit.
-func (emll *EditMessageLiveLocation) Business(id String) *EditMessageLiveLocation {
+func (emll *EditMessageLiveLocation) Business(id g.String) *EditMessageLiveLocation {
 	emll.opts.BusinessConnectionId = id.Std()
 	return emll
 }
@@ -88,7 +88,7 @@ func (emll *EditMessageLiveLocation) Timeout(duration time.Duration) *EditMessag
 }
 
 // APIURL sets a custom API URL for this request.
-func (emll *EditMessageLiveLocation) APIURL(url String) *EditMessageLiveLocation {
+func (emll *EditMessageLiveLocation) APIURL(url g.String) *EditMessageLiveLocation {
 	if emll.opts.RequestOpts == nil {
 		emll.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -99,10 +99,10 @@ func (emll *EditMessageLiveLocation) APIURL(url String) *EditMessageLiveLocation
 }
 
 // Send edits the live location message.
-func (emll *EditMessageLiveLocation) Send() Result[*gotgbot.Message] {
+func (emll *EditMessageLiveLocation) Send() g.Result[*gotgbot.Message] {
 	emll.opts.ChatId = emll.chatID.UnwrapOr(emll.ctx.EffectiveChat.Id)
 	emll.opts.MessageId = emll.messageID.UnwrapOr(emll.ctx.EffectiveMessage.MessageId)
 	msg, _, err := emll.ctx.Bot.Raw().EditMessageLiveLocation(emll.latitude, emll.longitude, emll.opts)
 
-	return ResultOf(msg, err)
+	return g.ResultOf(msg, err)
 }

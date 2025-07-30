@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // ConvertGiftToStars is a request builder for converting gifts to stars.
 type ConvertGiftToStars struct {
 	ctx                  *Context
-	businessConnectionID String
-	ownedGiftID          String
+	businessConnectionID g.String
+	ownedGiftID          g.String
 	opts                 *gotgbot.ConvertGiftToStarsOpts
 }
 
@@ -27,7 +27,7 @@ func (cgts *ConvertGiftToStars) Timeout(duration time.Duration) *ConvertGiftToSt
 }
 
 // APIURL sets a custom API URL for this request.
-func (cgts *ConvertGiftToStars) APIURL(url String) *ConvertGiftToStars {
+func (cgts *ConvertGiftToStars) APIURL(url g.String) *ConvertGiftToStars {
 	if cgts.opts.RequestOpts == nil {
 		cgts.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -38,8 +38,8 @@ func (cgts *ConvertGiftToStars) APIURL(url String) *ConvertGiftToStars {
 }
 
 // Send executes the ConvertGiftToStars request.
-func (cgts *ConvertGiftToStars) Send() Result[bool] {
-	return ResultOf(cgts.ctx.Bot.Raw().ConvertGiftToStars(
+func (cgts *ConvertGiftToStars) Send() g.Result[bool] {
+	return g.ResultOf(cgts.ctx.Bot.Raw().ConvertGiftToStars(
 		cgts.businessConnectionID.Std(),
 		cgts.ownedGiftID.Std(),
 		cgts.opts,

@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Command to get member info about yourself
@@ -16,14 +16,14 @@ func main() {
 		result := ctx.GetChatMember(ctx.EffectiveUser.Id).Send()
 
 		if result.IsErr() {
-			return ctx.Reply(Format("Error getting member info: {}", result.Err())).Send().Err()
+			return ctx.Reply(g.Format("Error getting member info: {}", result.Err())).Send().Err()
 		}
 
 		member := result.Ok()
 		status := getMemberStatus(member)
 		user := member.GetUser()
 
-		info := Format(`
+		info := g.Format(`
 👤 <b>Your Status in This Chat</b>
 
 🆔 <b>User ID:</b> <code>{}</code>
@@ -45,7 +45,7 @@ func main() {
 }
 
 // Helper function to get member status string
-func getMemberStatus(member gotgbot.ChatMember) String {
+func getMemberStatus(member gotgbot.ChatMember) g.String {
 	switch member.(type) {
 	case *gotgbot.ChatMemberOwner:
 		return "👑 Owner"

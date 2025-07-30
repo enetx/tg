@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 )
@@ -13,11 +13,11 @@ type SendAudio struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendAudioOpts
-	file        *File
-	thumb       *File
-	chatID      Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	file        *g.File
+	thumb       *g.File
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 	err         error
 }
 
@@ -29,18 +29,18 @@ func (sa *SendAudio) CaptionEntities(e *entities.Entities) *SendAudio {
 
 // After schedules the audio to be sent after the specified duration.
 func (sa *SendAudio) After(duration time.Duration) *SendAudio {
-	sa.after = Some(duration)
+	sa.after = g.Some(duration)
 	return sa
 }
 
 // DeleteAfter schedules the audio message to be deleted after the specified duration.
 func (sa *SendAudio) DeleteAfter(duration time.Duration) *SendAudio {
-	sa.deleteAfter = Some(duration)
+	sa.deleteAfter = g.Some(duration)
 	return sa
 }
 
 // Caption sets the caption text for the audio.
-func (sa *SendAudio) Caption(caption String) *SendAudio {
+func (sa *SendAudio) Caption(caption g.String) *SendAudio {
 	sa.opts.Caption = caption.Std()
 	return sa
 }
@@ -76,8 +76,8 @@ func (sa *SendAudio) Markup(kb keyboard.Keyboard) *SendAudio {
 }
 
 // Thumbnail sets a custom thumbnail for the audio.
-func (sa *SendAudio) Thumbnail(file String) *SendAudio {
-	sa.thumb = NewFile(file)
+func (sa *SendAudio) Thumbnail(file g.String) *SendAudio {
+	sa.thumb = g.NewFile(file)
 
 	reader := sa.thumb.Open()
 	if reader.IsErr() {
@@ -107,7 +107,7 @@ func (sa *SendAudio) Timeout(duration time.Duration) *SendAudio {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sa *SendAudio) APIURL(url String) *SendAudio {
+func (sa *SendAudio) APIURL(url g.String) *SendAudio {
 	if sa.opts.RequestOpts == nil {
 		sa.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -118,7 +118,7 @@ func (sa *SendAudio) APIURL(url String) *SendAudio {
 }
 
 // Business sets the business connection ID for the audio message.
-func (sa *SendAudio) Business(id String) *SendAudio {
+func (sa *SendAudio) Business(id g.String) *SendAudio {
 	sa.opts.BusinessConnectionId = id.Std()
 	return sa
 }
@@ -136,27 +136,27 @@ func (sa *SendAudio) Duration(duration time.Duration) *SendAudio {
 }
 
 // Performer sets the audio performer/artist name.
-func (sa *SendAudio) Performer(artist String) *SendAudio {
+func (sa *SendAudio) Performer(artist g.String) *SendAudio {
 	sa.opts.Performer = artist.Std()
 	return sa
 }
 
 // Title sets the audio track title.
-func (sa *SendAudio) Title(title String) *SendAudio {
+func (sa *SendAudio) Title(title g.String) *SendAudio {
 	sa.opts.Title = title.Std()
 	return sa
 }
 
 // To sets the target chat ID for the audio message.
 func (sa *SendAudio) To(chatID int64) *SendAudio {
-	sa.chatID = Some(chatID)
+	sa.chatID = g.Some(chatID)
 	return sa
 }
 
 // Send sends the audio message to Telegram and returns the result.
-func (sa *SendAudio) Send() Result[*gotgbot.Message] {
+func (sa *SendAudio) Send() g.Result[*gotgbot.Message] {
 	if sa.err != nil {
-		return Err[*gotgbot.Message](sa.err)
+		return g.Err[*gotgbot.Message](sa.err)
 	}
 
 	if sa.file != nil {
@@ -167,8 +167,8 @@ func (sa *SendAudio) Send() Result[*gotgbot.Message] {
 		defer sa.thumb.Close()
 	}
 
-	return sa.ctx.timers(sa.after, sa.deleteAfter, func() Result[*gotgbot.Message] {
+	return sa.ctx.timers(sa.after, sa.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := sa.chatID.UnwrapOr(sa.ctx.EffectiveChat.Id)
-		return ResultOf(sa.ctx.Bot.Raw().SendAudio(chatID, sa.doc, sa.opts))
+		return g.ResultOf(sa.ctx.Bot.Raw().SendAudio(chatID, sa.doc, sa.opts))
 	})
 }

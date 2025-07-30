@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/types/permissions"
 )
 
@@ -14,12 +14,12 @@ type SetChatPermissions struct {
 	permissions     *gotgbot.ChatPermissions
 	autoPermissions bool
 	opts            *gotgbot.SetChatPermissionsOpts
-	chatID          Option[int64]
+	chatID          g.Option[int64]
 }
 
 // ChatID sets the target chat ID for this request.
 func (scp *SetChatPermissions) ChatID(id int64) *SetChatPermissions {
-	scp.chatID = Some(id)
+	scp.chatID = g.Some(id)
 	return scp
 }
 
@@ -41,7 +41,7 @@ func (scp *SetChatPermissions) Timeout(duration time.Duration) *SetChatPermissio
 }
 
 // APIURL sets a custom API URL for this request.
-func (scp *SetChatPermissions) APIURL(url String) *SetChatPermissions {
+func (scp *SetChatPermissions) APIURL(url g.String) *SetChatPermissions {
 	if scp.opts.RequestOpts == nil {
 		scp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -58,13 +58,13 @@ func (scp *SetChatPermissions) Permissions(perms ...permissions.Permission) *Set
 }
 
 // Send executes the SetChatPermissions request.
-func (scp *SetChatPermissions) Send() Result[bool] {
+func (scp *SetChatPermissions) Send() g.Result[bool] {
 	if scp.permissions == nil {
-		return Err[bool](Errorf("permissions are required"))
+		return g.Err[bool](g.Errorf("permissions are required"))
 	}
 
 	chatID := scp.chatID.UnwrapOr(scp.ctx.EffectiveChat.Id)
 	scp.opts.UseIndependentChatPermissions = !scp.autoPermissions
 
-	return ResultOf(scp.ctx.Bot.Raw().SetChatPermissions(chatID, *scp.permissions, scp.opts))
+	return g.ResultOf(scp.ctx.Bot.Raw().SetChatPermissions(chatID, *scp.permissions, scp.opts))
 }

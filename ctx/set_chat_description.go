@@ -4,20 +4,20 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetChatDescription represents a request to set the chat description.
 type SetChatDescription struct {
 	ctx         *Context
-	description String
+	description g.String
 	opts        *gotgbot.SetChatDescriptionOpts
-	chatID      Option[int64]
+	chatID      g.Option[int64]
 }
 
 // ChatID sets the target chat ID for this request.
 func (scd *SetChatDescription) ChatID(id int64) *SetChatDescription {
-	scd.chatID = Some(id)
+	scd.chatID = g.Some(id)
 	return scd
 }
 
@@ -33,7 +33,7 @@ func (scd *SetChatDescription) Timeout(duration time.Duration) *SetChatDescripti
 }
 
 // APIURL sets a custom API URL for this request.
-func (scd *SetChatDescription) APIURL(url String) *SetChatDescription {
+func (scd *SetChatDescription) APIURL(url g.String) *SetChatDescription {
 	if scd.opts.RequestOpts == nil {
 		scd.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,7 +44,7 @@ func (scd *SetChatDescription) APIURL(url String) *SetChatDescription {
 }
 
 // Send executes the SetChatDescription request.
-func (scd *SetChatDescription) Send() Result[bool] {
+func (scd *SetChatDescription) Send() g.Result[bool] {
 	chatID := scd.chatID.UnwrapOr(scd.ctx.EffectiveChat.Id)
-	return ResultOf(scd.ctx.Bot.Raw().SetChatDescription(chatID, scd.opts))
+	return g.ResultOf(scd.ctx.Bot.Raw().SetChatDescription(chatID, scd.opts))
 }

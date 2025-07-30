@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/file"
 )
@@ -13,7 +13,7 @@ type MediaPhoto struct {
 }
 
 // Photo creates a new MediaPhoto builder with the required fields.
-func Photo(media file.File) *MediaPhoto {
+func Photo(media file.TgFile) *MediaPhoto {
 	return &MediaPhoto{
 		input: &gotgbot.InputMediaPhoto{
 			Media: media.Doc,
@@ -22,7 +22,7 @@ func Photo(media file.File) *MediaPhoto {
 }
 
 // Caption sets the caption for the photo.
-func (mp *MediaPhoto) Caption(caption String) *MediaPhoto {
+func (mp *MediaPhoto) Caption(caption g.String) *MediaPhoto {
 	mp.input.Caption = caption.Std()
 	return mp
 }

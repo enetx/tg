@@ -4,17 +4,17 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 type AnswerCallbackQuery struct {
 	ctx  *Context
-	text String
+	text g.String
 	opts *gotgbot.AnswerCallbackQueryOpts
 }
 
 // URL sets a URL to be opened by the user's client when the button is pressed.
-func (acq *AnswerCallbackQuery) URL(url String) *AnswerCallbackQuery {
+func (acq *AnswerCallbackQuery) URL(url g.String) *AnswerCallbackQuery {
 	acq.opts.Url = url.Std()
 	return acq
 }
@@ -43,7 +43,7 @@ func (acq *AnswerCallbackQuery) Timeout(duration time.Duration) *AnswerCallbackQ
 }
 
 // APIURL sets a custom API URL for this request.
-func (acq *AnswerCallbackQuery) APIURL(url String) *AnswerCallbackQuery {
+func (acq *AnswerCallbackQuery) APIURL(url g.String) *AnswerCallbackQuery {
 	if acq.opts.RequestOpts == nil {
 		acq.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -54,7 +54,7 @@ func (acq *AnswerCallbackQuery) APIURL(url String) *AnswerCallbackQuery {
 }
 
 // Send sends the callback query answer and returns the result.
-func (acq *AnswerCallbackQuery) Send() Result[bool] {
+func (acq *AnswerCallbackQuery) Send() g.Result[bool] {
 	acq.opts.Text = acq.text.Std()
-	return ResultOf(acq.ctx.Update.CallbackQuery.Answer(acq.ctx.Bot.Raw(), acq.opts))
+	return g.ResultOf(acq.ctx.Update.CallbackQuery.Answer(acq.ctx.Bot.Raw(), acq.opts))
 }

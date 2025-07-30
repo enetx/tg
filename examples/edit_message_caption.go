@@ -1,14 +1,14 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Command to send a photo with caption that can be edited later
@@ -37,7 +37,7 @@ func main() {
 	b.On.Callback.Equal("edit_caption", func(ctx *ctx.Context) error {
 		newCaption := "✨ <b>Updated Caption!</b>\n\n📸 This caption has been <i>edited</i> using EditMessageCaption!\n\n🎯 <u>Features demonstrated:</u>\n• HTML formatting\n• Bold and italic text\n• Underlined text"
 
-		result := ctx.EditMessageCaption(String(newCaption)).
+		result := ctx.EditMessageCaption(g.String(newCaption)).
 			HTML().
 			Markup(
 				keyboard.Inline().
@@ -57,7 +57,7 @@ func main() {
 	b.On.Callback.Equal("change_style", func(ctx *ctx.Context) error {
 		newCaption := "*Styled Caption*\n\n_This caption uses_ **Markdown** formatting\\!\n\n• Feature 1\n• Feature 2\n• Feature 3\n\n`Code example: ctx.EditMessageCaption()`"
 
-		result := ctx.EditMessageCaption(String(newCaption)).
+		result := ctx.EditMessageCaption(g.String(newCaption)).
 			Markdown().
 			Markup(
 				keyboard.Inline().
@@ -82,7 +82,7 @@ func main() {
 • Source: Lorem Picsum
 
 💡 <b>Technical Info:</b>
-• Format: JPEG
+• g.Format: JPEG
 • Color: Full spectrum
 • Quality: High definition
 
@@ -92,7 +92,7 @@ func main() {
 • Inline keyboard ✅
 • Multiple styles ✅`
 
-		result := ctx.EditMessageCaption(String(newCaption)).
+		result := ctx.EditMessageCaption(g.String(newCaption)).
 			HTML().
 			Markup(
 				keyboard.Inline().
@@ -119,7 +119,7 @@ func main() {
 
 🔧 <b>Technical note:</b> This feature works for animation, photo and video messages.`
 
-		result := ctx.EditMessageCaption(String(newCaption)).
+		result := ctx.EditMessageCaption(g.String(newCaption)).
 			HTML().
 			ShowCaptionAboveMedia().
 			Markup(
@@ -138,7 +138,7 @@ func main() {
 	b.On.Callback.Equal("original_caption", func(ctx *ctx.Context) error {
 		originalCaption := "🖼 <b>Original Caption</b>\n\nThis is the original caption for this beautiful photo."
 
-		result := ctx.EditMessageCaption(String(originalCaption)).
+		result := ctx.EditMessageCaption(g.String(originalCaption)).
 			HTML().
 			Markup(
 				keyboard.Inline().
@@ -159,7 +159,7 @@ func main() {
 	b.On.Callback.Equal("plain_caption", func(ctx *ctx.Context) error {
 		plainCaption := "Simple plain text caption without any formatting. This demonstrates how the caption looks without HTML or Markdown parsing."
 
-		result := ctx.EditMessageCaption(String(plainCaption)).
+		result := ctx.EditMessageCaption(g.String(plainCaption)).
 			Markup(
 				keyboard.Inline().
 					Text("🎨 Add HTML", "edit_caption").
@@ -195,7 +195,7 @@ func main() {
 			Send()
 
 		if result.IsErr() {
-			return ctx.Reply(Format("Failed to edit caption: {}", result.Err())).Send().Err()
+			return ctx.Reply(g.Format("Failed to edit caption: {}", result.Err())).Send().Err()
 		}
 
 		return ctx.Reply("Caption edited successfully! ✨").Send().Err()
@@ -235,7 +235,7 @@ To test business connection caption editing:
 			Send()
 
 		if result.IsErr() {
-			return ctx.Reply(Format("Failed to edit business caption: {}", result.Err())).Send().Err()
+			return ctx.Reply(g.Format("Failed to edit business caption: {}", result.Err())).Send().Err()
 		}
 
 		return ctx.Reply("Business message caption edited! 💼").Send().Err()

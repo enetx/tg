@@ -1,19 +1,19 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// /start command with inline button
 	b.Command("start", func(ctx *ctx.Context) error {
-		ctx.Reply(Format("Hello, I'm @{.Raw.Username}. I <b>repeat</b> all your messages.", b)).
+		ctx.Reply(g.Format("Hello, I'm @{.Raw.Username}. I <b>repeat</b> all your messages.", b)).
 			HTML().
 			Markup(keyboard.Inline().Text("Press me", "start_callback")).
 			Send()

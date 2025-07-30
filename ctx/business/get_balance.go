@@ -4,13 +4,13 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetStarBalance request builder for star balance.
 type GetStarBalance struct {
 	bot    Bot
-	connID String
+	connID g.String
 	opts   *gotgbot.GetBusinessAccountStarBalanceOpts
 }
 
@@ -26,7 +26,7 @@ func (gb *GetStarBalance) Timeout(duration time.Duration) *GetStarBalance {
 }
 
 // APIURL sets a custom API URL for this request.
-func (gb *GetStarBalance) APIURL(url String) *GetStarBalance {
+func (gb *GetStarBalance) APIURL(url g.String) *GetStarBalance {
 	if gb.opts.RequestOpts == nil {
 		gb.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -37,6 +37,6 @@ func (gb *GetStarBalance) APIURL(url String) *GetStarBalance {
 }
 
 // Send executes the GetStarBalance request.
-func (gb *GetStarBalance) Send() Result[*gotgbot.StarAmount] {
-	return ResultOf(gb.bot.Raw().GetBusinessAccountStarBalance(gb.connID.Std(), gb.opts))
+func (gb *GetStarBalance) Send() g.Result[*gotgbot.StarAmount] {
+	return g.ResultOf(gb.bot.Raw().GetBusinessAccountStarBalance(gb.connID.Std(), gb.opts))
 }

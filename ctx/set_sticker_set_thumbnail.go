@@ -4,23 +4,23 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetStickerSetThumbnail represents a request to set sticker set thumbnail.
 type SetStickerSetThumbnail struct {
 	ctx    *Context
-	name   String
+	name   g.String
 	userID int64
-	format String
+	format g.String
 	opts   *gotgbot.SetStickerSetThumbnailOpts
-	thumb  *File
+	thumb  *g.File
 	err    error
 }
 
 // Thumbnail sets the thumbnail file for the sticker set.
-func (ssst *SetStickerSetThumbnail) Thumbnail(filename String) *SetStickerSetThumbnail {
-	ssst.thumb = NewFile(filename)
+func (ssst *SetStickerSetThumbnail) Thumbnail(filename g.String) *SetStickerSetThumbnail {
+	ssst.thumb = g.NewFile(filename)
 
 	reader := ssst.thumb.Open()
 	if reader.IsErr() {
@@ -35,7 +35,7 @@ func (ssst *SetStickerSetThumbnail) Thumbnail(filename String) *SetStickerSetThu
 // Format sets the thumbnail format.
 // format of the thumbnail, must be one of "static" for a .WEBP or .PNG image,
 // "animated" for a .TGS animation, or "video" for a .WEBM video.
-func (ssst *SetStickerSetThumbnail) Format(format String) *SetStickerSetThumbnail {
+func (ssst *SetStickerSetThumbnail) Format(format g.String) *SetStickerSetThumbnail {
 	ssst.format = format
 	return ssst
 }
@@ -52,7 +52,7 @@ func (ssst *SetStickerSetThumbnail) Timeout(duration time.Duration) *SetStickerS
 }
 
 // APIURL sets a custom API URL for this request.
-func (ssst *SetStickerSetThumbnail) APIURL(url String) *SetStickerSetThumbnail {
+func (ssst *SetStickerSetThumbnail) APIURL(url g.String) *SetStickerSetThumbnail {
 	if ssst.opts.RequestOpts == nil {
 		ssst.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -63,16 +63,16 @@ func (ssst *SetStickerSetThumbnail) APIURL(url String) *SetStickerSetThumbnail {
 }
 
 // Send sets the sticker set thumbnail.
-func (ssst *SetStickerSetThumbnail) Send() Result[bool] {
+func (ssst *SetStickerSetThumbnail) Send() g.Result[bool] {
 	if ssst.err != nil {
-		return Err[bool](ssst.err)
+		return g.Err[bool](ssst.err)
 	}
 
 	if ssst.thumb != nil {
 		defer ssst.thumb.Close()
 	}
 
-	return ResultOf(ssst.ctx.Bot.Raw().
+	return g.ResultOf(ssst.ctx.Bot.Raw().
 		SetStickerSetThumbnail(ssst.name.Std(), ssst.userID, ssst.format.Std(), ssst.opts),
 	)
 }

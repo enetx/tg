@@ -4,15 +4,15 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // ReplaceStickerInSet represents a request to replace a sticker in a sticker set.
 type ReplaceStickerInSet struct {
 	ctx        *Context
 	userID     int64
-	name       String
-	oldSticker String
+	name       g.String
+	oldSticker g.String
 	sticker    gotgbot.InputSticker
 	opts       *gotgbot.ReplaceStickerInSetOpts
 }
@@ -35,7 +35,7 @@ func (rsis *ReplaceStickerInSet) Timeout(duration time.Duration) *ReplaceSticker
 }
 
 // APIURL sets a custom API URL for this request.
-func (rsis *ReplaceStickerInSet) APIURL(url String) *ReplaceStickerInSet {
+func (rsis *ReplaceStickerInSet) APIURL(url g.String) *ReplaceStickerInSet {
 	if rsis.opts.RequestOpts == nil {
 		rsis.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -46,8 +46,8 @@ func (rsis *ReplaceStickerInSet) APIURL(url String) *ReplaceStickerInSet {
 }
 
 // Send replaces the sticker in the sticker set.
-func (rsis *ReplaceStickerInSet) Send() Result[bool] {
-	return ResultOf(rsis.ctx.Bot.Raw().ReplaceStickerInSet(
+func (rsis *ReplaceStickerInSet) Send() g.Result[bool] {
+	return g.ResultOf(rsis.ctx.Bot.Raw().ReplaceStickerInSet(
 		rsis.userID,
 		rsis.name.Std(),
 		rsis.oldSticker.Std(),

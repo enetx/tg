@@ -4,19 +4,19 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 type BanChatMember struct {
 	ctx    *Context
 	opts   *gotgbot.BanChatMemberOpts
 	userID int64
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID for the ban action.
 func (b *BanChatMember) ChatID(id int64) *BanChatMember {
-	b.chatID = Some(id)
+	b.chatID = g.Some(id)
 	return b
 }
 
@@ -49,7 +49,7 @@ func (b *BanChatMember) Timeout(duration time.Duration) *BanChatMember {
 }
 
 // APIURL sets a custom API URL for this request.
-func (b *BanChatMember) APIURL(url String) *BanChatMember {
+func (b *BanChatMember) APIURL(url g.String) *BanChatMember {
 	if b.opts.RequestOpts == nil {
 		b.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -60,7 +60,7 @@ func (b *BanChatMember) APIURL(url String) *BanChatMember {
 }
 
 // Send executes the ban action and returns the result.
-func (b *BanChatMember) Send() Result[bool] {
+func (b *BanChatMember) Send() g.Result[bool] {
 	chatID := b.chatID.UnwrapOr(b.ctx.EffectiveChat.Id)
-	return ResultOf(b.ctx.Bot.Raw().BanChatMember(chatID, b.userID, b.opts))
+	return g.ResultOf(b.ctx.Bot.Raw().BanChatMember(chatID, b.userID, b.opts))
 }

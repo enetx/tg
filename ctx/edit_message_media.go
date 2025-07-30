@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
@@ -14,30 +14,30 @@ type EditMessageMedia struct {
 	ctx       *Context
 	media     input.Media
 	opts      *gotgbot.EditMessageMediaOpts
-	chatID    Option[int64]
-	messageID Option[int64]
+	chatID    g.Option[int64]
+	messageID g.Option[int64]
 }
 
 // ChatID sets the target chat ID for the media edit.
 func (emm *EditMessageMedia) ChatID(id int64) *EditMessageMedia {
-	emm.chatID = Some(id)
+	emm.chatID = g.Some(id)
 	return emm
 }
 
 // MessageID sets the target message ID to edit.
 func (emm *EditMessageMedia) MessageID(id int64) *EditMessageMedia {
-	emm.messageID = Some(id)
+	emm.messageID = g.Some(id)
 	return emm
 }
 
 // InlineMessageID sets the inline message ID to edit.
-func (emm *EditMessageMedia) InlineMessageID(id String) *EditMessageMedia {
+func (emm *EditMessageMedia) InlineMessageID(id g.String) *EditMessageMedia {
 	emm.opts.InlineMessageId = id.Std()
 	return emm
 }
 
 // Business sets the business connection ID for the media edit.
-func (emm *EditMessageMedia) Business(id String) *EditMessageMedia {
+func (emm *EditMessageMedia) Business(id g.String) *EditMessageMedia {
 	emm.opts.BusinessConnectionId = id.Std()
 	return emm
 }
@@ -63,7 +63,7 @@ func (emm *EditMessageMedia) Timeout(duration time.Duration) *EditMessageMedia {
 }
 
 // APIURL sets a custom API URL for this request.
-func (emm *EditMessageMedia) APIURL(url String) *EditMessageMedia {
+func (emm *EditMessageMedia) APIURL(url g.String) *EditMessageMedia {
 	if emm.opts.RequestOpts == nil {
 		emm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -74,10 +74,10 @@ func (emm *EditMessageMedia) APIURL(url String) *EditMessageMedia {
 }
 
 // Send edits the message media and returns the result.
-func (emm *EditMessageMedia) Send() Result[*gotgbot.Message] {
+func (emm *EditMessageMedia) Send() g.Result[*gotgbot.Message] {
 	emm.opts.ChatId = emm.chatID.UnwrapOr(emm.ctx.EffectiveChat.Id)
 	emm.opts.MessageId = emm.messageID.UnwrapOr(emm.ctx.EffectiveMessage.MessageId)
 
 	msg, _, err := emm.ctx.Bot.Raw().EditMessageMedia(emm.media.Build(), emm.opts)
-	return ResultOf(msg, err)
+	return g.ResultOf(msg, err)
 }

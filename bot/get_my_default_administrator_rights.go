@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetMyDefaultAdministratorRights represents a request to get the bot's default administrator rights.
@@ -31,7 +31,7 @@ func (gmdar *GetMyDefaultAdministratorRights) Timeout(duration time.Duration) *G
 }
 
 // APIURL sets a custom API URL for this request.
-func (gmdar *GetMyDefaultAdministratorRights) APIURL(url String) *GetMyDefaultAdministratorRights {
+func (gmdar *GetMyDefaultAdministratorRights) APIURL(url g.String) *GetMyDefaultAdministratorRights {
 	if gmdar.opts.RequestOpts == nil {
 		gmdar.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -42,6 +42,6 @@ func (gmdar *GetMyDefaultAdministratorRights) APIURL(url String) *GetMyDefaultAd
 }
 
 // Send gets the bot's default administrator rights.
-func (gmdar *GetMyDefaultAdministratorRights) Send() Result[*gotgbot.ChatAdministratorRights] {
-	return ResultOf(gmdar.bot.Raw().GetMyDefaultAdministratorRights(gmdar.opts))
+func (gmdar *GetMyDefaultAdministratorRights) Send() g.Result[*gotgbot.ChatAdministratorRights] {
+	return g.ResultOf(gmdar.bot.Raw().GetMyDefaultAdministratorRights(gmdar.opts))
 }

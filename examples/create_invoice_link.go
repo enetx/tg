@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Command to create a simple product invoice link
@@ -30,12 +30,12 @@ func main() {
 			Send()
 
 		if result.IsErr() {
-			return ctx.Reply(Format("Failed to create invoice link: {}", result.Err())).Send().Err()
+			return ctx.Reply(g.Format("Failed to create invoice link: {}", result.Err())).Send().Err()
 		}
 
 		link := result.Ok()
 
-		return ctx.Reply(Format(`
+		return ctx.Reply(g.Format(`
 💳 <b>Premium Features Invoice</b>
 
 Your payment link has been created!
@@ -68,12 +68,12 @@ Your payment link has been created!
 			Send()
 
 		if result.IsErr() {
-			return ctx.Reply(Format("Failed to create Stars invoice: {}", result.Err())).Send().Err()
+			return ctx.Reply(g.Format("Failed to create Stars invoice: {}", result.Err())).Send().Err()
 		}
 
 		link := result.Ok()
 
-		return ctx.Reply(Format(`
+		return ctx.Reply(g.Format(`
 ⭐ <b>Telegram Stars Package</b>
 
 <a href="{}">💳 Pay with Telegram Stars</a>
@@ -103,12 +103,12 @@ Your payment link has been created!
 			Send()
 
 		if result.IsErr() {
-			return ctx.Reply(Format("Failed to create subscription link: {}", result.Err())).Send().Err()
+			return ctx.Reply(g.Format("Failed to create subscription link: {}", result.Err())).Send().Err()
 		}
 
 		link := result.Ok()
 
-		return ctx.Reply(Format(`
+		return ctx.Reply(g.Format(`
 🔄 <b>Monthly Premium Subscription</b>
 
 <a href="{}">📅 Subscribe Now</a>
@@ -144,12 +144,12 @@ Your payment link has been created!
 			Send()
 
 		if result.IsErr() {
-			return ctx.Reply(Format("Failed to create flexible invoice: {}", result.Err())).Send().Err()
+			return ctx.Reply(g.Format("Failed to create flexible invoice: {}", result.Err())).Send().Err()
 		}
 
 		link := result.Ok()
 
-		return ctx.Reply(Format(`
+		return ctx.Reply(g.Format(`
 🛠 <b>Custom Service Package</b>
 
 <a href="{}">💼 Get Quote & Pay</a>
@@ -186,12 +186,12 @@ Your payment link has been created!
 			Send()
 
 		if result.IsErr() {
-			return ctx.Reply(Format("Failed to create business invoice: {}", result.Err())).Send().Err()
+			return ctx.Reply(g.Format("Failed to create business invoice: {}", result.Err())).Send().Err()
 		}
 
 		link := result.Ok()
 
-		return ctx.Reply(Format(`
+		return ctx.Reply(g.Format(`
 💼 <b>Business Account Service</b>
 
 <a href="{}">🏢 Pay via Business Account</a>
@@ -257,7 +257,7 @@ Try these commands to create different types of invoice links:
 
 		link := result.Ok()
 
-		ctx.EditMessageText(Format("🎮 Demo product link created!\n\n<a href=\"{}\">Click to view invoice</a>", link)).
+		ctx.EditMessageText(g.Format("🎮 Demo product link created!\n\n<a href=\"{}\">Click to view invoice</a>", link)).
 			HTML().
 			Send()
 

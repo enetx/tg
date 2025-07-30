@@ -1,14 +1,14 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/types/passport"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Simple command to show passport error types
@@ -69,7 +69,7 @@ Use /passport_demo to test all error types.`).Send().Err()
 				// Multiple files error
 				passport.NewFilesError(
 					passport.UtilityBill,
-					SliceOf[String]("file1_hash", "file2_hash", "file3_hash"),
+					g.SliceOf[g.String]("file1_hash", "file2_hash", "file3_hash"),
 					"All files are expired",
 				),
 				// Translation file error
@@ -81,7 +81,7 @@ Use /passport_demo to test all error types.`).Send().Err()
 				// Multiple translation files error
 				passport.NewTranslationFilesError(
 					passport.DriverLicense,
-					SliceOf[String]("trans1_hash", "trans2_hash"),
+					g.SliceOf[g.String]("trans1_hash", "trans2_hash"),
 					"Translation quality insufficient",
 				),
 				// Unspecified error
@@ -109,7 +109,7 @@ Use /passport_demo to test all error types.`).Send().Err()
 			userID := ctx.EffectiveUser.Id
 
 			// Simulate passport validation and create errors
-			var errors Slice[*passport.PassportError]
+			var errors g.Slice[*passport.PassportError]
 
 			// Example validation scenarios
 			for _, element := range passportData.Data {
@@ -135,7 +135,7 @@ Use /passport_demo to test all error types.`).Send().Err()
 					)
 				case "utility_bill":
 					// Multiple files error
-					fileHashes := Slice[String]{"file1_hash", "file2_hash"}
+					fileHashes := g.Slice[g.String]{"file1_hash", "file2_hash"}
 					errors.Push(
 						passport.NewFilesError(
 							passport.UtilityBill,

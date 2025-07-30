@@ -4,13 +4,13 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetStickerSet represents a request to get sticker set information.
 type GetStickerSet struct {
 	ctx  *Context
-	name String
+	name g.String
 	opts *gotgbot.GetStickerSetOpts
 }
 
@@ -26,7 +26,7 @@ func (gss *GetStickerSet) Timeout(duration time.Duration) *GetStickerSet {
 }
 
 // APIURL sets a custom API URL for this request.
-func (gss *GetStickerSet) APIURL(url String) *GetStickerSet {
+func (gss *GetStickerSet) APIURL(url g.String) *GetStickerSet {
 	if gss.opts.RequestOpts == nil {
 		gss.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -37,6 +37,6 @@ func (gss *GetStickerSet) APIURL(url String) *GetStickerSet {
 }
 
 // Send retrieves the sticker set information.
-func (gss *GetStickerSet) Send() Result[*gotgbot.StickerSet] {
-	return ResultOf(gss.ctx.Bot.Raw().GetStickerSet(gss.name.Std(), gss.opts))
+func (gss *GetStickerSet) Send() g.Result[*gotgbot.StickerSet] {
+	return g.ResultOf(gss.ctx.Bot.Raw().GetStickerSet(gss.name.Std(), gss.opts))
 }

@@ -4,20 +4,20 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetChatTitle represents a request to set the chat title.
 type SetChatTitle struct {
 	ctx    *Context
-	title  String
+	title  g.String
 	opts   *gotgbot.SetChatTitleOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID for this request.
 func (sat *SetChatTitle) ChatID(id int64) *SetChatTitle {
-	sat.chatID = Some(id)
+	sat.chatID = g.Some(id)
 	return sat
 }
 
@@ -33,7 +33,7 @@ func (sat *SetChatTitle) Timeout(duration time.Duration) *SetChatTitle {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sat *SetChatTitle) APIURL(url String) *SetChatTitle {
+func (sat *SetChatTitle) APIURL(url g.String) *SetChatTitle {
 	if sat.opts.RequestOpts == nil {
 		sat.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,7 +44,7 @@ func (sat *SetChatTitle) APIURL(url String) *SetChatTitle {
 }
 
 // Send executes the SetChatTitle request.
-func (sat *SetChatTitle) Send() Result[bool] {
+func (sat *SetChatTitle) Send() g.Result[bool] {
 	chatID := sat.chatID.UnwrapOr(sat.ctx.EffectiveChat.Id)
-	return ResultOf(sat.ctx.Bot.Raw().SetChatTitle(chatID, sat.title.Std(), sat.opts))
+	return g.ResultOf(sat.ctx.Bot.Raw().SetChatTitle(chatID, sat.title.Std(), sat.opts))
 }

@@ -4,19 +4,19 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // DeleteChatStickerSet represents a request to delete a chat's sticker set.
 type DeleteChatStickerSet struct {
 	ctx    *Context
 	opts   *gotgbot.DeleteChatStickerSetOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (dcss *DeleteChatStickerSet) ChatID(chatID int64) *DeleteChatStickerSet {
-	dcss.chatID = Some(chatID)
+	dcss.chatID = g.Some(chatID)
 	return dcss
 }
 
@@ -32,7 +32,7 @@ func (dcss *DeleteChatStickerSet) Timeout(duration time.Duration) *DeleteChatSti
 }
 
 // APIURL sets a custom API URL for this request.
-func (dcss *DeleteChatStickerSet) APIURL(url String) *DeleteChatStickerSet {
+func (dcss *DeleteChatStickerSet) APIURL(url g.String) *DeleteChatStickerSet {
 	if dcss.opts.RequestOpts == nil {
 		dcss.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -43,7 +43,7 @@ func (dcss *DeleteChatStickerSet) APIURL(url String) *DeleteChatStickerSet {
 }
 
 // Send deletes the chat sticker set and returns the result.
-func (dcss *DeleteChatStickerSet) Send() Result[bool] {
+func (dcss *DeleteChatStickerSet) Send() g.Result[bool] {
 	chatID := dcss.chatID.UnwrapOr(dcss.ctx.EffectiveChat.Id)
-	return ResultOf(dcss.ctx.Bot.Raw().DeleteChatStickerSet(chatID, dcss.opts))
+	return g.ResultOf(dcss.ctx.Bot.Raw().DeleteChatStickerSet(chatID, dcss.opts))
 }

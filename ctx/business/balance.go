@@ -2,13 +2,13 @@ package business
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // Balance provides balance management
 type Balance struct {
 	bot    Bot
-	connID String
+	connID g.String
 }
 
 // GetStarBalance creates a request to retrieve the current star balance.

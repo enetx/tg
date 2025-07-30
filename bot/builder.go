@@ -7,13 +7,13 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/handlers"
 )
 
 // BotBuilder provides a fluent interface for configuring and building Telegram bots.
 type BotBuilder struct {
-	token String
+	token g.String
 	opts  *gotgbot.BotOpts
 }
 
@@ -45,7 +45,7 @@ func (b *BotBuilder) Timeout(duration time.Duration) *BotBuilder {
 }
 
 // APIURL sets the API URL for bot builder operations.
-func (b *BotBuilder) APIURL(url String) *BotBuilder {
+func (b *BotBuilder) APIURL(url g.String) *BotBuilder {
 	b.opts.RequestOpts.APIURL = url.Std()
 	return b
 }
@@ -60,7 +60,7 @@ func (b *BotBuilder) DefaultTimeout(duration time.Duration) *BotBuilder {
 }
 
 // DefaultAPIURL sets the default API URL for all bot requests.
-func (b *BotBuilder) DefaultAPIURL(url String) *BotBuilder {
+func (b *BotBuilder) DefaultAPIURL(url g.String) *BotBuilder {
 	if base, ok := b.opts.BotClient.(*gotgbot.BaseBotClient); ok {
 		base.DefaultRequestOpts.APIURL = url.Std()
 	}
@@ -69,7 +69,7 @@ func (b *BotBuilder) DefaultAPIURL(url String) *BotBuilder {
 }
 
 // Build creates and initializes a new Bot instance with the configured settings.
-func (b *BotBuilder) Build() Result[*Bot] {
+func (b *BotBuilder) Build() g.Result[*Bot] {
 	raw := &gotgbot.Bot{
 		Token:     b.token.Std(),
 		BotClient: b.opts.BotClient,
@@ -87,24 +87,24 @@ func (b *BotBuilder) Build() Result[*Bot] {
 	if !b.opts.DisableTokenCheck {
 		user := bot.GetMe()
 		if b.opts.RequestOpts != nil {
-			user = user.Timeout(b.opts.RequestOpts.Timeout).APIURL(String(b.opts.RequestOpts.APIURL))
+			user = user.Timeout(b.opts.RequestOpts.Timeout).APIURL(g.String(b.opts.RequestOpts.APIURL))
 		}
-		
+
 		result := user.Send()
 		if result.IsErr() {
-			return Err[*Bot](fmt.Errorf("failed to check bot token: %w", result.Err()))
+			return g.Err[*Bot](fmt.Errorf("failed to check bot token: %w", result.Err()))
 		}
 
 		raw.User = *result.Ok()
 	} else {
 		split := b.token.Split(":").Collect()
 		if split.Len().Ne(2) {
-			return Err[*Bot](fmt.Errorf("invalid token format: expected '123456:ABCDEF', got '%s'", b.token))
+			return g.Err[*Bot](fmt.Errorf("invalid token format: expected '123456:ABCDEF', got '%s'", b.token))
 		}
 
 		id := split[0].ToInt()
 		if id.IsErr() {
-			return Err[*Bot](fmt.Errorf("failed to parse bot ID from token: %w", id.Err()))
+			return g.Err[*Bot](fmt.Errorf("failed to parse bot ID from token: %w", id.Err()))
 		}
 
 		raw.User = gotgbot.User{
@@ -115,5 +115,5 @@ func (b *BotBuilder) Build() Result[*Bot] {
 		}
 	}
 
-	return Ok(bot)
+	return g.Ok(bot)
 }

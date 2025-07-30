@@ -4,7 +4,7 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/g/cmp"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
@@ -74,24 +74,24 @@ var (
 
 // Demo data structures for complex keyboards
 type MenuItem struct {
-	ID          String
-	Title       String
-	Description String
-	Price       Int
-	Category    String
+	ID          g.String
+	Title       g.String
+	Description g.String
+	Price       g.Int
+	Category    g.String
 	Available   bool
 }
 
 type UserSession struct {
-	CurrentPage    Int
-	SelectedItems  Slice[String]
-	FilterCategory String
-	SortOrder      String
-	ViewMode       String
+	CurrentPage    g.Int
+	SelectedItems  g.Slice[g.String]
+	FilterCategory g.String
+	SortOrder      g.String
+	ViewMode       g.String
 }
 
 // Demo menu items
-var menuItems = SliceOf(
+var menuItems = g.SliceOf(
 	MenuItem{"pizza_1", "Margherita Pizza", "Classic tomato, mozzarella, basil", 1200, "pizza", true},
 	MenuItem{"pizza_2", "Pepperoni Pizza", "Tomato, mozzarella, pepperoni", 1400, "pizza", true},
 	MenuItem{"pizza_3", "Vegetarian Pizza", "Tomato, mozzarella, vegetables", 1300, "pizza", true},
@@ -105,7 +105,7 @@ var menuItems = SliceOf(
 )
 
 // User sessions storage using Map (in production, use a database)
-var userSessions = NewMap[int64, *UserSession]()
+var userSessions = g.NewMap[int64, *UserSession]()
 
 func main() {
 	// Get bot token from environment
@@ -114,7 +114,7 @@ func main() {
 	// 	log.Fatal("BOT_TOKEN environment variable is required")
 	// }
 
-	token := NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 
 	// Create bot instance
 	botInstance = bot.New(token).Build().Unwrap()
@@ -146,7 +146,7 @@ func main() {
 		return ctx.AnswerCallbackQuery("⚠️ Warning: This is a warning message").Alert().Send().Err()
 	})
 	botInstance.On.Callback.Equal("action_error", func(ctx *ctx.Context) error {
-		return ctx.AnswerCallbackQuery("❌ Error: Something went wrong").Alert().Send().Err()
+		return ctx.AnswerCallbackQuery("❌ Error: g.Something went wrong").Alert().Send().Err()
 	})
 	botInstance.On.Callback.Equal("action_info", func(ctx *ctx.Context) error {
 		return ctx.AnswerCallbackQuery("ℹ️ Info: Additional information displayed").Alert().Send().Err()
@@ -202,7 +202,7 @@ func main() {
 	botInstance.On.Callback.Prefix("back_", handleBackNavigation)
 
 	// Start the bot
-	Println("🚀 Interactive Keyboards Example started...")
+	g.Println("🚀 Interactive Keyboards Example started...")
 	botInstance.Polling().AllowedUpdates().Start()
 }
 
@@ -443,7 +443,7 @@ func handleRestaurantMenu(ctx *ctx.Context) error {
 		Row()
 
 	// Add current filter info
-	filterText := String("All Categories")
+	filterText := g.String("All Categories")
 	if !session.FilterCategory.Empty() && session.FilterCategory.Ne("all") {
 		filterText = session.FilterCategory.Title()
 	}
@@ -452,19 +452,19 @@ func handleRestaurantMenu(ctx *ctx.Context) error {
 	filteredItems := getFilteredItems(session)
 
 	// Add items to keyboard using functional approach (first 6 items)
-	itemCount := Int(0)
+	itemCount := g.Int(0)
 	filteredItems.Iter().
 		Take(6).
 		ForEach(func(item MenuItem) {
-			available := String("✅")
+			available := g.String("✅")
 			if !item.Available {
 				available = "❌"
 			}
 
-			kb.Text(Format("{} {} - {}",
+			kb.Text(g.Format("{} {} - {}",
 				available,
 				item.Title,
-				(Float(item.Price)/100).RoundDecimal(2)),
+				(g.Float(item.Price)/100).RoundDecimal(2)),
 				"item_"+item.ID,
 			)
 
@@ -495,12 +495,12 @@ func handleRestaurantMenu(ctx *ctx.Context) error {
 		filteredItems.Iter().
 			Take(6).
 			ForEach(func(item MenuItem) {
-				status := String("✅ Available")
+				status := g.String("✅ Available")
 				if !item.Available {
 					status = "❌ Unavailable"
 				}
 
-				menuText += Format("• <b>{}</b> - {} ({})\n", item.Title, (item.Price.Float() / 100).RoundDecimal(2), status)
+				menuText += g.Format("• <b>{}</b> - {} ({})\n", item.Title, (item.Price.Float() / 100).RoundDecimal(2), status)
 			})
 		menuText += "\n"
 	}
@@ -523,7 +523,7 @@ func handleCategoryFilter(ctx *ctx.Context) error {
 	session := getUserSession(userID)
 
 	// Extract category from callback data
-	session.FilterCategory = String(ctx.Update.CallbackQuery.Data).StripPrefix("category_")
+	session.FilterCategory = g.String(ctx.Update.CallbackQuery.Data).StripPrefix("category_")
 
 	// Update menu with new filter
 	return handleRestaurantMenu(ctx)
@@ -534,7 +534,7 @@ func handleSortOrder(ctx *ctx.Context) error {
 	session := getUserSession(userID)
 
 	// Extract sort order from callback data
-	session.SortOrder = String(ctx.Update.CallbackQuery.Data).StripPrefix("sort_")
+	session.SortOrder = g.String(ctx.Update.CallbackQuery.Data).StripPrefix("sort_")
 
 	// Update menu with new sort order
 	return handleRestaurantMenu(ctx)
@@ -545,7 +545,7 @@ func handleItemSelection(ctx *ctx.Context) error {
 	session := getUserSession(userID)
 
 	// Extract item ID from callback data
-	itemID := String(ctx.Update.CallbackQuery.Data).StripPrefix("item_")
+	itemID := g.String(ctx.Update.CallbackQuery.Data).StripPrefix("item_")
 
 	// Find the item
 	var selectedItem *MenuItem
@@ -566,7 +566,7 @@ func handleItemSelection(ctx *ctx.Context) error {
 
 	// Show confirmation with current cart count
 	cartCount := session.SelectedItems.Len()
-	return ctx.AnswerCallbackQuery(Format("✅ {} added to cart! ({} items)", selectedItem.Title, cartCount)).
+	return ctx.AnswerCallbackQuery(g.Format("✅ {} added to cart! ({} items)", selectedItem.Title, cartCount)).
 		Send().
 		Err()
 }
@@ -583,7 +583,7 @@ func handleViewCart(ctx *ctx.Context) error {
 
 		ctx.AnswerCallbackQuery("🛒 Your cart is empty").Send()
 
-		return ctx.EditMessageText(String("🛒 <b>Shopping Cart</b>\n\n" +
+		return ctx.EditMessageText(g.String("🛒 <b>Shopping Cart</b>\n\n" +
 			"<i>Your cart is empty. Add some items from the menu!</i>\n\n" +
 			"<b>Available Actions:</b>\n" +
 			"• Browse menu items\n" +
@@ -598,25 +598,25 @@ func handleViewCart(ctx *ctx.Context) error {
 	// Count items
 	itemCounts := session.SelectedItems.Iter().Counter()
 
-	cartText := String("🛒 <b>Shopping Cart</b>\n\n")
-	total := Int(0)
+	cartText := g.String("🛒 <b>Shopping Cart</b>\n\n")
+	total := g.Int(0)
 
 	// Build cart text using functional approach
-	itemCounts.ForEach(func(itemID String, count Int) {
+	itemCounts.ForEach(func(itemID g.String, count g.Int) {
 		menuItems.Iter().
 			Filter(func(item MenuItem) bool { return item.ID == itemID }).
 			Take(1).
 			ForEach(func(item MenuItem) {
 				itemTotal := item.Price * count
-				cartText += Format("• <b>{}</b> x{} - {}\n",
+				cartText += g.Format("• <b>{}</b> x{} - {}\n",
 					item.Title,
 					count,
-					(Float(itemTotal) / 100).RoundDecimal(2))
+					(g.Float(itemTotal) / 100).RoundDecimal(2))
 				total += itemTotal
 			})
 	})
 
-	cartText += Format("\n<b>Total: {}</b>\n\n", (Float(total) / 100).RoundDecimal(2))
+	cartText += g.Format("\n<b>Total: {}</b>\n\n", (g.Float(total) / 100).RoundDecimal(2))
 
 	kb := keyboard.Inline().
 		Row().
@@ -656,7 +656,7 @@ func handlePageNavigation(ctx *ctx.Context) error {
 	userID := ctx.EffectiveUser.Id
 	session := getUserSession(userID)
 
-	data := String(ctx.Update.CallbackQuery.Data)
+	data := g.String(ctx.Update.CallbackQuery.Data)
 
 	// Parse page number from callback data
 	if data.StartsWith("page_") {
@@ -675,7 +675,7 @@ func handlePageNavigation(ctx *ctx.Context) error {
 		session.CurrentPage = 1
 	}
 	if session.CurrentPage.Std() > totalPages {
-		session.CurrentPage = Int(totalPages)
+		session.CurrentPage = g.Int(totalPages)
 	}
 
 	// Build pagination keyboard
@@ -685,7 +685,7 @@ func handlePageNavigation(ctx *ctx.Context) error {
 	startItem := (session.CurrentPage.Std() - 1) * itemsPerPage
 	for i := 0; i < itemsPerPage && startItem+i < totalItems; i++ {
 		itemNum := startItem + i + 1
-		kb.Row().Text(Format("📄 Document {}", itemNum), Format("doc_{}", itemNum))
+		kb.Row().Text(g.Format("📄 Document {}", itemNum), g.Format("doc_{}", itemNum))
 	}
 
 	// Build pagination controls
@@ -693,33 +693,38 @@ func handlePageNavigation(ctx *ctx.Context) error {
 
 	// Previous page button
 	if session.CurrentPage > 1 {
-		paginationRow.Text("⬅️ Prev", Format("page_{}", session.CurrentPage-1))
+		paginationRow.Text("⬅️ Prev", g.Format("page_{}", session.CurrentPage-1))
 	}
 
 	// Page indicator
-	paginationRow.Text(Format("📄 {}/{}", session.CurrentPage, totalPages), "current_page")
+	paginationRow.Text(g.Format("📄 {}/{}", session.CurrentPage, totalPages), "current_page")
 
 	// Next page button
 	if session.CurrentPage.Std() < totalPages {
-		paginationRow.Text("Next ➡️", Format("page_{}", session.CurrentPage+1))
+		paginationRow.Text("Next ➡️", g.Format("page_{}", session.CurrentPage+1))
 	}
 
 	// Navigation controls
 	kb.Row().
 		Text("⏮️ First", "page_1").
-		Text("🔄 Refresh", Format("page_{}", session.CurrentPage)).
-		Text("Last ⏭️", Format("page_{}", totalPages)).
+		Text("🔄 Refresh", g.Format("page_{}", session.CurrentPage)).
+		Text("Last ⏭️", g.Format("page_{}", totalPages)).
 		Row().
 		Text("🔙 Back", "back_main")
 
 	paginationText := "📄 <b>Pagination Demo</b>\n\n" +
-		Format("<b>Page {} of {}</b>\n", session.CurrentPage, totalPages) +
-		Format("<b>Showing items {}-{} of {}</b>\n\n", startItem+1, min(startItem+itemsPerPage, totalItems), totalItems)
+		g.Format("<b>Page {} of {}</b>\n", session.CurrentPage, totalPages) +
+		g.Format(
+			"<b>Showing items {}-{} of {}</b>\n\n",
+			startItem+1,
+			min(startItem+itemsPerPage, totalItems),
+			totalItems,
+		)
 
 	paginationText += "<b>Current Page Items:</b>\n"
 	for i := 0; i < itemsPerPage && startItem+i < totalItems; i++ {
 		itemNum := startItem + i + 1
-		paginationText += Format("• Document {} - Sample content item\n", itemNum)
+		paginationText += g.Format("• Document {} - Sample content item\n", itemNum)
 	}
 
 	paginationText += "\n<b>Pagination Features:</b>\n" +
@@ -902,7 +907,7 @@ func handleKeyboardStates(ctx *ctx.Context) error {
 		"• User session storage\n" +
 		"• Progress tracking\n" +
 		"• Answer validation\n" +
-		"• Results calculation\n\n" +
+		"• g.Results calculation\n\n" +
 		"<i>Experience complex stateful interactions with keyboards.</i>").
 		HTML().
 		Markup(kb).
@@ -916,28 +921,28 @@ func handleQuizDemo(ctx *ctx.Context) error {
 	// Initialize quiz state if needed
 	if session.ViewMode == "" {
 		session.ViewMode = "quiz_active"
-		session.CurrentPage = 0                    // Current question
-		session.SelectedItems = NewSlice[String]() // User answers
+		session.CurrentPage = 0                        // Current question
+		session.SelectedItems = g.NewSlice[g.String]() // User answers
 	}
 
-	questions := Slice[struct {
-		Question String
-		Options  Slice[String]
-		Correct  Int
+	questions := g.Slice[struct {
+		Question g.String
+		Options  g.Slice[g.String]
+		Correct  g.Int
 	}]{
 		{
 			"What is the capital of France?",
-			Slice[String]{"London", "Berlin", "Paris", "Madrid"},
+			g.Slice[g.String]{"London", "Berlin", "Paris", "Madrid"},
 			2,
 		},
 		{
 			"Which programming language is TG Framework built with?",
-			Slice[String]{"Python", "Go", "JavaScript", "Java"},
+			g.Slice[g.String]{"Python", "Go", "JavaScript", "Java"},
 			1,
 		},
 		{
 			"What does API stand for?",
-			Slice[String]{
+			g.Slice[g.String]{
 				"Application Programming Interface",
 				"Automated Program Integration",
 				"Advanced Programming Instructions",
@@ -960,7 +965,7 @@ func handleQuizDemo(ctx *ctx.Context) error {
 
 	// Add answer options
 	for i, option := range question.Options {
-		kb.Row().Text(Format("{}) {}", String(rune('A'+i)), option), Format("answer_{}_{}", currentQ, i))
+		kb.Row().Text(g.Format("{}) {}", g.String(rune('A'+i)), option), g.Format("answer_{}_{}", currentQ, i))
 	}
 
 	kb.Row().
@@ -968,12 +973,12 @@ func handleQuizDemo(ctx *ctx.Context) error {
 		Text("🔙 Back", "keyboard_states")
 
 	quizText := "🧠 <b>Interactive Quiz</b>\n\n" +
-		Format("<b>Question {} of {}</b>\n\n", currentQ+1, len(questions)) +
+		g.Format("<b>Question {} of {}</b>\n\n", currentQ+1, len(questions)) +
 		"<b>" + question.Question + "</b>\n\n" +
 		"<b>Options:</b>\n"
 
 	for i, option := range question.Options {
-		quizText += Format("{}) {}\n", String(rune('A'+i)), option)
+		quizText += g.Format("{}) {}\n", g.String(rune('A'+i)), option)
 	}
 
 	quizText += "\n<b>Progress:</b>\n"
@@ -1000,7 +1005,7 @@ func handleQuizAnswer(ctx *ctx.Context) error {
 	session := getUserSession(userID)
 
 	// Parse answer from callback data: answer_questionIndex_answerIndex
-	parts := String(ctx.Update.CallbackQuery.Data).StripPrefix("answer_").Split("_").Collect()
+	parts := g.String(ctx.Update.CallbackQuery.Data).StripPrefix("answer_").Split("_").Collect()
 
 	if parts.Len().Ne(2) {
 		return ctx.AnswerCallbackQuery("❌ Invalid answer format").Alert().Send().Err()
@@ -1033,24 +1038,24 @@ func handleQuizResults(ctx *ctx.Context) error {
 	userID := ctx.EffectiveUser.Id
 	session := getUserSession(userID)
 
-	questions := Slice[struct {
-		Question String
-		Options  Slice[String]
-		Correct  Int
+	questions := g.Slice[struct {
+		Question g.String
+		Options  g.Slice[g.String]
+		Correct  g.Int
 	}]{
 		{
 			"What is the capital of France?",
-			Slice[String]{"London", "Berlin", "Paris", "Madrid"},
+			g.Slice[g.String]{"London", "Berlin", "Paris", "Madrid"},
 			2,
 		},
 		{
 			"Which programming language is TG Framework built with?",
-			Slice[String]{"Python", "Go", "JavaScript", "Java"},
+			g.Slice[g.String]{"Python", "Go", "JavaScript", "Java"},
 			1,
 		},
 		{
 			"What does API stand for?",
-			Slice[String]{
+			g.Slice[g.String]{
 				"Application Programming Interface",
 				"Automated Program Integration",
 				"Advanced Programming Instructions",
@@ -1062,7 +1067,7 @@ func handleQuizResults(ctx *ctx.Context) error {
 
 	// Calculate score
 	correctAnswers := 0
-	for i := Int(0); i < session.SelectedItems.Len() && i < questions.Len(); i++ {
+	for i := g.Int(0); i < session.SelectedItems.Len() && i < questions.Len(); i++ {
 		if userAnswer := session.SelectedItems.Get(i); userAnswer.IsSome() {
 			if answerIndex := userAnswer.Some().ToInt(); answerIndex.IsOk() {
 				if answerIndex.Ok() == questions[i].Correct {
@@ -1079,8 +1084,8 @@ func handleQuizResults(ctx *ctx.Context) error {
 		Text("🔄 Retake Quiz", "reset_quiz").
 		Text("🔙 Back", "keyboard_states")
 
-	resultsText := "🎉 <b>Quiz Results</b>\n\n" +
-		Format("<b>Score: {}/{} ({}%)</b>\n\n", correctAnswers, len(questions), percentage)
+	resultsText := "🎉 <b>Quiz g.Results</b>\n\n" +
+		g.Format("<b>Score: {}/{} ({}%)</b>\n\n", correctAnswers, len(questions), percentage)
 
 	// Performance message
 	if percentage >= 80 {
@@ -1093,7 +1098,7 @@ func handleQuizResults(ctx *ctx.Context) error {
 
 	resultsText += "<b>Answer Review:</b>\n"
 	for i, question := range questions {
-		userAnswerIndex := Int(-1)
+		userAnswerIndex := g.Int(-1)
 		if i < session.SelectedItems.Len().Std() {
 			userAnswerIndex = session.SelectedItems[i].ToInt().Ok()
 		}
@@ -1108,14 +1113,14 @@ func handleQuizResults(ctx *ctx.Context) error {
 			questionText.Truncate(50)
 		}
 
-		resultsText += Format("{} <b>Q{}:</b> {}\n", correctIcon, i+1, questionText)
-		resultsText += Format("   <b>Correct:</b> {}) {}\n",
-			String(rune('A'+question.Correct)),
+		resultsText += g.Format("{} <b>Q{}:</b> {}\n", correctIcon, i+1, questionText)
+		resultsText += g.Format("   <b>Correct:</b> {}) {}\n",
+			g.String(rune('A'+question.Correct)),
 			question.Options[question.Correct])
 
 		if userAnswerIndex >= 0 && userAnswerIndex < question.Options.Len() && userAnswerIndex.Ne(question.Correct) {
-			resultsText += Format("   <b>Your answer:</b> {}) {}\n",
-				String(rune('A'+userAnswerIndex)),
+			resultsText += g.Format("   <b>Your answer:</b> {}) {}\n",
+				g.String(rune('A'+userAnswerIndex)),
 				question.Options[userAnswerIndex])
 		}
 
@@ -1137,7 +1142,7 @@ func handleResetQuiz(ctx *ctx.Context) error {
 	// Reset quiz state
 	session.ViewMode = ""
 	session.CurrentPage = 0
-	session.SelectedItems = NewSlice[String]()
+	session.SelectedItems = g.NewSlice[g.String]()
 
 	return handleQuizDemo(ctx)
 }
@@ -1152,7 +1157,7 @@ func getUserSession(userID int64) *UserSession {
 	// Create new session
 	session := &UserSession{
 		CurrentPage:    1,
-		SelectedItems:  NewSlice[String](),
+		SelectedItems:  g.NewSlice[g.String](),
 		FilterCategory: "all",
 		SortOrder:      "name",
 		ViewMode:       "list",
@@ -1162,7 +1167,7 @@ func getUserSession(userID int64) *UserSession {
 	return session
 }
 
-func getFilteredItems(session *UserSession) Slice[MenuItem] {
+func getFilteredItems(session *UserSession) g.Slice[MenuItem] {
 	filtered := menuItems.Iter().
 		Filter(func(item MenuItem) bool {
 			return session.FilterCategory.Eq("all") ||
@@ -1184,7 +1189,7 @@ func getFilteredItems(session *UserSession) Slice[MenuItem] {
 	return result
 }
 
-func getSortDisplayName(sortOrder String) String {
+func getSortDisplayName(sortOrder g.String) g.String {
 	switch sortOrder.Std() {
 	case "price_asc":
 		return "Price (Low to High)"
@@ -1199,7 +1204,7 @@ func getSortDisplayName(sortOrder String) String {
 
 func handleBackNavigation(ctx *ctx.Context) error {
 	// Extract destination from callback data
-	destination := String(ctx.Update.CallbackQuery.Data).StripPrefix("back_")
+	destination := g.String(ctx.Update.CallbackQuery.Data).StripPrefix("back_")
 
 	switch destination {
 	case "main":
@@ -1224,7 +1229,7 @@ func handleAddToCart(ctx *ctx.Context) error {
 	session := getUserSession(userID)
 
 	// Extract item ID from callback data
-	itemID := String(ctx.Update.CallbackQuery.Data).StripPrefix("add_")
+	itemID := g.String(ctx.Update.CallbackQuery.Data).StripPrefix("add_")
 
 	// Add to cart
 	session.SelectedItems.Push(itemID)
@@ -1237,13 +1242,13 @@ func handleRemoveFromCart(ctx *ctx.Context) error {
 	session := getUserSession(userID)
 
 	// Extract item ID from callback data
-	itemID := String(ctx.Update.CallbackQuery.Data).StripPrefix("remove_")
+	itemID := g.String(ctx.Update.CallbackQuery.Data).StripPrefix("remove_")
 
 	// Remove one instance of the item from cart
 	found := false
 	session.SelectedItems = session.SelectedItems.
 		Iter().
-		Exclude(func(s String) bool {
+		Exclude(func(s g.String) bool {
 			if !found && s.Eq(itemID) {
 				found = true
 				return true
@@ -1269,7 +1274,7 @@ func handleClearCart(ctx *ctx.Context) error {
 	session := getUserSession(userID)
 
 	// Clear all items from cart
-	session.SelectedItems = NewSlice[String]()
+	session.SelectedItems = g.NewSlice[g.String]()
 
 	// Update the cart view
 	return handleViewCart(ctx)
@@ -1277,7 +1282,7 @@ func handleClearCart(ctx *ctx.Context) error {
 
 func handleDocumentView(ctx *ctx.Context) error {
 	// Extract document ID from callback data
-	docID := String(ctx.Update.CallbackQuery.Data).StripPrefix("doc_")
+	docID := g.String(ctx.Update.CallbackQuery.Data).StripPrefix("doc_")
 	return ctx.AnswerCallbackQuery("📄 Opening document " + docID).Send().Err()
 }
 
@@ -1285,13 +1290,13 @@ func handleCurrentPage(ctx *ctx.Context) error {
 	userID := ctx.EffectiveUser.Id
 	session := getUserSession(userID)
 
-	return ctx.AnswerCallbackQuery(Format("📄 Current page: {}", session.CurrentPage)).Send().Err()
+	return ctx.AnswerCallbackQuery(g.Format("📄 Current page: {}", session.CurrentPage)).Send().Err()
 }
 
 func handleDemoLogin(ctx *ctx.Context) error {
 	user := ctx.EffectiveUser
 
-	return ctx.AnswerCallbackQuery(Format("🔐 Demo login successful!\nWelcome, {}!", user.FirstName)).
+	return ctx.AnswerCallbackQuery(g.Format("🔐 Demo login successful!\nWelcome, {}!", user.FirstName)).
 		Alert().
 		Send().
 		Err()

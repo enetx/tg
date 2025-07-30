@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
@@ -13,10 +13,10 @@ import (
 
 type Reply struct {
 	ctx         *Context
-	text        String
+	text        g.String
 	opts        *gotgbot.SendMessageOpts
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 }
 
 // Entities sets custom entities for the reply text.
@@ -27,13 +27,13 @@ func (r *Reply) Entities(e *entities.Entities) *Reply {
 
 // After schedules the reply to be sent after the specified duration.
 func (r *Reply) After(duration time.Duration) *Reply {
-	r.after = Some(duration)
+	r.after = g.Some(duration)
 	return r
 }
 
 // DeleteAfter schedules the reply message to be deleted after the specified duration.
 func (r *Reply) DeleteAfter(duration time.Duration) *Reply {
-	r.deleteAfter = Some(duration)
+	r.deleteAfter = g.Some(duration)
 	return r
 }
 
@@ -104,7 +104,7 @@ func (r *Reply) Preview(p *preview.Preview) *Reply {
 }
 
 // Business sets the business connection ID for the reply.
-func (r *Reply) Business(id String) *Reply {
+func (r *Reply) Business(id g.String) *Reply {
 	r.opts.BusinessConnectionId = id.Std()
 	return r
 }
@@ -127,7 +127,7 @@ func (r *Reply) Timeout(duration time.Duration) *Reply {
 }
 
 // APIURL sets a custom API URL for this request.
-func (r *Reply) APIURL(url String) *Reply {
+func (r *Reply) APIURL(url g.String) *Reply {
 	if r.opts.RequestOpts == nil {
 		r.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -138,8 +138,8 @@ func (r *Reply) APIURL(url String) *Reply {
 }
 
 // Send sends the reply message and returns the result.
-func (r *Reply) Send() Result[*gotgbot.Message] {
-	return r.ctx.timers(r.after, r.deleteAfter, func() Result[*gotgbot.Message] {
-		return ResultOf(r.ctx.EffectiveMessage.Reply(r.ctx.Bot.Raw(), r.text.Std(), r.opts))
+func (r *Reply) Send() g.Result[*gotgbot.Message] {
+	return r.ctx.timers(r.after, r.deleteAfter, func() g.Result[*gotgbot.Message] {
+		return g.ResultOf(r.ctx.EffectiveMessage.Reply(r.ctx.Bot.Raw(), r.text.Std(), r.opts))
 	})
 }

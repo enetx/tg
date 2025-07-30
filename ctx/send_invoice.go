@@ -4,29 +4,29 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
 )
 
 type SendInvoice struct {
 	ctx      *Context
-	title    String
-	desc     String
-	payload  String
-	currency String
-	prices   Slice[gotgbot.LabeledPrice]
-	chatID   Option[int64]
+	title    g.String
+	desc     g.String
+	payload  g.String
+	currency g.String
+	prices   g.Slice[gotgbot.LabeledPrice]
+	chatID   g.Option[int64]
 	opts     *gotgbot.SendInvoiceOpts
 }
 
 // To sets the target chat ID for the invoice.
 func (si *SendInvoice) To(chatID int64) *SendInvoice {
-	si.chatID = Some(chatID)
+	si.chatID = g.Some(chatID)
 	return si
 }
 
 // Price adds a labeled price item to the invoice.
-func (si *SendInvoice) Price(label String, amount int64) *SendInvoice {
+func (si *SendInvoice) Price(label g.String, amount int64) *SendInvoice {
 	si.prices.Push(gotgbot.LabeledPrice{Label: label.Std(), Amount: amount})
 	return si
 }
@@ -38,7 +38,7 @@ func (si *SendInvoice) Thread(id int64) *SendInvoice {
 }
 
 // ProviderToken sets the payment provider token.
-func (si *SendInvoice) ProviderToken(token String) *SendInvoice {
+func (si *SendInvoice) ProviderToken(token g.String) *SendInvoice {
 	si.opts.ProviderToken = token.Std()
 	return si
 }
@@ -56,19 +56,19 @@ func (si *SendInvoice) SuggestedTips(tips ...int64) *SendInvoice {
 }
 
 // StartParameter sets the unique deep-linking parameter.
-func (si *SendInvoice) StartParameter(param String) *SendInvoice {
+func (si *SendInvoice) StartParameter(param g.String) *SendInvoice {
 	si.opts.StartParameter = param.Std()
 	return si
 }
 
 // ProviderData sets JSON-encoded data for the payment provider.
-func (si *SendInvoice) ProviderData(data String) *SendInvoice {
+func (si *SendInvoice) ProviderData(data g.String) *SendInvoice {
 	si.opts.ProviderData = data.Std()
 	return si
 }
 
 // Photo sets the product photo URL and dimensions.
-func (si *SendInvoice) Photo(url String, size, width, height int64) *SendInvoice {
+func (si *SendInvoice) Photo(url g.String, size, width, height int64) *SendInvoice {
 	si.opts.PhotoUrl = url.Std()
 	si.opts.PhotoSize = size
 	si.opts.PhotoWidth = width
@@ -170,7 +170,7 @@ func (si *SendInvoice) Timeout(duration time.Duration) *SendInvoice {
 }
 
 // APIURL sets a custom API URL for this request.
-func (si *SendInvoice) APIURL(url String) *SendInvoice {
+func (si *SendInvoice) APIURL(url g.String) *SendInvoice {
 	if si.opts.RequestOpts == nil {
 		si.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -181,8 +181,8 @@ func (si *SendInvoice) APIURL(url String) *SendInvoice {
 }
 
 // Send sends the invoice to Telegram and returns the result.
-func (si *SendInvoice) Send() Result[*gotgbot.Message] {
-	return ResultOf(si.ctx.Bot.Raw().SendInvoice(
+func (si *SendInvoice) Send() g.Result[*gotgbot.Message] {
+	return g.ResultOf(si.ctx.Bot.Raw().SendInvoice(
 		si.chatID.UnwrapOr(si.ctx.EffectiveChat.Id),
 		si.title.Std(),
 		si.desc.Std(),

@@ -4,23 +4,23 @@ import (
 	"io"
 	"net/http"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/types/updates"
 	// "github.com/valyala/fasthttp"
 )
 
-var bots = NewMap[String, *bot.Bot]()
+var bots = g.NewMap[g.String, *bot.Bot]()
 
 func main() {
-	domain := String("https://3b1d-134-19-179-195.ngrok-free.app")
+	domain := g.String("https://3b1d-134-19-179-195.ngrok-free.app")
 
 	register("111111111:AAA...A", domain)
 	register("222222222:BBB...B", domain)
 	register("333333333:CCC...C", domain)
 
-	Println("Listening on :8080")
+	g.Println("Listening on :8080")
 
 	if err := http.ListenAndServe(":8080", http.HandlerFunc(handler)); err != nil {
 		panic(err)
@@ -31,7 +31,7 @@ func main() {
 	// }
 }
 
-func register(token, domain String) {
+func register(token, domain g.String) {
 	path := "/bot/" + token
 
 	b := bot.New(token).Build().Unwrap()
@@ -59,12 +59,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		path  String
-		token String
+		path  g.String
+		token g.String
 	)
 
 	// /bot/<token>
-	String(r.URL.Path).Split("/").Exclude(String.Empty).Collect().Unpack(&path, &token)
+	g.String(r.URL.Path).Split("/").Exclude(g.String.Empty).Collect().Unpack(&path, &token)
 
 	if path.Ne("bot") {
 		http.NotFound(w, r)
@@ -77,7 +77,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if String(r.Header.Get("X-Telegram-Bot-Api-Secret-Token")).Ne(token.Hash().MD5()) {
+	if g.String(r.Header.Get("X-Telegram-Bot-Api-Secret-Token")).Ne(token.Hash().MD5()) {
 		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -103,8 +103,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 // 	}
 //
 // 	var (
-// 		path  String
-// 		token String
+// 		path  g.String
+// 		token g.String
 // 	)
 //
 // 	// /bot/<token>
@@ -122,7 +122,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 // 		return
 // 	}
 //
-// 	if String(ctx.Request.Header.Peek("X-Telegram-Bot-Api-Secret-Token")).Ne(token.Hash().MD5()) {
+// 	if g.String(ctx.Request.Header.Peek("X-Telegram-Bot-Api-Secret-Token")).Ne(token.Hash().MD5()) {
 // 		ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 // 		return
 // 	}

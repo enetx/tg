@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/file"
 )
@@ -13,7 +13,7 @@ type MediaAnimation struct {
 }
 
 // Animation creates a new MediaAnimation builder with the required fields.
-func Animation(media file.File) *MediaAnimation {
+func Animation(media file.TgFile) *MediaAnimation {
 	return &MediaAnimation{
 		input: &gotgbot.InputMediaAnimation{
 			Media: media.Doc,
@@ -29,7 +29,7 @@ func (ma *MediaAnimation) Thumbnail(thumbnail gotgbot.InputFile) *MediaAnimation
 }
 
 // Caption sets the caption for the animation.
-func (ma *MediaAnimation) Caption(caption String) *MediaAnimation {
+func (ma *MediaAnimation) Caption(caption g.String) *MediaAnimation {
 	ma.input.Caption = caption.Std()
 	return ma
 }

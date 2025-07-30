@@ -1,21 +1,21 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/entities"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 
 	// Create bot instance
 	b := bot.New(token).Build().Unwrap()
 
 	// Demo command showing various entity types
 	b.Command("entities", func(ctx *ctx.Context) error {
-		text := String("Hello bold italic code")
+		text := g.String("Hello bold italic code")
 
 		e := entities.New(text).
 			Bold("bold").     // "bold"
@@ -29,7 +29,7 @@ func main() {
 
 	// Demo with URL and spoiler
 	b.Command("url", func(ctx *ctx.Context) error {
-		text := String("Click here to visit Google")
+		text := g.String("Click here to visit Google")
 
 		e := entities.New(text).
 			URL("here", "https://google.com"). // "here" as a hyperlink
@@ -42,22 +42,22 @@ func main() {
 
 	// Demo with preformatted code block
 	b.Command("code", func(ctx *ctx.Context) error {
-		code := String(`func main() {
+		code := g.String(`func main() {
 	    fmt.Println("Hello")
 	}`)
-		codeText := Format("Check this Go code:{}", code)
+		codeText := g.Format("Check this Go code:{}", code)
 
 		e := entities.New(codeText).
 			Pre(code, "go") // Go code with syntax highlighting
 
-		return ctx.Reply(String(codeText)).
+		return ctx.Reply(g.String(codeText)).
 			Entities(e).
 			Send().Err()
 	})
 
 	// Demo combining multiple entity types
 	b.Command("mixed", func(ctx *ctx.Context) error {
-		text := String("Bold italic underline strikethrough spoiler")
+		text := g.String("Bold italic underline strikethrough spoiler")
 
 		e := entities.New(text).
 			Bold("Bold").                   // "Bold"
@@ -81,14 +81,14 @@ This is expandable quote`
 			Blockquote("This is a blockquote").              // Regular blockquote
 			ExpandableBlockquote("This is expandable quote") // Expandable blockquote
 
-		return ctx.Reply(String(quoteText)).
+		return ctx.Reply(g.String(quoteText)).
 			Entities(e).
 			Send().Err()
 	})
 
 	// Demo for sending a gift with formatted text
 	b.Command("gift", func(ctx *ctx.Context) error {
-		text := String("Happy Birthday!")
+		text := g.String("Happy Birthday!")
 
 		e := entities.New(text).
 			Bold("Happy").     // "Happy"

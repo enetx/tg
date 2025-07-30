@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/inline"
 )
 
@@ -52,7 +52,7 @@ func (spim *SavePreparedInlineMessage) Timeout(duration time.Duration) *SavePrep
 }
 
 // APIURL sets a custom API URL for this request.
-func (spim *SavePreparedInlineMessage) APIURL(url String) *SavePreparedInlineMessage {
+func (spim *SavePreparedInlineMessage) APIURL(url g.String) *SavePreparedInlineMessage {
 	if spim.opts.RequestOpts == nil {
 		spim.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -63,8 +63,8 @@ func (spim *SavePreparedInlineMessage) APIURL(url String) *SavePreparedInlineMes
 }
 
 // Send saves the prepared inline message.
-func (spim *SavePreparedInlineMessage) Send() Result[*gotgbot.PreparedInlineMessage] {
-	return ResultOf(spim.ctx.Bot.Raw().SavePreparedInlineMessage(
+func (spim *SavePreparedInlineMessage) Send() g.Result[*gotgbot.PreparedInlineMessage] {
+	return g.ResultOf(spim.ctx.Bot.Raw().SavePreparedInlineMessage(
 		spim.userID,
 		spim.result.Build(),
 		spim.opts,

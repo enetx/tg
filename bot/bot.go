@@ -7,7 +7,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 	"github.com/enetx/tg/handlers"
 )
@@ -15,12 +15,12 @@ import (
 // Bot represents a Telegram bot instance with all necessary components for handling updates,
 // managing middleware, and interacting with the Telegram Bot API.
 type Bot struct {
-	token       String                  // Bot token for API authentication
-	dispatcher  *ext.Dispatcher         // Event dispatcher for handling updates
-	updater     *ext.Updater            // Updater for receiving updates
-	middlewares Slice[handlers.Handler] // Global middleware stack
-	On          *handlers.Handlers      // Event handlers for different update types
-	raw         *gotgbot.Bot            // Raw gotgbot instance for direct API access
+	token       g.String                  // Bot token for API authentication
+	dispatcher  *ext.Dispatcher           // Event dispatcher for handling updates
+	updater     *ext.Updater              // Updater for receiving updates
+	middlewares g.Slice[handlers.Handler] // Global middleware stack
+	On          *handlers.Handlers        // Event handlers for different update types
+	raw         *gotgbot.Bot              // Raw gotgbot instance for direct API access
 }
 
 var _ core.BotAPI = (*Bot)(nil)
@@ -43,7 +43,7 @@ func (b *Bot) Raw() *gotgbot.Bot {
 // New creates a new BotBuilder instance with the provided token.
 func New[T ~string](token T) *BotBuilder {
 	return &BotBuilder{
-		token: String(token),
+		token: g.String(token),
 		opts: &gotgbot.BotOpts{
 			BotClient: &gotgbot.BaseBotClient{
 				Client: http.Client{},
@@ -59,7 +59,7 @@ func New[T ~string](token T) *BotBuilder {
 }
 
 // Command registers a command handler for the specified command.
-func (b *Bot) Command(cmd String, fn handlers.Handler) *handlers.Command {
+func (b *Bot) Command(cmd g.String, fn handlers.Handler) *handlers.Command {
 	c := handlers.NewCommand(b, cmd, fn)
 	c.Register()
 
@@ -86,7 +86,7 @@ func (b *Bot) Webhook() *SetWebhook {
 func (b *Bot) HandleWebhook(data []byte) error {
 	var update gotgbot.Update
 	if err := json.Unmarshal(data, &update); err != nil {
-		return Errorf("failed to unmarshal update: {}", err)
+		return g.Errorf("failed to unmarshal update: {}", err)
 	}
 
 	return b.dispatcher.ProcessUpdate(b.Raw(), &update, nil)
@@ -99,7 +99,7 @@ func (b *Bot) Use(middleware handlers.Handler) *Bot {
 }
 
 // Middlewares returns the current global middleware stack.
-func (b *Bot) Middlewares() Slice[handlers.Handler] {
+func (b *Bot) Middlewares() g.Slice[handlers.Handler] {
 	return b.middlewares
 }
 

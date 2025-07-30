@@ -4,24 +4,24 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // CreateChatInviteLink represents a request to create a new chat invite link.
 type CreateChatInviteLink struct {
 	ctx    *Context
 	opts   *gotgbot.CreateChatInviteLinkOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (ccil *CreateChatInviteLink) ChatID(chatID int64) *CreateChatInviteLink {
-	ccil.chatID = Some(chatID)
+	ccil.chatID = g.Some(chatID)
 	return ccil
 }
 
 // Name sets the invite link name.
-func (ccil *CreateChatInviteLink) Name(name String) *CreateChatInviteLink {
+func (ccil *CreateChatInviteLink) Name(name g.String) *CreateChatInviteLink {
 	ccil.opts.Name = name.Std()
 	return ccil
 }
@@ -62,7 +62,7 @@ func (ccil *CreateChatInviteLink) Timeout(duration time.Duration) *CreateChatInv
 }
 
 // APIURL sets a custom API URL for this request.
-func (ccil *CreateChatInviteLink) APIURL(url String) *CreateChatInviteLink {
+func (ccil *CreateChatInviteLink) APIURL(url g.String) *CreateChatInviteLink {
 	if ccil.opts.RequestOpts == nil {
 		ccil.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -73,7 +73,7 @@ func (ccil *CreateChatInviteLink) APIURL(url String) *CreateChatInviteLink {
 }
 
 // Send creates the chat invite link and returns the result.
-func (ccil *CreateChatInviteLink) Send() Result[*gotgbot.ChatInviteLink] {
+func (ccil *CreateChatInviteLink) Send() g.Result[*gotgbot.ChatInviteLink] {
 	chatID := ccil.chatID.UnwrapOr(ccil.ctx.EffectiveChat.Id)
-	return ResultOf(ccil.ctx.Bot.Raw().CreateChatInviteLink(chatID, ccil.opts))
+	return g.ResultOf(ccil.ctx.Bot.Raw().CreateChatInviteLink(chatID, ccil.opts))
 }

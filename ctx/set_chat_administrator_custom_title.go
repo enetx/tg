@@ -4,21 +4,21 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetChatAdministratorCustomTitle represents a request to set a custom title for an administrator.
 type SetChatAdministratorCustomTitle struct {
 	ctx         *Context
 	userID      int64
-	customTitle String
+	customTitle g.String
 	opts        *gotgbot.SetChatAdministratorCustomTitleOpts
-	chatID      Option[int64]
+	chatID      g.Option[int64]
 }
 
 // ChatID sets the target chat ID for this request.
 func (scact *SetChatAdministratorCustomTitle) ChatID(id int64) *SetChatAdministratorCustomTitle {
-	scact.chatID = Some(id)
+	scact.chatID = g.Some(id)
 	return scact
 }
 
@@ -34,7 +34,7 @@ func (scact *SetChatAdministratorCustomTitle) Timeout(duration time.Duration) *S
 }
 
 // APIURL sets a custom API URL for this request.
-func (scact *SetChatAdministratorCustomTitle) APIURL(url String) *SetChatAdministratorCustomTitle {
+func (scact *SetChatAdministratorCustomTitle) APIURL(url g.String) *SetChatAdministratorCustomTitle {
 	if scact.opts.RequestOpts == nil {
 		scact.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -45,9 +45,9 @@ func (scact *SetChatAdministratorCustomTitle) APIURL(url String) *SetChatAdminis
 }
 
 // Send executes the SetChatAdministratorCustomTitle request.
-func (scact *SetChatAdministratorCustomTitle) Send() Result[bool] {
+func (scact *SetChatAdministratorCustomTitle) Send() g.Result[bool] {
 	chatID := scact.chatID.UnwrapOr(scact.ctx.EffectiveChat.Id)
-	return ResultOf(
+	return g.ResultOf(
 		scact.ctx.Bot.Raw().SetChatAdministratorCustomTitle(chatID, scact.userID, scact.customTitle.Std(), scact.opts),
 	)
 }

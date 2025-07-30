@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
@@ -105,7 +105,7 @@ func handleSetCommands(ctx *ctx.Context) error {
 		Send()
 
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to set commands: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to set commands: " + result.Err().Error())).Send().Err()
 	}
 
 	return ctx.Reply("✅ <b>Commands Set Successfully!</b>\n\n" +
@@ -124,7 +124,7 @@ func handleGetCommands(ctx *ctx.Context) error {
 	result := botInstance.GetMyCommands().ScopeDefault().Send()
 
 	if result.IsErr() {
-		return ctx.Reply(Format("❌ Failed to get commands: {}", result.Err())).Send().Err()
+		return ctx.Reply(g.Format("❌ Failed to get commands: {}", result.Err())).Send().Err()
 	}
 
 	commands := result.Ok()
@@ -138,14 +138,14 @@ func handleGetCommands(ctx *ctx.Context) error {
 		text += "• /" + cmd.Command + " - " + cmd.Description + "\n"
 	}
 
-	return ctx.Reply(String(text)).HTML().Send().Err()
+	return ctx.Reply(g.String(text)).HTML().Send().Err()
 }
 
 func handleDeleteCommands(ctx *ctx.Context) error {
 	result := botInstance.DeleteMyCommands().ScopeDefault().Send()
 
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to delete commands: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to delete commands: " + result.Err().Error())).Send().Err()
 	}
 
 	return ctx.Reply("🗑️ <b>Commands Deleted</b>\n\n" +
@@ -184,7 +184,7 @@ func handleProfileInfo(ctx *ctx.Context) error {
 	result := botInstance.GetMe().Send()
 
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to get bot info: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to get bot info: " + result.Err().Error())).Send().Err()
 	}
 
 	bot := result.Ok()
@@ -192,13 +192,13 @@ func handleProfileInfo(ctx *ctx.Context) error {
 	text := "ℹ️ <b>Bot Profile Information</b>\n\n" +
 		"<b>Username:</b> @" + bot.Username + "\n" +
 		"<b>First Name:</b> " + bot.FirstName + "\n" +
-		"<b>ID:</b> " + Int(bot.Id).String().Std() + "\n" +
+		"<b>ID:</b> " + g.Int(bot.Id).String().Std() + "\n" +
 		"<b>Can Join Groups:</b> " + strconv.FormatBool(bot.CanJoinGroups) + "\n" +
 		"<b>Can Read Messages:</b> " + strconv.FormatBool(bot.CanReadAllGroupMessages) + "\n" +
 		"<b>Supports Inline:</b> " + strconv.FormatBool(bot.SupportsInlineQueries) + "\n\n" +
 		"<i>Use bot configuration methods to update profile settings.</i>"
 
-	return ctx.Reply(String(text)).HTML().Send().Err()
+	return ctx.Reply(g.String(text)).HTML().Send().Err()
 }
 
 // ================ WEBHOOK CONFIGURATION ================
@@ -236,25 +236,25 @@ func handleWebhookInfo(ctx *ctx.Context) error {
 	result := botInstance.GetWebhookInfo().Send()
 
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to get webhook info: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to get webhook info: " + result.Err().Error())).Send().Err()
 	}
 
 	info := result.Ok()
 
-	text := String("ℹ️ <b>Webhook Information</b>\n\n")
+	text := g.String("ℹ️ <b>Webhook Information</b>\n\n")
 
 	if info.Url == "" {
 		text += "<b>Status:</b> Polling Mode\n" +
-			"<b>Pending Updates:</b> " + Int(info.PendingUpdateCount).String() + "\n\n" +
+			"<b>Pending Updates:</b> " + g.Int(info.PendingUpdateCount).String() + "\n\n" +
 			"The bot is currently using polling mode to receive updates."
 	} else {
 		text += "<b>Status:</b> Webhook Mode\n" +
-			"<b>URL:</b> <code>" + String(info.Url) + "</code>\n" +
-			"<b>Pending Updates:</b> " + Int(info.PendingUpdateCount).String() + "\n" +
-			"<b>Max Connections:</b> " + Int(info.MaxConnections).String() + "\n"
+			"<b>URL:</b> <code>" + g.String(info.Url) + "</code>\n" +
+			"<b>Pending Updates:</b> " + g.Int(info.PendingUpdateCount).String() + "\n" +
+			"<b>Max Connections:</b> " + g.Int(info.MaxConnections).String() + "\n"
 
 		if info.LastErrorDate != 0 {
-			text += "<b>Last Error:</b> <i>" + String(info.LastErrorMessage) + "</i>\n"
+			text += "<b>Last Error:</b> <i>" + g.String(info.LastErrorMessage) + "</i>\n"
 		}
 	}
 

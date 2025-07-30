@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/internal/pkg/ffmpeg"
 	"github.com/enetx/tg/keyboard"
@@ -15,14 +15,14 @@ type SendVideo struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendVideoOpts
-	file        *File
-	files       Slice[*File]
-	thumb       *File
+	file        *g.File
+	files       g.Slice[*g.File]
+	thumb       *g.File
 	removethumb bool
-	duration    Float
-	chatID      Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	duration    g.Float
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 	err         error
 }
 
@@ -34,13 +34,13 @@ func (sv *SendVideo) CaptionEntities(e *entities.Entities) *SendVideo {
 
 // After schedules the video to be sent after the specified duration.
 func (sv *SendVideo) After(duration time.Duration) *SendVideo {
-	sv.after = Some(duration)
+	sv.after = g.Some(duration)
 	return sv
 }
 
 // DeleteAfter schedules the video message to be deleted after the specified duration.
 func (sv *SendVideo) DeleteAfter(duration time.Duration) *SendVideo {
-	sv.deleteAfter = Some(duration)
+	sv.deleteAfter = g.Some(duration)
 	return sv
 }
 
@@ -63,8 +63,8 @@ func (sv *SendVideo) Duration(duration time.Duration) *SendVideo {
 }
 
 // Thumbnail sets a custom thumbnail for the video.
-func (sv *SendVideo) Thumbnail(file String) *SendVideo {
-	thumb := NewFile(file)
+func (sv *SendVideo) Thumbnail(file g.String) *SendVideo {
+	thumb := g.NewFile(file)
 
 	reader := thumb.Open()
 	if reader.IsErr() {
@@ -91,7 +91,7 @@ func (sv *SendVideo) Streamable() *SendVideo {
 }
 
 // Caption sets the caption text for the video.
-func (sv *SendVideo) Caption(caption String) *SendVideo {
+func (sv *SendVideo) Caption(caption g.String) *SendVideo {
 	sv.opts.Caption = caption.Std()
 	return sv
 }
@@ -144,7 +144,7 @@ func (sv *SendVideo) Timeout(duration time.Duration) *SendVideo {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sv *SendVideo) APIURL(url String) *SendVideo {
+func (sv *SendVideo) APIURL(url g.String) *SendVideo {
 	if sv.opts.RequestOpts == nil {
 		sv.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -155,7 +155,7 @@ func (sv *SendVideo) APIURL(url String) *SendVideo {
 }
 
 // Business sets the business connection ID for the video message.
-func (sv *SendVideo) Business(id String) *SendVideo {
+func (sv *SendVideo) Business(id g.String) *SendVideo {
 	sv.opts.BusinessConnectionId = id.Std()
 	return sv
 }
@@ -173,8 +173,8 @@ func (sv *SendVideo) ShowCaptionAboveMedia() *SendVideo {
 }
 
 // Cover sets a cover image for the video.
-func (sv *SendVideo) Cover(filename String) *SendVideo {
-	cover := NewFile(filename)
+func (sv *SendVideo) Cover(filename g.String) *SendVideo {
+	cover := g.NewFile(filename)
 
 	reader := cover.Open()
 	if reader.IsErr() {
@@ -227,7 +227,7 @@ func (sv *SendVideo) ApplyMetadata() *SendVideo {
 }
 
 // GenerateThumbnail automatically generates a thumbnail from the video at the specified seek time.
-func (sv *SendVideo) GenerateThumbnail(seek ...String) *SendVideo {
+func (sv *SendVideo) GenerateThumbnail(seek ...g.String) *SendVideo {
 	if sv.file == nil {
 		sv.err = errors.New("video file is not set")
 		return sv
@@ -244,7 +244,7 @@ func (sv *SendVideo) GenerateThumbnail(seek ...String) *SendVideo {
 		return sv
 	}
 
-	var seekTime String
+	var seekTime g.String
 
 	if len(seek) != 0 {
 		seekTime = seek[0]
@@ -272,14 +272,14 @@ func (sv *SendVideo) GenerateThumbnail(seek ...String) *SendVideo {
 
 // To sets the target chat ID for the video message.
 func (sv *SendVideo) To(chatID int64) *SendVideo {
-	sv.chatID = Some(chatID)
+	sv.chatID = g.Some(chatID)
 	return sv
 }
 
 // Send sends the video message to Telegram and returns the result.
-func (sv *SendVideo) Send() Result[*gotgbot.Message] {
+func (sv *SendVideo) Send() g.Result[*gotgbot.Message] {
 	if sv.err != nil {
-		return Err[*gotgbot.Message](sv.err)
+		return g.Err[*gotgbot.Message](sv.err)
 	}
 
 	if sv.file != nil {
@@ -294,13 +294,13 @@ func (sv *SendVideo) Send() Result[*gotgbot.Message] {
 	}
 
 	defer func() {
-		sv.files.Iter().ForEach(func(file *File) {
+		sv.files.Iter().ForEach(func(file *g.File) {
 			file.Close()
 		})
 	}()
 
-	return sv.ctx.timers(sv.after, sv.deleteAfter, func() Result[*gotgbot.Message] {
+	return sv.ctx.timers(sv.after, sv.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := sv.chatID.UnwrapOr(sv.ctx.EffectiveChat.Id)
-		return ResultOf(sv.ctx.Bot.Raw().SendVideo(chatID, sv.doc, sv.opts))
+		return g.ResultOf(sv.ctx.Bot.Raw().SendVideo(chatID, sv.doc, sv.opts))
 	})
 }

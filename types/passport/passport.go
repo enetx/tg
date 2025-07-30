@@ -3,7 +3,7 @@ package passport
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // ErrorType enumerates all supported Telegram passport element error types.
@@ -38,7 +38,7 @@ const (
 	TemporaryRegistration PassportElementType = "temporary_registration"
 )
 
-// String returns the string representation of the PassportElementType.
+// g.String returns the string representation of the PassportElementType.
 func (pet PassportElementType) String() string {
 	return string(pet)
 }
@@ -47,106 +47,106 @@ func (pet PassportElementType) String() string {
 type PassportError struct {
 	errorType   ErrorType
 	elementType PassportElementType
-	message     String
-	fieldName   Option[String]
-	dataHash    Option[String]
-	fileHash    Option[String]
-	fileHashes  Option[Slice[String]]
-	elementHash Option[String]
+	message     g.String
+	fieldName   g.Option[g.String]
+	dataHash    g.Option[g.String]
+	fileHash    g.Option[g.String]
+	fileHashes  g.Option[g.Slice[g.String]]
+	elementHash g.Option[g.String]
 }
 
 // NewDataFieldError creates a new data field error.
-func NewDataFieldError(elementType PassportElementType, fieldName, dataHash, message String) *PassportError {
+func NewDataFieldError(elementType PassportElementType, fieldName, dataHash, message g.String) *PassportError {
 	return &PassportError{
 		errorType:   DataFieldError,
 		elementType: elementType,
 		message:     message,
-		fieldName:   Some(fieldName),
-		dataHash:    Some(dataHash),
+		fieldName:   g.Some(fieldName),
+		dataHash:    g.Some(dataHash),
 	}
 }
 
 // NewFrontSideError creates a new front side error.
-func NewFrontSideError(elementType PassportElementType, fileHash, message String) *PassportError {
+func NewFrontSideError(elementType PassportElementType, fileHash, message g.String) *PassportError {
 	return &PassportError{
 		errorType:   FrontSideError,
 		elementType: elementType,
 		message:     message,
-		fileHash:    Some(fileHash),
+		fileHash:    g.Some(fileHash),
 	}
 }
 
 // NewReverseSideError creates a new reverse side error.
-func NewReverseSideError(elementType PassportElementType, fileHash, message String) *PassportError {
+func NewReverseSideError(elementType PassportElementType, fileHash, message g.String) *PassportError {
 	return &PassportError{
 		errorType:   ReverseSideError,
 		elementType: elementType,
 		message:     message,
-		fileHash:    Some(fileHash),
+		fileHash:    g.Some(fileHash),
 	}
 }
 
 // NewSelfieError creates a new selfie error.
-func NewSelfieError(elementType PassportElementType, fileHash, message String) *PassportError {
+func NewSelfieError(elementType PassportElementType, fileHash, message g.String) *PassportError {
 	return &PassportError{
 		errorType:   SelfieError,
 		elementType: elementType,
 		message:     message,
-		fileHash:    Some(fileHash),
+		fileHash:    g.Some(fileHash),
 	}
 }
 
 // NewFileError creates a new file error.
-func NewFileError(elementType PassportElementType, fileHash, message String) *PassportError {
+func NewFileError(elementType PassportElementType, fileHash, message g.String) *PassportError {
 	return &PassportError{
 		errorType:   FileError,
 		elementType: elementType,
 		message:     message,
-		fileHash:    Some(fileHash),
+		fileHash:    g.Some(fileHash),
 	}
 }
 
 // NewFilesError creates a new files error.
-func NewFilesError(elementType PassportElementType, fileHashes Slice[String], message String) *PassportError {
+func NewFilesError(elementType PassportElementType, fileHashes g.Slice[g.String], message g.String) *PassportError {
 	return &PassportError{
 		errorType:   FilesError,
 		elementType: elementType,
 		message:     message,
-		fileHashes:  Some(fileHashes),
+		fileHashes:  g.Some(fileHashes),
 	}
 }
 
 // NewTranslationFileError creates a new translation file error.
-func NewTranslationFileError(elementType PassportElementType, fileHash, message String) *PassportError {
+func NewTranslationFileError(elementType PassportElementType, fileHash, message g.String) *PassportError {
 	return &PassportError{
 		errorType:   TranslationFileError,
 		elementType: elementType,
 		message:     message,
-		fileHash:    Some(fileHash),
+		fileHash:    g.Some(fileHash),
 	}
 }
 
 // NewTranslationFilesError creates a new translation files error.
 func NewTranslationFilesError(
 	elementType PassportElementType,
-	fileHashes Slice[String],
-	message String,
+	fileHashes g.Slice[g.String],
+	message g.String,
 ) *PassportError {
 	return &PassportError{
 		errorType:   TranslationFilesError,
 		elementType: elementType,
 		message:     message,
-		fileHashes:  Some(fileHashes),
+		fileHashes:  g.Some(fileHashes),
 	}
 }
 
 // NewUnspecifiedError creates a new unspecified error.
-func NewUnspecifiedError(elementType PassportElementType, elementHash, message String) *PassportError {
+func NewUnspecifiedError(elementType PassportElementType, elementHash, message g.String) *PassportError {
 	return &PassportError{
 		errorType:   UnspecifiedError,
 		elementType: elementType,
 		message:     message,
-		elementHash: Some(elementHash),
+		elementHash: g.Some(elementHash),
 	}
 }
 
@@ -219,11 +219,6 @@ func (pe *PassportError) Build() gotgbot.PassportElementError {
 }
 
 // Errors creates a slice of gotgbot.PassportElementError from multiple PassportError builders.
-func Errors(errors ...*PassportError) Slice[gotgbot.PassportElementError] {
-	result := NewSlice[gotgbot.PassportElementError](Int(len(errors)))
-	for i, err := range errors {
-		result[i] = err.Build()
-	}
-
-	return result
+func Errors(errors ...*PassportError) g.Slice[gotgbot.PassportElementError] {
+	return g.TransformSlice(g.SliceOf(errors...), (*PassportError).Build)
 }

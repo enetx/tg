@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetStarTransactions is a request builder for getting star transaction history.
@@ -37,7 +37,7 @@ func (gsts *GetStarTransactions) Timeout(duration time.Duration) *GetStarTransac
 }
 
 // APIURL sets a custom API URL for this request.
-func (gsts *GetStarTransactions) APIURL(url String) *GetStarTransactions {
+func (gsts *GetStarTransactions) APIURL(url g.String) *GetStarTransactions {
 	if gsts.opts.RequestOpts == nil {
 		gsts.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -48,6 +48,6 @@ func (gsts *GetStarTransactions) APIURL(url String) *GetStarTransactions {
 }
 
 // Send executes the GetStarTransactions request.
-func (gsts *GetStarTransactions) Send() Result[*gotgbot.StarTransactions] {
-	return ResultOf(gsts.ctx.Bot.Raw().GetStarTransactions(gsts.opts))
+func (gsts *GetStarTransactions) Send() g.Result[*gotgbot.StarTransactions] {
+	return g.ResultOf(gsts.ctx.Bot.Raw().GetStarTransactions(gsts.opts))
 }

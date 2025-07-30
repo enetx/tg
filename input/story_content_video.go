@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // StoryContentVideo represents an input story content video builder.
@@ -11,7 +11,7 @@ type StoryContentVideo struct {
 }
 
 // StoryVideo creates a new StoryContentVideo builder with the required fields.
-func StoryVideo(video String) *StoryContentVideo {
+func StoryVideo(video g.String) *StoryContentVideo {
 	return &StoryContentVideo{
 		input: &gotgbot.InputStoryContentVideo{
 			Video: video.Std(),

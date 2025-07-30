@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // LogOut represents a request to log out from the cloud Bot API server.
@@ -25,7 +25,7 @@ func (lo *LogOut) Timeout(duration time.Duration) *LogOut {
 }
 
 // APIURL sets a custom API URL for this request.
-func (lo *LogOut) APIURL(url String) *LogOut {
+func (lo *LogOut) APIURL(url g.String) *LogOut {
 	if lo.opts.RequestOpts == nil {
 		lo.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -36,6 +36,6 @@ func (lo *LogOut) APIURL(url String) *LogOut {
 }
 
 // Send logs out from the cloud Bot API server and returns the result.
-func (lo *LogOut) Send() Result[bool] {
-	return ResultOf(lo.bot.raw.LogOut(lo.opts))
+func (lo *LogOut) Send() g.Result[bool] {
+	return g.ResultOf(lo.bot.raw.LogOut(lo.opts))
 }

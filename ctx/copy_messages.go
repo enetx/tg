@@ -4,27 +4,27 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // CopyMessages represents a request to copy multiple messages.
 type CopyMessages struct {
 	ctx        *Context
-	chatID     Option[int64]
-	fromChatID Option[int64]
-	messageIDs Slice[int64]
+	chatID     g.Option[int64]
+	fromChatID g.Option[int64]
+	messageIDs g.Slice[int64]
 	opts       *gotgbot.CopyMessagesOpts
 }
 
 // To sets the target chat ID for copying messages.
 func (cm *CopyMessages) To(chatID int64) *CopyMessages {
-	cm.chatID = Some(chatID)
+	cm.chatID = g.Some(chatID)
 	return cm
 }
 
 // From sets the source chat ID where messages are copied from.
 func (cm *CopyMessages) From(fromChatID int64) *CopyMessages {
-	cm.fromChatID = Some(fromChatID)
+	cm.fromChatID = g.Some(fromChatID)
 	return cm
 }
 
@@ -76,7 +76,7 @@ func (cm *CopyMessages) Timeout(duration time.Duration) *CopyMessages {
 }
 
 // APIURL sets a custom API URL for this request.
-func (cm *CopyMessages) APIURL(url String) *CopyMessages {
+func (cm *CopyMessages) APIURL(url g.String) *CopyMessages {
 	if cm.opts.RequestOpts == nil {
 		cm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -87,17 +87,19 @@ func (cm *CopyMessages) APIURL(url String) *CopyMessages {
 }
 
 // Send copies the messages and returns the array of sent message IDs.
-func (cm *CopyMessages) Send() Result[Slice[gotgbot.MessageId]] {
+func (cm *CopyMessages) Send() g.Result[g.Slice[gotgbot.MessageId]] {
 	if cm.messageIDs.Empty() {
-		return Err[Slice[gotgbot.MessageId]](Errorf("no message IDs specified for copying"))
+		return g.Err[g.Slice[gotgbot.MessageId]](g.Errorf("no message IDs specified for copying"))
 	}
 
 	if cm.messageIDs.Len() > 100 {
-		return Err[Slice[gotgbot.MessageId]](Errorf("too many message IDs: {} (maximum 100)", cm.messageIDs.Len()))
+		return g.Err[g.Slice[gotgbot.MessageId]](
+			g.Errorf("too many message IDs: {} (maximum 100)", cm.messageIDs.Len()),
+		)
 	}
 
 	if cm.fromChatID.IsNone() {
-		return Err[Slice[gotgbot.MessageId]](Errorf("source chat ID must be specified"))
+		return g.Err[g.Slice[gotgbot.MessageId]](g.Errorf("source chat ID must be specified"))
 	}
 
 	chatID := cm.chatID.UnwrapOr(cm.ctx.EffectiveChat.Id)
@@ -105,5 +107,5 @@ func (cm *CopyMessages) Send() Result[Slice[gotgbot.MessageId]] {
 
 	result, err := cm.ctx.Bot.Raw().CopyMessages(chatID, fromChatID, cm.messageIDs, cm.opts)
 
-	return ResultOf[Slice[gotgbot.MessageId]](result, err)
+	return g.ResultOf[g.Slice[gotgbot.MessageId]](result, err)
 }

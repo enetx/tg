@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/file"
 )
 
@@ -12,7 +12,7 @@ type PaidMediaVideo struct {
 }
 
 // PaidVideo creates a new PaidMediaVideo builder with the required fields.
-func PaidVideo(media file.File) *PaidMediaVideo {
+func PaidVideo(media file.TgFile) *PaidMediaVideo {
 	return &PaidMediaVideo{
 		input: &gotgbot.InputPaidMediaVideo{
 			Media: media.Doc,
@@ -21,7 +21,7 @@ func PaidVideo(media file.File) *PaidMediaVideo {
 }
 
 // Cover sets a cover image for the video.
-func (pmv *PaidMediaVideo) Cover(cover String) *PaidMediaVideo {
+func (pmv *PaidMediaVideo) Cover(cover g.String) *PaidMediaVideo {
 	pmv.input.Cover = cover.Std()
 	return pmv
 }

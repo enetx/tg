@@ -4,13 +4,13 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // TransferStars request builder for sending stars.
 type TransferStars struct {
 	bot    Bot
-	connID String
+	connID g.String
 	amount int64
 	opts   *gotgbot.TransferBusinessAccountStarsOpts
 }
@@ -27,7 +27,7 @@ func (t *TransferStars) Timeout(duration time.Duration) *TransferStars {
 }
 
 // APIURL sets a custom API URL for this request.
-func (t *TransferStars) APIURL(url String) *TransferStars {
+func (t *TransferStars) APIURL(url g.String) *TransferStars {
 	if t.opts.RequestOpts == nil {
 		t.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -38,6 +38,6 @@ func (t *TransferStars) APIURL(url String) *TransferStars {
 }
 
 // Send executes the Transfer request.
-func (t *TransferStars) Send() Result[bool] {
-	return ResultOf(t.bot.Raw().TransferBusinessAccountStars(t.connID.Std(), t.amount, t.opts))
+func (t *TransferStars) Send() g.Result[bool] {
+	return g.ResultOf(t.bot.Raw().TransferBusinessAccountStars(t.connID.Std(), t.amount, t.opts))
 }

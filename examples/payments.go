@@ -1,13 +1,13 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	b.Command("start", func(ctx *ctx.Context) error {
@@ -34,7 +34,7 @@ func main() {
 		chargeID := ctx.Args().Get(0).Some()
 
 		if result := ctx.RefundStarPayment(chargeID).Send(); result.IsErr() {
-			err := String(result.Err().Error())
+			err := g.String(result.Err().Error())
 			switch {
 			case err.Contains("CHARGE_ALREADY_REFUNDED"):
 				return ctx.Reply("This charge has already been refunded.").Send().Err()
@@ -60,10 +60,10 @@ func main() {
 		payment := ctx.EffectiveMessage.SuccessfulPayment
 		chargeID := ctx.EffectiveMessage.SuccessfulPayment.TelegramPaymentChargeId
 
-		Println("User {1.FirstName} ({1.Id}) paid {2.TotalAmount} {2.Currency} with payload {2.InvoicePayload}",
+		g.Println("User {1.FirstName} ({1.Id}) paid {2.TotalAmount} {2.Currency} with payload {2.InvoicePayload}",
 			user, payment)
 
-		return ctx.SendMessage(Format("Payment complete! Thank you, {}!\nChargeID:\n{}", user.FirstName, chargeID)).
+		return ctx.SendMessage(g.Format("Payment complete! Thank you, {}!\nChargeID:\n{}", user.FirstName, chargeID)).
 			Send().
 			Err()
 	})

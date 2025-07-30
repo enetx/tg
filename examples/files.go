@@ -3,17 +3,17 @@ package main
 import (
 	"time"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	b.Command("start", func(ctx *ctx.Context) error {
-		return ctx.Reply(Format("Welcome to <b>{}</b>", ctx.Bot.Raw().Username)).HTML().Send().Err()
+		return ctx.Reply(g.Format("Welcome to <b>{}</b>", ctx.Bot.Raw().Username)).HTML().Send().Err()
 	})
 
 	b.Command("doc", func(ctx *ctx.Context) error {

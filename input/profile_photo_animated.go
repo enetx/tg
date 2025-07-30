@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // ProfilePhotoAnimated represents an input profile photo animated builder.
@@ -11,7 +11,7 @@ type ProfilePhotoAnimated struct {
 }
 
 // AnimatedPhoto creates a new ProfilePhotoAnimated builder with the required fields.
-func AnimatedPhoto(animation String) *ProfilePhotoAnimated {
+func AnimatedPhoto(animation g.String) *ProfilePhotoAnimated {
 	return &ProfilePhotoAnimated{
 		input: &gotgbot.InputProfilePhotoAnimated{
 			Animation: animation.Std(),

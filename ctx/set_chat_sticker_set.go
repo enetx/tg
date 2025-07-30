@@ -4,20 +4,20 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetChatStickerSet represents a request to set a chat's sticker set.
 type SetChatStickerSet struct {
 	ctx            *Context
-	stickerSetName String
+	stickerSetName g.String
 	opts           *gotgbot.SetChatStickerSetOpts
-	chatID         Option[int64]
+	chatID         g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (scss *SetChatStickerSet) ChatID(chatID int64) *SetChatStickerSet {
-	scss.chatID = Some(chatID)
+	scss.chatID = g.Some(chatID)
 	return scss
 }
 
@@ -33,7 +33,7 @@ func (scss *SetChatStickerSet) Timeout(duration time.Duration) *SetChatStickerSe
 }
 
 // APIURL sets a custom API URL for this request.
-func (scss *SetChatStickerSet) APIURL(url String) *SetChatStickerSet {
+func (scss *SetChatStickerSet) APIURL(url g.String) *SetChatStickerSet {
 	if scss.opts.RequestOpts == nil {
 		scss.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,7 +44,7 @@ func (scss *SetChatStickerSet) APIURL(url String) *SetChatStickerSet {
 }
 
 // Send sets the chat sticker set and returns the result.
-func (scss *SetChatStickerSet) Send() Result[bool] {
+func (scss *SetChatStickerSet) Send() g.Result[bool] {
 	chatID := scss.chatID.UnwrapOr(scss.ctx.EffectiveChat.Id)
-	return ResultOf(scss.ctx.Bot.Raw().SetChatStickerSet(chatID, scss.stickerSetName.Std(), scss.opts))
+	return g.ResultOf(scss.ctx.Bot.Raw().SetChatStickerSet(chatID, scss.stickerSetName.Std(), scss.opts))
 }

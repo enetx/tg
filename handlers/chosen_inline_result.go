@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 )
 
@@ -31,7 +31,7 @@ func (h *ChosenInlineResultHandlers) FromUser(id int64, fn Handler) *ChosenInlin
 }
 
 // Query handles chosen inline results with a specific query string.
-func (h *ChosenInlineResultHandlers) Query(query String, fn Handler) *ChosenInlineResultHandlers {
+func (h *ChosenInlineResultHandlers) Query(query g.String, fn Handler) *ChosenInlineResultHandlers {
 	h.handleChosenInlineResult(func(cir *gotgbot.ChosenInlineResult) bool {
 		return cir != nil && cir.Query == query.Std()
 	}, fn)
@@ -39,23 +39,23 @@ func (h *ChosenInlineResultHandlers) Query(query String, fn Handler) *ChosenInli
 }
 
 // QueryPrefix handles chosen inline results where query starts with the specified prefix.
-func (h *ChosenInlineResultHandlers) QueryPrefix(prefix String, fn Handler) *ChosenInlineResultHandlers {
+func (h *ChosenInlineResultHandlers) QueryPrefix(prefix g.String, fn Handler) *ChosenInlineResultHandlers {
 	h.handleChosenInlineResult(func(cir *gotgbot.ChosenInlineResult) bool {
-		return cir != nil && String(cir.Query).StartsWith(prefix)
+		return cir != nil && g.String(cir.Query).StartsWith(prefix)
 	}, fn)
 	return h
 }
 
 // QuerySuffix handles chosen inline results where query ends with the specified suffix.
-func (h *ChosenInlineResultHandlers) QuerySuffix(suffix String, fn Handler) *ChosenInlineResultHandlers {
+func (h *ChosenInlineResultHandlers) QuerySuffix(suffix g.String, fn Handler) *ChosenInlineResultHandlers {
 	h.handleChosenInlineResult(func(cir *gotgbot.ChosenInlineResult) bool {
-		return cir != nil && String(cir.Query).EndsWith(suffix)
+		return cir != nil && g.String(cir.Query).EndsWith(suffix)
 	}, fn)
 	return h
 }
 
 // InlineMessage handles chosen inline results with a specific inline message ID.
-func (h *ChosenInlineResultHandlers) InlineMessage(messageID String, fn Handler) *ChosenInlineResultHandlers {
+func (h *ChosenInlineResultHandlers) InlineMessage(messageID g.String, fn Handler) *ChosenInlineResultHandlers {
 	h.handleChosenInlineResult(func(cir *gotgbot.ChosenInlineResult) bool {
 		return cir != nil && cir.InlineMessageId == messageID.Std()
 	}, fn)

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // VerifyUser represents a request to verify a user.
@@ -16,7 +16,7 @@ type VerifyUser struct {
 
 // CustomDescription for the verification; 0-70 characters.
 // Must be empty if the organization isn't allowed to provide a custom verification description.
-func (vu *VerifyUser) CustomDescription(description String) *VerifyUser {
+func (vu *VerifyUser) CustomDescription(description g.String) *VerifyUser {
 	vu.opts.CustomDescription = description.Std()
 	return vu
 }
@@ -33,7 +33,7 @@ func (vu *VerifyUser) Timeout(duration time.Duration) *VerifyUser {
 }
 
 // APIURL sets a custom API URL for this request.
-func (vu *VerifyUser) APIURL(url String) *VerifyUser {
+func (vu *VerifyUser) APIURL(url g.String) *VerifyUser {
 	if vu.opts.RequestOpts == nil {
 		vu.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,6 +44,6 @@ func (vu *VerifyUser) APIURL(url String) *VerifyUser {
 }
 
 // Send verifies the user.
-func (vu *VerifyUser) Send() Result[bool] {
-	return ResultOf(vu.ctx.Bot.Raw().VerifyUser(vu.userID, vu.opts))
+func (vu *VerifyUser) Send() g.Result[bool] {
+	return g.ResultOf(vu.ctx.Bot.Raw().VerifyUser(vu.userID, vu.opts))
 }

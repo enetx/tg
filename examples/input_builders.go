@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/file"
@@ -29,7 +29,7 @@ All builders follow the same pattern as inline/ builders:
 */
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Example: Creating Input Builders - demonstrates all builder types
@@ -116,7 +116,7 @@ func main() {
 			"• Type-safe builder interfaces\n" +
 			"• Consistent pattern across all Input* types"
 
-		return ctx.SendMessage(String(message)).Markdown().Send().Err()
+		return ctx.SendMessage(g.String(message)).Markdown().Send().Err()
 	})
 
 	b.Polling().AllowedUpdates().Start()

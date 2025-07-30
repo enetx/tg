@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // DeleteWebhook represents a request to remove webhook integration.
@@ -31,7 +31,7 @@ func (dw *DeleteWebhook) Timeout(duration time.Duration) *DeleteWebhook {
 }
 
 // APIURL sets a custom API URL for this request.
-func (dw *DeleteWebhook) APIURL(url String) *DeleteWebhook {
+func (dw *DeleteWebhook) APIURL(url g.String) *DeleteWebhook {
 	if dw.opts.RequestOpts == nil {
 		dw.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -42,6 +42,6 @@ func (dw *DeleteWebhook) APIURL(url String) *DeleteWebhook {
 }
 
 // Send removes the webhook integration.
-func (dw *DeleteWebhook) Send() Result[bool] {
-	return ResultOf(dw.bot.Raw().DeleteWebhook(dw.opts))
+func (dw *DeleteWebhook) Send() g.Result[bool] {
+	return g.ResultOf(dw.bot.Raw().DeleteWebhook(dw.opts))
 }

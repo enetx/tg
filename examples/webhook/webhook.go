@@ -4,7 +4,7 @@ import (
 	"io"
 	"net/http"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/types/updates"
@@ -12,11 +12,11 @@ import (
 )
 
 func main() {
-	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
-	path := String("/bot/" + token)
-	secret := String("my-secret-token")
+	path := g.String("/bot/" + token)
+	secret := g.String("my-secret-token")
 
 	b.Webhook().
 		Domain("https://3b1d-134-19-179-195.ngrok-free.app").
@@ -31,12 +31,12 @@ func main() {
 	b.On.Message.Text(func(ctx *ctx.Context) error { return ctx.SendMessage("pong").Send().Err() })
 
 	handler := func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost || String(r.URL.Path).Ne(path) {
+		if r.Method != http.MethodPost || g.String(r.URL.Path).Ne(path) {
 			http.NotFound(w, r)
 			return
 		}
 
-		if String(r.Header.Get("X-Telegram-Bot-Api-Secret-Token")).Ne(secret) {
+		if g.String(r.Header.Get("X-Telegram-Bot-Api-Secret-Token")).Ne(secret) {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
@@ -57,22 +57,22 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 	}
 
-	// Println("Listening on https://0.0.0.0:8443 at {}", path)
+	// g.Println("Listening on https://0.0.0.0:8443 at {}", path)
 	// err := http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", http.HandlerFunc(handler))
 
-	Println("Listening on http://0.0.0.0:8080 at {}", path)
+	g.Println("Listening on http://0.0.0.0:8080 at {}", path)
 	err := http.ListenAndServe(":8080", http.HandlerFunc(handler))
 	if err != nil {
 		panic(err)
 	}
 
 	// handler := func(ctx *fasthttp.RequestCtx) {
-	// 	if !ctx.IsPost() || String(ctx.Path()).Ne(path) {
+	// 	if !ctx.IsPost() || g.String(ctx.Path()).Ne(path) {
 	// 		ctx.SetStatusCode(fasthttp.StatusNotFound)
 	// 		return
 	// 	}
 	//
-	// 	if String(ctx.Request.Header.Peek("X-Telegram-Bot-Api-Secret-Token")).Ne(secret) {
+	// 	if g.String(ctx.Request.Header.Peek("X-Telegram-Bot-Api-Secret-Token")).Ne(secret) {
 	// 		ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 	// 		return
 	// 	}
@@ -86,10 +86,10 @@ func main() {
 	// 	ctx.SetStatusCode(fasthttp.StatusOK)
 	// }
 	//
-	// // Println("Listening on https://0.0.0.0:8443 at {}", path)
+	// // g.Println("Listening on https://0.0.0.0:8443 at {}", path)
 	// // err := fasthttp.ListenAndServeTLS(":8443", "cert.pem", "key.pem", handler)
 	//
-	// Println("Listening on http://0.0.0.0:8080 at {}", path)
+	// g.Println("Listening on http://0.0.0.0:8080 at {}", path)
 	// err := fasthttp.ListenAndServe(":8080", handler)
 	// if err != nil {
 	// 	panic(err)

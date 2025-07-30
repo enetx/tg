@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 type AnswerPreCheckoutQuery struct {
@@ -20,7 +20,7 @@ func (apcq *AnswerPreCheckoutQuery) Ok() *AnswerPreCheckoutQuery {
 }
 
 // Error marks the pre-checkout query as failed with the specified error message.
-func (apcq *AnswerPreCheckoutQuery) Error(text String) *AnswerPreCheckoutQuery {
+func (apcq *AnswerPreCheckoutQuery) Error(text g.String) *AnswerPreCheckoutQuery {
 	apcq.ok = false
 	apcq.opts.ErrorMessage = text.Std()
 
@@ -39,7 +39,7 @@ func (apcq *AnswerPreCheckoutQuery) Timeout(duration time.Duration) *AnswerPreCh
 }
 
 // APIURL sets a custom API URL for this request.
-func (apcq *AnswerPreCheckoutQuery) APIURL(url String) *AnswerPreCheckoutQuery {
+func (apcq *AnswerPreCheckoutQuery) APIURL(url g.String) *AnswerPreCheckoutQuery {
 	if apcq.opts.RequestOpts == nil {
 		apcq.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -50,11 +50,11 @@ func (apcq *AnswerPreCheckoutQuery) APIURL(url String) *AnswerPreCheckoutQuery {
 }
 
 // Send answers the pre-checkout query and returns the result.
-func (apcq *AnswerPreCheckoutQuery) Send() Result[bool] {
+func (apcq *AnswerPreCheckoutQuery) Send() g.Result[bool] {
 	query := apcq.ctx.Update.PreCheckoutQuery
 	if query == nil {
-		return Err[bool](Errorf("no precheckout query"))
+		return g.Err[bool](g.Errorf("no precheckout query"))
 	}
 
-	return ResultOf(query.Answer(apcq.ctx.Bot.Raw(), apcq.ok, apcq.opts))
+	return g.ResultOf(query.Answer(apcq.ctx.Bot.Raw(), apcq.ok, apcq.opts))
 }

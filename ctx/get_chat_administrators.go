@@ -4,19 +4,19 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetChatAdministrators represents a request to get chat administrators.
 type GetChatAdministrators struct {
 	ctx    *Context
 	opts   *gotgbot.GetChatAdministratorsOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID for this request.
 func (gca *GetChatAdministrators) ChatID(id int64) *GetChatAdministrators {
-	gca.chatID = Some(id)
+	gca.chatID = g.Some(id)
 	return gca
 }
 
@@ -32,7 +32,7 @@ func (gca *GetChatAdministrators) Timeout(duration time.Duration) *GetChatAdmini
 }
 
 // APIURL sets a custom API URL for this request.
-func (gca *GetChatAdministrators) APIURL(url String) *GetChatAdministrators {
+func (gca *GetChatAdministrators) APIURL(url g.String) *GetChatAdministrators {
 	if gca.opts.RequestOpts == nil {
 		gca.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -43,9 +43,9 @@ func (gca *GetChatAdministrators) APIURL(url String) *GetChatAdministrators {
 }
 
 // Send executes the GetChatAdministrators request.
-func (gca *GetChatAdministrators) Send() Result[Slice[gotgbot.ChatMember]] {
+func (gca *GetChatAdministrators) Send() g.Result[g.Slice[gotgbot.ChatMember]] {
 	chatID := gca.chatID.UnwrapOr(gca.ctx.EffectiveChat.Id)
 	members, err := gca.ctx.Bot.Raw().GetChatAdministrators(chatID, gca.opts)
 
-	return ResultOf(Slice[gotgbot.ChatMember](members), err)
+	return g.ResultOf(g.Slice[gotgbot.ChatMember](members), err)
 }

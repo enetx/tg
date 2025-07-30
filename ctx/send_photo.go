@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 )
@@ -13,10 +13,10 @@ type SendPhoto struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendPhotoOpts
-	file        *File
-	chatID      Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	file        *g.File
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 	err         error
 }
 
@@ -28,13 +28,13 @@ func (sp *SendPhoto) CaptionEntities(e *entities.Entities) *SendPhoto {
 
 // After schedules the photo to be sent after the specified duration.
 func (sp *SendPhoto) After(duration time.Duration) *SendPhoto {
-	sp.after = Some(duration)
+	sp.after = g.Some(duration)
 	return sp
 }
 
 // DeleteAfter schedules the photo message to be deleted after the specified duration.
 func (sp *SendPhoto) DeleteAfter(duration time.Duration) *SendPhoto {
-	sp.deleteAfter = Some(duration)
+	sp.deleteAfter = g.Some(duration)
 	return sp
 }
 
@@ -45,7 +45,7 @@ func (sp *SendPhoto) Spoiler() *SendPhoto {
 }
 
 // Caption sets the caption text for the photo.
-func (sp *SendPhoto) Caption(caption String) *SendPhoto {
+func (sp *SendPhoto) Caption(caption g.String) *SendPhoto {
 	sp.opts.Caption = caption.Std()
 	return sp
 }
@@ -98,7 +98,7 @@ func (sp *SendPhoto) Timeout(duration time.Duration) *SendPhoto {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sp *SendPhoto) APIURL(url String) *SendPhoto {
+func (sp *SendPhoto) APIURL(url g.String) *SendPhoto {
 	if sp.opts.RequestOpts == nil {
 		sp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -109,7 +109,7 @@ func (sp *SendPhoto) APIURL(url String) *SendPhoto {
 }
 
 // Business sets the business connection ID for the photo message.
-func (sp *SendPhoto) Business(id String) *SendPhoto {
+func (sp *SendPhoto) Business(id g.String) *SendPhoto {
 	sp.opts.BusinessConnectionId = id.Std()
 	return sp
 }
@@ -128,22 +128,22 @@ func (sp *SendPhoto) ShowCaptionAboveMedia() *SendPhoto {
 
 // To sets the target chat ID for the photo message.
 func (sp *SendPhoto) To(chatID int64) *SendPhoto {
-	sp.chatID = Some(chatID)
+	sp.chatID = g.Some(chatID)
 	return sp
 }
 
 // Send sends the photo message to Telegram and returns the result.
-func (sp *SendPhoto) Send() Result[*gotgbot.Message] {
+func (sp *SendPhoto) Send() g.Result[*gotgbot.Message] {
 	if sp.err != nil {
-		return Err[*gotgbot.Message](sp.err)
+		return g.Err[*gotgbot.Message](sp.err)
 	}
 
 	if sp.file != nil {
 		defer sp.file.Close()
 	}
 
-	return sp.ctx.timers(sp.after, sp.deleteAfter, func() Result[*gotgbot.Message] {
+	return sp.ctx.timers(sp.after, sp.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := sp.chatID.UnwrapOr(sp.ctx.EffectiveChat.Id)
-		return ResultOf(sp.ctx.Bot.Raw().SendPhoto(chatID, sp.doc, sp.opts))
+		return g.ResultOf(sp.ctx.Bot.Raw().SendPhoto(chatID, sp.doc, sp.opts))
 	})
 }

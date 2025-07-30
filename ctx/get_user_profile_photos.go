@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetUserProfilePhotos represents a request to get user profile photos.
@@ -39,7 +39,7 @@ func (gupp *GetUserProfilePhotos) Timeout(duration time.Duration) *GetUserProfil
 }
 
 // APIURL sets a custom API URL for this request.
-func (gupp *GetUserProfilePhotos) APIURL(url String) *GetUserProfilePhotos {
+func (gupp *GetUserProfilePhotos) APIURL(url g.String) *GetUserProfilePhotos {
 	if gupp.opts.RequestOpts == nil {
 		gupp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -50,6 +50,6 @@ func (gupp *GetUserProfilePhotos) APIURL(url String) *GetUserProfilePhotos {
 }
 
 // Send gets user profile photos and returns the result.
-func (gupp *GetUserProfilePhotos) Send() Result[*gotgbot.UserProfilePhotos] {
-	return ResultOf(gupp.ctx.Bot.Raw().GetUserProfilePhotos(gupp.userID, gupp.opts))
+func (gupp *GetUserProfilePhotos) Send() g.Result[*gotgbot.UserProfilePhotos] {
+	return g.ResultOf(gupp.ctx.Bot.Raw().GetUserProfilePhotos(gupp.userID, gupp.opts))
 }

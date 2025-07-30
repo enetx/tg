@@ -6,7 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 	"github.com/enetx/tg/handlers/filters"
 	"github.com/enetx/tg/types/chat"
@@ -56,7 +56,7 @@ func (h *BusinessMessagesDeleted) Any(fn Handler) *BusinessMessagesDeleted {
 }
 
 // ConnectionID handles deleted messages from a specific connection.
-func (h *BusinessMessagesDeleted) ConnectionID(connectionID String, fn Handler) *BusinessMessagesDeleted {
+func (h *BusinessMessagesDeleted) ConnectionID(connectionID g.String, fn Handler) *BusinessMessagesDeleted {
 	h.handleBusinessMessagesDelete(func(d *gotgbot.BusinessMessagesDeleted) bool {
 		return d.BusinessConnectionId == connectionID.Std()
 	}, fn)

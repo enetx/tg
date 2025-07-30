@@ -4,34 +4,34 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // CreateInvoiceLink represents a request to create an invoice link.
 type CreateInvoiceLink struct {
 	ctx      *Context
-	title    String
-	desc     String
-	payload  String
-	currency String
-	prices   Slice[gotgbot.LabeledPrice]
+	title    g.String
+	desc     g.String
+	payload  g.String
+	currency g.String
+	prices   g.Slice[gotgbot.LabeledPrice]
 	opts     *gotgbot.CreateInvoiceLinkOpts
 }
 
 // Price adds a labeled price item to the invoice link.
-func (cil *CreateInvoiceLink) Price(label String, amount int64) *CreateInvoiceLink {
+func (cil *CreateInvoiceLink) Price(label g.String, amount int64) *CreateInvoiceLink {
 	cil.prices.Push(gotgbot.LabeledPrice{Label: label.Std(), Amount: amount})
 	return cil
 }
 
 // Business sets the business connection ID for the invoice link.
-func (cil *CreateInvoiceLink) Business(id String) *CreateInvoiceLink {
+func (cil *CreateInvoiceLink) Business(id g.String) *CreateInvoiceLink {
 	cil.opts.BusinessConnectionId = id.Std()
 	return cil
 }
 
 // ProviderToken sets the payment provider token.
-func (cil *CreateInvoiceLink) ProviderToken(token String) *CreateInvoiceLink {
+func (cil *CreateInvoiceLink) ProviderToken(token g.String) *CreateInvoiceLink {
 	cil.opts.ProviderToken = token.Std()
 	return cil
 }
@@ -55,13 +55,13 @@ func (cil *CreateInvoiceLink) SuggestedTips(tips ...int64) *CreateInvoiceLink {
 }
 
 // ProviderData sets JSON-serialized data for the payment provider.
-func (cil *CreateInvoiceLink) ProviderData(data String) *CreateInvoiceLink {
+func (cil *CreateInvoiceLink) ProviderData(data g.String) *CreateInvoiceLink {
 	cil.opts.ProviderData = data.Std()
 	return cil
 }
 
 // Photo sets the product photo URL and dimensions.
-func (cil *CreateInvoiceLink) Photo(url String, size, width, height int64) *CreateInvoiceLink {
+func (cil *CreateInvoiceLink) Photo(url g.String, size, width, height int64) *CreateInvoiceLink {
 	cil.opts.PhotoUrl = url.Std()
 	cil.opts.PhotoSize = size
 	cil.opts.PhotoWidth = width
@@ -124,7 +124,7 @@ func (cil *CreateInvoiceLink) Timeout(duration time.Duration) *CreateInvoiceLink
 }
 
 // APIURL sets a custom API URL for this request.
-func (cil *CreateInvoiceLink) APIURL(url String) *CreateInvoiceLink {
+func (cil *CreateInvoiceLink) APIURL(url g.String) *CreateInvoiceLink {
 	if cil.opts.RequestOpts == nil {
 		cil.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -135,7 +135,7 @@ func (cil *CreateInvoiceLink) APIURL(url String) *CreateInvoiceLink {
 }
 
 // Send creates the invoice link and returns the result.
-func (cil *CreateInvoiceLink) Send() Result[String] {
+func (cil *CreateInvoiceLink) Send() g.Result[g.String] {
 	link, err := cil.ctx.Bot.Raw().CreateInvoiceLink(
 		cil.title.Std(),
 		cil.desc.Std(),
@@ -145,5 +145,5 @@ func (cil *CreateInvoiceLink) Send() Result[String] {
 		cil.opts,
 	)
 
-	return ResultOf(String(link), err)
+	return g.ResultOf(g.String(link), err)
 }

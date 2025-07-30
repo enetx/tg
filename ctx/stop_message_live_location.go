@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -12,30 +12,30 @@ import (
 type StopMessageLiveLocation struct {
 	ctx       *Context
 	opts      *gotgbot.StopMessageLiveLocationOpts
-	chatID    Option[int64]
-	messageID Option[int64]
+	chatID    g.Option[int64]
+	messageID g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (smll *StopMessageLiveLocation) ChatID(chatID int64) *StopMessageLiveLocation {
-	smll.chatID = Some(chatID)
+	smll.chatID = g.Some(chatID)
 	return smll
 }
 
 // MessageID sets the target message ID.
 func (smll *StopMessageLiveLocation) MessageID(messageID int64) *StopMessageLiveLocation {
-	smll.messageID = Some(messageID)
+	smll.messageID = g.Some(messageID)
 	return smll
 }
 
 // InlineMessageID sets the inline message ID to edit.
-func (smll *StopMessageLiveLocation) InlineMessageID(id String) *StopMessageLiveLocation {
+func (smll *StopMessageLiveLocation) InlineMessageID(id g.String) *StopMessageLiveLocation {
 	smll.opts.InlineMessageId = id.Std()
 	return smll
 }
 
 // Business sets the business connection ID for stopping the location.
-func (smll *StopMessageLiveLocation) Business(id String) *StopMessageLiveLocation {
+func (smll *StopMessageLiveLocation) Business(id g.String) *StopMessageLiveLocation {
 	smll.opts.BusinessConnectionId = id.Std()
 	return smll
 }
@@ -61,7 +61,7 @@ func (smll *StopMessageLiveLocation) Timeout(duration time.Duration) *StopMessag
 }
 
 // APIURL sets a custom API URL for this request.
-func (smll *StopMessageLiveLocation) APIURL(url String) *StopMessageLiveLocation {
+func (smll *StopMessageLiveLocation) APIURL(url g.String) *StopMessageLiveLocation {
 	if smll.opts.RequestOpts == nil {
 		smll.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -72,10 +72,10 @@ func (smll *StopMessageLiveLocation) APIURL(url String) *StopMessageLiveLocation
 }
 
 // Send stops updating the live location message.
-func (smll *StopMessageLiveLocation) Send() Result[*gotgbot.Message] {
+func (smll *StopMessageLiveLocation) Send() g.Result[*gotgbot.Message] {
 	smll.opts.ChatId = smll.chatID.UnwrapOr(smll.ctx.EffectiveChat.Id)
 	smll.opts.MessageId = smll.messageID.UnwrapOr(smll.ctx.EffectiveMessage.MessageId)
 	msg, _, err := smll.ctx.Bot.Raw().StopMessageLiveLocation(smll.opts)
 
-	return ResultOf(msg, err)
+	return g.ResultOf(msg, err)
 }

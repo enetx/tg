@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/g/ref"
 )
 
@@ -13,17 +13,17 @@ type EditForumTopic struct {
 	ctx             *Context
 	messageThreadID int64
 	opts            *gotgbot.EditForumTopicOpts
-	chatID          Option[int64]
+	chatID          g.Option[int64]
 }
 
 // Name sets the new name of the topic.
-func (eft *EditForumTopic) Name(name String) *EditForumTopic {
+func (eft *EditForumTopic) Name(name g.String) *EditForumTopic {
 	eft.opts.Name = name.Std()
 	return eft
 }
 
 // IconCustomEmojiID sets the new custom emoji identifier.
-func (eft *EditForumTopic) IconCustomEmojiID(emojiID String) *EditForumTopic {
+func (eft *EditForumTopic) IconCustomEmojiID(emojiID g.String) *EditForumTopic {
 	eft.opts.IconCustomEmojiId = ref.Of(emojiID.Std())
 	return eft
 }
@@ -40,7 +40,7 @@ func (eft *EditForumTopic) Timeout(duration time.Duration) *EditForumTopic {
 }
 
 // APIURL sets a custom API URL for this request.
-func (eft *EditForumTopic) APIURL(url String) *EditForumTopic {
+func (eft *EditForumTopic) APIURL(url g.String) *EditForumTopic {
 	if eft.opts.RequestOpts == nil {
 		eft.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -52,12 +52,12 @@ func (eft *EditForumTopic) APIURL(url String) *EditForumTopic {
 
 // ChatID sets the target chat ID for this request.
 func (eft *EditForumTopic) ChatID(id int64) *EditForumTopic {
-	eft.chatID = Some(id)
+	eft.chatID = g.Some(id)
 	return eft
 }
 
 // Send executes the EditForumTopic request.
-func (eft *EditForumTopic) Send() Result[bool] {
+func (eft *EditForumTopic) Send() g.Result[bool] {
 	chatID := eft.chatID.UnwrapOr(eft.ctx.EffectiveChat.Id)
-	return ResultOf(eft.ctx.Bot.Raw().EditForumTopic(chatID, eft.messageThreadID, eft.opts))
+	return g.ResultOf(eft.ctx.Bot.Raw().EditForumTopic(chatID, eft.messageThreadID, eft.opts))
 }

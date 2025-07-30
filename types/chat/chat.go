@@ -14,7 +14,7 @@ const (
 	Sender                     // Sender chat type for special contexts
 )
 
-// String returns the canonical string representation used by Telegram Bot API.
+// g.String returns the canonical string representation used by Telegram Bot API.
 func (c ChatType) String() string {
 	switch c {
 	case Private:

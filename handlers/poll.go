@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 	"github.com/enetx/tg/types/poll"
 )
@@ -24,7 +24,7 @@ func (h *PollHandlers) Any(fn Handler) *PollHandlers {
 }
 
 // ID handles polls with a specific ID.
-func (h *PollHandlers) ID(id String, fn Handler) *PollHandlers {
+func (h *PollHandlers) ID(id g.String, fn Handler) *PollHandlers {
 	h.handlePoll(func(p *gotgbot.Poll) bool { return p != nil && p.Id == id.Std() }, fn)
 	return h
 }

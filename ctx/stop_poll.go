@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -12,24 +12,24 @@ import (
 type StopPoll struct {
 	ctx       *Context
 	opts      *gotgbot.StopPollOpts
-	chatID    Option[int64]
-	messageID Option[int64]
+	chatID    g.Option[int64]
+	messageID g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (sp *StopPoll) ChatID(chatID int64) *StopPoll {
-	sp.chatID = Some(chatID)
+	sp.chatID = g.Some(chatID)
 	return sp
 }
 
 // MessageID sets the target message ID.
 func (sp *StopPoll) MessageID(messageID int64) *StopPoll {
-	sp.messageID = Some(messageID)
+	sp.messageID = g.Some(messageID)
 	return sp
 }
 
 // Business sets the business connection ID.
-func (sp *StopPoll) Business(id String) *StopPoll {
+func (sp *StopPoll) Business(id g.String) *StopPoll {
 	sp.opts.BusinessConnectionId = id.Std()
 	return sp
 }
@@ -55,7 +55,7 @@ func (sp *StopPoll) Timeout(duration time.Duration) *StopPoll {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sp *StopPoll) APIURL(url String) *StopPoll {
+func (sp *StopPoll) APIURL(url g.String) *StopPoll {
 	if sp.opts.RequestOpts == nil {
 		sp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -66,8 +66,8 @@ func (sp *StopPoll) APIURL(url String) *StopPoll {
 }
 
 // Send stops the poll.
-func (sp *StopPoll) Send() Result[*gotgbot.Poll] {
-	return ResultOf(sp.ctx.Bot.Raw().StopPoll(
+func (sp *StopPoll) Send() g.Result[*gotgbot.Poll] {
+	return g.ResultOf(sp.ctx.Bot.Raw().StopPoll(
 		sp.chatID.UnwrapOr(sp.ctx.EffectiveChat.Id),
 		sp.messageID.UnwrapOr(sp.ctx.EffectiveMessage.MessageId),
 		sp.opts,

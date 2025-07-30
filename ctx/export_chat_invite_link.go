@@ -4,19 +4,19 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // ExportChatInviteLink represents a request to export a chat invite link.
 type ExportChatInviteLink struct {
 	ctx    *Context
 	opts   *gotgbot.ExportChatInviteLinkOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (ecil *ExportChatInviteLink) ChatID(chatID int64) *ExportChatInviteLink {
-	ecil.chatID = Some(chatID)
+	ecil.chatID = g.Some(chatID)
 	return ecil
 }
 
@@ -32,7 +32,7 @@ func (ecil *ExportChatInviteLink) Timeout(duration time.Duration) *ExportChatInv
 }
 
 // APIURL sets a custom API URL for this request.
-func (ecil *ExportChatInviteLink) APIURL(url String) *ExportChatInviteLink {
+func (ecil *ExportChatInviteLink) APIURL(url g.String) *ExportChatInviteLink {
 	if ecil.opts.RequestOpts == nil {
 		ecil.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -43,9 +43,9 @@ func (ecil *ExportChatInviteLink) APIURL(url String) *ExportChatInviteLink {
 }
 
 // Send exports the chat invite link and returns the result.
-func (ecil *ExportChatInviteLink) Send() Result[String] {
+func (ecil *ExportChatInviteLink) Send() g.Result[g.String] {
 	chatID := ecil.chatID.UnwrapOr(ecil.ctx.EffectiveChat.Id)
 	link, err := ecil.ctx.Bot.Raw().ExportChatInviteLink(chatID, ecil.opts)
 
-	return ResultOf(String(link), err)
+	return g.ResultOf(g.String(link), err)
 }

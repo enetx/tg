@@ -4,13 +4,13 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetStickerPositionInSet represents a request to set sticker position in set.
 type SetStickerPositionInSet struct {
 	ctx      *Context
-	sticker  String
+	sticker  g.String
 	position int64
 	opts     *gotgbot.SetStickerPositionInSetOpts
 }
@@ -27,7 +27,7 @@ func (sspis *SetStickerPositionInSet) Timeout(duration time.Duration) *SetSticke
 }
 
 // APIURL sets a custom API URL for this request.
-func (sspis *SetStickerPositionInSet) APIURL(url String) *SetStickerPositionInSet {
+func (sspis *SetStickerPositionInSet) APIURL(url g.String) *SetStickerPositionInSet {
 	if sspis.opts.RequestOpts == nil {
 		sspis.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -38,6 +38,6 @@ func (sspis *SetStickerPositionInSet) APIURL(url String) *SetStickerPositionInSe
 }
 
 // Send sets the sticker position in the set.
-func (sspis *SetStickerPositionInSet) Send() Result[bool] {
-	return ResultOf(sspis.ctx.Bot.Raw().SetStickerPositionInSet(sspis.sticker.Std(), int64(sspis.position), sspis.opts))
+func (sspis *SetStickerPositionInSet) Send() g.Result[bool] {
+	return g.ResultOf(sspis.ctx.Bot.Raw().SetStickerPositionInSet(sspis.sticker.Std(), int64(sspis.position), sspis.opts))
 }

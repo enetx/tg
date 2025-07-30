@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 type ForwardMessage struct {
@@ -12,20 +12,20 @@ type ForwardMessage struct {
 	fromChatID  int64
 	messageID   int64
 	opts        *gotgbot.ForwardMessageOpts
-	toChatID    Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	toChatID    g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 }
 
 // After schedules the forward to be sent after the specified duration.
 func (fm *ForwardMessage) After(duration time.Duration) *ForwardMessage {
-	fm.after = Some(duration)
+	fm.after = g.Some(duration)
 	return fm
 }
 
 // DeleteAfter schedules the forwarded message to be deleted after the specified duration.
 func (fm *ForwardMessage) DeleteAfter(duration time.Duration) *ForwardMessage {
-	fm.deleteAfter = Some(duration)
+	fm.deleteAfter = g.Some(duration)
 	return fm
 }
 
@@ -53,7 +53,7 @@ func (fm *ForwardMessage) Timeout(duration time.Duration) *ForwardMessage {
 }
 
 // APIURL sets a custom API URL for this request.
-func (fm *ForwardMessage) APIURL(url String) *ForwardMessage {
+func (fm *ForwardMessage) APIURL(url g.String) *ForwardMessage {
 	if fm.opts.RequestOpts == nil {
 		fm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -65,14 +65,14 @@ func (fm *ForwardMessage) APIURL(url String) *ForwardMessage {
 
 // To sets the target chat ID for the forwarded message.
 func (fm *ForwardMessage) To(chatID int64) *ForwardMessage {
-	fm.toChatID = Some(chatID)
+	fm.toChatID = g.Some(chatID)
 	return fm
 }
 
 // Send forwards the message to the target chat and returns the result.
-func (fm *ForwardMessage) Send() Result[*gotgbot.Message] {
-	return fm.ctx.timers(fm.after, fm.deleteAfter, func() Result[*gotgbot.Message] {
+func (fm *ForwardMessage) Send() g.Result[*gotgbot.Message] {
+	return fm.ctx.timers(fm.after, fm.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := fm.toChatID.UnwrapOr(fm.ctx.EffectiveChat.Id)
-		return ResultOf(fm.ctx.Bot.Raw().ForwardMessage(chatID, fm.fromChatID, fm.messageID, fm.opts))
+		return g.ResultOf(fm.ctx.Bot.Raw().ForwardMessage(chatID, fm.fromChatID, fm.messageID, fm.opts))
 	})
 }

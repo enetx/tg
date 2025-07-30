@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetMyDescription represents a request to get the bot's description.
@@ -14,7 +14,7 @@ type GetMyDescription struct {
 }
 
 // Language sets the language code for getting the description.
-func (gmd *GetMyDescription) Language(code String) *GetMyDescription {
+func (gmd *GetMyDescription) Language(code g.String) *GetMyDescription {
 	gmd.opts.LanguageCode = code.Std()
 	return gmd
 }
@@ -31,7 +31,7 @@ func (gmd *GetMyDescription) Timeout(duration time.Duration) *GetMyDescription {
 }
 
 // APIURL sets a custom API URL for this request.
-func (gmd *GetMyDescription) APIURL(url String) *GetMyDescription {
+func (gmd *GetMyDescription) APIURL(url g.String) *GetMyDescription {
 	if gmd.opts.RequestOpts == nil {
 		gmd.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -42,6 +42,6 @@ func (gmd *GetMyDescription) APIURL(url String) *GetMyDescription {
 }
 
 // Send gets the bot's description and returns the result.
-func (gmd *GetMyDescription) Send() Result[*gotgbot.BotDescription] {
-	return ResultOf(gmd.bot.raw.GetMyDescription(gmd.opts))
+func (gmd *GetMyDescription) Send() g.Result[*gotgbot.BotDescription] {
+	return g.ResultOf(gmd.bot.raw.GetMyDescription(gmd.opts))
 }

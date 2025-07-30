@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/file"
 )
@@ -13,7 +13,7 @@ type MediaVideo struct {
 }
 
 // Video creates a new MediaVideo builder with the required fields.
-func Video(media file.File) *MediaVideo {
+func Video(media file.TgFile) *MediaVideo {
 	return &MediaVideo{
 		input: &gotgbot.InputMediaVideo{
 			Media: media.Doc,
@@ -22,7 +22,7 @@ func Video(media file.File) *MediaVideo {
 }
 
 // Cover sets a cover image for the video.
-func (mv *MediaVideo) Cover(cover String) *MediaVideo {
+func (mv *MediaVideo) Cover(cover g.String) *MediaVideo {
 	mv.input.Cover = cover.Std()
 	return mv
 }
@@ -35,7 +35,7 @@ func (mv *MediaVideo) Thumbnail(thumbnail gotgbot.InputFile) *MediaVideo {
 }
 
 // Caption sets the caption for the video.
-func (mv *MediaVideo) Caption(caption String) *MediaVideo {
+func (mv *MediaVideo) Caption(caption g.String) *MediaVideo {
 	mv.input.Caption = caption.Std()
 	return mv
 }

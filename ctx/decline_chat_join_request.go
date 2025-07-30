@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // DeclineChatJoinRequest represents a request to decline a chat join request.
@@ -12,12 +12,12 @@ type DeclineChatJoinRequest struct {
 	ctx    *Context
 	userID int64
 	opts   *gotgbot.DeclineChatJoinRequestOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (dcjr *DeclineChatJoinRequest) ChatID(chatID int64) *DeclineChatJoinRequest {
-	dcjr.chatID = Some(chatID)
+	dcjr.chatID = g.Some(chatID)
 	return dcjr
 }
 
@@ -33,7 +33,7 @@ func (dcjr *DeclineChatJoinRequest) Timeout(duration time.Duration) *DeclineChat
 }
 
 // APIURL sets a custom API URL for this request.
-func (dcjr *DeclineChatJoinRequest) APIURL(url String) *DeclineChatJoinRequest {
+func (dcjr *DeclineChatJoinRequest) APIURL(url g.String) *DeclineChatJoinRequest {
 	if dcjr.opts.RequestOpts == nil {
 		dcjr.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,7 +44,7 @@ func (dcjr *DeclineChatJoinRequest) APIURL(url String) *DeclineChatJoinRequest {
 }
 
 // Send declines the chat join request and returns the result.
-func (dcjr *DeclineChatJoinRequest) Send() Result[bool] {
+func (dcjr *DeclineChatJoinRequest) Send() g.Result[bool] {
 	chatID := dcjr.chatID.UnwrapOr(dcjr.ctx.EffectiveChat.Id)
-	return ResultOf(dcjr.ctx.Bot.Raw().DeclineChatJoinRequest(chatID, dcjr.userID, dcjr.opts))
+	return g.ResultOf(dcjr.ctx.Bot.Raw().DeclineChatJoinRequest(chatID, dcjr.userID, dcjr.opts))
 }

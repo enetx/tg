@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetMyStarBalance is a request builder for getting bot's star balance.
@@ -25,7 +25,7 @@ func (gmsb *GetMyStarBalance) Timeout(duration time.Duration) *GetMyStarBalance 
 }
 
 // APIURL sets a custom API URL for this request.
-func (gmsb *GetMyStarBalance) APIURL(url String) *GetMyStarBalance {
+func (gmsb *GetMyStarBalance) APIURL(url g.String) *GetMyStarBalance {
 	if gmsb.opts.RequestOpts == nil {
 		gmsb.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -36,6 +36,6 @@ func (gmsb *GetMyStarBalance) APIURL(url String) *GetMyStarBalance {
 }
 
 // Send executes the GetMyStarBalance request.
-func (gmsb *GetMyStarBalance) Send() Result[*gotgbot.StarAmount] {
-	return ResultOf(gmsb.ctx.Bot.Raw().GetMyStarBalance(gmsb.opts))
+func (gmsb *GetMyStarBalance) Send() g.Result[*gotgbot.StarAmount] {
+	return g.ResultOf(gmsb.ctx.Bot.Raw().GetMyStarBalance(gmsb.opts))
 }

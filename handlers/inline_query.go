@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 	"github.com/enetx/tg/types/chat"
 )
@@ -32,7 +32,7 @@ func (h *InlineQueryHandlers) FromUser(id int64, fn Handler) *InlineQueryHandler
 }
 
 // Query handles inline queries with a specific query string.
-func (h *InlineQueryHandlers) Query(query String, fn Handler) *InlineQueryHandlers {
+func (h *InlineQueryHandlers) Query(query g.String, fn Handler) *InlineQueryHandlers {
 	h.handleInlineQuery(func(iq *gotgbot.InlineQuery) bool {
 		return iq != nil && iq.Query == query.Std()
 	}, fn)
@@ -40,17 +40,17 @@ func (h *InlineQueryHandlers) Query(query String, fn Handler) *InlineQueryHandle
 }
 
 // QueryPrefix handles inline queries where query starts with the specified prefix.
-func (h *InlineQueryHandlers) QueryPrefix(prefix String, fn Handler) *InlineQueryHandlers {
+func (h *InlineQueryHandlers) QueryPrefix(prefix g.String, fn Handler) *InlineQueryHandlers {
 	h.handleInlineQuery(func(iq *gotgbot.InlineQuery) bool {
-		return iq != nil && String(iq.Query).StartsWith(prefix)
+		return iq != nil && g.String(iq.Query).StartsWith(prefix)
 	}, fn)
 	return h
 }
 
 // QuerySuffix handles inline queries where query ends with the specified suffix.
-func (h *InlineQueryHandlers) QuerySuffix(suffix String, fn Handler) *InlineQueryHandlers {
+func (h *InlineQueryHandlers) QuerySuffix(suffix g.String, fn Handler) *InlineQueryHandlers {
 	h.handleInlineQuery(func(iq *gotgbot.InlineQuery) bool {
-		return iq != nil && String(iq.Query).EndsWith(suffix)
+		return iq != nil && g.String(iq.Query).EndsWith(suffix)
 	}, fn)
 	return h
 }

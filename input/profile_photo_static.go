@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // ProfilePhotoStatic represents an input profile photo static builder.
@@ -11,7 +11,7 @@ type ProfilePhotoStatic struct {
 }
 
 // StaticPhoto creates a new ProfilePhotoStatic builder with the required fields.
-func StaticPhoto(photo String) *ProfilePhotoStatic {
+func StaticPhoto(photo g.String) *ProfilePhotoStatic {
 	return &ProfilePhotoStatic{
 		input: &gotgbot.InputProfilePhotoStatic{
 			Photo: photo.Std(),

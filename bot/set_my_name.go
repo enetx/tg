@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetMyName represents a request to set the bot's name.
@@ -14,13 +14,13 @@ type SetMyName struct {
 }
 
 // Name sets the bot's name (0-64 characters).
-func (smn *SetMyName) Name(name String) *SetMyName {
+func (smn *SetMyName) Name(name g.String) *SetMyName {
 	smn.opts.Name = name.Std()
 	return smn
 }
 
 // Language sets the language code for the name.
-func (smn *SetMyName) Language(code String) *SetMyName {
+func (smn *SetMyName) Language(code g.String) *SetMyName {
 	smn.opts.LanguageCode = code.Std()
 	return smn
 }
@@ -43,7 +43,7 @@ func (smn *SetMyName) Timeout(duration time.Duration) *SetMyName {
 }
 
 // APIURL sets a custom API URL for this request.
-func (smn *SetMyName) APIURL(url String) *SetMyName {
+func (smn *SetMyName) APIURL(url g.String) *SetMyName {
 	if smn.opts.RequestOpts == nil {
 		smn.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -54,6 +54,6 @@ func (smn *SetMyName) APIURL(url String) *SetMyName {
 }
 
 // Send sets the bot's name and returns the result.
-func (smn *SetMyName) Send() Result[bool] {
-	return ResultOf(smn.bot.raw.SetMyName(smn.opts))
+func (smn *SetMyName) Send() g.Result[bool] {
+	return g.ResultOf(smn.bot.raw.SetMyName(smn.opts))
 }

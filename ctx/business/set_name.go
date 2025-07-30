@@ -4,18 +4,18 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetName is a request builder for setting the account's name.
 type SetName struct {
 	account   *Account
-	firstName String
+	firstName g.String
 	opts      *gotgbot.SetBusinessAccountNameOpts
 }
 
 // LastName sets the optional last name.
-func (sn *SetName) LastName(lastName String) *SetName {
+func (sn *SetName) LastName(lastName g.String) *SetName {
 	sn.opts.LastName = lastName.Std()
 	return sn
 }
@@ -32,7 +32,7 @@ func (sn *SetName) Timeout(duration time.Duration) *SetName {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sn *SetName) APIURL(url String) *SetName {
+func (sn *SetName) APIURL(url g.String) *SetName {
 	if sn.opts.RequestOpts == nil {
 		sn.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -43,8 +43,8 @@ func (sn *SetName) APIURL(url String) *SetName {
 }
 
 // Send executes the SetName request.
-func (sn *SetName) Send() Result[bool] {
-	return ResultOf(sn.account.bot.Raw().SetBusinessAccountName(
+func (sn *SetName) Send() g.Result[bool] {
+	return g.ResultOf(sn.account.bot.Raw().SetBusinessAccountName(
 		sn.account.connID.Std(),
 		sn.firstName.Std(),
 		sn.opts,

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 )
@@ -13,36 +13,36 @@ import (
 type EditMessageCaption struct {
 	ctx       *Context
 	opts      *gotgbot.EditMessageCaptionOpts
-	chatID    Option[int64]
-	messageID Option[int64]
+	chatID    g.Option[int64]
+	messageID g.Option[int64]
 }
 
 // ChatID sets the target chat ID for the caption edit.
 func (emc *EditMessageCaption) ChatID(id int64) *EditMessageCaption {
-	emc.chatID = Some(id)
+	emc.chatID = g.Some(id)
 	return emc
 }
 
 // MessageID sets the target message ID to edit.
 func (emc *EditMessageCaption) MessageID(id int64) *EditMessageCaption {
-	emc.messageID = Some(id)
+	emc.messageID = g.Some(id)
 	return emc
 }
 
 // InlineMessageID sets the inline message ID to edit.
-func (emc *EditMessageCaption) InlineMessageID(id String) *EditMessageCaption {
+func (emc *EditMessageCaption) InlineMessageID(id g.String) *EditMessageCaption {
 	emc.opts.InlineMessageId = id.Std()
 	return emc
 }
 
 // Business sets the business connection ID for the caption edit.
-func (emc *EditMessageCaption) Business(id String) *EditMessageCaption {
+func (emc *EditMessageCaption) Business(id g.String) *EditMessageCaption {
 	emc.opts.BusinessConnectionId = id.Std()
 	return emc
 }
 
 // ParseMode sets the parse mode for the caption (HTML, Markdown, MarkdownV2).
-func (emc *EditMessageCaption) ParseMode(mode String) *EditMessageCaption {
+func (emc *EditMessageCaption) ParseMode(mode g.String) *EditMessageCaption {
 	emc.opts.ParseMode = mode.Std()
 	return emc
 }
@@ -92,7 +92,7 @@ func (emc *EditMessageCaption) Timeout(duration time.Duration) *EditMessageCapti
 }
 
 // APIURL sets a custom API URL for this request.
-func (emc *EditMessageCaption) APIURL(url String) *EditMessageCaption {
+func (emc *EditMessageCaption) APIURL(url g.String) *EditMessageCaption {
 	if emc.opts.RequestOpts == nil {
 		emc.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -103,10 +103,10 @@ func (emc *EditMessageCaption) APIURL(url String) *EditMessageCaption {
 }
 
 // Send edits the message caption and returns the result.
-func (emc *EditMessageCaption) Send() Result[*gotgbot.Message] {
+func (emc *EditMessageCaption) Send() g.Result[*gotgbot.Message] {
 	emc.opts.ChatId = emc.chatID.UnwrapOr(emc.ctx.EffectiveChat.Id)
 	emc.opts.MessageId = emc.messageID.UnwrapOr(emc.ctx.EffectiveMessage.MessageId)
 
 	msg, _, err := emc.ctx.Bot.Raw().EditMessageCaption(emc.opts)
-	return ResultOf(msg, err)
+	return g.ResultOf(msg, err)
 }

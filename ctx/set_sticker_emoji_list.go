@@ -4,19 +4,19 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetStickerEmojiList represents a request to set sticker emoji list.
 type SetStickerEmojiList struct {
 	ctx       *Context
-	sticker   String
-	emojiList Slice[String]
+	sticker   g.String
+	emojiList g.Slice[g.String]
 	opts      *gotgbot.SetStickerEmojiListOpts
 }
 
 // EmojiList sets the emoji list for the sticker.
-func (ssel *SetStickerEmojiList) EmojiList(emojis Slice[String]) *SetStickerEmojiList {
+func (ssel *SetStickerEmojiList) EmojiList(emojis g.Slice[g.String]) *SetStickerEmojiList {
 	ssel.emojiList = emojis
 	return ssel
 }
@@ -33,7 +33,7 @@ func (ssel *SetStickerEmojiList) Timeout(duration time.Duration) *SetStickerEmoj
 }
 
 // APIURL sets a custom API URL for this request.
-func (ssel *SetStickerEmojiList) APIURL(url String) *SetStickerEmojiList {
+func (ssel *SetStickerEmojiList) APIURL(url g.String) *SetStickerEmojiList {
 	if ssel.opts.RequestOpts == nil {
 		ssel.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,8 +44,8 @@ func (ssel *SetStickerEmojiList) APIURL(url String) *SetStickerEmojiList {
 }
 
 // Send sets the sticker emoji list.
-func (ssel *SetStickerEmojiList) Send() Result[bool] {
-	return ResultOf(ssel.ctx.Bot.Raw().
+func (ssel *SetStickerEmojiList) Send() g.Result[bool] {
+	return g.ResultOf(ssel.ctx.Bot.Raw().
 		SetStickerEmojiList(ssel.sticker.Std(), ssel.emojiList.ToStringSlice(), ssel.opts),
 	)
 }

@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/input"
@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Create poll with stop button
@@ -89,7 +89,7 @@ func main() {
 
 		if result.IsOk() {
 			poll := result.Ok()
-			return ctx.Reply(Format("✅ Poll stopped! Total votes: {}", poll.TotalVoterCount)).Send().Err()
+			return ctx.Reply(g.Format("✅ Poll stopped! Total votes: {}", poll.TotalVoterCount)).Send().Err()
 		}
 
 		return ctx.Reply("❌ Failed to stop poll").Send().Err()

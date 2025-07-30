@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/types/permissions"
 )
 
@@ -14,12 +14,12 @@ type RestrictChatMember struct {
 	permissions     *gotgbot.ChatPermissions
 	autoPermissions bool
 	userID          int64
-	chatID          Option[int64]
+	chatID          g.Option[int64]
 }
 
 // ChatID sets the target chat ID for the restrict action.
 func (r *RestrictChatMember) ChatID(id int64) *RestrictChatMember {
-	r.chatID = Some(id)
+	r.chatID = g.Some(id)
 	return r
 }
 
@@ -58,7 +58,7 @@ func (r *RestrictChatMember) Timeout(duration time.Duration) *RestrictChatMember
 }
 
 // APIURL sets a custom API URL for this request.
-func (r *RestrictChatMember) APIURL(url String) *RestrictChatMember {
+func (r *RestrictChatMember) APIURL(url g.String) *RestrictChatMember {
 	if r.opts.RequestOpts == nil {
 		r.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -69,13 +69,13 @@ func (r *RestrictChatMember) APIURL(url String) *RestrictChatMember {
 }
 
 // Send restricts the user's permissions and returns the result.
-func (r *RestrictChatMember) Send() Result[bool] {
+func (r *RestrictChatMember) Send() g.Result[bool] {
 	if r.permissions == nil {
-		return Err[bool](Errorf("permissions are required"))
+		return g.Err[bool](g.Errorf("permissions are required"))
 	}
 
 	chatID := r.chatID.UnwrapOr(r.ctx.EffectiveChat.Id)
 	r.opts.UseIndependentChatPermissions = !r.autoPermissions
 
-	return ResultOf(r.ctx.Bot.Raw().RestrictChatMember(chatID, r.userID, *r.permissions, r.opts))
+	return g.ResultOf(r.ctx.Bot.Raw().RestrictChatMember(chatID, r.userID, *r.permissions, r.opts))
 }

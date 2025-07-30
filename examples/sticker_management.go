@@ -1,13 +1,13 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Create new sticker set
@@ -25,7 +25,7 @@ func main() {
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
 			StickerType("regular").
-			Sticker(stickerFile, "static", []String{emoji}).Add().
+			Sticker(stickerFile, "static", []g.String{emoji}).Add().
 			Send()
 
 		if result.IsErr() {
@@ -50,8 +50,8 @@ func main() {
 		result := ctx.AddStickerToSet(userID, setName).
 			File(stickerFile).
 			Format("static").
-			EmojiList([]String{emoji}).
-			Keywords([]String{"custom", "sticker"}).
+			EmojiList([]g.String{emoji}).
+			Keywords([]g.String{"custom", "sticker"}).
 			Send()
 
 		if result.IsErr() {
@@ -79,9 +79,9 @@ func main() {
 		info := "Sticker Set Info:\n" +
 			"Name: " + stickerSet.Name + "\n" +
 			"Title: " + stickerSet.Title + "\n" +
-			"Count: " + String(len(stickerSet.Stickers)).Std()
+			"Count: " + g.String(len(stickerSet.Stickers)).Std()
 
-		return ctx.Reply(String(info)).Send().Err()
+		return ctx.Reply(g.String(info)).Send().Err()
 	})
 
 	// Delete sticker from set
@@ -127,9 +127,9 @@ func main() {
 		}
 
 		stickerID := args[0]
-		var emojis Slice[String]
+		var emojis g.Slice[g.String]
 
-		args.Iter().Skip(1).ForEach(func(emoji String) {
+		args.Iter().Skip(1).ForEach(func(emoji g.String) {
 			emojis.Push(emoji)
 		})
 
@@ -152,9 +152,9 @@ func main() {
 		}
 
 		stickerID := args[0]
-		var keywords Slice[String]
+		var keywords g.Slice[g.String]
 
-		args.Iter().Skip(1).ForEach(func(keyword String) {
+		args.Iter().Skip(1).ForEach(func(keyword g.String) {
 			keywords.Push(keyword)
 		})
 
@@ -239,7 +239,7 @@ func main() {
 
 		uploadedFile := result.Ok()
 
-		return ctx.Reply("File uploaded successfully! File ID: " + String(uploadedFile.FileId)).Send().Err()
+		return ctx.Reply("File uploaded successfully! File ID: " + g.String(uploadedFile.FileId)).Send().Err()
 	})
 
 	// Delete entire sticker set
@@ -291,8 +291,8 @@ func main() {
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
 			StickerType("regular").
-			Sticker(tgsFile, "animated", []String{emoji}).
-			Keywords([]String{"animated", "custom"}).
+			Sticker(tgsFile, "animated", []g.String{emoji}).
+			Keywords([]g.String{"animated", "custom"}).
 			Add().
 			Send()
 
@@ -318,8 +318,8 @@ func main() {
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
 			StickerType("regular").
-			Sticker(webmFile, "video", []String{emoji}).
-			Keywords([]String{"video", "custom"}).
+			Sticker(webmFile, "video", []g.String{emoji}).
+			Keywords([]g.String{"video", "custom"}).
 			Add().
 			Send()
 
@@ -351,7 +351,7 @@ func main() {
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
 			StickerType("mask").
-			Sticker(stickerFile, "static", []String{emoji}).
+			Sticker(stickerFile, "static", []g.String{emoji}).
 			MaskPosition(point, xShift.Std(), yShift.Std(), scale.Std()).
 			Add().
 			Send()
@@ -378,11 +378,11 @@ func main() {
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
 			StickerType("regular").
-			Sticker(args[3], "static", []String{args[4]}).
-			Keywords([]String{"first", "custom", "happy"}).
+			Sticker(args[3], "static", []g.String{args[4]}).
+			Keywords([]g.String{"first", "custom", "happy"}).
 			Add().
-			Sticker(args[5], "static", []String{args[6]}).
-			Keywords([]String{"second", "custom", "sad"}).
+			Sticker(args[5], "static", []g.String{args[6]}).
+			Keywords([]g.String{"second", "custom", "sad"}).
 			Add().
 			Send()
 

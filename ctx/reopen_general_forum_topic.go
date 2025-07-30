@@ -4,19 +4,19 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // ReopenGeneralForumTopic represents a request to reopen the general forum topic.
 type ReopenGeneralForumTopic struct {
 	ctx    *Context
 	opts   *gotgbot.ReopenGeneralForumTopicOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (rgft *ReopenGeneralForumTopic) ChatID(chatID int64) *ReopenGeneralForumTopic {
-	rgft.chatID = Some(chatID)
+	rgft.chatID = g.Some(chatID)
 	return rgft
 }
 
@@ -32,7 +32,7 @@ func (rgft *ReopenGeneralForumTopic) Timeout(duration time.Duration) *ReopenGene
 }
 
 // APIURL sets a custom API URL for this request.
-func (rgft *ReopenGeneralForumTopic) APIURL(url String) *ReopenGeneralForumTopic {
+func (rgft *ReopenGeneralForumTopic) APIURL(url g.String) *ReopenGeneralForumTopic {
 	if rgft.opts.RequestOpts == nil {
 		rgft.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -43,8 +43,8 @@ func (rgft *ReopenGeneralForumTopic) APIURL(url String) *ReopenGeneralForumTopic
 }
 
 // Send reopens the general forum topic.
-func (rgft *ReopenGeneralForumTopic) Send() Result[bool] {
-	return ResultOf(rgft.ctx.Bot.Raw().ReopenGeneralForumTopic(
+func (rgft *ReopenGeneralForumTopic) Send() g.Result[bool] {
+	return g.ResultOf(rgft.ctx.Bot.Raw().ReopenGeneralForumTopic(
 		rgft.chatID.UnwrapOr(rgft.ctx.EffectiveChat.Id),
 		rgft.opts,
 	))

@@ -4,19 +4,19 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 type UnbanChatMember struct {
 	ctx    *Context
 	opts   *gotgbot.UnbanChatMemberOpts
 	userID int64
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID for the unban action.
 func (u *UnbanChatMember) ChatID(id int64) *UnbanChatMember {
-	u.chatID = Some(id)
+	u.chatID = g.Some(id)
 	return u
 }
 
@@ -38,7 +38,7 @@ func (u *UnbanChatMember) Timeout(duration time.Duration) *UnbanChatMember {
 }
 
 // APIURL sets a custom API URL for this request.
-func (u *UnbanChatMember) APIURL(url String) *UnbanChatMember {
+func (u *UnbanChatMember) APIURL(url g.String) *UnbanChatMember {
 	if u.opts.RequestOpts == nil {
 		u.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -49,7 +49,7 @@ func (u *UnbanChatMember) APIURL(url String) *UnbanChatMember {
 }
 
 // Send executes the unban action and returns the result.
-func (u *UnbanChatMember) Send() Result[bool] {
+func (u *UnbanChatMember) Send() g.Result[bool] {
 	chatID := u.chatID.UnwrapOr(u.ctx.EffectiveChat.Id)
-	return ResultOf(u.ctx.Bot.Raw().UnbanChatMember(chatID, u.userID, u.opts))
+	return g.ResultOf(u.ctx.Bot.Raw().UnbanChatMember(chatID, u.userID, u.opts))
 }

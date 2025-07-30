@@ -4,13 +4,13 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetGifts request builder for retrieving business account gifts.
 type GetGifts struct {
 	bot    Bot
-	connID String
+	connID g.String
 	opts   *gotgbot.GetBusinessAccountGiftsOpts
 }
 
@@ -51,7 +51,7 @@ func (ggs *GetGifts) SortByPrice() *GetGifts {
 }
 
 // Offset sets pagination offset.
-func (ggs *GetGifts) Offset(offset String) *GetGifts {
+func (ggs *GetGifts) Offset(offset g.String) *GetGifts {
 	ggs.opts.Offset = offset.Std()
 	return ggs
 }
@@ -74,7 +74,7 @@ func (ggs *GetGifts) Timeout(duration time.Duration) *GetGifts {
 }
 
 // APIURL sets a custom API URL for this request.
-func (ggs *GetGifts) APIURL(url String) *GetGifts {
+func (ggs *GetGifts) APIURL(url g.String) *GetGifts {
 	if ggs.opts.RequestOpts == nil {
 		ggs.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -85,8 +85,8 @@ func (ggs *GetGifts) APIURL(url String) *GetGifts {
 }
 
 // Send executes the Gifts request.
-func (ggs *GetGifts) Send() Result[*gotgbot.OwnedGifts] {
-	return ResultOf(ggs.bot.Raw().GetBusinessAccountGifts(
+func (ggs *GetGifts) Send() g.Result[*gotgbot.OwnedGifts] {
+	return g.ResultOf(ggs.bot.Raw().GetBusinessAccountGifts(
 		ggs.connID.Std(),
 		ggs.opts,
 	))

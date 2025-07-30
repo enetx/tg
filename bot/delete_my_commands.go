@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // DeleteMyCommands represents a request to delete bot commands.
@@ -66,7 +66,7 @@ func (dmc *DeleteMyCommands) ScopeChatMember(chatID, userID int64) *DeleteMyComm
 }
 
 // LanguageCode sets the language code for the commands.
-func (dmc *DeleteMyCommands) LanguageCode(code String) *DeleteMyCommands {
+func (dmc *DeleteMyCommands) LanguageCode(code g.String) *DeleteMyCommands {
 	dmc.opts.LanguageCode = code.Std()
 	return dmc
 }
@@ -83,7 +83,7 @@ func (dmc *DeleteMyCommands) Timeout(duration time.Duration) *DeleteMyCommands {
 }
 
 // APIURL sets a custom API URL for this request.
-func (dmc *DeleteMyCommands) APIURL(url String) *DeleteMyCommands {
+func (dmc *DeleteMyCommands) APIURL(url g.String) *DeleteMyCommands {
 	if dmc.opts.RequestOpts == nil {
 		dmc.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -94,6 +94,6 @@ func (dmc *DeleteMyCommands) APIURL(url String) *DeleteMyCommands {
 }
 
 // Send deletes the bot commands.
-func (dmc *DeleteMyCommands) Send() Result[bool] {
-	return ResultOf(dmc.bot.raw.DeleteMyCommands(dmc.opts))
+func (dmc *DeleteMyCommands) Send() g.Result[bool] {
+	return g.ResultOf(dmc.bot.raw.DeleteMyCommands(dmc.opts))
 }

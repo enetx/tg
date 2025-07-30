@@ -4,33 +4,33 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/types/effects"
 )
 
 type SendDice struct {
 	ctx         *Context
-	chatID      Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 	opts        *gotgbot.SendDiceOpts
 }
 
 // After schedules the dice to be sent after the specified duration.
 func (sd *SendDice) After(duration time.Duration) *SendDice {
-	sd.after = Some(duration)
+	sd.after = g.Some(duration)
 	return sd
 }
 
 // DeleteAfter schedules the dice message to be deleted after the specified duration.
 func (sd *SendDice) DeleteAfter(duration time.Duration) *SendDice {
-	sd.deleteAfter = Some(duration)
+	sd.deleteAfter = g.Some(duration)
 	return sd
 }
 
 // Emoji sets a custom emoji for the dice.
-func (sd *SendDice) Emoji(e String) *SendDice {
+func (sd *SendDice) Emoji(e g.String) *SendDice {
 	sd.opts.Emoji = e.Std()
 	return sd
 }
@@ -102,7 +102,7 @@ func (sd *SendDice) Markup(kb keyboard.Keyboard) *SendDice {
 }
 
 // Business sets the business connection ID for the dice message.
-func (sd *SendDice) Business(id String) *SendDice {
+func (sd *SendDice) Business(id g.String) *SendDice {
 	sd.opts.BusinessConnectionId = id.Std()
 	return sd
 }
@@ -115,7 +115,7 @@ func (sd *SendDice) Protect() *SendDice {
 
 // To sets the target chat ID for the dice message.
 func (sd *SendDice) To(chatID int64) *SendDice {
-	sd.chatID = Some(chatID)
+	sd.chatID = g.Some(chatID)
 	return sd
 }
 
@@ -131,7 +131,7 @@ func (sd *SendDice) Timeout(duration time.Duration) *SendDice {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sd *SendDice) APIURL(url String) *SendDice {
+func (sd *SendDice) APIURL(url g.String) *SendDice {
 	if sd.opts.RequestOpts == nil {
 		sd.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -142,9 +142,9 @@ func (sd *SendDice) APIURL(url String) *SendDice {
 }
 
 // Send sends the dice message to Telegram and returns the result.
-func (sd *SendDice) Send() Result[*gotgbot.Message] {
-	return sd.ctx.timers(sd.after, sd.deleteAfter, func() Result[*gotgbot.Message] {
+func (sd *SendDice) Send() g.Result[*gotgbot.Message] {
+	return sd.ctx.timers(sd.after, sd.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := sd.chatID.UnwrapOr(sd.ctx.EffectiveChat.Id)
-		return ResultOf(sd.ctx.Bot.Raw().SendDice(chatID, sd.opts))
+		return g.ResultOf(sd.ctx.Bot.Raw().SendDice(chatID, sd.opts))
 	})
 }

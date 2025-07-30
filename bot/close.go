@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // Close represents a request to close the bot instance.
@@ -25,7 +25,7 @@ func (c *Close) Timeout(duration time.Duration) *Close {
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *Close) APIURL(url String) *Close {
+func (c *Close) APIURL(url g.String) *Close {
 	if c.opts.RequestOpts == nil {
 		c.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -36,6 +36,6 @@ func (c *Close) APIURL(url String) *Close {
 }
 
 // Send closes the bot instance and returns the result.
-func (c *Close) Send() Result[bool] {
-	return ResultOf(c.bot.raw.Close(c.opts))
+func (c *Close) Send() g.Result[bool] {
+	return g.ResultOf(c.bot.raw.Close(c.opts))
 }

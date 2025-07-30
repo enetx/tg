@@ -4,29 +4,29 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/types/effects"
 )
 
 type SendGame struct {
 	ctx           *Context
-	gameShortName String
+	gameShortName g.String
 	opts          *gotgbot.SendGameOpts
-	chatID        Option[int64]
-	after         Option[time.Duration]
-	deleteAfter   Option[time.Duration]
+	chatID        g.Option[int64]
+	after         g.Option[time.Duration]
+	deleteAfter   g.Option[time.Duration]
 }
 
 // After schedules the game to be sent after the specified duration.
 func (sg *SendGame) After(duration time.Duration) *SendGame {
-	sg.after = Some(duration)
+	sg.after = g.Some(duration)
 	return sg
 }
 
 // DeleteAfter schedules the game message to be deleted after the specified duration.
 func (sg *SendGame) DeleteAfter(duration time.Duration) *SendGame {
-	sg.deleteAfter = Some(duration)
+	sg.deleteAfter = g.Some(duration)
 	return sg
 }
 
@@ -76,14 +76,14 @@ func (sg *SendGame) Markup(kb keyboard.Keyboard) *SendGame {
 }
 
 // Business sets the business connection ID for the game message.
-func (sg *SendGame) Business(id String) *SendGame {
+func (sg *SendGame) Business(id g.String) *SendGame {
 	sg.opts.BusinessConnectionId = id.Std()
 	return sg
 }
 
 // To sets the target chat ID for the game message.
 func (sg *SendGame) To(chatID int64) *SendGame {
-	sg.chatID = Some(chatID)
+	sg.chatID = g.Some(chatID)
 	return sg
 }
 
@@ -99,7 +99,7 @@ func (sg *SendGame) Timeout(duration time.Duration) *SendGame {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sg *SendGame) APIURL(url String) *SendGame {
+func (sg *SendGame) APIURL(url g.String) *SendGame {
 	if sg.opts.RequestOpts == nil {
 		sg.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -110,9 +110,9 @@ func (sg *SendGame) APIURL(url String) *SendGame {
 }
 
 // Send sends the game message to Telegram and returns the result.
-func (sg *SendGame) Send() Result[*gotgbot.Message] {
-	return sg.ctx.timers(sg.after, sg.deleteAfter, func() Result[*gotgbot.Message] {
+func (sg *SendGame) Send() g.Result[*gotgbot.Message] {
+	return sg.ctx.timers(sg.after, sg.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := sg.chatID.UnwrapOr(sg.ctx.EffectiveChat.Id)
-		return ResultOf(sg.ctx.Bot.Raw().SendGame(chatID, sg.gameShortName.Std(), sg.opts))
+		return g.ResultOf(sg.ctx.Bot.Raw().SendGame(chatID, sg.gameShortName.Std(), sg.opts))
 	})
 }

@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // EditUserStarSubscription is a request builder for editing user star subscriptions.
 type EditUserStarSubscription struct {
 	ctx                     *Context
 	userID                  int64
-	telegramPaymentChargeID String
+	telegramPaymentChargeID g.String
 	isCanceled              bool
 	opts                    *gotgbot.EditUserStarSubscriptionOpts
 }
@@ -28,7 +28,7 @@ func (c *EditUserStarSubscription) Timeout(duration time.Duration) *EditUserStar
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *EditUserStarSubscription) APIURL(url String) *EditUserStarSubscription {
+func (c *EditUserStarSubscription) APIURL(url g.String) *EditUserStarSubscription {
 	if c.opts.RequestOpts == nil {
 		c.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -39,8 +39,8 @@ func (c *EditUserStarSubscription) APIURL(url String) *EditUserStarSubscription 
 }
 
 // Send executes the EditUserStarSubscription request.
-func (c *EditUserStarSubscription) Send() Result[bool] {
-	return ResultOf(c.ctx.Bot.Raw().EditUserStarSubscription(
+func (c *EditUserStarSubscription) Send() g.Result[bool] {
+	return g.ResultOf(c.ctx.Bot.Raw().EditUserStarSubscription(
 		c.userID,
 		c.telegramPaymentChargeID.Std(),
 		c.isCanceled,

@@ -4,18 +4,18 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetCustomEmojiStickerSetThumbnail represents a request to set the thumbnail of a custom emoji sticker set.
 type SetCustomEmojiStickerSetThumbnail struct {
 	ctx  *Context
-	name String
+	name g.String
 	opts *gotgbot.SetCustomEmojiStickerSetThumbnailOpts
 }
 
 // CustomEmojiID sets the custom emoji identifier for the thumbnail.
-func (scesst *SetCustomEmojiStickerSetThumbnail) CustomEmojiID(emojiID String) *SetCustomEmojiStickerSetThumbnail {
+func (scesst *SetCustomEmojiStickerSetThumbnail) CustomEmojiID(emojiID g.String) *SetCustomEmojiStickerSetThumbnail {
 	scesst.opts.CustomEmojiId = emojiID.Std()
 	return scesst
 }
@@ -38,7 +38,7 @@ func (scesst *SetCustomEmojiStickerSetThumbnail) Timeout(duration time.Duration)
 }
 
 // APIURL sets a custom API URL for this request.
-func (scesst *SetCustomEmojiStickerSetThumbnail) APIURL(url String) *SetCustomEmojiStickerSetThumbnail {
+func (scesst *SetCustomEmojiStickerSetThumbnail) APIURL(url g.String) *SetCustomEmojiStickerSetThumbnail {
 	if scesst.opts.RequestOpts == nil {
 		scesst.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -49,6 +49,6 @@ func (scesst *SetCustomEmojiStickerSetThumbnail) APIURL(url String) *SetCustomEm
 }
 
 // Send sets the custom emoji sticker set thumbnail.
-func (scesst *SetCustomEmojiStickerSetThumbnail) Send() Result[bool] {
-	return ResultOf(scesst.ctx.Bot.Raw().SetCustomEmojiStickerSetThumbnail(scesst.name.Std(), scesst.opts))
+func (scesst *SetCustomEmojiStickerSetThumbnail) Send() g.Result[bool] {
+	return g.ResultOf(scesst.ctx.Bot.Raw().SetCustomEmojiStickerSetThumbnail(scesst.name.Std(), scesst.opts))
 }

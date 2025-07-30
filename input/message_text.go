@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/preview"
 )
@@ -13,7 +13,7 @@ type MessageText struct {
 }
 
 // Text creates a new MessageText builder with the required fields.
-func Text(messageText String) *MessageText {
+func Text(messageText g.String) *MessageText {
 	return &MessageText{
 		input: &gotgbot.InputTextMessageContent{
 			MessageText: messageText.Std(),

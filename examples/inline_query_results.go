@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/inline"
@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Start command with inline query example
@@ -31,14 +31,14 @@ func main() {
 			"• game - Game result\n" +
 			"• gif - GIF animation\n" +
 			"• cached - Cached content\n" +
-			"• keyboard - Result with inline keyboard\n" +
+			"• keyboard - g.Result with inline keyboard\n" +
 			"• content - Different message content types").Send().Err()
 	})
 
 	// Handle callback queries from inline keyboards
 	b.On.Callback.Prefix("opt", func(ctx *ctx.Context) error {
 		data := ctx.Update.CallbackQuery.Data
-		return ctx.AnswerCallbackQuery(Format("You selected: {}", data)).Alert().Send().Err()
+		return ctx.AnswerCallbackQuery(g.Format("You selected: {}", data)).Alert().Send().Err()
 	})
 
 	// Handle inline queries with different result types
@@ -48,7 +48,7 @@ func main() {
 
 		fmt.Printf("Debug: Received inline query: '%s' (ID: %s)\n", query, queryID)
 
-		var results Slice[inline.QueryResult]
+		var results g.Slice[inline.QueryResult]
 
 		switch {
 		case query == "article":
@@ -265,7 +265,7 @@ func main() {
 		// Answer the inline query
 		fmt.Printf("Debug: Sending %d results for query '%s'\n", results.Len(), query)
 
-		return ctx.AnswerInlineQuery(String(queryID)).
+		return ctx.AnswerInlineQuery(g.String(queryID)).
 			Results(results...).
 			CacheFor(0 * time.Second).
 			Send().Err()

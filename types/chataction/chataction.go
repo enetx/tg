@@ -23,7 +23,7 @@ const (
 	UploadVideoNote                   // Uploading a video note
 )
 
-// String returns the canonical string representation used by Telegram Bot API.
+// g.String returns the canonical string representation used by Telegram Bot API.
 func (c ChatAction) String() string {
 	switch c {
 	case Typing:

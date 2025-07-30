@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/g/ref"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
@@ -15,9 +15,9 @@ type CopyMessage struct {
 	fromChatID  int64
 	messageID   int64
 	opts        *gotgbot.CopyMessageOpts
-	toChatID    Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	toChatID    g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 }
 
 // CaptionEntities sets custom entities for the copied message caption.
@@ -28,18 +28,18 @@ func (c *CopyMessage) CaptionEntities(e *entities.Entities) *CopyMessage {
 
 // After schedules the copy to be sent after the specified duration.
 func (c *CopyMessage) After(duration time.Duration) *CopyMessage {
-	c.after = Some(duration)
+	c.after = g.Some(duration)
 	return c
 }
 
 // DeleteAfter schedules the copied message to be deleted after the specified duration.
 func (c *CopyMessage) DeleteAfter(duration time.Duration) *CopyMessage {
-	c.deleteAfter = Some(duration)
+	c.deleteAfter = g.Some(duration)
 	return c
 }
 
 // Caption sets a new caption for the copied message.
-func (c *CopyMessage) Caption(caption String) *CopyMessage {
+func (c *CopyMessage) Caption(caption g.String) *CopyMessage {
 	c.opts.Caption = ref.Of(caption.Std())
 	return c
 }
@@ -116,7 +116,7 @@ func (c *CopyMessage) Timeout(duration time.Duration) *CopyMessage {
 }
 
 // APIURL sets a custom API URL for this request.
-func (c *CopyMessage) APIURL(url String) *CopyMessage {
+func (c *CopyMessage) APIURL(url g.String) *CopyMessage {
 	if c.opts.RequestOpts == nil {
 		c.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -128,12 +128,12 @@ func (c *CopyMessage) APIURL(url String) *CopyMessage {
 
 // To sets the target chat ID for the copied message.
 func (c *CopyMessage) To(chatID int64) *CopyMessage {
-	c.toChatID = Some(chatID)
+	c.toChatID = g.Some(chatID)
 	return c
 }
 
 // Send copies the message to the target chat and returns the result.
-func (c *CopyMessage) Send() Result[*gotgbot.MessageId] {
+func (c *CopyMessage) Send() g.Result[*gotgbot.MessageId] {
 	if c.after.IsSome() {
 		go func() {
 			<-time.After(c.after.Some())
@@ -144,11 +144,11 @@ func (c *CopyMessage) Send() Result[*gotgbot.MessageId] {
 			}
 		}()
 
-		return Ok[*gotgbot.MessageId](nil)
+		return g.Ok[*gotgbot.MessageId](nil)
 	}
 
 	chatID := c.toChatID.UnwrapOr(c.ctx.EffectiveChat.Id)
-	result := ResultOf(c.ctx.Bot.Raw().CopyMessage(chatID, c.fromChatID, c.messageID, c.opts))
+	result := g.ResultOf(c.ctx.Bot.Raw().CopyMessage(chatID, c.fromChatID, c.messageID, c.opts))
 
 	if result.IsOk() && c.deleteAfter.IsSome() {
 		c.ctx.DeleteMessage().MessageID(result.Ok().MessageId).ChatID(chatID).After(c.deleteAfter.Some()).Send()

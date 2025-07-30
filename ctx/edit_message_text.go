@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
@@ -12,9 +12,9 @@ import (
 
 type EditMessageText struct {
 	ctx       *Context
-	text      String
-	chatID    Option[int64]
-	messageID Option[int64]
+	text      g.String
+	chatID    g.Option[int64]
+	messageID g.Option[int64]
 	opts      *gotgbot.EditMessageTextOpts
 }
 
@@ -38,24 +38,24 @@ func (emt *EditMessageText) Markdown() *EditMessageText {
 
 // ChatID sets the target chat ID for the text edit.
 func (emt *EditMessageText) ChatID(id int64) *EditMessageText {
-	emt.chatID = Some(id)
+	emt.chatID = g.Some(id)
 	return emt
 }
 
 // MessageID sets the target message ID to edit.
 func (emt *EditMessageText) MessageID(id int64) *EditMessageText {
-	emt.messageID = Some(id)
+	emt.messageID = g.Some(id)
 	return emt
 }
 
 // InlineMessageID sets the inline message ID to edit.
-func (emt *EditMessageText) InlineMessageID(id String) *EditMessageText {
+func (emt *EditMessageText) InlineMessageID(id g.String) *EditMessageText {
 	emt.opts.InlineMessageId = id.Std()
 	return emt
 }
 
 // Business sets the business connection ID for the text edit.
-func (emt *EditMessageText) Business(id String) *EditMessageText {
+func (emt *EditMessageText) Business(id g.String) *EditMessageText {
 	emt.opts.BusinessConnectionId = id.Std()
 	return emt
 }
@@ -72,7 +72,7 @@ func (emt *EditMessageText) Timeout(duration time.Duration) *EditMessageText {
 }
 
 // APIURL sets a custom API URL for this request.
-func (emt *EditMessageText) APIURL(url String) *EditMessageText {
+func (emt *EditMessageText) APIURL(url g.String) *EditMessageText {
 	if emt.opts.RequestOpts == nil {
 		emt.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -98,10 +98,10 @@ func (emt *EditMessageText) Preview(p *preview.Preview) *EditMessageText {
 }
 
 // Send edits the message text and returns the result.
-func (emt *EditMessageText) Send() Result[*gotgbot.Message] {
+func (emt *EditMessageText) Send() g.Result[*gotgbot.Message] {
 	emt.opts.ChatId = emt.chatID.UnwrapOr(emt.ctx.EffectiveChat.Id)
 	emt.opts.MessageId = emt.messageID.UnwrapOr(emt.ctx.EffectiveMessage.MessageId)
 	msg, _, err := emt.ctx.Bot.Raw().EditMessageText(emt.text.Std(), emt.opts)
 
-	return ResultOf(msg, err)
+	return g.ResultOf(msg, err)
 }

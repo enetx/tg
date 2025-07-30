@@ -5,7 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 	"github.com/enetx/tg/file"
 	"github.com/enetx/tg/inline"
@@ -102,7 +102,7 @@ func (ctx *Context) PromoteChatMember(userID int64) *PromoteChatMember {
 }
 
 // SendPoll creates a new Poll request with the specified question.
-func (ctx *Context) SendPoll(question String) *SendPoll {
+func (ctx *Context) SendPoll(question g.String) *SendPoll {
 	return &SendPoll{
 		ctx:      ctx,
 		question: question,
@@ -122,7 +122,7 @@ func (ctx *Context) GiftPremiumSubscription(userID, monthCount, starCount int64)
 }
 
 // Reply creates a new Reply request that replies to the current message.
-func (ctx *Context) Reply(text String) *Reply {
+func (ctx *Context) Reply(text g.String) *Reply {
 	return &Reply{
 		ctx:  ctx,
 		text: text,
@@ -179,7 +179,7 @@ func (ctx *Context) CreateChatSubscriptionInviteLink(period, price int64) *Creat
 }
 
 // EditChatSubscriptionInviteLink creates a new EditChatSubscriptionInviteLink request.
-func (ctx *Context) EditChatSubscriptionInviteLink(inviteLink String) *EditChatSubscriptionInviteLink {
+func (ctx *Context) EditChatSubscriptionInviteLink(inviteLink g.String) *EditChatSubscriptionInviteLink {
 	return &EditChatSubscriptionInviteLink{
 		ctx:        ctx,
 		inviteLink: inviteLink,
@@ -196,7 +196,7 @@ func (ctx *Context) StopPoll() *StopPoll {
 }
 
 // SendMessage creates a new SendMessage request to send a text message.
-func (ctx *Context) SendMessage(text String) *SendMessage {
+func (ctx *Context) SendMessage(text g.String) *SendMessage {
 	return &SendMessage{
 		ctx:  ctx,
 		text: text,
@@ -205,7 +205,7 @@ func (ctx *Context) SendMessage(text String) *SendMessage {
 }
 
 // SendDocument creates a new SendDocument request to send a document file.
-func (ctx *Context) SendDocument(filename String) *SendDocument {
+func (ctx *Context) SendDocument(filename g.String) *SendDocument {
 	d := &SendDocument{
 		ctx:  ctx,
 		opts: new(gotgbot.SendDocumentOpts),
@@ -224,7 +224,7 @@ func (ctx *Context) SendDocument(filename String) *SendDocument {
 }
 
 // SendAudio creates a new SendAudio request to send an audio file.
-func (ctx *Context) SendAudio(filename String) *SendAudio {
+func (ctx *Context) SendAudio(filename g.String) *SendAudio {
 	a := &SendAudio{
 		ctx:  ctx,
 		opts: new(gotgbot.SendAudioOpts),
@@ -243,7 +243,7 @@ func (ctx *Context) SendAudio(filename String) *SendAudio {
 }
 
 // SendPhoto creates a new SendPhoto request to send a photo.
-func (ctx *Context) SendPhoto(filename String) *SendPhoto {
+func (ctx *Context) SendPhoto(filename g.String) *SendPhoto {
 	p := &SendPhoto{
 		ctx:  ctx,
 		opts: new(gotgbot.SendPhotoOpts),
@@ -262,7 +262,7 @@ func (ctx *Context) SendPhoto(filename String) *SendPhoto {
 }
 
 // SendVideo creates a new SendVideo request to send a video file.
-func (ctx *Context) SendVideo(filename String) *SendVideo {
+func (ctx *Context) SendVideo(filename g.String) *SendVideo {
 	v := &SendVideo{
 		ctx:  ctx,
 		opts: new(gotgbot.SendVideoOpts),
@@ -281,7 +281,7 @@ func (ctx *Context) SendVideo(filename String) *SendVideo {
 }
 
 // SendVoice creates a new SendVoice request to send a voice message.
-func (ctx *Context) SendVoice(filename String) *SendVoice {
+func (ctx *Context) SendVoice(filename g.String) *SendVoice {
 	v := &SendVoice{
 		ctx:  ctx,
 		opts: new(gotgbot.SendVoiceOpts),
@@ -300,7 +300,7 @@ func (ctx *Context) SendVoice(filename String) *SendVoice {
 }
 
 // SendVideoNote creates a new SendVideoNote request to send a video note.
-func (ctx *Context) SendVideoNote(filename String) *SendVideoNote {
+func (ctx *Context) SendVideoNote(filename g.String) *SendVideoNote {
 	vn := &SendVideoNote{
 		ctx:  ctx,
 		opts: new(gotgbot.SendVideoNoteOpts),
@@ -319,7 +319,7 @@ func (ctx *Context) SendVideoNote(filename String) *SendVideoNote {
 }
 
 // SendAnimation creates a new SendAnimation request to send an animated GIF or video.
-func (ctx *Context) SendAnimation(filename String) *SendAnimation {
+func (ctx *Context) SendAnimation(filename g.String) *SendAnimation {
 	a := &SendAnimation{
 		ctx:  ctx,
 		opts: new(gotgbot.SendAnimationOpts),
@@ -338,7 +338,7 @@ func (ctx *Context) SendAnimation(filename String) *SendAnimation {
 }
 
 // SendSticker creates a new SendSticker request to send a sticker.
-func (ctx *Context) SendSticker(filename String) *SendSticker {
+func (ctx *Context) SendSticker(filename g.String) *SendSticker {
 	s := &SendSticker{
 		ctx:  ctx,
 		opts: new(gotgbot.SendStickerOpts),
@@ -367,7 +367,7 @@ func (ctx *Context) SendLocation(latitude, longitude float64) *SendLocation {
 }
 
 // SendVenue creates a new SendVenue request to send a venue location.
-func (ctx *Context) SendVenue(latitude, longitude float64, title, address String) *SendVenue {
+func (ctx *Context) SendVenue(latitude, longitude float64, title, address g.String) *SendVenue {
 	return &SendVenue{
 		ctx:       ctx,
 		latitude:  latitude,
@@ -379,7 +379,7 @@ func (ctx *Context) SendVenue(latitude, longitude float64, title, address String
 }
 
 // SendContact creates a new SendContact request to send a contact.
-func (ctx *Context) SendContact(phoneNumber, firstName String) *SendContact {
+func (ctx *Context) SendContact(phoneNumber, firstName g.String) *SendContact {
 	return &SendContact{
 		ctx:         ctx,
 		phoneNumber: phoneNumber,
@@ -418,7 +418,7 @@ func (ctx *Context) EditMessageReplyMarkup(kb keyboard.Keyboard) *EditMessageRep
 }
 
 // EditMessageCaption creates a new EditMessageCaption request to edit a message's caption.
-func (ctx *Context) EditMessageCaption(caption String) *EditMessageCaption {
+func (ctx *Context) EditMessageCaption(caption g.String) *EditMessageCaption {
 	return &EditMessageCaption{
 		ctx:  ctx,
 		opts: &gotgbot.EditMessageCaptionOpts{Caption: caption.Std()},
@@ -435,7 +435,7 @@ func (ctx *Context) EditMessageMedia(media input.Media) *EditMessageMedia {
 }
 
 // EditMessageText creates a new EditMessageText request to edit a message's text.
-func (ctx *Context) EditMessageText(text String) *EditMessageText {
+func (ctx *Context) EditMessageText(text g.String) *EditMessageText {
 	return &EditMessageText{
 		ctx:  ctx,
 		text: text,
@@ -444,7 +444,7 @@ func (ctx *Context) EditMessageText(text String) *EditMessageText {
 }
 
 // AnswerCallbackQuery creates a new AnswerCallbackQuery request to answer a callback query.
-func (ctx *Context) AnswerCallbackQuery(text String) *AnswerCallbackQuery {
+func (ctx *Context) AnswerCallbackQuery(text g.String) *AnswerCallbackQuery {
 	return &AnswerCallbackQuery{
 		ctx:  ctx,
 		text: text,
@@ -461,14 +461,14 @@ func (ctx *Context) SendDice() *SendDice {
 }
 
 // SendInvoice creates a new SendInvoice request to send an invoice for payment.
-func (ctx *Context) SendInvoice(title, desc, payload, currency String) *SendInvoice {
+func (ctx *Context) SendInvoice(title, desc, payload, currency g.String) *SendInvoice {
 	return &SendInvoice{
 		ctx:      ctx,
 		title:    title,
 		desc:     desc,
 		payload:  payload,
 		currency: currency,
-		prices:   NewSlice[gotgbot.LabeledPrice](),
+		prices:   g.NewSlice[gotgbot.LabeledPrice](),
 		opts:     new(gotgbot.SendInvoiceOpts),
 	}
 }
@@ -485,13 +485,13 @@ func (ctx *Context) AnswerPreCheckoutQuery() *AnswerPreCheckoutQuery {
 func (ctx *Context) AnswerShippingQuery() *AnswerShippingQuery {
 	return &AnswerShippingQuery{
 		ctx:     ctx,
-		options: NewSlice[gotgbot.ShippingOption](),
+		options: g.NewSlice[gotgbot.ShippingOption](),
 		opts:    new(gotgbot.AnswerShippingQueryOpts),
 	}
 }
 
 // RefundStarPayment creates a new RefundStarPayment request to refund a star payment.
-func (ctx *Context) RefundStarPayment(chargeID String) *RefundStarPayment {
+func (ctx *Context) RefundStarPayment(chargeID g.String) *RefundStarPayment {
 	return &RefundStarPayment{
 		ctx:      ctx,
 		chargeID: chargeID,
@@ -500,7 +500,7 @@ func (ctx *Context) RefundStarPayment(chargeID String) *RefundStarPayment {
 }
 
 // Gift creates a Gift request builder.
-func (ctx *Context) SendGift(giftID String) *SendGift {
+func (ctx *Context) SendGift(giftID g.String) *SendGift {
 	return &SendGift{
 		ctx:    ctx,
 		giftID: giftID,
@@ -509,7 +509,7 @@ func (ctx *Context) SendGift(giftID String) *SendGift {
 }
 
 // ConvertGiftToStars creates a ConvertGiftToStars request builder.
-func (ctx *Context) ConvertGiftToStars(businessConnectionID, ownedGiftID String) *ConvertGiftToStars {
+func (ctx *Context) ConvertGiftToStars(businessConnectionID, ownedGiftID g.String) *ConvertGiftToStars {
 	return &ConvertGiftToStars{
 		ctx:                  ctx,
 		businessConnectionID: businessConnectionID,
@@ -519,7 +519,7 @@ func (ctx *Context) ConvertGiftToStars(businessConnectionID, ownedGiftID String)
 }
 
 // CreateInvoiceLink creates a new CreateInvoiceLink request to create an invoice link.
-func (ctx *Context) CreateInvoiceLink(title, desc, payload, currency String) *CreateInvoiceLink {
+func (ctx *Context) CreateInvoiceLink(title, desc, payload, currency g.String) *CreateInvoiceLink {
 	return &CreateInvoiceLink{
 		ctx:      ctx,
 		title:    title,
@@ -531,7 +531,7 @@ func (ctx *Context) CreateInvoiceLink(title, desc, payload, currency String) *Cr
 }
 
 // TransferGift creates a TransferGift request builder.
-func (ctx *Context) TransferGift(businessConnectionID, ownedGiftID String, newOwnerChatID int64) *TransferGift {
+func (ctx *Context) TransferGift(businessConnectionID, ownedGiftID g.String, newOwnerChatID int64) *TransferGift {
 	return &TransferGift{
 		ctx:                  ctx,
 		businessConnectionID: businessConnectionID,
@@ -542,7 +542,7 @@ func (ctx *Context) TransferGift(businessConnectionID, ownedGiftID String, newOw
 }
 
 // UpgradeGift creates an UpgradeGift request builder.
-func (ctx *Context) UpgradeGift(businessConnectionID, ownedGiftID String) *UpgradeGift {
+func (ctx *Context) UpgradeGift(businessConnectionID, ownedGiftID g.String) *UpgradeGift {
 	return &UpgradeGift{
 		ctx:                  ctx,
 		businessConnectionID: businessConnectionID,
@@ -586,7 +586,7 @@ func (ctx *Context) GetStarTransactions() *GetStarTransactions {
 // EditUserStarSubscription creates an EditUserStarSubscription request builder.
 func (ctx *Context) EditUserStarSubscription(
 	userID int64,
-	telegramPaymentChargeID String,
+	telegramPaymentChargeID g.String,
 	isCanceled bool,
 ) *EditUserStarSubscription {
 	return &EditUserStarSubscription{
@@ -599,29 +599,29 @@ func (ctx *Context) EditUserStarSubscription(
 }
 
 // PostStory creates a new PostStory request for posting a photo story.
-func (ctx *Context) PostStory(businessConnectionID String, input input.StoryContent) *PostStory {
+func (ctx *Context) PostStory(businessConnectionID g.String, content input.StoryContent) *PostStory {
 	return &PostStory{
 		ctx:                  ctx,
 		businessConnectionID: businessConnectionID,
 		activePeriod:         86400, // Default 24 hours
 		opts:                 new(gotgbot.PostStoryOpts),
-		content:              input,
+		content:              content,
 	}
 }
 
 // EditPhotoStory creates a new EditStory request for editing a photo story.
-func (ctx *Context) EditStory(businessConnectionID String, storyID int64, input input.StoryContent) *EditStory {
+func (ctx *Context) EditStory(businessConnectionID g.String, storyID int64, content input.StoryContent) *EditStory {
 	return &EditStory{
 		ctx:                  ctx,
 		businessConnectionID: businessConnectionID,
 		storyID:              storyID,
 		opts:                 new(gotgbot.EditStoryOpts),
-		content:              input,
+		content:              content,
 	}
 }
 
 // DeleteStory creates a new DeleteStory request for the specified business connection and story.
-func (ctx *Context) DeleteStory(businessConnectionID String, storyID int64) *DeleteStory {
+func (ctx *Context) DeleteStory(businessConnectionID g.String, storyID int64) *DeleteStory {
 	return &DeleteStory{
 		ctx:                  ctx,
 		businessConnectionID: businessConnectionID,
@@ -631,25 +631,25 @@ func (ctx *Context) DeleteStory(businessConnectionID String, storyID int64) *Del
 }
 
 // IsAdmin checks if the effective user is an administrator in the current chat.
-func (ctx *Context) IsAdmin() Result[bool] {
+func (ctx *Context) IsAdmin() g.Result[bool] {
 	member, err := ctx.Bot.Raw().GetChatMember(ctx.EffectiveChat.Id, ctx.EffectiveUser.Id, nil)
 	if err != nil {
-		return Err[bool](nil)
+		return g.Err[bool](nil)
 	}
 
-	return Ok(member.GetStatus() == "administrator" || member.GetStatus() == "creator")
+	return g.Ok(member.GetStatus() == "administrator" || member.GetStatus() == "creator")
 }
 
 // Args returns command arguments from the message text, excluding the command itself.
-func (ctx *Context) Args() Slice[String] {
-	return String(ctx.EffectiveMessage.Text).Fields().Skip(1).Collect()
+func (ctx *Context) Args() g.Slice[g.String] {
+	return g.String(ctx.EffectiveMessage.Text).Fields().Skip(1).Collect()
 }
 
 // MediaGroup creates a new MediaGroup request to send multiple media as an album.
 func (ctx *Context) MediaGroup() *MediaGroup {
 	return &MediaGroup{
 		ctx:   ctx,
-		media: NewSlice[input.Media](),
+		media: g.NewSlice[input.Media](),
 		opts:  new(gotgbot.SendMediaGroupOpts),
 	}
 }
@@ -674,7 +674,7 @@ func (ctx *Context) DeleteMessage() *DeleteMessage {
 func (ctx *Context) DeleteMessages() *DeleteMessages {
 	return &DeleteMessages{
 		ctx:        ctx,
-		messageIDs: NewSlice[int64](),
+		messageIDs: g.NewSlice[int64](),
 		opts:       new(gotgbot.DeleteMessagesOpts),
 	}
 }
@@ -683,7 +683,7 @@ func (ctx *Context) DeleteMessages() *DeleteMessages {
 func (ctx *Context) ForwardMessages() *ForwardMessages {
 	return &ForwardMessages{
 		ctx:        ctx,
-		messageIDs: NewSlice[int64](),
+		messageIDs: g.NewSlice[int64](),
 		opts:       new(gotgbot.ForwardMessagesOpts),
 	}
 }
@@ -692,7 +692,7 @@ func (ctx *Context) ForwardMessages() *ForwardMessages {
 func (ctx *Context) CopyMessages() *CopyMessages {
 	return &CopyMessages{
 		ctx:        ctx,
-		messageIDs: NewSlice[int64](),
+		messageIDs: g.NewSlice[int64](),
 		opts:       new(gotgbot.CopyMessagesOpts),
 	}
 }
@@ -702,13 +702,13 @@ func (ctx *Context) SendPaidMedia(starCount int64) *SendPaidMedia {
 	return &SendPaidMedia{
 		ctx:       ctx,
 		starCount: starCount,
-		media:     NewSlice[input.PaidMedia](),
+		media:     g.NewSlice[input.PaidMedia](),
 		opts:      new(gotgbot.SendPaidMediaOpts),
 	}
 }
 
 // CreateForumTopic creates a new CreateForumTopic request.
-func (ctx *Context) CreateForumTopic(name String) *CreateForumTopic {
+func (ctx *Context) CreateForumTopic(name g.String) *CreateForumTopic {
 	return &CreateForumTopic{
 		ctx:  ctx,
 		name: name,
@@ -753,7 +753,7 @@ func (ctx *Context) DeleteForumTopic(messageThreadID int64) *DeleteForumTopic {
 }
 
 // EditGeneralForumTopic creates a new EditGeneralForumTopic request.
-func (ctx *Context) EditGeneralForumTopic(name String) *EditGeneralForumTopic {
+func (ctx *Context) EditGeneralForumTopic(name g.String) *EditGeneralForumTopic {
 	return &EditGeneralForumTopic{
 		ctx:  ctx,
 		name: name,
@@ -794,7 +794,7 @@ func (ctx *Context) ReopenGeneralForumTopic() *ReopenGeneralForumTopic {
 }
 
 // SetChatTitle creates a new SetChatTitle request.
-func (ctx *Context) SetChatTitle(title String) *SetChatTitle {
+func (ctx *Context) SetChatTitle(title g.String) *SetChatTitle {
 	return &SetChatTitle{
 		ctx:   ctx,
 		title: title,
@@ -803,7 +803,7 @@ func (ctx *Context) SetChatTitle(title String) *SetChatTitle {
 }
 
 // SetChatDescription creates a new SetChatDescription request.
-func (ctx *Context) SetChatDescription(description String) *SetChatDescription {
+func (ctx *Context) SetChatDescription(description g.String) *SetChatDescription {
 	return &SetChatDescription{
 		ctx:  ctx,
 		opts: &gotgbot.SetChatDescriptionOpts{Description: description.Std()},
@@ -811,7 +811,7 @@ func (ctx *Context) SetChatDescription(description String) *SetChatDescription {
 }
 
 // SetChatPhoto creates a new SetChatPhoto request.
-func (ctx *Context) SetChatPhoto(filename String) *SetChatPhoto {
+func (ctx *Context) SetChatPhoto(filename g.String) *SetChatPhoto {
 	p := &SetChatPhoto{
 		ctx:  ctx,
 		opts: new(gotgbot.SetChatPhotoOpts),
@@ -846,7 +846,10 @@ func (ctx *Context) SetChatPermissions() *SetChatPermissions {
 }
 
 // SetChatAdministratorCustomTitle creates a new SetChatAdministratorCustomTitle request.
-func (ctx *Context) SetChatAdministratorCustomTitle(userID int64, customTitle String) *SetChatAdministratorCustomTitle {
+func (ctx *Context) SetChatAdministratorCustomTitle(
+	userID int64,
+	customTitle g.String,
+) *SetChatAdministratorCustomTitle {
 	return &SetChatAdministratorCustomTitle{
 		ctx:         ctx,
 		userID:      userID,
@@ -931,7 +934,7 @@ func (ctx *Context) GetChatMemberCount() *GetChatMemberCount {
 }
 
 // CreateNewStickerSet creates a new sticker set.
-func (ctx *Context) CreateNewStickerSet(userID int64, name, title String) *CreateNewStickerSet {
+func (ctx *Context) CreateNewStickerSet(userID int64, name, title g.String) *CreateNewStickerSet {
 	return &CreateNewStickerSet{
 		ctx:    ctx,
 		userID: userID,
@@ -942,7 +945,7 @@ func (ctx *Context) CreateNewStickerSet(userID int64, name, title String) *Creat
 }
 
 // AddStickerToSet adds a sticker to an existing sticker set.
-func (ctx *Context) AddStickerToSet(userID int64, name String) *AddStickerToSet {
+func (ctx *Context) AddStickerToSet(userID int64, name g.String) *AddStickerToSet {
 	return &AddStickerToSet{
 		ctx:    ctx,
 		userID: userID,
@@ -952,7 +955,7 @@ func (ctx *Context) AddStickerToSet(userID int64, name String) *AddStickerToSet 
 }
 
 // GetStickerSet gets sticker set information by name.
-func (ctx *Context) GetStickerSet(name String) *GetStickerSet {
+func (ctx *Context) GetStickerSet(name g.String) *GetStickerSet {
 	return &GetStickerSet{
 		ctx:  ctx,
 		name: name,
@@ -961,7 +964,7 @@ func (ctx *Context) GetStickerSet(name String) *GetStickerSet {
 }
 
 // DeleteStickerSet deletes a sticker set.
-func (ctx *Context) DeleteStickerSet(name String) *DeleteStickerSet {
+func (ctx *Context) DeleteStickerSet(name g.String) *DeleteStickerSet {
 	return &DeleteStickerSet{
 		ctx:  ctx,
 		name: name,
@@ -970,7 +973,7 @@ func (ctx *Context) DeleteStickerSet(name String) *DeleteStickerSet {
 }
 
 // DeleteStickerFromSet deletes a sticker from a set.
-func (ctx *Context) DeleteStickerFromSet(sticker String) *DeleteStickerFromSet {
+func (ctx *Context) DeleteStickerFromSet(sticker g.String) *DeleteStickerFromSet {
 	return &DeleteStickerFromSet{
 		ctx:     ctx,
 		sticker: sticker,
@@ -979,7 +982,7 @@ func (ctx *Context) DeleteStickerFromSet(sticker String) *DeleteStickerFromSet {
 }
 
 // SetStickerPositionInSet sets the position of a sticker in a set.
-func (ctx *Context) SetStickerPositionInSet(sticker String, position int64) *SetStickerPositionInSet {
+func (ctx *Context) SetStickerPositionInSet(sticker g.String, position int64) *SetStickerPositionInSet {
 	return &SetStickerPositionInSet{
 		ctx:      ctx,
 		sticker:  sticker,
@@ -991,7 +994,7 @@ func (ctx *Context) SetStickerPositionInSet(sticker String, position int64) *Set
 // ReplaceStickerInSet replaces a sticker in a sticker set.
 func (ctx *Context) ReplaceStickerInSet(
 	userID int64,
-	name, oldSticker String,
+	name, oldSticker g.String,
 	sticker gotgbot.InputSticker,
 ) *ReplaceStickerInSet {
 	return &ReplaceStickerInSet{
@@ -1005,7 +1008,7 @@ func (ctx *Context) ReplaceStickerInSet(
 }
 
 // SetCustomEmojiStickerSetThumbnail sets the thumbnail of a custom emoji sticker set.
-func (ctx *Context) SetCustomEmojiStickerSetThumbnail(name String) *SetCustomEmojiStickerSetThumbnail {
+func (ctx *Context) SetCustomEmojiStickerSetThumbnail(name g.String) *SetCustomEmojiStickerSetThumbnail {
 	return &SetCustomEmojiStickerSetThumbnail{
 		ctx:  ctx,
 		name: name,
@@ -1014,7 +1017,7 @@ func (ctx *Context) SetCustomEmojiStickerSetThumbnail(name String) *SetCustomEmo
 }
 
 // SetStickerSetTitle sets the title of a sticker set.
-func (ctx *Context) SetStickerSetTitle(name, title String) *SetStickerSetTitle {
+func (ctx *Context) SetStickerSetTitle(name, title g.String) *SetStickerSetTitle {
 	return &SetStickerSetTitle{
 		ctx:   ctx,
 		name:  name,
@@ -1033,7 +1036,7 @@ func (ctx *Context) SetUserEmojiStatus(userID int64) *SetUserEmojiStatus {
 }
 
 // SetStickerEmojiList sets the emoji list for a sticker.
-func (ctx *Context) SetStickerEmojiList(sticker String) *SetStickerEmojiList {
+func (ctx *Context) SetStickerEmojiList(sticker g.String) *SetStickerEmojiList {
 	return &SetStickerEmojiList{
 		ctx:     ctx,
 		sticker: sticker,
@@ -1042,7 +1045,7 @@ func (ctx *Context) SetStickerEmojiList(sticker String) *SetStickerEmojiList {
 }
 
 // SetStickerKeywords sets keywords for a sticker.
-func (ctx *Context) SetStickerKeywords(sticker String) *SetStickerKeywords {
+func (ctx *Context) SetStickerKeywords(sticker g.String) *SetStickerKeywords {
 	return &SetStickerKeywords{
 		ctx:     ctx,
 		sticker: sticker,
@@ -1051,7 +1054,7 @@ func (ctx *Context) SetStickerKeywords(sticker String) *SetStickerKeywords {
 }
 
 // SetStickerMaskPosition sets the mask position for a sticker.
-func (ctx *Context) SetStickerMaskPosition(sticker String) *SetStickerMaskPosition {
+func (ctx *Context) SetStickerMaskPosition(sticker g.String) *SetStickerMaskPosition {
 	return &SetStickerMaskPosition{
 		ctx:     ctx,
 		sticker: sticker,
@@ -1060,7 +1063,7 @@ func (ctx *Context) SetStickerMaskPosition(sticker String) *SetStickerMaskPositi
 }
 
 // SetStickerSetThumbnail sets the thumbnail for a sticker set.
-func (ctx *Context) SetStickerSetThumbnail(name String, userID int64) *SetStickerSetThumbnail {
+func (ctx *Context) SetStickerSetThumbnail(name g.String, userID int64) *SetStickerSetThumbnail {
 	return &SetStickerSetThumbnail{
 		ctx:    ctx,
 		name:   name,
@@ -1070,17 +1073,17 @@ func (ctx *Context) SetStickerSetThumbnail(name String, userID int64) *SetSticke
 }
 
 // UploadStickerFile uploads a sticker file.
-func (ctx *Context) UploadStickerFile(userID int64, format String) *UploadStickerFile {
+func (ctx *Context) UploadStickerFile(userID int64, format g.String) *UploadStickerFile {
 	return &UploadStickerFile{
-		ctx:           ctx,
-		userID:        userID,
-		stickerFormat: format,
-		opts:          new(gotgbot.UploadStickerFileOpts),
+		ctx:    ctx,
+		userID: userID,
+		format: format,
+		opts:   new(gotgbot.UploadStickerFileOpts),
 	}
 }
 
 // GetCustomEmojiStickers gets custom emoji stickers by IDs.
-func (ctx *Context) GetCustomEmojiStickers(ids Slice[String]) *GetCustomEmojiStickers {
+func (ctx *Context) GetCustomEmojiStickers(ids g.Slice[g.String]) *GetCustomEmojiStickers {
 	return &GetCustomEmojiStickers{
 		ctx:            ctx,
 		customEmojiIDs: ids,
@@ -1141,7 +1144,7 @@ func (ctx *Context) RemoveChatVerification(chatID int64) *RemoveChatVerification
 }
 
 // SendChecklist sends a checklist message.
-func (ctx *Context) SendChecklist(businessConnectionID, title String) *SendChecklist {
+func (ctx *Context) SendChecklist(businessConnectionID, title g.String) *SendChecklist {
 	return &SendChecklist{
 		ctx:                  ctx,
 		checklist:            gotgbot.InputChecklist{Title: title.Std()},
@@ -1152,7 +1155,7 @@ func (ctx *Context) SendChecklist(businessConnectionID, title String) *SendCheck
 }
 
 // EditMessageChecklist edits a checklist message.
-func (ctx *Context) EditMessageChecklist(businessConnectionID String) *EditMessageChecklist {
+func (ctx *Context) EditMessageChecklist(businessConnectionID g.String) *EditMessageChecklist {
 	return &EditMessageChecklist{
 		ctx:                  ctx,
 		businessConnectionID: businessConnectionID,
@@ -1162,7 +1165,7 @@ func (ctx *Context) EditMessageChecklist(businessConnectionID String) *EditMessa
 }
 
 // SendGame creates a new SendGame request to send a game.
-func (ctx *Context) SendGame(gameShortName String) *SendGame {
+func (ctx *Context) SendGame(gameShortName g.String) *SendGame {
 	return &SendGame{
 		ctx:           ctx,
 		gameShortName: gameShortName,
@@ -1198,7 +1201,7 @@ func (ctx *Context) CreateChatInviteLink() *CreateChatInviteLink {
 }
 
 // EditChatInviteLink edits an existing chat invite link.
-func (ctx *Context) EditChatInviteLink(inviteLink String) *EditChatInviteLink {
+func (ctx *Context) EditChatInviteLink(inviteLink g.String) *EditChatInviteLink {
 	return &EditChatInviteLink{
 		ctx:        ctx,
 		inviteLink: inviteLink,
@@ -1207,7 +1210,7 @@ func (ctx *Context) EditChatInviteLink(inviteLink String) *EditChatInviteLink {
 }
 
 // RevokeChatInviteLink revokes a chat invite link.
-func (ctx *Context) RevokeChatInviteLink(inviteLink String) *RevokeChatInviteLink {
+func (ctx *Context) RevokeChatInviteLink(inviteLink g.String) *RevokeChatInviteLink {
 	return &RevokeChatInviteLink{
 		ctx:        ctx,
 		inviteLink: inviteLink,
@@ -1242,7 +1245,7 @@ func (ctx *Context) LeaveChat() *LeaveChat {
 }
 
 // GetFile gets information about a file.
-func (ctx *Context) GetFile(fileID String) *GetFile {
+func (ctx *Context) GetFile(fileID g.String) *GetFile {
 	return &GetFile{
 		ctx:    ctx,
 		fileID: fileID,
@@ -1251,7 +1254,7 @@ func (ctx *Context) GetFile(fileID String) *GetFile {
 }
 
 // SetChatStickerSet sets a chat's sticker set.
-func (ctx *Context) SetChatStickerSet(stickerSetName String) *SetChatStickerSet {
+func (ctx *Context) SetChatStickerSet(stickerSetName g.String) *SetChatStickerSet {
 	return &SetChatStickerSet{
 		ctx:            ctx,
 		stickerSetName: stickerSetName,
@@ -1268,7 +1271,7 @@ func (ctx *Context) DeleteChatStickerSet() *DeleteChatStickerSet {
 }
 
 // AnswerWebAppQuery answers a web app query.
-func (ctx *Context) AnswerWebAppQuery(webAppQueryID String, result inline.QueryResult) *AnswerWebAppQuery {
+func (ctx *Context) AnswerWebAppQuery(webAppQueryID g.String, result inline.QueryResult) *AnswerWebAppQuery {
 	return &AnswerWebAppQuery{
 		ctx:           ctx,
 		webAppQueryID: webAppQueryID,
@@ -1287,11 +1290,11 @@ func (ctx *Context) SetMessageReaction(messageID int64) *SetMessageReaction {
 }
 
 // AnswerInlineQuery answers an inline query.
-func (ctx *Context) AnswerInlineQuery(inlineQueryID String) *AnswerInlineQuery {
+func (ctx *Context) AnswerInlineQuery(inlineQueryID g.String) *AnswerInlineQuery {
 	return &AnswerInlineQuery{
 		ctx:           ctx,
 		inlineQueryID: inlineQueryID,
-		results:       NewSlice[gotgbot.InlineQueryResult](),
+		results:       g.NewSlice[gotgbot.InlineQueryResult](),
 		opts:          new(gotgbot.AnswerInlineQueryOpts),
 	}
 }
@@ -1318,16 +1321,16 @@ func (ctx *Context) SetPassportDataErrors(userID int64) *SetPassportDataErrors {
 	return &SetPassportDataErrors{
 		ctx:    ctx,
 		userID: userID,
-		errors: NewSlice[gotgbot.PassportElementError](),
+		errors: g.NewSlice[gotgbot.PassportElementError](),
 		opts:   new(gotgbot.SetPassportDataErrorsOpts),
 	}
 }
 
 func (ctx *Context) timers(
-	after Option[time.Duration],
-	deleteAfter Option[time.Duration],
-	send func() Result[*gotgbot.Message],
-) Result[*gotgbot.Message] {
+	after g.Option[time.Duration],
+	deleteAfter g.Option[time.Duration],
+	send func() g.Result[*gotgbot.Message],
+) g.Result[*gotgbot.Message] {
 	if after.IsSome() {
 		go func() {
 			<-time.After(after.Some())
@@ -1337,7 +1340,7 @@ func (ctx *Context) timers(
 			}
 		}()
 
-		return Ok[*gotgbot.Message](nil)
+		return g.Ok[*gotgbot.Message](nil)
 	}
 
 	msg := send()

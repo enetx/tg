@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/input"
 )
 
@@ -12,9 +12,9 @@ import (
 type CreateNewStickerSet struct {
 	ctx      *Context
 	userID   int64
-	name     String
-	title    String
-	stickers Slice[gotgbot.InputSticker]
+	name     g.String
+	title    g.String
+	stickers g.Slice[gotgbot.InputSticker]
 	opts     *gotgbot.CreateNewStickerSetOpts
 }
 
@@ -25,7 +25,7 @@ type StickerBuilder struct {
 }
 
 // StickerType sets the type of stickers in the set.
-func (cns *CreateNewStickerSet) StickerType(stickerType String) *CreateNewStickerSet {
+func (cns *CreateNewStickerSet) StickerType(stickerType g.String) *CreateNewStickerSet {
 	cns.opts.StickerType = stickerType.Std()
 	return cns
 }
@@ -37,7 +37,7 @@ func (cns *CreateNewStickerSet) NeedsRepainting() *CreateNewStickerSet {
 }
 
 // Sticker creates a new sticker builder for configuring individual sticker properties.
-func (cns *CreateNewStickerSet) Sticker(filename, format String, emojiList Slice[String]) *StickerBuilder {
+func (cns *CreateNewStickerSet) Sticker(filename, format g.String, emojiList g.Slice[g.String]) *StickerBuilder {
 	sticker := input.NewSticker(filename, format, emojiList)
 
 	return &StickerBuilder{
@@ -47,13 +47,13 @@ func (cns *CreateNewStickerSet) Sticker(filename, format String, emojiList Slice
 }
 
 // Keywords sets search keywords for the sticker.
-func (sb *StickerBuilder) Keywords(keywords Slice[String]) *StickerBuilder {
+func (sb *StickerBuilder) Keywords(keywords g.Slice[g.String]) *StickerBuilder {
 	sb.sticker.Keywords(keywords)
 	return sb
 }
 
 // MaskPosition sets the mask position for mask stickers.
-func (sb *StickerBuilder) MaskPosition(point String, xShift, yShift, scale float64) *StickerBuilder {
+func (sb *StickerBuilder) MaskPosition(point g.String, xShift, yShift, scale float64) *StickerBuilder {
 	maskPosition := &gotgbot.MaskPosition{
 		Point:  point.Std(),
 		XShift: xShift,
@@ -84,7 +84,7 @@ func (cns *CreateNewStickerSet) Timeout(duration time.Duration) *CreateNewSticke
 }
 
 // APIURL sets a custom API URL for this request.
-func (cns *CreateNewStickerSet) APIURL(url String) *CreateNewStickerSet {
+func (cns *CreateNewStickerSet) APIURL(url g.String) *CreateNewStickerSet {
 	if cns.opts.RequestOpts == nil {
 		cns.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -95,11 +95,11 @@ func (cns *CreateNewStickerSet) APIURL(url String) *CreateNewStickerSet {
 }
 
 // Send creates the new sticker set and returns the result.
-func (cns *CreateNewStickerSet) Send() Result[bool] {
+func (cns *CreateNewStickerSet) Send() g.Result[bool] {
 	if len(cns.stickers) == 0 {
-		return Err[bool](Errorf("no stickers added to sticker set"))
+		return g.Err[bool](g.Errorf("no stickers added to sticker set"))
 	}
 
-	return ResultOf(cns.ctx.Bot.Raw().
+	return g.ResultOf(cns.ctx.Bot.Raw().
 		CreateNewStickerSet(cns.userID, cns.name.Std(), cns.title.Std(), cns.stickers, cns.opts))
 }

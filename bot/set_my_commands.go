@@ -4,18 +4,18 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetMyCommands represents a request to set bot commands.
 type SetMyCommands struct {
 	bot      *Bot
-	commands Slice[gotgbot.BotCommand]
+	commands g.Slice[gotgbot.BotCommand]
 	opts     *gotgbot.SetMyCommandsOpts
 }
 
 // AddCommand adds a command to the command list.
-func (smc *SetMyCommands) AddCommand(command, description String) *SetMyCommands {
+func (smc *SetMyCommands) AddCommand(command, description g.String) *SetMyCommands {
 	smc.commands.Push(gotgbot.BotCommand{
 		Command:     command.Std(),
 		Description: description.Std(),
@@ -25,7 +25,7 @@ func (smc *SetMyCommands) AddCommand(command, description String) *SetMyCommands
 }
 
 // Commands sets the entire command list at once.
-func (smc *SetMyCommands) Commands(commands []gotgbot.BotCommand) *SetMyCommands {
+func (smc *SetMyCommands) Commands(commands g.Slice[gotgbot.BotCommand]) *SetMyCommands {
 	smc.commands = commands
 	return smc
 }
@@ -83,7 +83,7 @@ func (smc *SetMyCommands) ScopeChatMember(chatID, userID int64) *SetMyCommands {
 }
 
 // LanguageCode sets the language code for the commands.
-func (smc *SetMyCommands) LanguageCode(code String) *SetMyCommands {
+func (smc *SetMyCommands) LanguageCode(code g.String) *SetMyCommands {
 	smc.opts.LanguageCode = code.Std()
 	return smc
 }
@@ -100,7 +100,7 @@ func (smc *SetMyCommands) Timeout(duration time.Duration) *SetMyCommands {
 }
 
 // APIURL sets a custom API URL for this request.
-func (smc *SetMyCommands) APIURL(url String) *SetMyCommands {
+func (smc *SetMyCommands) APIURL(url g.String) *SetMyCommands {
 	if smc.opts.RequestOpts == nil {
 		smc.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -111,14 +111,14 @@ func (smc *SetMyCommands) APIURL(url String) *SetMyCommands {
 }
 
 // Send sets the bot commands.
-func (smc *SetMyCommands) Send() Result[bool] {
+func (smc *SetMyCommands) Send() g.Result[bool] {
 	if len(smc.commands) == 0 {
-		return Err[bool](Errorf("no commands specified"))
+		return g.Err[bool](g.Errorf("no commands specified"))
 	}
 
 	if len(smc.commands) > 100 {
-		return Err[bool](Errorf("too many commands: {} (maximum 100)", len(smc.commands)))
+		return g.Err[bool](g.Errorf("too many commands: {} (maximum 100)", smc.commands.Len()))
 	}
 
-	return ResultOf(smc.bot.raw.SetMyCommands(smc.commands, smc.opts))
+	return g.ResultOf(smc.bot.raw.SetMyCommands(smc.commands, smc.opts))
 }

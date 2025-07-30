@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 )
@@ -13,10 +13,10 @@ type SendVoice struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendVoiceOpts
-	file        *File
-	chatID      Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	file        *g.File
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 	err         error
 }
 
@@ -28,18 +28,18 @@ func (sv *SendVoice) CaptionEntities(e *entities.Entities) *SendVoice {
 
 // After schedules the voice message to be sent after the specified duration.
 func (sv *SendVoice) After(duration time.Duration) *SendVoice {
-	sv.after = Some(duration)
+	sv.after = g.Some(duration)
 	return sv
 }
 
 // DeleteAfter schedules the voice message to be deleted after the specified duration.
 func (sv *SendVoice) DeleteAfter(duration time.Duration) *SendVoice {
-	sv.deleteAfter = Some(duration)
+	sv.deleteAfter = g.Some(duration)
 	return sv
 }
 
 // Caption sets the caption text for the voice message.
-func (sv *SendVoice) Caption(caption String) *SendVoice {
+func (sv *SendVoice) Caption(caption g.String) *SendVoice {
 	sv.opts.Caption = caption.Std()
 	return sv
 }
@@ -98,7 +98,7 @@ func (sv *SendVoice) Timeout(duration time.Duration) *SendVoice {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sv *SendVoice) APIURL(url String) *SendVoice {
+func (sv *SendVoice) APIURL(url g.String) *SendVoice {
 	if sv.opts.RequestOpts == nil {
 		sv.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -109,7 +109,7 @@ func (sv *SendVoice) APIURL(url String) *SendVoice {
 }
 
 // Business sets the business connection ID for the voice message.
-func (sv *SendVoice) Business(id String) *SendVoice {
+func (sv *SendVoice) Business(id g.String) *SendVoice {
 	sv.opts.BusinessConnectionId = id.Std()
 	return sv
 }
@@ -122,22 +122,22 @@ func (sv *SendVoice) Thread(id int64) *SendVoice {
 
 // To sets the target chat ID for the voice message.
 func (sv *SendVoice) To(chatID int64) *SendVoice {
-	sv.chatID = Some(chatID)
+	sv.chatID = g.Some(chatID)
 	return sv
 }
 
 // Send sends the voice message to Telegram and returns the result.
-func (sv *SendVoice) Send() Result[*gotgbot.Message] {
+func (sv *SendVoice) Send() g.Result[*gotgbot.Message] {
 	if sv.err != nil {
-		return Err[*gotgbot.Message](sv.err)
+		return g.Err[*gotgbot.Message](sv.err)
 	}
 
 	if sv.file != nil {
 		defer sv.file.Close()
 	}
 
-	return sv.ctx.timers(sv.after, sv.deleteAfter, func() Result[*gotgbot.Message] {
+	return sv.ctx.timers(sv.after, sv.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := sv.chatID.UnwrapOr(sv.ctx.EffectiveChat.Id)
-		return ResultOf(sv.ctx.Bot.Raw().SendVoice(chatID, sv.doc, sv.opts))
+		return g.ResultOf(sv.ctx.Bot.Raw().SendVoice(chatID, sv.doc, sv.opts))
 	})
 }

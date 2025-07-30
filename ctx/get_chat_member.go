@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetChatMember represents a request to get information about a chat member.
@@ -12,12 +12,12 @@ type GetChatMember struct {
 	ctx    *Context
 	userID int64
 	opts   *gotgbot.GetChatMemberOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID for this request.
 func (gcm *GetChatMember) ChatID(id int64) *GetChatMember {
-	gcm.chatID = Some(id)
+	gcm.chatID = g.Some(id)
 	return gcm
 }
 
@@ -39,7 +39,7 @@ func (gcm *GetChatMember) Timeout(duration time.Duration) *GetChatMember {
 }
 
 // APIURL sets a custom API URL for this request.
-func (gcm *GetChatMember) APIURL(url String) *GetChatMember {
+func (gcm *GetChatMember) APIURL(url g.String) *GetChatMember {
 	if gcm.opts.RequestOpts == nil {
 		gcm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -50,7 +50,7 @@ func (gcm *GetChatMember) APIURL(url String) *GetChatMember {
 }
 
 // Send executes the GetChatMember request and returns chat member information.
-func (gcm *GetChatMember) Send() Result[gotgbot.ChatMember] {
+func (gcm *GetChatMember) Send() g.Result[gotgbot.ChatMember] {
 	chatID := gcm.chatID.UnwrapOr(gcm.ctx.EffectiveChat.Id)
-	return ResultOf(gcm.ctx.Bot.Raw().GetChatMember(chatID, gcm.userID, gcm.opts))
+	return g.ResultOf(gcm.ctx.Bot.Raw().GetChatMember(chatID, gcm.userID, gcm.opts))
 }

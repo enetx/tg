@@ -1,19 +1,19 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Middleware: restrict callbacks with "admin:" prefix to admins only
 	b.Use(func(ctx *ctx.Context) error {
-		if ctx.Callback == nil || !String(ctx.Callback.Data).StartsWith("admin:") {
+		if ctx.Callback == nil || !g.String(ctx.Callback.Data).StartsWith("admin:") {
 			return nil
 		}
 
@@ -31,7 +31,7 @@ func main() {
 
 	// Middleware: log each incoming update type
 	b.Use(func(ctx *ctx.Context) error {
-		Println("[MW] Update: {}", ctx.Update.GetType())
+		g.Println("[MW] Update: {}", ctx.Update.GetType())
 		return nil
 	})
 

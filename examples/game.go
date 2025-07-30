@@ -1,13 +1,13 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Set game score
@@ -80,7 +80,7 @@ func main() {
 
 		response := "High Scores for user " + args[0] + ":\n"
 		for i, score := range scores {
-			response += Int(i+1).String() + ". " + Int(score.Score).String() + " points\n"
+			response += g.Int(i+1).String() + ". " + g.Int(score.Score).String() + " points\n"
 		}
 
 		return ctx.Reply(response).Send().Err()
@@ -107,10 +107,10 @@ func main() {
 		scores := result.Ok()
 		response := "Scores for message " + args[0] + ":\n"
 		for i, score := range scores {
-			response += Int(i+1).String() + ". " + Int(score.Score).String() + " points\n"
+			response += g.Int(i+1).String() + ". " + g.Int(score.Score).String() + " points\n"
 		}
 
-		return ctx.Reply(String(response)).Send().Err()
+		return ctx.Reply(g.String(response)).Send().Err()
 	})
 
 	// Set inline game score

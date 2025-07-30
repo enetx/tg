@@ -4,13 +4,13 @@ import (
 	"unsafe"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/g/ref"
 )
 
 // InlineKeyboard helps build Telegram inline keyboard markup using a fluent API.
 type InlineKeyboard struct {
-	rows Slice[Slice[gotgbot.InlineKeyboardButton]]
+	rows g.Slice[g.Slice[gotgbot.InlineKeyboardButton]]
 }
 
 // Row starts a new row for subsequent buttons.
@@ -80,7 +80,7 @@ func (b *InlineKeyboard) update(btn *Button) *InlineKeyboard {
 }
 
 // Text adds a text button with callback data to the current row.
-func (b *InlineKeyboard) Text(text, callback String) *InlineKeyboard {
+func (b *InlineKeyboard) Text(text, callback g.String) *InlineKeyboard {
 	return b.addToLastRow(gotgbot.InlineKeyboardButton{
 		Text:         text.Std(),
 		CallbackData: callback.Std(),
@@ -88,7 +88,7 @@ func (b *InlineKeyboard) Text(text, callback String) *InlineKeyboard {
 }
 
 // URL adds a button that opens a given URL.
-func (b *InlineKeyboard) URL(text, url String) *InlineKeyboard {
+func (b *InlineKeyboard) URL(text, url g.String) *InlineKeyboard {
 	return b.addToLastRow(gotgbot.InlineKeyboardButton{
 		Text: text.Std(),
 		Url:  url.Std(),
@@ -96,7 +96,7 @@ func (b *InlineKeyboard) URL(text, url String) *InlineKeyboard {
 }
 
 // WebApp adds a button that opens a Telegram Web App.
-func (b *InlineKeyboard) WebApp(text, url String) *InlineKeyboard {
+func (b *InlineKeyboard) WebApp(text, url g.String) *InlineKeyboard {
 	return b.addToLastRow(gotgbot.InlineKeyboardButton{
 		Text:   text.Std(),
 		WebApp: &gotgbot.WebAppInfo{Url: url.Std()},
@@ -104,7 +104,7 @@ func (b *InlineKeyboard) WebApp(text, url String) *InlineKeyboard {
 }
 
 // LoginURL adds a button for Telegram login via an external URL.
-func (b *InlineKeyboard) LoginURL(text, url String) *InlineKeyboard {
+func (b *InlineKeyboard) LoginURL(text, url g.String) *InlineKeyboard {
 	return b.addToLastRow(gotgbot.InlineKeyboardButton{
 		Text:     text.Std(),
 		LoginUrl: &gotgbot.LoginUrl{Url: url.Std()},
@@ -112,7 +112,7 @@ func (b *InlineKeyboard) LoginURL(text, url String) *InlineKeyboard {
 }
 
 // CopyText adds a button that copies a predefined text to the clipboard.
-func (b *InlineKeyboard) CopyText(text, toCopy String) *InlineKeyboard {
+func (b *InlineKeyboard) CopyText(text, toCopy g.String) *InlineKeyboard {
 	return b.addToLastRow(gotgbot.InlineKeyboardButton{
 		Text:     text.Std(),
 		CopyText: &gotgbot.CopyTextButton{Text: toCopy.Std()},
@@ -120,7 +120,7 @@ func (b *InlineKeyboard) CopyText(text, toCopy String) *InlineKeyboard {
 }
 
 // Pay adds a payment button. Must be used in invoices and be the first button.
-func (b *InlineKeyboard) Pay(text String) *InlineKeyboard {
+func (b *InlineKeyboard) Pay(text g.String) *InlineKeyboard {
 	return b.addToLastRow(gotgbot.InlineKeyboardButton{
 		Text: text.Std(),
 		Pay:  true,
@@ -128,7 +128,7 @@ func (b *InlineKeyboard) Pay(text String) *InlineKeyboard {
 }
 
 // Game adds a game launch button. Must be the first button in the first row.
-func (b *InlineKeyboard) Game(text String) *InlineKeyboard {
+func (b *InlineKeyboard) Game(text g.String) *InlineKeyboard {
 	return b.addToLastRow(gotgbot.InlineKeyboardButton{
 		Text:         text.Std(),
 		CallbackGame: new(gotgbot.CallbackGame),
@@ -136,7 +136,7 @@ func (b *InlineKeyboard) Game(text String) *InlineKeyboard {
 }
 
 // SwitchInlineQuery adds a button that opens inline query in another chat.
-func (b *InlineKeyboard) SwitchInlineQuery(text, query String) *InlineKeyboard {
+func (b *InlineKeyboard) SwitchInlineQuery(text, query g.String) *InlineKeyboard {
 	return b.addToLastRow(gotgbot.InlineKeyboardButton{
 		Text:              text.Std(),
 		SwitchInlineQuery: ref.Of(query.Std()),
@@ -144,7 +144,7 @@ func (b *InlineKeyboard) SwitchInlineQuery(text, query String) *InlineKeyboard {
 }
 
 // SwitchInlineQueryCurrentChat adds a button that triggers inline query in the current chat.
-func (b *InlineKeyboard) SwitchInlineQueryCurrentChat(text, query String) *InlineKeyboard {
+func (b *InlineKeyboard) SwitchInlineQueryCurrentChat(text, query g.String) *InlineKeyboard {
 	return b.addToLastRow(gotgbot.InlineKeyboardButton{
 		Text:                         text.Std(),
 		SwitchInlineQueryCurrentChat: ref.Of(query.Std()),
@@ -162,9 +162,9 @@ func (b *InlineKeyboard) Markup() gotgbot.ReplyMarkup {
 func (b *InlineKeyboard) fromMarkup(markup gotgbot.ReplyMarkup) *InlineKeyboard {
 	switch m := markup.(type) {
 	case *gotgbot.InlineKeyboardMarkup:
-		b.rows = *(*Slice[Slice[gotgbot.InlineKeyboardButton]])(unsafe.Pointer(&m.InlineKeyboard))
+		b.rows = *(*g.Slice[g.Slice[gotgbot.InlineKeyboardButton]])(unsafe.Pointer(&m.InlineKeyboard))
 	case gotgbot.InlineKeyboardMarkup:
-		b.rows = *(*Slice[Slice[gotgbot.InlineKeyboardButton]])(unsafe.Pointer(&m.InlineKeyboard))
+		b.rows = *(*g.Slice[g.Slice[gotgbot.InlineKeyboardButton]])(unsafe.Pointer(&m.InlineKeyboard))
 	}
 
 	return b
@@ -192,25 +192,26 @@ func (b *InlineKeyboard) Edit(handler func(btn *Button)) *InlineKeyboard {
 		return b
 	}
 
-	var rows Slice[Slice[gotgbot.InlineKeyboardButton]]
+	var rows g.Slice[g.Slice[gotgbot.InlineKeyboardButton]]
 
 	for _, row := range b.rows {
-		var nrow Slice[gotgbot.InlineKeyboardButton]
+		var nrow g.Slice[gotgbot.InlineKeyboardButton]
 
 		for j := range row {
 			btn := NewButton(&row[j])
 			handler(btn)
 
 			if !btn.deleted {
-				nrow = append(nrow, btn.build())
+				nrow.Push(btn.build())
 			}
 		}
 
-		if len(nrow) > 0 {
-			rows = append(rows, nrow)
+		if nrow.NotEmpty() {
+			rows.Push(nrow)
 		}
 	}
 
 	b.rows = rows
+
 	return b
 }

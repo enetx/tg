@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // TransferGift is a request builder for transferring gifts.
 type TransferGift struct {
 	ctx                  *Context
-	businessConnectionID String
-	ownedGiftID          String
+	businessConnectionID g.String
+	ownedGiftID          g.String
 	newOwnerChatID       int64
 	opts                 *gotgbot.TransferGiftOpts
 }
@@ -34,7 +34,7 @@ func (tg *TransferGift) Timeout(duration time.Duration) *TransferGift {
 }
 
 // APIURL sets a custom API URL for this request.
-func (tg *TransferGift) APIURL(url String) *TransferGift {
+func (tg *TransferGift) APIURL(url g.String) *TransferGift {
 	if tg.opts.RequestOpts == nil {
 		tg.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -45,8 +45,8 @@ func (tg *TransferGift) APIURL(url String) *TransferGift {
 }
 
 // Send executes the TransferGift request.
-func (tg *TransferGift) Send() Result[bool] {
-	return ResultOf(tg.ctx.Bot.Raw().TransferGift(
+func (tg *TransferGift) Send() g.Result[bool] {
+	return g.ResultOf(tg.ctx.Bot.Raw().TransferGift(
 		tg.businessConnectionID.Std(),
 		tg.ownedGiftID.Std(),
 		tg.newOwnerChatID,

@@ -4,13 +4,13 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // Read is a request builder for marking a business message as read.
 type Read struct {
 	bot       Bot
-	connID    String
+	connID    g.String
 	chatID    int64
 	messageID int64
 	opts      *gotgbot.ReadBusinessMessageOpts
@@ -28,7 +28,7 @@ func (r *Read) Timeout(duration time.Duration) *Read {
 }
 
 // APIURL sets a custom API URL for this request.
-func (r *Read) APIURL(url String) *Read {
+func (r *Read) APIURL(url g.String) *Read {
 	if r.opts.RequestOpts == nil {
 		r.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -39,8 +39,8 @@ func (r *Read) APIURL(url String) *Read {
 }
 
 // Send executes the Read request.
-func (r *Read) Send() Result[bool] {
-	return ResultOf(r.bot.Raw().ReadBusinessMessage(
+func (r *Read) Send() g.Result[bool] {
+	return g.ResultOf(r.bot.Raw().ReadBusinessMessage(
 		r.connID.Std(),
 		r.chatID,
 		r.messageID,

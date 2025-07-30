@@ -2,12 +2,12 @@ package areas
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // Areas provides a builder for creating StoryArea slices with fluent API.
 type Areas struct {
-	areas Slice[gotgbot.StoryArea]
+	areas g.Slice[gotgbot.StoryArea]
 }
 
 // AreaBuilder represents a single area being built with position/rotation that can be reused.
@@ -19,7 +19,7 @@ type AreaBuilder struct {
 // New creates a new Areas builder.
 func New() *Areas {
 	return &Areas{
-		areas: NewSlice[gotgbot.StoryArea](),
+		areas: g.NewSlice[gotgbot.StoryArea](),
 	}
 }
 
@@ -66,7 +66,7 @@ func (ab *AreaBuilder) Location() *Areas {
 }
 
 // Reaction adds a suggested reaction area type to this position.
-func (ab *AreaBuilder) Reaction(emoji String) *Areas {
+func (ab *AreaBuilder) Reaction(emoji g.String) *Areas {
 	area := gotgbot.StoryArea{
 		Position: ab.position,
 		Type: &gotgbot.StoryAreaTypeSuggestedReaction{
@@ -82,7 +82,7 @@ func (ab *AreaBuilder) Reaction(emoji String) *Areas {
 }
 
 // Link adds a clickable link area type to this position.
-func (ab *AreaBuilder) Link(url String) *Areas {
+func (ab *AreaBuilder) Link(url g.String) *Areas {
 	area := gotgbot.StoryArea{
 		Position: ab.position,
 		Type: &gotgbot.StoryAreaTypeLink{
@@ -141,7 +141,7 @@ func (a *Areas) Clear() *Areas {
 }
 
 // Count returns the number of areas.
-func (a *Areas) Count() Int {
+func (a *Areas) Count() g.Int {
 	return a.areas.Len()
 }
 

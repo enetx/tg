@@ -4,21 +4,21 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/input"
 )
 
 // SetAnimatedPhoto is a request builder for setting the business account animated profile photo.
 type SetAnimatedPhoto struct {
 	account            *Account
-	animation          String
-	mainFrameTimestamp Option[float64]
+	animation          g.String
+	mainFrameTimestamp g.Option[float64]
 	opts               *gotgbot.SetBusinessAccountProfilePhotoOpts
 }
 
 // MainFrame sets the timestamp in seconds of the frame that will be used as the static profile photo.
 func (sap *SetAnimatedPhoto) MainFrame(timestamp float64) *SetAnimatedPhoto {
-	sap.mainFrameTimestamp = Some(timestamp)
+	sap.mainFrameTimestamp = g.Some(timestamp)
 	return sap
 }
 
@@ -40,7 +40,7 @@ func (sap *SetAnimatedPhoto) Timeout(duration time.Duration) *SetAnimatedPhoto {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sap *SetAnimatedPhoto) APIURL(url String) *SetAnimatedPhoto {
+func (sap *SetAnimatedPhoto) APIURL(url g.String) *SetAnimatedPhoto {
 	if sap.opts.RequestOpts == nil {
 		sap.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -51,14 +51,14 @@ func (sap *SetAnimatedPhoto) APIURL(url String) *SetAnimatedPhoto {
 }
 
 // Send executes the SetAnimatedPhoto request.
-func (sap *SetAnimatedPhoto) Send() Result[bool] {
+func (sap *SetAnimatedPhoto) Send() g.Result[bool] {
 	animated := input.AnimatedPhoto(sap.animation)
 
 	if sap.mainFrameTimestamp.IsSome() {
 		animated.MainFrameTimestamp(sap.mainFrameTimestamp.Some())
 	}
 
-	return ResultOf(sap.account.bot.Raw().SetBusinessAccountProfilePhoto(
+	return g.ResultOf(sap.account.bot.Raw().SetBusinessAccountProfilePhoto(
 		sap.account.connID.Std(),
 		animated.Build(),
 		sap.opts,

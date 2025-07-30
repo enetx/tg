@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
@@ -15,7 +15,7 @@ func main() {
 		giftID := "gift_premium"
 
 		// Send gift to user with text
-		result := ctx.SendGift(String(giftID)).
+		result := ctx.SendGift(g.String(giftID)).
 			To(ctx.EffectiveUser.Id).
 			Text("Happy holidays!").
 			HTML().
@@ -37,7 +37,7 @@ func main() {
 		}
 
 		gifts := result.Ok()
-		return ctx.Reply(Format("Available gifts: {}", len(gifts.Gifts))).Send().Err()
+		return ctx.Reply(g.Format("Available gifts: {}", len(gifts.Gifts))).Send().Err()
 	})
 
 	// Command to check star balance
@@ -48,7 +48,7 @@ func main() {
 		}
 
 		balance := result.Ok()
-		return ctx.Reply(Format("Bot star balance: {} ⭐", balance.Amount)).Send().Err()
+		return ctx.Reply(g.Format("Bot star balance: {} ⭐", balance.Amount)).Send().Err()
 	})
 
 	// Command to get star transactions
@@ -63,12 +63,12 @@ func main() {
 		}
 
 		transactions := result.Ok()
-		return ctx.Reply(Format("Recent transactions: {}", len(transactions.Transactions))).Send().Err()
+		return ctx.Reply(g.Format("Recent transactions: {}", len(transactions.Transactions))).Send().Err()
 	})
 
 	// Business account gift management
 	b.Command("business_gifts", func(ctx *ctx.Context) error {
-		connectionID := String("your_business_connection_id")
+		connectionID := g.String("your_business_connection_id")
 		account := ctx.Business(connectionID)
 
 		// Get business account gifts
@@ -83,13 +83,13 @@ func main() {
 		}
 
 		gifts := result.Ok()
-		return ctx.Reply(Format("Business gifts: {}", gifts.TotalCount)).Send().Err()
+		return ctx.Reply(g.Format("Business gifts: {}", gifts.TotalCount)).Send().Err()
 	})
 
 	// Business gift operations
 	b.Command("gift_ops", func(ctx *ctx.Context) error {
-		connectionID := String("your_business_connection_id")
-		ownedGiftID := String("owned_gift_id")
+		connectionID := g.String("your_business_connection_id")
+		ownedGiftID := g.String("owned_gift_id")
 
 		// Convert gift to stars
 		if result := ctx.ConvertGiftToStars(connectionID, ownedGiftID).Send(); result.IsOk() {
@@ -116,7 +116,7 @@ func main() {
 	// Star subscription management
 	b.Command("subscription", func(ctx *ctx.Context) error {
 		userID := ctx.EffectiveUser.Id
-		chargeID := String("telegram_payment_charge_id")
+		chargeID := g.String("telegram_payment_charge_id")
 
 		// Cancel user's star subscription
 		result := ctx.EditUserStarSubscription(userID, chargeID, true).Send()

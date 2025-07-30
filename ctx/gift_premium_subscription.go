@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 )
 
@@ -18,7 +18,7 @@ type GiftPremiumSubscription struct {
 }
 
 // Text sets the text that will be shown along with the service message.
-func (gps *GiftPremiumSubscription) Text(text String) *GiftPremiumSubscription {
+func (gps *GiftPremiumSubscription) Text(text g.String) *GiftPremiumSubscription {
 	gps.opts.Text = text.Std()
 	return gps
 }
@@ -53,7 +53,7 @@ func (gps *GiftPremiumSubscription) Timeout(duration time.Duration) *GiftPremium
 }
 
 // APIURL sets a custom API URL for this request.
-func (gps *GiftPremiumSubscription) APIURL(url String) *GiftPremiumSubscription {
+func (gps *GiftPremiumSubscription) APIURL(url g.String) *GiftPremiumSubscription {
 	if gps.opts.RequestOpts == nil {
 		gps.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -64,8 +64,8 @@ func (gps *GiftPremiumSubscription) APIURL(url String) *GiftPremiumSubscription 
 }
 
 // Send gifts the premium subscription to the user.
-func (gps *GiftPremiumSubscription) Send() Result[bool] {
-	return ResultOf(gps.ctx.Bot.Raw().GiftPremiumSubscription(
+func (gps *GiftPremiumSubscription) Send() g.Result[bool] {
+	return g.ResultOf(gps.ctx.Bot.Raw().GiftPremiumSubscription(
 		gps.userID,
 		gps.monthCount,
 		gps.starCount,

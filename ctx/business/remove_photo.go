@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // RemovePhoto is a request builder for removing the business account profile photo.
@@ -31,7 +31,7 @@ func (rp *RemovePhoto) Timeout(duration time.Duration) *RemovePhoto {
 }
 
 // APIURL sets a custom API URL for this request.
-func (rp *RemovePhoto) APIURL(url String) *RemovePhoto {
+func (rp *RemovePhoto) APIURL(url g.String) *RemovePhoto {
 	if rp.opts.RequestOpts == nil {
 		rp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -42,8 +42,8 @@ func (rp *RemovePhoto) APIURL(url String) *RemovePhoto {
 }
 
 // Send executes the RemovePhoto request.
-func (rp *RemovePhoto) Send() Result[bool] {
-	return ResultOf(rp.account.bot.Raw().RemoveBusinessAccountProfilePhoto(
+func (rp *RemovePhoto) Send() g.Result[bool] {
+	return g.ResultOf(rp.account.bot.Raw().RemoveBusinessAccountProfilePhoto(
 		rp.account.connID.Std(),
 		rp.opts,
 	))

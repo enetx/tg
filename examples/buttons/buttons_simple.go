@@ -1,14 +1,14 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 )
 
 func main() {
-	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	b.Command("start", func(ctx *ctx.Context) error {
@@ -41,7 +41,7 @@ func main() {
 	)
 
 	b.On.Message.Text(func(ctx *ctx.Context) error {
-		return ctx.Reply("Echo: " + String(ctx.EffectiveMessage.Text)).Send().Err()
+		return ctx.Reply("Echo: " + g.String(ctx.EffectiveMessage.Text)).Send().Err()
 	})
 
 	b.Polling().Start()

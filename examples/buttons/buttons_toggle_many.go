@@ -5,11 +5,11 @@ import (
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 func main() {
-	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Create the initial inline keyboard with two rows:
@@ -24,13 +24,13 @@ func main() {
 	banan := keyboard.NewButton().On("🍌 Banan").Off("Banan")
 
 	// Map of callback data to buttons
-	buttons := Map[String, *keyboard.Button]{
+	buttons := g.Map[g.String, *keyboard.Button]{
 		"fruit:apple": apple,
 		"fruit:banan": banan,
 	}
 
 	// Add fruit buttons dynamically from the map
-	buttons.Iter().ForEach(func(cb String, btn *keyboard.Button) {
+	buttons.Iter().ForEach(func(cb g.String, btn *keyboard.Button) {
 		markup.Button(btn.Callback(cb))
 	})
 
@@ -41,7 +41,7 @@ func main() {
 
 	// Handle all callback queries starting with "fruit"
 	b.On.Callback.Prefix("fruit", func(ctx *ctx.Context) error {
-		cb := String(ctx.Callback.Data)
+		cb := g.String(ctx.Callback.Data)
 
 		if btn := buttons.Get(cb); btn.IsSome() {
 			// Toggle the button state

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetMe represents a request to get basic information about the bot.
@@ -25,7 +25,7 @@ func (gm *GetMe) Timeout(duration time.Duration) *GetMe {
 }
 
 // APIURL sets a custom API URL for this request.
-func (gm *GetMe) APIURL(url String) *GetMe {
+func (gm *GetMe) APIURL(url g.String) *GetMe {
 	if gm.opts.RequestOpts == nil {
 		gm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -36,6 +36,6 @@ func (gm *GetMe) APIURL(url String) *GetMe {
 }
 
 // Send gets basic information about the bot.
-func (gm *GetMe) Send() Result[*gotgbot.User] {
-	return ResultOf(gm.bot.Raw().GetMe(gm.opts))
+func (gm *GetMe) Send() g.Result[*gotgbot.User] {
+	return g.ResultOf(gm.bot.Raw().GetMe(gm.opts))
 }

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetMyCommands represents a request to get bot commands.
@@ -66,7 +66,7 @@ func (gmc *GetMyCommands) ScopeChatMember(chatID, userID int64) *GetMyCommands {
 }
 
 // LanguageCode sets the language code for the commands.
-func (gmc *GetMyCommands) LanguageCode(code String) *GetMyCommands {
+func (gmc *GetMyCommands) LanguageCode(code g.String) *GetMyCommands {
 	gmc.opts.LanguageCode = code.Std()
 	return gmc
 }
@@ -83,7 +83,7 @@ func (gmc *GetMyCommands) Timeout(duration time.Duration) *GetMyCommands {
 }
 
 // APIURL sets a custom API URL for this request.
-func (gmc *GetMyCommands) APIURL(url String) *GetMyCommands {
+func (gmc *GetMyCommands) APIURL(url g.String) *GetMyCommands {
 	if gmc.opts.RequestOpts == nil {
 		gmc.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -94,6 +94,6 @@ func (gmc *GetMyCommands) APIURL(url String) *GetMyCommands {
 }
 
 // Send gets the bot commands.
-func (gmc *GetMyCommands) Send() Result[[]gotgbot.BotCommand] {
-	return ResultOf(gmc.bot.raw.GetMyCommands(gmc.opts))
+func (gmc *GetMyCommands) Send() g.Result[g.Slice[gotgbot.BotCommand]] {
+	return g.ResultOf[g.Slice[gotgbot.BotCommand]](gmc.bot.raw.GetMyCommands(gmc.opts))
 }

@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/file"
 )
@@ -13,7 +13,7 @@ type MediaDocument struct {
 }
 
 // Document creates a new MediaDocument builder with the required fields.
-func Document(media file.File) *MediaDocument {
+func Document(media file.TgFile) *MediaDocument {
 	return &MediaDocument{
 		input: &gotgbot.InputMediaDocument{
 			Media: media.Doc,
@@ -29,7 +29,7 @@ func (md *MediaDocument) Thumbnail(thumbnail gotgbot.InputFile) *MediaDocument {
 }
 
 // Caption sets the caption for the document.
-func (md *MediaDocument) Caption(caption String) *MediaDocument {
+func (md *MediaDocument) Caption(caption g.String) *MediaDocument {
 	md.input.Caption = caption.Std()
 	return md
 }

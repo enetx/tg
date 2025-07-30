@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/file"
@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Command to send initial media that can be edited later
@@ -51,7 +51,7 @@ func main() {
 			Send()
 
 		if result.IsErr() {
-			return ctx.AnswerCallbackQuery(Format("Failed to change to video: {}", result.Err())).Send().Err()
+			return ctx.AnswerCallbackQuery(g.Format("Failed to change to video: {}", result.Err())).Send().Err()
 		}
 
 		return ctx.AnswerCallbackQuery("Changed to video! 🎥").Send().Err()
@@ -187,7 +187,7 @@ func main() {
 		}
 
 		if r := ctx.EditMessageMedia(media).MessageID(replyMsg.MessageId).Send(); r.IsErr() {
-			return ctx.Reply(Format("Failed to edit media: {}", r.Err())).Send().Err()
+			return ctx.Reply(g.Format("Failed to edit media: {}", r.Err())).Send().Err()
 		}
 
 		return ctx.Reply("Media edited successfully! ✨").Send().Err()
@@ -245,7 +245,7 @@ To test business connection media editing:
 			Send()
 
 		if result.IsErr() {
-			return ctx.Reply(Format("Failed to edit business media: {}", result.Err())).Send().Err()
+			return ctx.Reply(g.Format("Failed to edit business media: {}", result.Err())).Send().Err()
 		}
 
 		return ctx.Reply("Business message media edited! 💼").Send().Err()

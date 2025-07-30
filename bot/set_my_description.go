@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetMyDescription represents a request to set the bot's description.
@@ -14,13 +14,13 @@ type SetMyDescription struct {
 }
 
 // Description sets the bot's description text (0-512 characters).
-func (smd *SetMyDescription) Description(desc String) *SetMyDescription {
+func (smd *SetMyDescription) Description(desc g.String) *SetMyDescription {
 	smd.opts.Description = desc.Std()
 	return smd
 }
 
 // Language sets the language code for the description.
-func (smd *SetMyDescription) Language(code String) *SetMyDescription {
+func (smd *SetMyDescription) Language(code g.String) *SetMyDescription {
 	smd.opts.LanguageCode = code.Std()
 	return smd
 }
@@ -43,7 +43,7 @@ func (smd *SetMyDescription) Timeout(duration time.Duration) *SetMyDescription {
 }
 
 // APIURL sets a custom API URL for this request.
-func (smd *SetMyDescription) APIURL(url String) *SetMyDescription {
+func (smd *SetMyDescription) APIURL(url g.String) *SetMyDescription {
 	if smd.opts.RequestOpts == nil {
 		smd.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -54,6 +54,6 @@ func (smd *SetMyDescription) APIURL(url String) *SetMyDescription {
 }
 
 // Send sets the bot's description and returns the result.
-func (smd *SetMyDescription) Send() Result[bool] {
-	return ResultOf(smd.bot.raw.SetMyDescription(smd.opts))
+func (smd *SetMyDescription) Send() g.Result[bool] {
+	return g.ResultOf(smd.bot.raw.SetMyDescription(smd.opts))
 }

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetChatPhoto represents a request to set the chat photo.
@@ -12,14 +12,14 @@ type SetChatPhoto struct {
 	ctx    *Context
 	opts   *gotgbot.SetChatPhotoOpts
 	doc    gotgbot.InputFile
-	file   *File
-	chatID Option[int64]
+	file   *g.File
+	chatID g.Option[int64]
 	err    error
 }
 
 // ChatID sets the target chat ID for this request.
 func (scp *SetChatPhoto) ChatID(id int64) *SetChatPhoto {
-	scp.chatID = Some(id)
+	scp.chatID = g.Some(id)
 	return scp
 }
 
@@ -35,7 +35,7 @@ func (scp *SetChatPhoto) Timeout(duration time.Duration) *SetChatPhoto {
 }
 
 // APIURL sets a custom API URL for this request.
-func (scp *SetChatPhoto) APIURL(url String) *SetChatPhoto {
+func (scp *SetChatPhoto) APIURL(url g.String) *SetChatPhoto {
 	if scp.opts.RequestOpts == nil {
 		scp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -46,9 +46,9 @@ func (scp *SetChatPhoto) APIURL(url String) *SetChatPhoto {
 }
 
 // Send executes the SetChatPhoto request.
-func (scp *SetChatPhoto) Send() Result[bool] {
+func (scp *SetChatPhoto) Send() g.Result[bool] {
 	if scp.err != nil {
-		return Err[bool](scp.err)
+		return g.Err[bool](scp.err)
 	}
 
 	if scp.file != nil {
@@ -57,5 +57,5 @@ func (scp *SetChatPhoto) Send() Result[bool] {
 
 	chatID := scp.chatID.UnwrapOr(scp.ctx.EffectiveChat.Id)
 
-	return ResultOf(scp.ctx.Bot.Raw().SetChatPhoto(chatID, scp.doc, scp.opts))
+	return g.ResultOf(scp.ctx.Bot.Raw().SetChatPhoto(chatID, scp.doc, scp.opts))
 }

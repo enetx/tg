@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // RemoveChatVerification represents a request to remove chat verification.
@@ -26,7 +26,7 @@ func (rcv *RemoveChatVerification) Timeout(duration time.Duration) *RemoveChatVe
 }
 
 // APIURL sets a custom API URL for this request.
-func (rcv *RemoveChatVerification) APIURL(url String) *RemoveChatVerification {
+func (rcv *RemoveChatVerification) APIURL(url g.String) *RemoveChatVerification {
 	if rcv.opts.RequestOpts == nil {
 		rcv.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -37,6 +37,6 @@ func (rcv *RemoveChatVerification) APIURL(url String) *RemoveChatVerification {
 }
 
 // Send removes chat verification.
-func (rcv *RemoveChatVerification) Send() Result[bool] {
-	return ResultOf(rcv.ctx.Bot.Raw().RemoveChatVerification(rcv.chatID, rcv.opts))
+func (rcv *RemoveChatVerification) Send() g.Result[bool] {
+	return g.ResultOf(rcv.ctx.Bot.Raw().RemoveChatVerification(rcv.chatID, rcv.opts))
 }

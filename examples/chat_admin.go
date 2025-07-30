@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/types/permissions"
@@ -178,13 +178,13 @@ func main() {
 			return admins.Err()
 		}
 
-		builder := NewBuilder()
+		builder := g.NewBuilder()
 		builder.WriteString("Chat Administrators:\n")
 
 		for admin := range admins.Ok().Iter() {
-			builder.WriteString(Format("• {.GetUser.FirstName}", admin))
+			builder.WriteString(g.Format("• {.GetUser.FirstName}", admin))
 			if username := admin.GetUser().Username; username != "" {
-				builder.WriteString(Format("(@{})", username))
+				builder.WriteString(g.Format("(@{})", username))
 			}
 			builder.WriteRune('\n')
 		}

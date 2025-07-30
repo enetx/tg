@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
@@ -130,12 +130,12 @@ func handleBanUser(ctx *ctx.Context) error {
 	// Ban the user
 	result := ctx.BanChatMember(targetUser.Id).Send()
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to ban user: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to ban user: " + result.Err().Error())).Send().Err()
 	}
 
-	return ctx.Reply(String("🚫 <b>User Banned Successfully</b>\n\n" +
+	return ctx.Reply(g.String("🚫 <b>User Banned Successfully</b>\n\n" +
 		"<b>User:</b> " + targetUser.FirstName + "\n" +
-		"<b>ID:</b> " + Int(targetUser.Id).String().Std() + "\n\n" +
+		"<b>ID:</b> " + g.Int(targetUser.Id).String().Std() + "\n\n" +
 		"The user has been permanently banned from this chat.")).
 		HTML().Send().Err()
 }
@@ -154,12 +154,12 @@ func handleUnbanUser(ctx *ctx.Context) error {
 	// Unban the user
 	result := ctx.UnbanChatMember(targetUser.Id).Send()
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to unban user: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to unban user: " + result.Err().Error())).Send().Err()
 	}
 
-	return ctx.Reply(String("✅ <b>User Unbanned Successfully</b>\n\n" +
+	return ctx.Reply(g.String("✅ <b>User Unbanned Successfully</b>\n\n" +
 		"<b>User:</b> " + targetUser.FirstName + "\n" +
-		"<b>ID:</b> " + Int(targetUser.Id).String().Std() + "\n\n" +
+		"<b>ID:</b> " + g.Int(targetUser.Id).String().Std() + "\n\n" +
 		"The user can now join the chat again.")).
 		HTML().Send().Err()
 }
@@ -182,12 +182,12 @@ func handleRestrictUser(ctx *ctx.Context) error {
 		Send()
 
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to restrict user: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to restrict user: " + result.Err().Error())).Send().Err()
 	}
 
-	return ctx.Reply(String("🔇 <b>User Restricted Successfully</b>\n\n" +
+	return ctx.Reply(g.String("🔇 <b>User Restricted Successfully</b>\n\n" +
 		"<b>User:</b> " + targetUser.FirstName + "\n" +
-		"<b>ID:</b> " + Int(targetUser.Id).String().Std() + "\n" +
+		"<b>ID:</b> " + g.Int(targetUser.Id).String().Std() + "\n" +
 		"<b>Duration:</b> 1 hour\n\n" +
 		"The user's permissions have been limited.")).
 		HTML().Send().Err()
@@ -219,12 +219,12 @@ func handlePromoteUser(ctx *ctx.Context) error {
 		Send()
 
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to promote user: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to promote user: " + result.Err().Error())).Send().Err()
 	}
 
-	return ctx.Reply(String("⭐ <b>User Promoted Successfully</b>\n\n" +
+	return ctx.Reply(g.String("⭐ <b>User Promoted Successfully</b>\n\n" +
 		"<b>User:</b> " + targetUser.FirstName + "\n" +
-		"<b>ID:</b> " + Int(targetUser.Id).String().Std() + "\n\n" +
+		"<b>ID:</b> " + g.Int(targetUser.Id).String().Std() + "\n\n" +
 		"The user has been granted administrator privileges.")).
 		HTML().Send().Err()
 }
@@ -260,7 +260,7 @@ func handleSetTitle(ctx *ctx.Context) error {
 	// This would typically require user input, showing example
 	result := ctx.SetChatTitle("🎯 Advanced Bot Demo Chat").Send()
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to set title: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to set title: " + result.Err().Error())).Send().Err()
 	}
 
 	return ctx.Reply("📝 <b>Chat Title Updated</b>\n\n" +
@@ -279,9 +279,9 @@ func handleSetDescription(ctx *ctx.Context) error {
 		"• Business account integration\n\n" +
 		"Powered by TG Framework for Go"
 
-	result := ctx.SetChatDescription(String(description)).Send()
+	result := ctx.SetChatDescription(g.String(description)).Send()
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to set description: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to set description: " + result.Err().Error())).Send().Err()
 	}
 
 	return ctx.Reply("📄 <b>Chat Description Updated</b>\n\n" +
@@ -299,7 +299,7 @@ func handlePinMessage(ctx *ctx.Context) error {
 	result := ctx.PinChatMessage(messageID).Send()
 
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to pin message: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to pin message: " + result.Err().Error())).Send().Err()
 	}
 
 	return ctx.Reply("📌 <b>Message Pinned Successfully</b>\n\n" +
@@ -317,7 +317,7 @@ func handleDeleteMessages(ctx *ctx.Context) error {
 	result := ctx.DeleteMessage().MessageID(messageID).Send()
 
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to delete message: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to delete message: " + result.Err().Error())).Send().Err()
 	}
 
 	return ctx.Reply("🗑️ <b>Message Deleted Successfully</b>\n\n" +
@@ -363,7 +363,7 @@ func handleDefaultPermissions(ctx *ctx.Context) error {
 		Send()
 
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to set permissions: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to set permissions: " + result.Err().Error())).Send().Err()
 	}
 
 	return ctx.Reply("🔧 <b>Default Permissions Updated</b>\n\n" +
@@ -432,16 +432,16 @@ func handleCreateInvite(ctx *ctx.Context) error {
 		Send()
 
 	if result.IsErr() {
-		return ctx.Reply(String("❌ Failed to create invite link: " + result.Err().Error())).Send().Err()
+		return ctx.Reply(g.String("❌ Failed to create invite link: " + result.Err().Error())).Send().Err()
 	}
 
 	inviteLink := result.Ok()
 
-	return ctx.Reply(String("➕ <b>Invite Link Created Successfully</b>\n\n" +
+	return ctx.Reply(g.String("➕ <b>Invite Link Created Successfully</b>\n\n" +
 		"<b>Link:</b> <code>" + inviteLink.InviteLink + "</code>\n" +
 		"<b>Name:</b> " + inviteLink.Name + "\n" +
 		"<b>Creator:</b> " + inviteLink.Creator.FirstName + "\n" +
-		"<b>Member Limit:</b> " + Int(inviteLink.MemberLimit).String().Std() + "\n" +
+		"<b>Member Limit:</b> " + g.Int(inviteLink.MemberLimit).String().Std() + "\n" +
 		"<b>Expires:</b> " + time.Unix(inviteLink.ExpireDate, 0).Format("2006-01-02 15:04:05") + "\n\n" +
 		"Share this link to invite new members!")).
 		HTML().Send().Err()

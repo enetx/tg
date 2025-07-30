@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/types/rights"
 )
 
@@ -38,7 +38,7 @@ func (smdar *SetMyDefaultAdministratorRights) Timeout(duration time.Duration) *S
 }
 
 // APIURL sets a custom API URL for this request.
-func (smdar *SetMyDefaultAdministratorRights) APIURL(url String) *SetMyDefaultAdministratorRights {
+func (smdar *SetMyDefaultAdministratorRights) APIURL(url g.String) *SetMyDefaultAdministratorRights {
 	if smdar.opts.RequestOpts == nil {
 		smdar.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -49,6 +49,6 @@ func (smdar *SetMyDefaultAdministratorRights) APIURL(url String) *SetMyDefaultAd
 }
 
 // Send sets the bot's default administrator rights.
-func (smdar *SetMyDefaultAdministratorRights) Send() Result[bool] {
-	return ResultOf(smdar.bot.Raw().SetMyDefaultAdministratorRights(smdar.opts))
+func (smdar *SetMyDefaultAdministratorRights) Send() g.Result[bool] {
+	return g.ResultOf(smdar.bot.Raw().SetMyDefaultAdministratorRights(smdar.opts))
 }

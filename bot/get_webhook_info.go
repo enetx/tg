@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetWebhookInfo represents a request to get current webhook status.
@@ -25,7 +25,7 @@ func (gwi *GetWebhookInfo) Timeout(duration time.Duration) *GetWebhookInfo {
 }
 
 // APIURL sets a custom API URL for this request.
-func (gwi *GetWebhookInfo) APIURL(url String) *GetWebhookInfo {
+func (gwi *GetWebhookInfo) APIURL(url g.String) *GetWebhookInfo {
 	if gwi.opts.RequestOpts == nil {
 		gwi.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -36,6 +36,6 @@ func (gwi *GetWebhookInfo) APIURL(url String) *GetWebhookInfo {
 }
 
 // Send gets the current webhook status.
-func (gwi *GetWebhookInfo) Send() Result[*gotgbot.WebhookInfo] {
-	return ResultOf(gwi.bot.Raw().GetWebhookInfo(gwi.opts))
+func (gwi *GetWebhookInfo) Send() g.Result[*gotgbot.WebhookInfo] {
+	return g.ResultOf(gwi.bot.Raw().GetWebhookInfo(gwi.opts))
 }

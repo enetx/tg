@@ -4,20 +4,20 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // RevokeChatInviteLink represents a request to revoke a chat invite link.
 type RevokeChatInviteLink struct {
 	ctx        *Context
-	inviteLink String
+	inviteLink g.String
 	opts       *gotgbot.RevokeChatInviteLinkOpts
-	chatID     Option[int64]
+	chatID     g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (rcil *RevokeChatInviteLink) ChatID(chatID int64) *RevokeChatInviteLink {
-	rcil.chatID = Some(chatID)
+	rcil.chatID = g.Some(chatID)
 	return rcil
 }
 
@@ -33,7 +33,7 @@ func (rcil *RevokeChatInviteLink) Timeout(duration time.Duration) *RevokeChatInv
 }
 
 // APIURL sets a custom API URL for this request.
-func (rcil *RevokeChatInviteLink) APIURL(url String) *RevokeChatInviteLink {
+func (rcil *RevokeChatInviteLink) APIURL(url g.String) *RevokeChatInviteLink {
 	if rcil.opts.RequestOpts == nil {
 		rcil.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,7 +44,7 @@ func (rcil *RevokeChatInviteLink) APIURL(url String) *RevokeChatInviteLink {
 }
 
 // Send revokes the chat invite link and returns the result.
-func (rcil *RevokeChatInviteLink) Send() Result[*gotgbot.ChatInviteLink] {
+func (rcil *RevokeChatInviteLink) Send() g.Result[*gotgbot.ChatInviteLink] {
 	chatID := rcil.chatID.UnwrapOr(rcil.ctx.EffectiveChat.Id)
-	return ResultOf(rcil.ctx.Bot.Raw().RevokeChatInviteLink(chatID, rcil.inviteLink.Std(), rcil.opts))
+	return g.ResultOf(rcil.ctx.Bot.Raw().RevokeChatInviteLink(chatID, rcil.inviteLink.Std(), rcil.opts))
 }

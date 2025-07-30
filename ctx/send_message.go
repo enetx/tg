@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
@@ -13,10 +13,10 @@ import (
 
 type SendMessage struct {
 	ctx         *Context
-	text        String
-	chatID      Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	text        g.String
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 	opts        *gotgbot.SendMessageOpts
 }
 
@@ -28,19 +28,19 @@ func (sm *SendMessage) Entities(e *entities.Entities) *SendMessage {
 
 // After schedules the message to be sent after the specified duration.
 func (sm *SendMessage) After(duration time.Duration) *SendMessage {
-	sm.after = Some(duration)
+	sm.after = g.Some(duration)
 	return sm
 }
 
 // DeleteAfter schedules the message to be deleted after the specified duration.
 func (sm *SendMessage) DeleteAfter(duration time.Duration) *SendMessage {
-	sm.deleteAfter = Some(duration)
+	sm.deleteAfter = g.Some(duration)
 	return sm
 }
 
 // To sets the target chat ID for the message.
 func (sm *SendMessage) To(chatID int64) *SendMessage {
-	sm.chatID = Some(chatID)
+	sm.chatID = g.Some(chatID)
 	return sm
 }
 
@@ -111,7 +111,7 @@ func (sm *SendMessage) Preview(p *preview.Preview) *SendMessage {
 }
 
 // Business sets the business connection ID for the message.
-func (sm *SendMessage) Business(id String) *SendMessage {
+func (sm *SendMessage) Business(id g.String) *SendMessage {
 	sm.opts.BusinessConnectionId = id.Std()
 	return sm
 }
@@ -134,7 +134,7 @@ func (sm *SendMessage) Timeout(duration time.Duration) *SendMessage {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sm *SendMessage) APIURL(url String) *SendMessage {
+func (sm *SendMessage) APIURL(url g.String) *SendMessage {
 	if sm.opts.RequestOpts == nil {
 		sm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -145,9 +145,9 @@ func (sm *SendMessage) APIURL(url String) *SendMessage {
 }
 
 // Send sends the message to Telegram and returns the result.
-func (sm *SendMessage) Send() Result[*gotgbot.Message] {
-	return sm.ctx.timers(sm.after, sm.deleteAfter, func() Result[*gotgbot.Message] {
+func (sm *SendMessage) Send() g.Result[*gotgbot.Message] {
+	return sm.ctx.timers(sm.after, sm.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := sm.chatID.UnwrapOr(sm.ctx.EffectiveChat.Id)
-		return ResultOf(sm.ctx.Bot.Raw().SendMessage(chatID, sm.text.Std(), sm.opts))
+		return g.ResultOf(sm.ctx.Bot.Raw().SendMessage(chatID, sm.text.Std(), sm.opts))
 	})
 }

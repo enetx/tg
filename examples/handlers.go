@@ -3,13 +3,13 @@ package main
 import (
 	"log"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Message
@@ -59,7 +59,7 @@ func main() {
 
 	b.On.Message.Any(func(ctx *ctx.Context) error {
 		for _, user := range ctx.EffectiveMessage.NewChatMembers {
-			_ = ctx.Reply(Format("Welcome, {}!", user.FirstName)).Send()
+			_ = ctx.Reply(g.Format("Welcome, {}!", user.FirstName)).Send()
 		}
 		return nil
 	})

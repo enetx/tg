@@ -5,7 +5,7 @@ package main
 
 import (
 	"github.com/enetx/fsm"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
@@ -22,7 +22,7 @@ const (
 
 var (
 	// fsmStore keeps a per-user FSM instance
-	fsmStore = NewMapSafe[int64, *fsm.SyncFSM]()
+	fsmStore = g.NewMapSafe[int64, *fsm.SyncFSM]()
 
 	// furl is the template for Telegram deep-link URLs
 	furl = "https://t.me/{.Bot.Raw.Username}?start={}"
@@ -30,7 +30,7 @@ var (
 
 func main() {
 	// Read the bot token from a .env file
-	token := NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 
 	// Create the bot instance
 	b := bot.New(token).Build().Unwrap()
@@ -69,7 +69,7 @@ func main() {
 
 	// Handle callback button press
 	b.On.Callback.Equal(CallbackButton, func(tgctx *ctx.Context) error {
-		url := Format(furl, tgctx.Bot, UsingKeyboard)
+		url := g.Format(furl, tgctx.Bot, UsingKeyboard)
 		return tgctx.AnswerCallbackQuery("").URL(url).Send().Err()
 	})
 
@@ -79,14 +79,14 @@ func main() {
 
 // Fallback handler for unknown payloads or transitions
 func handleDefault(c *ctx.Context) error {
-	url := Format(furl, c, CheckThisOut)
-	return c.SendMessage(String("Feel free to tell your friends about it:\n\n" + url)).Send().Err()
+	url := g.Format(furl, c, CheckThisOut)
+	return c.SendMessage(g.String("Feel free to tell your friends about it:\n\n" + url)).Send().Err()
 }
 
 // FSM: Entered state "deep1"
 func handleDeep1(fctx *fsm.Context) error {
 	tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
-	url := Format(furl, tgctx, SoCool)
+	url := g.Format(furl, tgctx, SoCool)
 
 	return tgctx.SendMessage("Awesome, you just accessed hidden functionality! Now let's get back to the private chat.").
 		Markup(keyboard.Inline().URL("Continue here!", url)).
@@ -97,8 +97,8 @@ func handleDeep1(fctx *fsm.Context) error {
 // FSM: Entered state "deep2"
 func handleDeep2(fctx *fsm.Context) error {
 	tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
-	url := Format(furl, tgctx, UsingEntities)
-	msg := Format(`You can also mask the deep-linked URLs as links: <a href="{}">▶️ CLICK HERE</a>`, url)
+	url := g.Format(furl, tgctx, UsingEntities)
+	msg := g.Format(`You can also mask the deep-linked URLs as links: <a href="{}">▶️ CLICK HERE</a>`, url)
 
 	return tgctx.SendMessage(msg).HTML().Preview(preview.New().Disable()).Send().Err()
 }
@@ -117,7 +117,7 @@ func handleDeep4(fctx *fsm.Context) error {
 	// Clear FSM for the user (optional, since this is a final state)
 	defer fsmStore.Delete(tgctx.EffectiveUser.Id)
 
-	return tgctx.SendMessage(Format("Congratulations! This is as deep as it gets \n\nThe payload was: {}", fctx.Input)).
+	return tgctx.SendMessage(g.Format("Congratulations! This is as deep as it gets \n\nThe payload was: {}", fctx.Input)).
 		Send().
 		Err()
 }

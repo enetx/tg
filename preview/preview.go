@@ -2,7 +2,7 @@ package preview
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 type Preview struct {
@@ -24,7 +24,7 @@ func (p *Preview) Import(src *gotgbot.LinkPreviewOptions) *Preview {
 }
 
 // URL sets a custom preview URL.
-func (p *Preview) URL(url String) *Preview {
+func (p *Preview) URL(url g.String) *Preview {
 	p.opts.Url = url.Std()
 	return p
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/enetx/fsm"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
@@ -17,11 +17,11 @@ const (
 
 // fsmStore holds the active FSM instance for each user, keyed by their Telegram user ID.
 // This allows each user to have their own independent state in the conversation.
-var fsmStore = NewMapSafe[int64, *fsm.SyncFSM]()
+var fsmStore = g.NewMapSafe[int64, *fsm.SyncFSM]()
 
 func main() {
 	// Load the Telegram bot token from a local .env file.
-	token := NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 
 	// Initialize the Telegram bot and its helper components.
 	b := bot.New(token).Build().Unwrap()
@@ -55,7 +55,7 @@ func main() {
 		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
 		// The selected color was passed as 'Input' from the color callback handler.
-		color := fctx.Input.(String)
+		color := fctx.Input.(g.String)
 		// Store the color in the FSM's persistent Data map for later use.
 		fctx.Data.Set("color", color)
 
@@ -81,13 +81,13 @@ func main() {
 
 		// Retrieve all collected data: color from the Data map, and animal from the current Input.
 		color := fctx.Data.Get("color").UnwrapOr("unknown")
-		animal := fctx.Input.(String)
+		animal := fctx.Input.(g.String)
 
 		// Acknowledge the final selection.
 		tgctx.Reply("✅ Animal selected: " + animal).Send()
 
 		// Compose and send the final summary message to the user.
-		return tgctx.SendMessage(Format("🧾 Your preferences:\n- Color: {}\n- Animal: {}", color, animal)).Send().Err()
+		return tgctx.SendMessage(g.Format("🧾 Your preferences:\n- Color: {}\n- Animal: {}", color, animal)).Send().Err()
 	})
 
 	// Command handler for /start, which initializes or resets a user's workflow.
@@ -123,7 +123,7 @@ func main() {
 
 		// Extract the color value from the callback data (e.g., "color:red" -> "red")
 		// and use it as the input for the FSM transition.
-		input := String(ctx.Callback.Data).StripPrefix("color:")
+		input := g.String(ctx.Callback.Data).StripPrefix("color:")
 
 		// Trigger the transition associated with selecting a color.
 		return fsm.Trigger("color_selected", input)
@@ -141,7 +141,7 @@ func main() {
 		fsm.Context().Meta.Set("tgctx", ctx)
 
 		// Extract the animal value from the callback data and use it as the FSM's input.
-		input := String(ctx.Callback.Data).StripPrefix("animal:")
+		input := g.String(ctx.Callback.Data).StripPrefix("animal:")
 
 		// Trigger the transition associated with selecting an animal.
 		return fsm.Trigger("animal_selected", input)

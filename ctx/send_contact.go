@@ -4,29 +4,29 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
 )
 
 type SendContact struct {
 	ctx         *Context
-	phoneNumber String
-	firstName   String
+	phoneNumber g.String
+	firstName   g.String
 	opts        *gotgbot.SendContactOpts
-	chatID      Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 }
 
 // After schedules the contact to be sent after the specified duration.
 func (sc *SendContact) After(duration time.Duration) *SendContact {
-	sc.after = Some(duration)
+	sc.after = g.Some(duration)
 	return sc
 }
 
 // DeleteAfter schedules the contact message to be deleted after the specified duration.
 func (sc *SendContact) DeleteAfter(duration time.Duration) *SendContact {
-	sc.deleteAfter = Some(duration)
+	sc.deleteAfter = g.Some(duration)
 	return sc
 }
 
@@ -49,13 +49,13 @@ func (sc *SendContact) Markup(kb keyboard.Keyboard) *SendContact {
 }
 
 // LastName sets the contact's last name.
-func (sc *SendContact) LastName(lastName String) *SendContact {
+func (sc *SendContact) LastName(lastName g.String) *SendContact {
 	sc.opts.LastName = lastName.Std()
 	return sc
 }
 
 // VCard sets additional contact information in vCard format.
-func (sc *SendContact) VCard(vcard String) *SendContact {
+func (sc *SendContact) VCard(vcard g.String) *SendContact {
 	sc.opts.Vcard = vcard.Std()
 	return sc
 }
@@ -78,7 +78,7 @@ func (sc *SendContact) Timeout(duration time.Duration) *SendContact {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sc *SendContact) APIURL(url String) *SendContact {
+func (sc *SendContact) APIURL(url g.String) *SendContact {
 	if sc.opts.RequestOpts == nil {
 		sc.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -89,7 +89,7 @@ func (sc *SendContact) APIURL(url String) *SendContact {
 }
 
 // Business sets the business connection ID for the contact message.
-func (sc *SendContact) Business(id String) *SendContact {
+func (sc *SendContact) Business(id g.String) *SendContact {
 	sc.opts.BusinessConnectionId = id.Std()
 	return sc
 }
@@ -102,14 +102,14 @@ func (sc *SendContact) Thread(id int64) *SendContact {
 
 // To sets the target chat ID for the contact message.
 func (sc *SendContact) To(chatID int64) *SendContact {
-	sc.chatID = Some(chatID)
+	sc.chatID = g.Some(chatID)
 	return sc
 }
 
 // Send sends the contact message to Telegram and returns the result.
-func (sc *SendContact) Send() Result[*gotgbot.Message] {
-	return sc.ctx.timers(sc.after, sc.deleteAfter, func() Result[*gotgbot.Message] {
+func (sc *SendContact) Send() g.Result[*gotgbot.Message] {
+	return sc.ctx.timers(sc.after, sc.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := sc.chatID.UnwrapOr(sc.ctx.EffectiveChat.Id)
-		return ResultOf(sc.ctx.Bot.Raw().SendContact(chatID, sc.phoneNumber.Std(), sc.firstName.Std(), sc.opts))
+		return g.ResultOf(sc.ctx.Bot.Raw().SendContact(chatID, sc.phoneNumber.Std(), sc.firstName.Std(), sc.opts))
 	})
 }

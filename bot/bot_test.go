@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 func TestBotBuilder(t *testing.T) {
-	token := String("123456:ABCDEF-test-token-here")
+	token := g.String("123456:ABCDEF-test-token-here")
 
 	// Test bot builder with disabled token check
 	result := New(token).
@@ -35,7 +35,7 @@ func TestBotBuilder(t *testing.T) {
 
 func TestBotBuilderInvalidToken(t *testing.T) {
 	// Test with invalid token format
-	token := String("invalid-token")
+	token := g.String("invalid-token")
 
 	result := New(token).
 		DisableTokenCheck().
@@ -47,15 +47,15 @@ func TestBotBuilderInvalidToken(t *testing.T) {
 }
 
 func TestBotBuilderWithOptions(t *testing.T) {
-	token := String("123456:ABCDEF-test-token-here")
+	token := g.String("123456:ABCDEF-test-token-here")
 
 	result := New(token).
 		DisableTokenCheck().
 		UseTestEnvironment().
 		Timeout(5 * time.Second).
-		APIURL(String("https://api.telegram.org")).
+		APIURL("https://api.telegram.org").
 		DefaultTimeout(10 * time.Second).
-		DefaultAPIURL(String("https://custom.api.url")).
+		DefaultAPIURL("https://custom.api.url").
 		Build()
 
 	if result.IsErr() {
@@ -75,7 +75,7 @@ func TestBotBuilderWithOptions(t *testing.T) {
 }
 
 func TestBotBuilderEmptyToken(t *testing.T) {
-	token := String("")
+	token := g.String("")
 
 	result := New(token).
 		DisableTokenCheck().
@@ -87,10 +87,10 @@ func TestBotBuilderEmptyToken(t *testing.T) {
 }
 
 func TestBotBuilderValidTokenFormat(t *testing.T) {
-	validTokens := []String{
-		String("123456789:AAEhBOweik9ai9Koh6oh9aegh"),
-		String("987654321:BBFhCPxejk0aj0Lpi7pi0bfhi"),
-		String("1111111111:CCGiDQyflk1bk1Mqj8qj1cgij"),
+	validTokens := []g.String{
+		"123456789:AAEhBOweik9ai9Koh6oh9aegh",
+		"987654321:BBFhCPxejk0aj0Lpi7pi0bfhi",
+		"1111111111:CCGiDQyflk1bk1Mqj8qj1cgij",
 	}
 
 	for _, token := range validTokens {
@@ -106,12 +106,12 @@ func TestBotBuilderValidTokenFormat(t *testing.T) {
 }
 
 func TestBotBuilderInvalidTokenFormats(t *testing.T) {
-	invalidTokens := []String{
-		String("123456"),      // No colon
-		String(":ABCDEF"),     // No bot ID
-		String("abc:ABCDEF"),  // Non-numeric bot ID
-		String("123456:"),     // Empty token part
-		String("123:456:789"), // Too many parts
+	invalidTokens := []g.String{
+		"123456",      // No colon
+		":ABCDEF",     // No bot ID
+		"abc:ABCDEF",  // Non-numeric bot ID
+		"123456:",     // Empty token part
+		"123:456:789", // Too many parts
 	}
 
 	for _, token := range invalidTokens {

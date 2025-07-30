@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 )
 
@@ -31,9 +31,9 @@ func (h *ShippingHandlers) FromUserID(id int64, fn Handler) *ShippingHandlers {
 }
 
 // HasPayloadPrefix handles shipping queries where invoice payload starts with the specified prefix.
-func (h *ShippingHandlers) HasPayloadPrefix(prefix String, fn Handler) *ShippingHandlers {
+func (h *ShippingHandlers) HasPayloadPrefix(prefix g.String, fn Handler) *ShippingHandlers {
 	h.handleShippingQuery(func(s *gotgbot.ShippingQuery) bool {
-		return s != nil && String(s.InvoicePayload).StartsWith(prefix)
+		return s != nil && g.String(s.InvoicePayload).StartsWith(prefix)
 	}, fn)
 	return h
 }

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // ReopenForumTopic represents a request to reopen a forum topic.
@@ -12,7 +12,7 @@ type ReopenForumTopic struct {
 	ctx             *Context
 	messageThreadID int64
 	opts            *gotgbot.ReopenForumTopicOpts
-	chatID          Option[int64]
+	chatID          g.Option[int64]
 }
 
 // Timeout sets a custom timeout for this request.
@@ -27,7 +27,7 @@ func (rft *ReopenForumTopic) Timeout(duration time.Duration) *ReopenForumTopic {
 }
 
 // APIURL sets a custom API URL for this request.
-func (rft *ReopenForumTopic) APIURL(url String) *ReopenForumTopic {
+func (rft *ReopenForumTopic) APIURL(url g.String) *ReopenForumTopic {
 	if rft.opts.RequestOpts == nil {
 		rft.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -39,12 +39,12 @@ func (rft *ReopenForumTopic) APIURL(url String) *ReopenForumTopic {
 
 // ChatID sets the target chat ID for this request.
 func (rft *ReopenForumTopic) ChatID(id int64) *ReopenForumTopic {
-	rft.chatID = Some(id)
+	rft.chatID = g.Some(id)
 	return rft
 }
 
 // Send executes the ReopenForumTopic request.
-func (rft *ReopenForumTopic) Send() Result[bool] {
+func (rft *ReopenForumTopic) Send() g.Result[bool] {
 	chatID := rft.chatID.UnwrapOr(rft.ctx.EffectiveChat.Id)
-	return ResultOf(rft.ctx.Bot.Raw().ReopenForumTopic(chatID, rft.messageThreadID, rft.opts))
+	return g.ResultOf(rft.ctx.Bot.Raw().ReopenForumTopic(chatID, rft.messageThreadID, rft.opts))
 }

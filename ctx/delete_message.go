@@ -4,33 +4,33 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 )
 
 type DeleteMessage struct {
 	ctx       *Context
-	chatID    Option[int64]
-	messageID Option[int64]
-	after     Option[time.Duration]
+	chatID    g.Option[int64]
+	messageID g.Option[int64]
+	after     g.Option[time.Duration]
 	opts      *gotgbot.DeleteMessageOpts
 }
 
 // After schedules the message deletion after the specified duration.
 func (dm *DeleteMessage) After(duration time.Duration) *DeleteMessage {
-	dm.after = Some(duration)
+	dm.after = g.Some(duration)
 	return dm
 }
 
 // ChatID sets the target chat ID for the delete action.
 func (dm *DeleteMessage) ChatID(id int64) *DeleteMessage {
-	dm.chatID = Some(id)
+	dm.chatID = g.Some(id)
 	return dm
 }
 
 // MessageID sets the target message ID to delete.
 func (dm *DeleteMessage) MessageID(id int64) *DeleteMessage {
-	dm.messageID = Some(id)
+	dm.messageID = g.Some(id)
 	return dm
 }
 
@@ -46,7 +46,7 @@ func (dm *DeleteMessage) Timeout(duration time.Duration) *DeleteMessage {
 }
 
 // APIURL sets a custom API URL for this request.
-func (dm *DeleteMessage) APIURL(url String) *DeleteMessage {
+func (dm *DeleteMessage) APIURL(url g.String) *DeleteMessage {
 	if dm.opts.RequestOpts == nil {
 		dm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -57,13 +57,13 @@ func (dm *DeleteMessage) APIURL(url String) *DeleteMessage {
 }
 
 // Send deletes the message and returns the result.
-func (dm *DeleteMessage) Send() Result[bool] {
+func (dm *DeleteMessage) Send() g.Result[bool] {
 	chatID := dm.chatID.UnwrapOr(dm.ctx.EffectiveChat.Id)
 	messageID := dm.messageID.UnwrapOr(dm.ctx.EffectiveMessage.MessageId)
 
 	if dm.after.IsSome() {
 		delay := dm.after.Some()
-		dm.after = None[time.Duration]()
+		dm.after = g.None[time.Duration]()
 
 		bot := dm.ctx.Bot
 
@@ -78,8 +78,8 @@ func (dm *DeleteMessage) Send() Result[bool] {
 			bot.Raw().DeleteMessage(chatID, messageID, opts)
 		}(bot, chatID, messageID, opts, delay)
 
-		return Ok(true)
+		return g.Ok(true)
 	}
 
-	return ResultOf(dm.ctx.Bot.Raw().DeleteMessage(chatID, messageID, dm.opts))
+	return g.ResultOf(dm.ctx.Bot.Raw().DeleteMessage(chatID, messageID, dm.opts))
 }

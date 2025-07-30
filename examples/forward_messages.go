@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
@@ -18,9 +18,9 @@ func main() {
 
 		fromChatID := args[0].ToInt().Unwrap().Int64()
 
-		var messageIDs Slice[int64]
+		var messageIDs g.Slice[int64]
 
-		args.Iter().Skip(1).ForEach(func(arg String) {
+		args.Iter().Skip(1).ForEach(func(arg g.String) {
 			messageIDs.Push(arg.ToInt().Unwrap().Int64())
 		})
 

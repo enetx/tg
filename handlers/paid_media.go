@@ -4,7 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 )
 
@@ -31,7 +31,7 @@ func (h *PaidMediaHandlers) FromUserID(id int64, fn Handler) *PaidMediaHandlers 
 }
 
 // Payload handles paid media purchases with a specific payload.
-func (h *PaidMediaHandlers) Payload(payload String, fn Handler) *PaidMediaHandlers {
+func (h *PaidMediaHandlers) Payload(payload g.String, fn Handler) *PaidMediaHandlers {
 	h.handlePurchasedPaidMedia(func(pm *gotgbot.PaidMediaPurchased) bool {
 		return pm != nil && pm.PaidMediaPayload == payload.Std()
 	}, fn)
@@ -39,9 +39,9 @@ func (h *PaidMediaHandlers) Payload(payload String, fn Handler) *PaidMediaHandle
 }
 
 // PayloadPrefix handles paid media purchases where payload starts with the specified prefix.
-func (h *PaidMediaHandlers) PayloadPrefix(prefix String, fn Handler) *PaidMediaHandlers {
+func (h *PaidMediaHandlers) PayloadPrefix(prefix g.String, fn Handler) *PaidMediaHandlers {
 	h.handlePurchasedPaidMedia(func(pm *gotgbot.PaidMediaPurchased) bool {
-		return pm != nil && String(pm.PaidMediaPayload).StartsWith(prefix)
+		return pm != nil && g.String(pm.PaidMediaPayload).StartsWith(prefix)
 	}, fn)
 	return h
 }

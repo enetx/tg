@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // PinChatMessage represents a request to pin a message.
@@ -12,17 +12,17 @@ type PinChatMessage struct {
 	ctx       *Context
 	messageID int64
 	opts      *gotgbot.PinChatMessageOpts
-	chatID    Option[int64]
+	chatID    g.Option[int64]
 }
 
 // ChatID sets the target chat ID for this request.
 func (pcm *PinChatMessage) ChatID(id int64) *PinChatMessage {
-	pcm.chatID = Some(id)
+	pcm.chatID = g.Some(id)
 	return pcm
 }
 
 // Business sets the business connection ID for the pin action.
-func (pcm *PinChatMessage) Business(id String) *PinChatMessage {
+func (pcm *PinChatMessage) Business(id g.String) *PinChatMessage {
 	pcm.opts.BusinessConnectionId = id.Std()
 	return pcm
 }
@@ -45,7 +45,7 @@ func (pcm *PinChatMessage) Timeout(duration time.Duration) *PinChatMessage {
 }
 
 // APIURL sets a custom API URL for this request.
-func (pcm *PinChatMessage) APIURL(url String) *PinChatMessage {
+func (pcm *PinChatMessage) APIURL(url g.String) *PinChatMessage {
 	if pcm.opts.RequestOpts == nil {
 		pcm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -56,7 +56,7 @@ func (pcm *PinChatMessage) APIURL(url String) *PinChatMessage {
 }
 
 // Send executes the PinChatMessage request.
-func (pcm *PinChatMessage) Send() Result[bool] {
+func (pcm *PinChatMessage) Send() g.Result[bool] {
 	chatID := pcm.chatID.UnwrapOr(pcm.ctx.EffectiveChat.Id)
-	return ResultOf(pcm.ctx.Bot.Raw().PinChatMessage(chatID, pcm.messageID, pcm.opts))
+	return g.ResultOf(pcm.ctx.Bot.Raw().PinChatMessage(chatID, pcm.messageID, pcm.opts))
 }

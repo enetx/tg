@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/areas"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/input"
@@ -13,14 +13,14 @@ import (
 // PostStory represents a request to post a story to a business account.
 type PostStory struct {
 	ctx                  *Context
-	businessConnectionID String
+	businessConnectionID g.String
 	content              input.StoryContent
 	activePeriod         int64
 	opts                 *gotgbot.PostStoryOpts
 }
 
 // Caption sets the story caption text.
-func (ps *PostStory) Caption(caption String) *PostStory {
+func (ps *PostStory) Caption(caption g.String) *PostStory {
 	ps.opts.Caption = caption.Std()
 	return ps
 }
@@ -79,7 +79,7 @@ func (ps *PostStory) Timeout(duration time.Duration) *PostStory {
 }
 
 // APIURL sets a custom API URL for this request.
-func (ps *PostStory) APIURL(url String) *PostStory {
+func (ps *PostStory) APIURL(url g.String) *PostStory {
 	if ps.opts.RequestOpts == nil {
 		ps.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -90,8 +90,8 @@ func (ps *PostStory) APIURL(url String) *PostStory {
 }
 
 // Send executes the PostStory request.
-func (ps *PostStory) Send() Result[*gotgbot.Story] {
-	return ResultOf(ps.ctx.Bot.Raw().PostStory(
+func (ps *PostStory) Send() g.Result[*gotgbot.Story] {
+	return g.ResultOf(ps.ctx.Bot.Raw().PostStory(
 		ps.businessConnectionID.Std(),
 		ps.content.Build(),
 		ps.activePeriod,

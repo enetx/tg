@@ -2,17 +2,17 @@ package business
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // Account provides high-level methods for managing a Telegram Business account.
 type Account struct {
 	bot    Bot
-	connID String
+	connID g.String
 }
 
 // NewAccount creates a new Account instance bound to the given bot and connection ID.
-func NewAccount(bot Bot, connectionID String) *Account {
+func NewAccount(bot Bot, connectionID g.String) *Account {
 	return &Account{
 		bot:    bot,
 		connID: connectionID,
@@ -20,7 +20,7 @@ func NewAccount(bot Bot, connectionID String) *Account {
 }
 
 // Name returns a builder for setting the account's first and last name.
-func (a *Account) SetName(firstName String) *SetName {
+func (a *Account) SetName(firstName g.String) *SetName {
 	return &SetName{
 		account:   a,
 		firstName: firstName,
@@ -29,7 +29,7 @@ func (a *Account) SetName(firstName String) *SetName {
 }
 
 // SetUsername returns a builder for setting the account's username.
-func (a *Account) SetUsername(username String) *SetUsername {
+func (a *Account) SetUsername(username g.String) *SetUsername {
 	return &SetUsername{
 		account: a,
 		opts:    &gotgbot.SetBusinessAccountUsernameOpts{Username: username.Std()},
@@ -37,7 +37,7 @@ func (a *Account) SetUsername(username String) *SetUsername {
 }
 
 // SetBio returns a builder for setting the account's biography text.
-func (a *Account) SetBio(bio String) *SetBio {
+func (a *Account) SetBio(bio g.String) *SetBio {
 	return &SetBio{
 		account: a,
 		opts:    &gotgbot.SetBusinessAccountBioOpts{Bio: bio.Std()},
@@ -45,7 +45,7 @@ func (a *Account) SetBio(bio String) *SetBio {
 }
 
 // SetPhoto returns a builder for setting the account's profile photo.
-func (a *Account) SetPhoto(photo String) *SetPhoto {
+func (a *Account) SetPhoto(photo g.String) *SetPhoto {
 	return &SetPhoto{
 		account: a,
 		photo:   photo,
@@ -54,7 +54,7 @@ func (a *Account) SetPhoto(photo String) *SetPhoto {
 }
 
 // SetAnimatedPhoto returns a builder for setting the account's animated profile photo.
-func (a *Account) SetAnimatedPhoto(animation String) *SetAnimatedPhoto {
+func (a *Account) SetAnimatedPhoto(animation g.String) *SetAnimatedPhoto {
 	return &SetAnimatedPhoto{
 		account:   a,
 		animation: animation,

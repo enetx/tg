@@ -4,15 +4,15 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // EditGeneralForumTopic represents a request to edit the general forum topic.
 type EditGeneralForumTopic struct {
 	ctx    *Context
-	name   String
+	name   g.String
 	opts   *gotgbot.EditGeneralForumTopicOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // Timeout sets a custom timeout for this request.
@@ -27,7 +27,7 @@ func (egft *EditGeneralForumTopic) Timeout(duration time.Duration) *EditGeneralF
 }
 
 // APIURL sets a custom API URL for this request.
-func (egft *EditGeneralForumTopic) APIURL(url String) *EditGeneralForumTopic {
+func (egft *EditGeneralForumTopic) APIURL(url g.String) *EditGeneralForumTopic {
 	if egft.opts.RequestOpts == nil {
 		egft.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -39,12 +39,12 @@ func (egft *EditGeneralForumTopic) APIURL(url String) *EditGeneralForumTopic {
 
 // ChatID sets the target chat ID for this request.
 func (egft *EditGeneralForumTopic) ChatID(id int64) *EditGeneralForumTopic {
-	egft.chatID = Some(id)
+	egft.chatID = g.Some(id)
 	return egft
 }
 
 // Send executes the EditGeneralForumTopic request.
-func (egft *EditGeneralForumTopic) Send() Result[bool] {
+func (egft *EditGeneralForumTopic) Send() g.Result[bool] {
 	chatID := egft.chatID.UnwrapOr(egft.ctx.EffectiveChat.Id)
-	return ResultOf(egft.ctx.Bot.Raw().EditGeneralForumTopic(chatID, egft.name.Std(), egft.opts))
+	return g.ResultOf(egft.ctx.Bot.Raw().EditGeneralForumTopic(chatID, egft.name.Std(), egft.opts))
 }

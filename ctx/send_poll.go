@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
@@ -13,11 +13,11 @@ import (
 
 type SendPoll struct {
 	ctx         *Context
-	question    String
-	chatID      Option[int64]
-	options     Slice[input.PollOption]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	question    g.String
+	chatID      g.Option[int64]
+	options     g.Slice[input.PollOption]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 	opts        *gotgbot.SendPollOpts
 }
 
@@ -35,19 +35,19 @@ func (sp *SendPoll) ExplanationEntities(e *entities.Entities) *SendPoll {
 
 // After schedules the poll to be sent after the specified duration.
 func (sp *SendPoll) After(duration time.Duration) *SendPoll {
-	sp.after = Some(duration)
+	sp.after = g.Some(duration)
 	return sp
 }
 
 // DeleteAfter schedules the poll message to be deleted after the specified duration.
 func (sp *SendPoll) DeleteAfter(duration time.Duration) *SendPoll {
-	sp.deleteAfter = Some(duration)
+	sp.deleteAfter = g.Some(duration)
 	return sp
 }
 
 // To sets the target chat ID for the poll.
 func (sp *SendPoll) To(id int64) *SendPoll {
-	sp.chatID = Some(id)
+	sp.chatID = g.Some(id)
 	return sp
 }
 
@@ -64,7 +64,7 @@ func (sp *SendPoll) Anonymous() *SendPoll {
 }
 
 // Business sets the business connection ID for the poll.
-func (sp *SendPoll) Business(id String) *SendPoll {
+func (sp *SendPoll) Business(id g.String) *SendPoll {
 	sp.opts.BusinessConnectionId = id.Std()
 	return sp
 }
@@ -107,7 +107,7 @@ func (sp *SendPoll) Quiz(correct int) *SendPoll {
 }
 
 // Explanation sets an explanation text for quiz answers.
-func (sp *SendPoll) Explanation(text String) *SendPoll {
+func (sp *SendPoll) Explanation(text g.String) *SendPoll {
 	sp.opts.Explanation = text.Std()
 	return sp
 }
@@ -172,7 +172,7 @@ func (sp *SendPoll) Timeout(duration time.Duration) *SendPoll {
 }
 
 // APIURL sets a custom API URL for this request.
-func (sp *SendPoll) APIURL(url String) *SendPoll {
+func (sp *SendPoll) APIURL(url g.String) *SendPoll {
 	if sp.opts.RequestOpts == nil {
 		sp.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -183,11 +183,11 @@ func (sp *SendPoll) APIURL(url String) *SendPoll {
 }
 
 // Send sends the poll to Telegram and returns the result.
-func (sp *SendPoll) Send() Result[*gotgbot.Message] {
-	return sp.ctx.timers(sp.after, sp.deleteAfter, func() Result[*gotgbot.Message] {
+func (sp *SendPoll) Send() g.Result[*gotgbot.Message] {
+	return sp.ctx.timers(sp.after, sp.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := sp.chatID.UnwrapOr(sp.ctx.EffectiveChat.Id)
-		options := TransformSlice(sp.options, input.PollOption.Build)
+		options := g.TransformSlice(sp.options, input.PollOption.Build)
 
-		return ResultOf(sp.ctx.Bot.Raw().SendPoll(chatID, sp.question.Std(), options, sp.opts))
+		return g.ResultOf(sp.ctx.Bot.Raw().SendPoll(chatID, sp.question.Std(), options, sp.opts))
 	})
 }

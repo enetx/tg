@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/types/passport"
 )
 
@@ -12,7 +12,7 @@ import (
 type SetPassportDataErrors struct {
 	ctx    *Context
 	userID int64
-	errors Slice[gotgbot.PassportElementError]
+	errors g.Slice[gotgbot.PassportElementError]
 	opts   *gotgbot.SetPassportDataErrorsOpts
 }
 
@@ -34,7 +34,7 @@ func (spde *SetPassportDataErrors) Timeout(duration time.Duration) *SetPassportD
 }
 
 // APIURL sets a custom API URL for this request.
-func (spde *SetPassportDataErrors) APIURL(url String) *SetPassportDataErrors {
+func (spde *SetPassportDataErrors) APIURL(url g.String) *SetPassportDataErrors {
 	if spde.opts.RequestOpts == nil {
 		spde.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -45,6 +45,6 @@ func (spde *SetPassportDataErrors) APIURL(url String) *SetPassportDataErrors {
 }
 
 // Send sets the passport data errors.
-func (spde *SetPassportDataErrors) Send() Result[bool] {
-	return ResultOf(spde.ctx.Bot.Raw().SetPassportDataErrors(spde.userID, spde.errors, spde.opts))
+func (spde *SetPassportDataErrors) Send() g.Result[bool] {
+	return g.ResultOf(spde.ctx.Bot.Raw().SetPassportDataErrors(spde.userID, spde.errors, spde.opts))
 }

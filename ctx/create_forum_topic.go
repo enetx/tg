@@ -4,15 +4,15 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // CreateForumTopic represents a request to create a forum topic.
 type CreateForumTopic struct {
 	ctx    *Context
-	name   String
+	name   g.String
 	opts   *gotgbot.CreateForumTopicOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // IconColor sets the color of the topic icon in RGB format.
@@ -22,7 +22,7 @@ func (cf *CreateForumTopic) IconColor(color int64) *CreateForumTopic {
 }
 
 // IconCustomEmojiID sets the unique identifier of the custom emoji.
-func (cf *CreateForumTopic) IconCustomEmojiID(emojiID String) *CreateForumTopic {
+func (cf *CreateForumTopic) IconCustomEmojiID(emojiID g.String) *CreateForumTopic {
 	cf.opts.IconCustomEmojiId = emojiID.Std()
 	return cf
 }
@@ -39,7 +39,7 @@ func (cf *CreateForumTopic) Timeout(duration time.Duration) *CreateForumTopic {
 }
 
 // APIURL sets a custom API URL for this request.
-func (cf *CreateForumTopic) APIURL(url String) *CreateForumTopic {
+func (cf *CreateForumTopic) APIURL(url g.String) *CreateForumTopic {
 	if cf.opts.RequestOpts == nil {
 		cf.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -51,12 +51,12 @@ func (cf *CreateForumTopic) APIURL(url String) *CreateForumTopic {
 
 // ChatID sets the target chat ID for this request.
 func (cf *CreateForumTopic) ChatID(id int64) *CreateForumTopic {
-	cf.chatID = Some(id)
+	cf.chatID = g.Some(id)
 	return cf
 }
 
 // Send executes the CreateForumTopic request.
-func (cf *CreateForumTopic) Send() Result[*gotgbot.ForumTopic] {
+func (cf *CreateForumTopic) Send() g.Result[*gotgbot.ForumTopic] {
 	chatID := cf.chatID.UnwrapOr(cf.ctx.EffectiveChat.Id)
-	return ResultOf(cf.ctx.Bot.Raw().CreateForumTopic(chatID, cf.name.Std(), cf.opts))
+	return g.ResultOf(cf.ctx.Bot.Raw().CreateForumTopic(chatID, cf.name.Std(), cf.opts))
 }

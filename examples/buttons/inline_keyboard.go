@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	token := NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// /start command — sends inline keyboard with 3 options
@@ -32,7 +32,7 @@ func main() {
 	// Handles any callback data
 	b.On.Callback.Any(func(ctx *ctx.Context) error {
 		data := ctx.Update.CallbackQuery.Data
-		return ctx.EditMessageText(Format("Selected option: <b>{}</b>", data)).
+		return ctx.EditMessageText(g.Format("Selected option: <b>{}</b>", data)).
 			HTML().
 			Preview(preview.New().URL("https://enetx.surf").Above()).
 			Send().Err()

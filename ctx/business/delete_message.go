@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // Delete is a request builder for deleting business messages.
 type Delete struct {
 	bot        Bot
-	connID     String
-	messageIDs Slice[int64]
+	connID     g.String
+	messageIDs g.Slice[int64]
 	opts       *gotgbot.DeleteBusinessMessagesOpts
 }
 
@@ -27,7 +27,7 @@ func (d *Delete) Timeout(duration time.Duration) *Delete {
 }
 
 // APIURL sets a custom API URL for this request.
-func (d *Delete) APIURL(url String) *Delete {
+func (d *Delete) APIURL(url g.String) *Delete {
 	if d.opts.RequestOpts == nil {
 		d.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -38,8 +38,8 @@ func (d *Delete) APIURL(url String) *Delete {
 }
 
 // Send executes the Delete request.
-func (d *Delete) Send() Result[bool] {
-	return ResultOf(d.bot.Raw().DeleteBusinessMessages(
+func (d *Delete) Send() g.Result[bool] {
+	return g.ResultOf(d.bot.Raw().DeleteBusinessMessages(
 		d.connID.Std(),
 		d.messageIDs,
 		d.opts,

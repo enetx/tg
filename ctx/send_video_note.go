@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -12,23 +12,23 @@ type SendVideoNote struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendVideoNoteOpts
-	file        *File
-	thumb       *File
-	chatID      Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	file        *g.File
+	thumb       *g.File
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 	err         error
 }
 
 // After schedules the video note to be sent after the specified duration.
 func (svn *SendVideoNote) After(duration time.Duration) *SendVideoNote {
-	svn.after = Some(duration)
+	svn.after = g.Some(duration)
 	return svn
 }
 
 // DeleteAfter schedules the video note message to be deleted after the specified duration.
 func (svn *SendVideoNote) DeleteAfter(duration time.Duration) *SendVideoNote {
-	svn.deleteAfter = Some(duration)
+	svn.deleteAfter = g.Some(duration)
 	return svn
 }
 
@@ -63,8 +63,8 @@ func (svn *SendVideoNote) Length(length int64) *SendVideoNote {
 }
 
 // Thumbnail sets a custom thumbnail for the video note.
-func (svn *SendVideoNote) Thumbnail(file String) *SendVideoNote {
-	svn.thumb = NewFile(file)
+func (svn *SendVideoNote) Thumbnail(file g.String) *SendVideoNote {
+	svn.thumb = g.NewFile(file)
 
 	reader := svn.thumb.Open()
 	if reader.IsErr() {
@@ -94,7 +94,7 @@ func (svn *SendVideoNote) Timeout(duration time.Duration) *SendVideoNote {
 }
 
 // APIURL sets a custom API URL for this request.
-func (svn *SendVideoNote) APIURL(url String) *SendVideoNote {
+func (svn *SendVideoNote) APIURL(url g.String) *SendVideoNote {
 	if svn.opts.RequestOpts == nil {
 		svn.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -105,7 +105,7 @@ func (svn *SendVideoNote) APIURL(url String) *SendVideoNote {
 }
 
 // Business sets the business connection ID for the video note message.
-func (svn *SendVideoNote) Business(id String) *SendVideoNote {
+func (svn *SendVideoNote) Business(id g.String) *SendVideoNote {
 	svn.opts.BusinessConnectionId = id.Std()
 	return svn
 }
@@ -118,14 +118,14 @@ func (svn *SendVideoNote) Thread(id int64) *SendVideoNote {
 
 // To sets the target chat ID for the video note message.
 func (svn *SendVideoNote) To(chatID int64) *SendVideoNote {
-	svn.chatID = Some(chatID)
+	svn.chatID = g.Some(chatID)
 	return svn
 }
 
 // Send sends the video note message to Telegram and returns the result.
-func (svn *SendVideoNote) Send() Result[*gotgbot.Message] {
+func (svn *SendVideoNote) Send() g.Result[*gotgbot.Message] {
 	if svn.err != nil {
-		return Err[*gotgbot.Message](svn.err)
+		return g.Err[*gotgbot.Message](svn.err)
 	}
 
 	if svn.file != nil {
@@ -136,8 +136,8 @@ func (svn *SendVideoNote) Send() Result[*gotgbot.Message] {
 		defer svn.thumb.Close()
 	}
 
-	return svn.ctx.timers(svn.after, svn.deleteAfter, func() Result[*gotgbot.Message] {
+	return svn.ctx.timers(svn.after, svn.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := svn.chatID.UnwrapOr(svn.ctx.EffectiveChat.Id)
-		return ResultOf(svn.ctx.Bot.Raw().SendVideoNote(chatID, svn.doc, svn.opts))
+		return g.ResultOf(svn.ctx.Bot.Raw().SendVideoNote(chatID, svn.doc, svn.opts))
 	})
 }

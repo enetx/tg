@@ -2,15 +2,15 @@ package keyboard
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/g/ref"
 )
 
 // Button represents an inline keyboard button with support for toggle functionality and fluent configuration.
 type Button struct {
 	raw      *gotgbot.InlineKeyboardButton
-	on       String
-	off      String
+	on       g.String
+	off      g.String
 	isToggle bool
 	isActive bool
 	deleted  bool
@@ -41,37 +41,37 @@ func (b *Button) attach(kb *InlineKeyboard) *Button {
 }
 
 // Text sets the button's display text.
-func (b *Button) Text(text String) *Button {
+func (b *Button) Text(text g.String) *Button {
 	b.raw.Text = text.Std()
 	return b
 }
 
 // Callback sets the callback data that will be sent when the button is pressed.
-func (b *Button) Callback(callback String) *Button {
+func (b *Button) Callback(callback g.String) *Button {
 	b.raw.CallbackData = callback.Std()
 	return b
 }
 
 // URL makes the button open the specified URL when pressed.
-func (b *Button) URL(url String) *Button {
+func (b *Button) URL(url g.String) *Button {
 	b.raw.Url = url.Std()
 	return b
 }
 
 // WebApp makes the button launch a Telegram Web App at the specified URL.
-func (b *Button) WebApp(url String) *Button {
+func (b *Button) WebApp(url g.String) *Button {
 	b.raw.WebApp = &gotgbot.WebAppInfo{Url: url.Std()}
 	return b
 }
 
 // LoginURL makes the button perform Telegram login via the specified URL.
-func (b *Button) LoginURL(url String) *Button {
+func (b *Button) LoginURL(url g.String) *Button {
 	b.raw.LoginUrl = &gotgbot.LoginUrl{Url: url.Std()}
 	return b
 }
 
 // CopyText makes the button copy the specified text to the user's clipboard when pressed.
-func (b *Button) CopyText(toCopy String) *Button {
+func (b *Button) CopyText(toCopy g.String) *Button {
 	b.raw.CopyText = &gotgbot.CopyTextButton{Text: toCopy.Std()}
 	return b
 }
@@ -89,13 +89,13 @@ func (b *Button) Game() *Button {
 }
 
 // SwitchInlineQuery makes the button open an inline query with the specified query string in another chat.
-func (b *Button) SwitchInlineQuery(query String) *Button {
+func (b *Button) SwitchInlineQuery(query g.String) *Button {
 	b.raw.SwitchInlineQuery = ref.Of(query.Std())
 	return b
 }
 
 // SwitchInlineQueryCurrentChat makes the button open an inline query with the specified query string in the current chat.
-func (b *Button) SwitchInlineQueryCurrentChat(query String) *Button {
+func (b *Button) SwitchInlineQueryCurrentChat(query g.String) *Button {
 	b.raw.SwitchInlineQueryCurrentChat = ref.Of(query.Std())
 	return b
 }
@@ -107,14 +107,14 @@ func (b *Button) Delete() {
 
 // Toggle-related methods
 // On sets the text to display when the toggle button is in the active state.
-func (b *Button) On(text String) *Button {
+func (b *Button) On(text g.String) *Button {
 	b.isToggle = true
 	b.on = text
 	return b
 }
 
 // Off sets the text to display when the toggle button is in the inactive state.
-func (b *Button) Off(text String) *Button {
+func (b *Button) Off(text g.String) *Button {
 	b.isToggle = true
 	b.off = text
 
@@ -160,26 +160,26 @@ func (b *Button) build() gotgbot.InlineKeyboardButton {
 
 // Getters
 // Callback returns the button's callback data.
-func (g buttonGetter) Callback() String {
-	return String(g.b.raw.CallbackData)
+func (bg buttonGetter) Callback() g.String {
+	return g.String(bg.b.raw.CallbackData)
 }
 
 // Text returns the button's display text.
-func (g buttonGetter) Text() String {
-	return String(g.b.raw.Text)
+func (bg buttonGetter) Text() g.String {
+	return g.String(bg.b.raw.Text)
 }
 
 // URL returns the button's URL.
-func (g buttonGetter) URL() String {
-	return String(g.b.raw.Url)
+func (bg buttonGetter) URL() g.String {
+	return g.String(bg.b.raw.Url)
 }
 
 // IsToggle returns true if the button is configured as a toggle button.
-func (g buttonGetter) IsToggle() bool {
-	return g.b.isToggle
+func (bg buttonGetter) IsToggle() bool {
+	return bg.b.isToggle
 }
 
 // IsActive returns the toggle button's current active state.
-func (g buttonGetter) IsActive() bool {
-	return g.b.isActive
+func (bg buttonGetter) IsActive() bool {
+	return bg.b.isActive
 }

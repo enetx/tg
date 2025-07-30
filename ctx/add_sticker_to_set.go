@@ -4,44 +4,44 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // AddStickerToSet represents a request to add a sticker to an existing set.
 type AddStickerToSet struct {
 	ctx     *Context
 	userID  int64
-	name    String
+	name    g.String
 	sticker gotgbot.InputSticker
 	opts    *gotgbot.AddStickerToSetOpts
 }
 
 // File sets the sticker file.
-func (ats *AddStickerToSet) File(filename String) *AddStickerToSet {
+func (ats *AddStickerToSet) File(filename g.String) *AddStickerToSet {
 	ats.sticker.Sticker = filename.Std()
 	return ats
 }
 
 // Format sets the sticker format.
-func (ats *AddStickerToSet) Format(format String) *AddStickerToSet {
+func (ats *AddStickerToSet) Format(format g.String) *AddStickerToSet {
 	ats.sticker.Format = format.Std()
 	return ats
 }
 
 // EmojiList sets the emoji list for the sticker.
-func (ats *AddStickerToSet) EmojiList(emojis Slice[String]) *AddStickerToSet {
+func (ats *AddStickerToSet) EmojiList(emojis g.Slice[g.String]) *AddStickerToSet {
 	ats.sticker.EmojiList = emojis.ToStringSlice()
 	return ats
 }
 
 // Keywords sets keywords for the sticker.
-func (ats *AddStickerToSet) Keywords(keywords Slice[String]) *AddStickerToSet {
+func (ats *AddStickerToSet) Keywords(keywords g.Slice[g.String]) *AddStickerToSet {
 	ats.sticker.Keywords = keywords.ToStringSlice()
 	return ats
 }
 
 // MaskPosition sets the mask position for the sticker.
-func (ats *AddStickerToSet) MaskPosition(point String, xShift, yShift, scale float64) *AddStickerToSet {
+func (ats *AddStickerToSet) MaskPosition(point g.String, xShift, yShift, scale float64) *AddStickerToSet {
 	ats.sticker.MaskPosition = &gotgbot.MaskPosition{
 		Point:  point.Std(),
 		XShift: xShift,
@@ -64,7 +64,7 @@ func (ats *AddStickerToSet) Timeout(duration time.Duration) *AddStickerToSet {
 }
 
 // APIURL sets a custom API URL for this request.
-func (ats *AddStickerToSet) APIURL(url String) *AddStickerToSet {
+func (ats *AddStickerToSet) APIURL(url g.String) *AddStickerToSet {
 	if ats.opts.RequestOpts == nil {
 		ats.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -75,6 +75,6 @@ func (ats *AddStickerToSet) APIURL(url String) *AddStickerToSet {
 }
 
 // Send adds the sticker to the set and returns the result.
-func (ats *AddStickerToSet) Send() Result[bool] {
-	return ResultOf(ats.ctx.Bot.Raw().AddStickerToSet(ats.userID, ats.name.Std(), ats.sticker, ats.opts))
+func (ats *AddStickerToSet) Send() g.Result[bool] {
+	return g.ResultOf(ats.ctx.Bot.Raw().AddStickerToSet(ats.userID, ats.name.Std(), ats.sticker, ats.opts))
 }

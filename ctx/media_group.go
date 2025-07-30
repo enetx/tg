@@ -5,29 +5,29 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/types/effects"
 )
 
 type MediaGroup struct {
 	ctx         *Context
-	media       Slice[input.Media]
+	media       g.Slice[input.Media]
 	opts        *gotgbot.SendMediaGroupOpts
-	chatID      Option[int64]
-	after       Option[time.Duration]
-	deleteAfter Option[time.Duration]
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 }
 
 // After schedules the media group to be sent after the specified duration.
 func (mg *MediaGroup) After(duration time.Duration) *MediaGroup {
-	mg.after = Some(duration)
+	mg.after = g.Some(duration)
 	return mg
 }
 
 // DeleteAfter schedules the media group messages to be deleted after the specified duration.
 func (mg *MediaGroup) DeleteAfter(duration time.Duration) *MediaGroup {
-	mg.deleteAfter = Some(duration)
+	mg.deleteAfter = g.Some(duration)
 	return mg
 }
 
@@ -101,14 +101,14 @@ func (mg *MediaGroup) ReplyTo(messageID int64) *MediaGroup {
 }
 
 // Business sets the business connection ID for the media group.
-func (mg *MediaGroup) Business(id String) *MediaGroup {
+func (mg *MediaGroup) Business(id g.String) *MediaGroup {
 	mg.opts.BusinessConnectionId = id.Std()
 	return mg
 }
 
 // To sets the target chat ID for the media group.
 func (mg *MediaGroup) To(chatID int64) *MediaGroup {
-	mg.chatID = Some(chatID)
+	mg.chatID = g.Some(chatID)
 	return mg
 }
 
@@ -124,7 +124,7 @@ func (mg *MediaGroup) Timeout(duration time.Duration) *MediaGroup {
 }
 
 // APIURL sets a custom API URL for this request.
-func (mg *MediaGroup) APIURL(url String) *MediaGroup {
+func (mg *MediaGroup) APIURL(url g.String) *MediaGroup {
 	if mg.opts.RequestOpts == nil {
 		mg.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -135,13 +135,13 @@ func (mg *MediaGroup) APIURL(url String) *MediaGroup {
 }
 
 // Send sends the media group to Telegram and returns the result.
-func (mg *MediaGroup) Send() Result[Slice[gotgbot.Message]] {
+func (mg *MediaGroup) Send() g.Result[g.Slice[gotgbot.Message]] {
 	if mg.media.Len() == 0 {
-		return Err[Slice[gotgbot.Message]](errors.New("no media added to media group"))
+		return g.Err[g.Slice[gotgbot.Message]](errors.New("no media added to media group"))
 	}
 
 	chatID := mg.chatID.UnwrapOr(mg.ctx.EffectiveChat.Id)
-	media := TransformSlice(mg.media, input.Media.Build)
+	media := g.TransformSlice(mg.media, input.Media.Build)
 
-	return ResultOf[Slice[gotgbot.Message]](mg.ctx.Bot.Raw().SendMediaGroup(chatID, media, mg.opts))
+	return g.ResultOf[g.Slice[gotgbot.Message]](mg.ctx.Bot.Raw().SendMediaGroup(chatID, media, mg.opts))
 }

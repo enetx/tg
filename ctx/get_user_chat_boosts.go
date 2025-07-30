@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // GetUserChatBoosts represents a request to get user chat boosts.
@@ -12,12 +12,12 @@ type GetUserChatBoosts struct {
 	ctx    *Context
 	userID int64
 	opts   *gotgbot.GetUserChatBoostsOpts
-	chatID Option[int64]
+	chatID g.Option[int64]
 }
 
 // ChatID sets the target chat ID.
 func (gucb *GetUserChatBoosts) ChatID(chatID int64) *GetUserChatBoosts {
-	gucb.chatID = Some(chatID)
+	gucb.chatID = g.Some(chatID)
 	return gucb
 }
 
@@ -33,7 +33,7 @@ func (gucb *GetUserChatBoosts) Timeout(duration time.Duration) *GetUserChatBoost
 }
 
 // APIURL sets a custom API URL for this request.
-func (gucb *GetUserChatBoosts) APIURL(url String) *GetUserChatBoosts {
+func (gucb *GetUserChatBoosts) APIURL(url g.String) *GetUserChatBoosts {
 	if gucb.opts.RequestOpts == nil {
 		gucb.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -44,8 +44,8 @@ func (gucb *GetUserChatBoosts) APIURL(url String) *GetUserChatBoosts {
 }
 
 // Send gets the user chat boosts.
-func (gucb *GetUserChatBoosts) Send() Result[*gotgbot.UserChatBoosts] {
-	return ResultOf(gucb.ctx.Bot.Raw().GetUserChatBoosts(
+func (gucb *GetUserChatBoosts) Send() g.Result[*gotgbot.UserChatBoosts] {
+	return g.ResultOf(gucb.ctx.Bot.Raw().GetUserChatBoosts(
 		gucb.chatID.UnwrapOr(gucb.ctx.EffectiveChat.Id),
 		gucb.userID,
 		gucb.opts,

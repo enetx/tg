@@ -4,20 +4,20 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 )
 
 // SetChatMenuButton represents a request to set the menu button of a chat.
 type SetChatMenuButton struct {
 	ctx        *Context
-	chatID     Option[*int64]
+	chatID     g.Option[*int64]
 	menuButton gotgbot.MenuButton
 	opts       *gotgbot.SetChatMenuButtonOpts
 }
 
 // ChatID sets the target chat ID.
 func (scmb *SetChatMenuButton) ChatID(chatID int64) *SetChatMenuButton {
-	scmb.chatID = Some(&chatID)
+	scmb.chatID = g.Some(&chatID)
 	return scmb
 }
 
@@ -34,7 +34,7 @@ func (scmb *SetChatMenuButton) DefaultMenu() *SetChatMenuButton {
 }
 
 // WebAppMenu sets a web app menu button.
-func (scmb *SetChatMenuButton) WebAppMenu(text String, webApp gotgbot.WebAppInfo) *SetChatMenuButton {
+func (scmb *SetChatMenuButton) WebAppMenu(text g.String, webApp gotgbot.WebAppInfo) *SetChatMenuButton {
 	scmb.menuButton = gotgbot.MenuButtonWebApp{
 		Text:   text.Std(),
 		WebApp: webApp,
@@ -61,7 +61,7 @@ func (scmb *SetChatMenuButton) Timeout(duration time.Duration) *SetChatMenuButto
 }
 
 // APIURL sets a custom API URL for this request.
-func (scmb *SetChatMenuButton) APIURL(url String) *SetChatMenuButton {
+func (scmb *SetChatMenuButton) APIURL(url g.String) *SetChatMenuButton {
 	if scmb.opts.RequestOpts == nil {
 		scmb.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -72,9 +72,9 @@ func (scmb *SetChatMenuButton) APIURL(url String) *SetChatMenuButton {
 }
 
 // Send sets the chat menu button.
-func (scmb *SetChatMenuButton) Send() Result[bool] {
+func (scmb *SetChatMenuButton) Send() g.Result[bool] {
 	scmb.opts.ChatId = scmb.chatID.UnwrapOrDefault()
 	scmb.opts.MenuButton = scmb.menuButton
 
-	return ResultOf(scmb.ctx.Bot.Raw().SetChatMenuButton(scmb.opts))
+	return g.ResultOf(scmb.ctx.Bot.Raw().SetChatMenuButton(scmb.opts))
 }

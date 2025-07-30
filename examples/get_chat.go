@@ -1,13 +1,13 @@
 package main
 
 import (
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
 
 func main() {
-	token := NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Command to get current chat info
@@ -15,11 +15,11 @@ func main() {
 		result := ctx.GetChat().Send()
 
 		if result.IsErr() {
-			return ctx.Reply(Format("Error getting chat info: {}", result.Err())).Send().Err()
+			return ctx.Reply(g.Format("Error getting chat info: {}", result.Err())).Send().Err()
 		}
 
 		chat := result.Ok()
-		info := Format(`
+		info := g.Format(`
 📊 <b>Chat Information</b>
 
 🆔 <b>ID:</b> <code>{}</code>
@@ -35,9 +35,9 @@ func main() {
 			chat.Title,
 			chat.Description,
 			chat.Username,
-			func() String {
+			func() g.String {
 				if chat.Location != nil {
-					return Format("{}, {}", chat.Location.Location.Latitude, chat.Location.Location.Longitude)
+					return g.Format("{}, {}", chat.Location.Location.Latitude, chat.Location.Location.Longitude)
 				}
 				return "N/A"
 			}(),
@@ -66,11 +66,11 @@ func main() {
 			result := ctx.GetChat().ChatID(chatID).Send()
 
 			if result.IsErr() {
-				return ctx.Reply(Format("Error getting chat info: {}", result.Err())).Send().Err()
+				return ctx.Reply(g.Format("Error getting chat info: {}", result.Err())).Send().Err()
 			}
 
 			chat := result.Ok()
-			return ctx.Reply(Format("Chat: {} ({})", chat.Title, chat.Type)).Send().Err()
+			return ctx.Reply(g.Format("Chat: {} ({})", chat.Title, chat.Type)).Send().Err()
 		}
 
 		return ctx.Reply("Please provide a valid chat ID (number)").Send().Err()
@@ -93,7 +93,7 @@ func main() {
 		case "group", "supergroup":
 			permissions := chat.Permissions
 			if permissions != nil {
-				return ctx.Reply(Format(`
+				return ctx.Reply(g.Format(`
 🔒 <b>Chat Permissions:</b>
 
 💬 Can send messages: {}

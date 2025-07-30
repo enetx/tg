@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 )
@@ -13,14 +13,14 @@ import (
 type SendPaidMedia struct {
 	ctx       *Context
 	opts      *gotgbot.SendPaidMediaOpts
-	chatID    Option[int64]
+	chatID    g.Option[int64]
 	starCount int64
-	media     Slice[input.PaidMedia]
+	media     g.Slice[input.PaidMedia]
 }
 
 // To sets the target chat ID for sending paid media.
 func (spm *SendPaidMedia) To(chatID int64) *SendPaidMedia {
-	spm.chatID = Some(chatID)
+	spm.chatID = g.Some(chatID)
 	return spm
 }
 
@@ -43,19 +43,19 @@ func (spm *SendPaidMedia) Video(video input.PaidMedia) *SendPaidMedia {
 }
 
 // Business sets the business connection ID for the paid media.
-func (spm *SendPaidMedia) Business(businessConnectionID String) *SendPaidMedia {
+func (spm *SendPaidMedia) Business(businessConnectionID g.String) *SendPaidMedia {
 	spm.opts.BusinessConnectionId = businessConnectionID.Std()
 	return spm
 }
 
 // Payload sets the bot-defined payload for internal processing.
-func (spm *SendPaidMedia) Payload(payload String) *SendPaidMedia {
+func (spm *SendPaidMedia) Payload(payload g.String) *SendPaidMedia {
 	spm.opts.Payload = payload.Std()
 	return spm
 }
 
 // Caption sets the media caption.
-func (spm *SendPaidMedia) Caption(caption String) *SendPaidMedia {
+func (spm *SendPaidMedia) Caption(caption g.String) *SendPaidMedia {
 	spm.opts.Caption = caption.Std()
 	return spm
 }
@@ -123,7 +123,7 @@ func (spm *SendPaidMedia) Timeout(duration time.Duration) *SendPaidMedia {
 }
 
 // APIURL sets a custom API URL for this request.
-func (spm *SendPaidMedia) APIURL(url String) *SendPaidMedia {
+func (spm *SendPaidMedia) APIURL(url g.String) *SendPaidMedia {
 	if spm.opts.RequestOpts == nil {
 		spm.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
@@ -134,21 +134,21 @@ func (spm *SendPaidMedia) APIURL(url String) *SendPaidMedia {
 }
 
 // Send sends the paid media and returns the message.
-func (spm *SendPaidMedia) Send() Result[*gotgbot.Message] {
+func (spm *SendPaidMedia) Send() g.Result[*gotgbot.Message] {
 	if spm.media.Empty() {
-		return Err[*gotgbot.Message](Errorf("no paid media specified"))
+		return g.Err[*gotgbot.Message](g.Errorf("no paid media specified"))
 	}
 
 	if spm.media.Len() > 10 {
-		return Err[*gotgbot.Message](Errorf("too many media items: {} (maximum 10)", spm.media.Len()))
+		return g.Err[*gotgbot.Message](g.Errorf("too many media items: {} (maximum 10)", spm.media.Len()))
 	}
 
 	if spm.starCount < 1 || spm.starCount > 10000 {
-		return Err[*gotgbot.Message](Errorf("star count must be between 1-10000, got {}", spm.starCount))
+		return g.Err[*gotgbot.Message](g.Errorf("star count must be between 1-10000, got {}", spm.starCount))
 	}
 
 	chatID := spm.chatID.UnwrapOr(spm.ctx.EffectiveChat.Id)
-	media := TransformSlice(spm.media, input.PaidMedia.Build)
+	media := g.TransformSlice(spm.media, input.PaidMedia.Build)
 
-	return ResultOf(spm.ctx.Bot.Raw().SendPaidMedia(chatID, spm.starCount, media, spm.opts))
+	return g.ResultOf(spm.ctx.Bot.Raw().SendPaidMedia(chatID, spm.starCount, media, spm.opts))
 }

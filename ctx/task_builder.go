@@ -2,14 +2,14 @@ package ctx
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
-	. "github.com/enetx/g"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 )
 
 type TaskBuilder[T any] struct {
-	text     String
-	parsmode Option[string]
-	entities Option[*entities.Entities]
+	text     g.String
+	parsmode g.Option[string]
+	entities g.Option[*entities.Entities]
 
 	target T
 	add    func(T, gotgbot.InputChecklistTask)
@@ -19,21 +19,21 @@ type TaskBuilder[T any] struct {
 // HTML sets the task's text to be parsed as HTML.
 // Ignored if Entities are set.
 func (tb *TaskBuilder[T]) HTML() *TaskBuilder[T] {
-	tb.parsmode = Some("HTML")
+	tb.parsmode = g.Some("HTML")
 	return tb
 }
 
 // Markdown sets the task's text to be parsed as MarkdownV2.
 // Ignored if Entities are set.
 func (tb *TaskBuilder[T]) Markdown() *TaskBuilder[T] {
-	tb.parsmode = Some("MarkdownV2")
+	tb.parsmode = g.Some("MarkdownV2")
 	return tb
 }
 
 // Entities sets custom message entities for the task.
 // Overrides any ParseMode if set.
 func (tb *TaskBuilder[T]) Entities(e *entities.Entities) *TaskBuilder[T] {
-	tb.entities = Some(e)
+	tb.entities = g.Some(e)
 	return tb
 }
 
