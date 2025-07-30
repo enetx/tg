@@ -77,7 +77,7 @@ func (mv *MediaVideo) Duration(duration int64) *MediaVideo {
 	return mv
 }
 
-// StartTimestamp sets the video start timestamp from the beginning..
+// StartTimestamp sets the video start timestamp from the beginning.
 func (mv *MediaVideo) StartTimestamp(timestamp int64) *MediaVideo {
 	mv.input.StartTimestamp = timestamp
 	return mv

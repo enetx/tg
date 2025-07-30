@@ -39,7 +39,7 @@ const (
 	CustomEmoji // inline custom emoji stickers
 )
 
-// g.String returns the canonical string representation used by Telegram Bot API.
+// String returns the canonical string representation used by Telegram Bot API.
 func (e EntityType) String() string {
 	switch e {
 	case Mention:

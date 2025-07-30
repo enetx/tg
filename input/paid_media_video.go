@@ -51,7 +51,7 @@ func (pmv *PaidMediaVideo) Duration(duration int64) *PaidMediaVideo {
 	return pmv
 }
 
-// StartTimestamp sets the video start timestamp from the beginning..
+// StartTimestamp sets the video start timestamp from the beginning.
 func (pmv *PaidMediaVideo) StartTimestamp(timestamp int64) *PaidMediaVideo {
 	pmv.input.StartTimestamp = timestamp
 	return pmv

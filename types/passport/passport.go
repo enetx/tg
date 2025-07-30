@@ -38,7 +38,7 @@ const (
 	TemporaryRegistration PassportElementType = "temporary_registration"
 )
 
-// g.String returns the string representation of the PassportElementType.
+// String returns the string representation of the PassportElementType.
 func (pet PassportElementType) String() string {
 	return string(pet)
 }

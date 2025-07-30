@@ -14,7 +14,7 @@ const (
 	Poop                          // 💩 Funny scream face animation
 )
 
-// g.String returns the Telegram MessageEffectId string associated with the effect.
+// String returns the Telegram MessageEffectId string associated with the effect.
 func (e EffectType) String() string {
 	switch e {
 	case Fire:

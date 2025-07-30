@@ -13,7 +13,7 @@ const (
 	ChannelPost                               // New channel post
 	EditedChannelPost                         // Edited channel post
 	InlineQuery                               // Inline query (e.g. @your_bot query)
-	ChosenInlineResult                        // g.Result chosen from inline query
+	ChosenInlineResult                        // Result chosen from inline query
 	CallbackQuery                             // Button callback with callback_data
 	ShippingQuery                             // Shipping address query for payments
 	PreCheckoutQuery                          // Pre-checkout query before confirming a payment
@@ -30,7 +30,7 @@ const (
 	DeletedBusinessMessages                   // Messages deleted from connected business account
 )
 
-// g.String returns the raw string name for UpdateType, as used in Telegram Bot API updates.
+// String returns the raw string name for UpdateType, as used in Telegram Bot API updates.
 func (u UpdateType) String() string {
 	switch u {
 	case Message:
