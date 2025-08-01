@@ -2,6 +2,11 @@
 
 # TG - Telegram Bot Framework for Go
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/enetx/tg.svg)](https://pkg.go.dev/github.com/enetx/tg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/enetx/tg)](https://goreportcard.com/report/github.com/enetx/tg)
+[![Coverage Status](https://coveralls.io/repos/github/enetx/tg/badge.svg?branch=main&service=github)](https://coveralls.io/github/enetx/tg?branch=main)
+[![Go](https://github.com/enetx/tg/actions/workflows/go.yml/badge.svg)](https://github.com/enetx/tg/actions/workflows/go.yml)
+
 Modern and elegant wrapper around [gotgbot](https://github.com/PaulSonOfLars/gotgbot) with convenient API and functional programming style support.
 
 ## Video Demo
