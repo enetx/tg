@@ -53,3 +53,7 @@ func (p *Polling) Start() {
 	g.Println("bot started")
 	p.bot.updater.Idle()
 }
+
+func (p *Polling) Opts() *ext.PollingOpts {
+	return p.opts
+}

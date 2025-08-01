@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/file"
@@ -26,7 +28,7 @@ func main() {
 		defer video.File.Close()
 
 		result := ctx.SendPaidMedia(stars).
-			Video(input.PaidVideo(video).SupportsStreaming().StartTimestamp(10)).
+			Video(input.PaidVideo(video).Streamable().StartAt(10 * time.Second)).
 			Caption("HD Premium Video with builder pattern and auto metadata!").
 			Send()
 
@@ -60,7 +62,7 @@ func main() {
 
 		result := ctx.SendPaidMedia(stars).
 			Photo(input.PaidPhoto(photo1)).
-			Video(input.PaidVideo(video).SupportsStreaming()).
+			Video(input.PaidVideo(video).Streamable()).
 			Photo(input.PaidPhoto(photo2)).
 			Caption("Mixed premium content with video builder!").
 			Send()

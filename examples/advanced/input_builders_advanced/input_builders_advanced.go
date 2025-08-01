@@ -90,7 +90,7 @@ func handlePhotoBuilder(ctx *ctx.Context) error {
 			"• HTML formatting in captions\n" +
 			"• Spoiler effects").
 		HTML().
-		HasSpoiler()
+		Spoiler()
 
 	// Send using MediaGroup for demonstration
 	ctx.MediaGroup().Photo(photo).Send()

@@ -1,0 +1,65 @@
+package bot_test
+
+import (
+	"testing"
+	"time"
+
+	"github.com/enetx/g"
+	"github.com/enetx/tg/bot"
+)
+
+func TestBot_SetMyName(t *testing.T) {
+	token := g.String("123456:ABCDEF-test-token-here")
+	result := bot.New(token).DisableTokenCheck().Build()
+
+	if result.IsErr() {
+		t.Errorf("Failed to create bot: %v", result.Err())
+		return
+	}
+
+	bot := result.Ok()
+	setName := bot.SetMyName()
+
+	if setName == nil {
+		t.Error("Expected SetMyName to return a builder")
+	}
+}
+
+func TestSetMyName_ChainedMethods(t *testing.T) {
+	token := g.String("123456:ABCDEF-test-token-here")
+	result := bot.New(token).DisableTokenCheck().Build()
+
+	if result.IsErr() {
+		t.Errorf("Failed to create bot: %v", result.Err())
+		return
+	}
+
+	bot := result.Ok()
+	req := bot.SetMyName()
+
+	// Test all chained methods for SetMyName
+	req = req.Name(g.String("Bot Name"))
+	if req == nil {
+		t.Error("Expected Name method to return request")
+	}
+
+	req = req.Language("en")
+	if req == nil {
+		t.Error("Expected Language method to return request")
+	}
+
+	req = req.Remove()
+	if req == nil {
+		t.Error("Expected Remove method to return request")
+	}
+
+	req = req.Timeout(10 * time.Second)
+	if req == nil {
+		t.Error("Expected Timeout method to return request")
+	}
+
+	req = req.APIURL("https://api.telegram.org")
+	if req == nil {
+		t.Error("Expected APIURL method to return request")
+	}
+}

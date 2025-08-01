@@ -77,8 +77,8 @@ func (b *Bot) Polling() *Polling {
 // Webhook returns a Webhook instance for receiving updates via webhook.
 func (b *Bot) Webhook() *SetWebhook {
 	return &SetWebhook{
-		bot: b,
-		opt: new(gotgbot.SetWebhookOpts),
+		bot:  b,
+		opts: new(gotgbot.SetWebhookOpts),
 	}
 }
 

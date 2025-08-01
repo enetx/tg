@@ -33,7 +33,7 @@ func main() {
 	// Video story command
 	b.Command("videostory", func(ctx *ctx.Context) error {
 		video := input.StoryVideo("video.mp4").
-			CoverFrameTimestamp(2.5) // Cover at 2.5 seconds
+			CoverFrameTimestamp(2 * time.Second) // Cover at 2 seconds
 
 		return ctx.PostStory("your_business_connection_id", video).
 			Caption("Epic video!").

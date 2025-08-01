@@ -12,7 +12,7 @@ type SetWebhook struct {
 	bot    *Bot
 	domain g.String
 	path   g.String
-	opt    *gotgbot.SetWebhookOpts
+	opts   *gotgbot.SetWebhookOpts
 	cert   *os.File
 }
 
@@ -22,7 +22,7 @@ func (w *SetWebhook) Certificate(path g.String) *SetWebhook {
 		panic("failed to open certificate file: " + err.Error())
 	}
 
-	w.opt.Certificate = gotgbot.InputFileByReader(path.Std(), file)
+	w.opts.Certificate = gotgbot.InputFileByReader(path.Std(), file)
 	w.cert = file
 
 	return w
@@ -39,27 +39,27 @@ func (w *SetWebhook) Path(s g.String) *SetWebhook {
 }
 
 func (w *SetWebhook) SecretToken(s g.String) *SetWebhook {
-	w.opt.SecretToken = s.Std()
+	w.opts.SecretToken = s.Std()
 	return w
 }
 
 func (w *SetWebhook) DropPending(b bool) *SetWebhook {
-	w.opt.DropPendingUpdates = b
+	w.opts.DropPendingUpdates = b
 	return w
 }
 
 func (w *SetWebhook) MaxConnections(n int) *SetWebhook {
-	w.opt.MaxConnections = int64(n)
+	w.opts.MaxConnections = int64(n)
 	return w
 }
 
 func (w *SetWebhook) IP(ip g.String) *SetWebhook {
-	w.opt.IpAddress = ip.Std()
+	w.opts.IpAddress = ip.Std()
 	return w
 }
 
 func (w *SetWebhook) AllowedUpdates(upds ...updates.UpdateType) *SetWebhook {
-	w.opt.AllowedUpdates = g.TransformSlice(g.Slice[updates.UpdateType](upds), updates.UpdateType.String)
+	w.opts.AllowedUpdates = g.TransformSlice(g.Slice[updates.UpdateType](upds), updates.UpdateType.String)
 	return w
 }
 
@@ -74,5 +74,9 @@ func (w *SetWebhook) Register() g.Result[bool] {
 
 	url := w.domain.StripSuffix("/") + "/" + w.path.StripPrefix("/")
 
-	return g.ResultOf(w.bot.Raw().SetWebhook(url.Std(), w.opt))
+	return g.ResultOf(w.bot.Raw().SetWebhook(url.Std(), w.opts))
+}
+
+func (w *SetWebhook) Opts() *gotgbot.SetWebhookOpts {
+	return w.opts
 }

@@ -12,8 +12,8 @@ type InlineArticle struct {
 	inline *gotgbot.InlineQueryResultArticle
 }
 
-// Article creates a new Article builder with ContentBuilder.
-func Article(id, title g.String, message input.MessageContent) *InlineArticle {
+// NewArticle creates a new NewArticle builder with ContentBuilder.
+func NewArticle(id, title g.String, message input.MessageContent) *InlineArticle {
 	return &InlineArticle{
 		inline: &gotgbot.InlineQueryResultArticle{
 			Id:                  id.Std(),

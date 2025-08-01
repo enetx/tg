@@ -58,8 +58,8 @@ func (pmv *PaidMediaVideo) StartAt(offset time.Duration) *PaidMediaVideo {
 	return pmv
 }
 
-// Streaming sets whether the video supports streaming.
-func (pmv *PaidMediaVideo) Streaming() *PaidMediaVideo {
+// Streamable sets whether the video supports streaming.
+func (pmv *PaidMediaVideo) Streamable() *PaidMediaVideo {
 	pmv.input.SupportsStreaming = true
 	return pmv
 }

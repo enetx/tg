@@ -1,9 +1,10 @@
-package entities
+package entities_test
 
 import (
 	"testing"
 
 	"github.com/enetx/g"
+	. "github.com/enetx/tg/entities"
 )
 
 func TestEntitiesBasicFormatting(t *testing.T) {

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/enetx/tg/areas"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
@@ -51,7 +53,7 @@ func main() {
 			// Custom proportions - wide and short
 			Position(60.0, 70.0).Size(35.0, 10.0).Rotate(30.0).Location()
 
-		return ctx.PostStory("conn_id", input.StoryVideo("video.mp4").CoverFrameTimestamp(1.5)).
+		return ctx.PostStory("conn_id", input.StoryVideo("video.mp4").CoverFrameTimestamp(1*time.Second)).
 			Caption("Size comparison!").
 			Areas(storyAreas).
 			Send().Err()

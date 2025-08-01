@@ -38,14 +38,14 @@ func main() {
 		photoBuilder := input.Photo(file.Input("https://picsum.photos/800/600").Ok()).
 			Caption("Beautiful photo with HTML formatting").
 			HTML().
-			HasSpoiler()
+			Spoiler()
 
 		videoBuilder := input.Video(file.Input("https://example.com/sample.mp4").Ok()).
 			Caption("Sample video with **markdown**").
 			Markdown().
 			Duration(120).
 			Size(1920, 1080).
-			SupportsStreaming()
+			Streamable()
 
 		audioBuilder := input.Audio(file.Input("https://example.com/song.mp3").Ok()).
 			Caption("🎵 Music track").

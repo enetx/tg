@@ -53,7 +53,7 @@ func main() {
 		switch {
 		case query == "article":
 			// Article result example
-			article := inline.Article(
+			article := inline.NewArticle(
 				"article_1",
 				"Sample Article",
 				input.Text("This is the content of the article"),
@@ -196,7 +196,7 @@ func main() {
 				Text("Option 2", "opt2")
 
 			// Create article with inline keyboard
-			article := inline.Article(
+			article := inline.NewArticle(
 				"article_keyboard",
 				"🎹 Article with Keyboard",
 				input.Text("Click the buttons below:"),
@@ -211,14 +211,14 @@ func main() {
 			// Different input message content types
 
 			// Text content
-			textArticle := inline.Article(
+			textArticle := inline.NewArticle(
 				"text_content",
 				"Text Content",
 				input.Text("*Bold text* and _italic text_").Markdown(),
 			)
 
 			// Location content
-			locationArticle := inline.Article(
+			locationArticle := inline.NewArticle(
 				"location_content",
 				"Send Location",
 				input.Location(51.5074, -0.1278), // London coordinates
@@ -226,7 +226,7 @@ func main() {
 				Description("This will send a location instead of text")
 
 			// Venue content
-			venueArticle := inline.Article(
+			venueArticle := inline.NewArticle(
 				"venue_content",
 				"Send Venue",
 				input.Venue(
@@ -238,7 +238,7 @@ func main() {
 				Description("This will send a venue instead of text")
 
 			// Contact content
-			contactArticle := inline.Article(
+			contactArticle := inline.NewArticle(
 				"contact_content",
 				"Send Contact",
 				input.Contact("+33123456789", "Pierre"),
@@ -249,7 +249,7 @@ func main() {
 
 		default:
 			// Default results for empty or unknown query
-			defaultArticle := inline.Article(
+			defaultArticle := inline.NewArticle(
 				"help",
 				"Inline Query Help",
 				input.Text(

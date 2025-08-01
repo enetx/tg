@@ -78,7 +78,7 @@ func main() {
 
 		result := ctx.MediaGroup().
 			Photo(input.Photo(photo1).Caption("First photo")).
-			Video(input.Video(video).Caption("Advanced video in album").SupportsStreaming()).
+			Video(input.Video(video).Caption("Advanced video in album").Streamable()).
 			Photo(input.Photo(photo2).Caption("Second photo")).
 			Send()
 

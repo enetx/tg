@@ -101,7 +101,7 @@ func main() {
 
 		switch response.Type {
 		case "article":
-			result = inline.Article(
+			result = inline.NewArticle(
 				"webapp_article_1",
 				"Mini App g.Result",
 				input.Text("✅ Data from Mini App: "+response.Data),
@@ -117,7 +117,7 @@ func main() {
 				Caption("📸 Photo selected in Mini App: " + response.Data)
 
 		default:
-			result = inline.Article(
+			result = inline.NewArticle(
 				"webapp_default_1",
 				"Unknown Type",
 				input.Text("Received unknown type: "+response.Type),

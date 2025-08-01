@@ -49,7 +49,7 @@ func main() {
 		defer video.File.Close()
 
 		result := ctx.SendPaidMedia(stars).
-			Video(input.PaidVideo(video).SupportsStreaming()).
+			Video(input.PaidVideo(video).Streamable()).
 			Caption("🎬 Premium video content").
 			Send()
 
@@ -81,7 +81,7 @@ func main() {
 		result := ctx.SendPaidMedia(stars).
 			Photo(input.PaidPhoto(photo1)).
 			Photo(input.PaidPhoto(photo2)).
-			Video(input.PaidVideo(video).SupportsStreaming()).
+			Video(input.PaidVideo(video).Streamable()).
 			Caption("🖼 Premium media album with photos and video").
 			Send()
 

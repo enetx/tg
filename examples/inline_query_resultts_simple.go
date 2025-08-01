@@ -21,7 +21,7 @@ func main() {
 		query := g.String(ctx.Update.InlineQuery.Query)
 		queryID := g.String(ctx.Update.InlineQuery.Id)
 
-		result := inline.Article("id1", "Echo", input.Text(query))
+		result := inline.NewArticle("id1", "Echo", input.Text(query))
 
 		return ctx.AnswerInlineQuery(queryID).
 			AddResult(result).

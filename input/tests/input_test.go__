@@ -1,0 +1,2835 @@
+package input_test
+
+import (
+	"testing"
+	"time"
+
+	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/enetx/g"
+	"github.com/enetx/tg/entities"
+	"github.com/enetx/tg/file"
+	"github.com/enetx/tg/input"
+	"github.com/enetx/tg/preview"
+)
+
+// Test compile-time interface checks (they should not panic)
+func TestInterfaceCompliance(t *testing.T) {
+	// Test that the interface compliance checks don't panic
+	defer func() {
+		if r := recover(); r != nil {
+			t.Errorf("Interface compliance check panicked: %v", r)
+		}
+	}()
+
+	// The actual checks are done at compile-time via var declarations,
+	// so we just need to make sure this test doesn't crash
+	t.Log("All interface compliance checks passed at compile-time")
+}
+
+// ==============================================
+// Media Tests
+// ==============================================
+
+func TestPhoto_Creation(t *testing.T) {
+	// Create a mock file input
+	mockFile := file.InputFile{
+		Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg"),
+	}
+
+	photo := input.Photo(mockFile)
+
+	if photo == nil {
+		t.Error("Expected Photo to be created")
+	}
+
+	// Test that Build() returns a valid InputMedia
+	built := photo.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMedia")
+	}
+}
+
+func TestMediaPhoto_Caption(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile)
+	caption := g.String("Test caption")
+
+	result := photo.Caption(caption)
+
+	// Test fluent interface
+	if result != photo {
+		t.Error("Expected fluent interface - method should return self")
+	}
+
+	// Test that Build() still works after setting caption
+	built := photo.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMedia after setting caption")
+	}
+}
+
+func TestMediaPhoto_HTML(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile)
+
+	result := photo.HTML()
+
+	// Test fluent interface
+	if result != photo {
+		t.Error("Expected fluent interface - method should return self")
+	}
+
+	// Test that Build() still works after setting HTML parse mode
+	built := photo.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMedia after setting HTML parse mode")
+	}
+}
+
+func TestMediaPhoto_Markdown(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile)
+
+	result := photo.Markdown()
+
+	// Test fluent interface
+	if result != photo {
+		t.Error("Expected fluent interface - method should return self")
+	}
+
+	// Test that Build() still works after setting Markdown parse mode
+	built := photo.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMedia after setting Markdown parse mode")
+	}
+}
+
+func TestMediaPhoto_CaptionEntities(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile)
+
+	ent := entities.New(g.String("test text")).Bold("test")
+	result := photo.CaptionEntities(*ent)
+
+	// Test fluent interface
+	if result != photo {
+		t.Error("Expected fluent interface - method should return self")
+	}
+
+	// Test that Build() still works after setting caption entities
+	built := photo.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMedia after setting caption entities")
+	}
+}
+
+func TestMediaPhoto_ShowCaptionAboveMedia(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile)
+
+	result := photo.ShowCaptionAboveMedia()
+
+	// Test fluent interface
+	if result != photo {
+		t.Error("Expected fluent interface - method should return self")
+	}
+
+	// Test that Build() still works after setting ShowCaptionAboveMedia
+	built := photo.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMedia after setting ShowCaptionAboveMedia")
+	}
+}
+
+func TestMediaPhoto_Spoiler(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile)
+
+	result := photo.Spoiler()
+
+	// Test fluent interface
+	if result != photo {
+		t.Error("Expected fluent interface - method should return self")
+	}
+
+	// Test that Build() still works after setting Spoiler
+	built := photo.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMedia after setting Spoiler")
+	}
+}
+
+func TestMediaPhoto_Build(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile).
+		Caption(g.String("Test caption")).
+		HTML().
+		ShowCaptionAboveMedia().
+		Spoiler()
+
+	built := photo.Build()
+
+	// Test that Build returns InputMedia
+	if built == nil {
+		t.Error("Expected Build to return non-nil InputMedia")
+	}
+
+	// Test type assertion
+	photoMedia, ok := built.(gotgbot.InputMediaPhoto)
+	if !ok {
+		t.Errorf("Expected InputMediaPhoto, got %T", built)
+	}
+
+	// Test all fields were preserved
+	if photoMedia.Caption != "Test caption" {
+		t.Error("Expected caption to be preserved in built result")
+	}
+
+	if photoMedia.ParseMode != "HTML" {
+		t.Error("Expected parse mode to be preserved in built result")
+	}
+
+	if !photoMedia.ShowCaptionAboveMedia {
+		t.Error("Expected ShowCaptionAboveMedia to be preserved in built result")
+	}
+
+	if !photoMedia.HasSpoiler {
+		t.Error("Expected HasSpoiler to be preserved in built result")
+	}
+}
+
+func TestMediaPhoto_ChainedMethods(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/chained.jpg")}
+
+	// Test complete method chaining
+	photo := input.Photo(mockFile).
+		Caption(g.String("Chained caption")).
+		Markdown().
+		ShowCaptionAboveMedia().
+		Spoiler()
+
+	// Test that chained builder is still valid
+	if photo == nil {
+		t.Error("Expected chained builder to be non-nil")
+	}
+
+	// Test that Build() works after method chaining
+	built := photo.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMedia after method chaining")
+	}
+
+	// Test type assertion and verify chain worked
+	photoMedia, ok := built.(gotgbot.InputMediaPhoto)
+	if !ok {
+		t.Errorf("Expected InputMediaPhoto, got %T", built)
+	}
+
+	// Verify chained values were applied
+	if photoMedia.Caption != "Chained caption" {
+		t.Error("Expected chained caption to be preserved")
+	}
+
+	if photoMedia.ParseMode != "MarkdownV2" {
+		t.Error("Expected chained parse mode to be preserved")
+	}
+
+	if !photoMedia.ShowCaptionAboveMedia {
+		t.Error("Expected chained ShowCaptionAboveMedia to be preserved")
+	}
+
+	if !photoMedia.HasSpoiler {
+		t.Error("Expected chained HasSpoiler to be preserved")
+	}
+}
+
+// ==============================================
+// MessageContent Tests
+// ==============================================
+
+func TestText_Creation(t *testing.T) {
+	messageText := g.String("Hello, world!")
+	text := input.Text(messageText)
+
+	if text == nil {
+		t.Error("Expected Text to be created")
+	}
+
+	// Test that Build() returns a valid InputMessageContent
+	built := text.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMessageContent")
+	}
+}
+
+func TestMessageText_HTML(t *testing.T) {
+	text := input.Text(g.String("Test message"))
+
+	result := text.HTML()
+
+	// Test fluent interface
+	if result != text {
+		t.Error("Expected fluent interface - method should return self")
+	}
+
+	// Test that Build() still works after setting HTML parse mode
+	built := text.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMessageContent after setting HTML parse mode")
+	}
+}
+
+func TestMessageText_Markdown(t *testing.T) {
+	text := input.Text(g.String("Test message"))
+
+	result := text.Markdown()
+
+	// Test fluent interface
+	if result != text {
+		t.Error("Expected fluent interface - method should return self")
+	}
+
+	// Test that Build() still works after setting Markdown parse mode
+	built := text.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMessageContent after setting Markdown parse mode")
+	}
+}
+
+func TestMessageText_Entities(t *testing.T) {
+	text := input.Text(g.String("Test message"))
+
+	ent := entities.New(g.String("test text")).Bold("test")
+	result := text.Entities(*ent)
+
+	// Test fluent interface
+	if result != text {
+		t.Error("Expected fluent interface - method should return self")
+	}
+
+	// Test that Build() still works after setting entities
+	built := text.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMessageContent after setting entities")
+	}
+}
+
+func TestMessageText_Preview(t *testing.T) {
+	text := input.Text(g.String("Test message with link"))
+
+	prev := preview.New().URL(g.String("https://example.com")).Large()
+	result := text.Preview(prev)
+
+	// Test fluent interface
+	if result != text {
+		t.Error("Expected fluent interface - method should return self")
+	}
+
+	// Test that Build() still works after setting preview
+	built := text.Build()
+	if built == nil {
+		t.Error("Expected Build() to return non-nil InputMessageContent after setting preview")
+	}
+}
+
+func TestMessageText_Build(t *testing.T) {
+	text := input.Text(g.String("Test build message")).
+		HTML().
+		Preview(preview.New().Disable())
+
+	built := text.Build()
+
+	// Test that Build returns InputMessageContent
+	if built == nil {
+		t.Error("Expected Build to return non-nil InputMessageContent")
+	}
+
+	// Test type assertion
+	textContent, ok := built.(gotgbot.InputTextMessageContent)
+	if !ok {
+		t.Errorf("Expected InputTextMessageContent, got %T", built)
+	}
+
+	// Test all fields were preserved
+	if textContent.MessageText != "Test build message" {
+		t.Error("Expected message text to be preserved in built result")
+	}
+
+	if textContent.ParseMode != "HTML" {
+		t.Error("Expected parse mode to be preserved in built result")
+	}
+
+	if textContent.LinkPreviewOptions == nil {
+		t.Error("Expected link preview options to be preserved in built result")
+	}
+}
+
+func TestMessageText_ChainedMethods(t *testing.T) {
+	// Test complete method chaining
+	text := Text(g.String("Chained message")).
+		Markdown().
+		Preview(preview.New().Above().Small())
+
+	if text.input.MessageText != "Chained message" {
+		t.Error("Expected chained message text to be set")
+	}
+
+	if text.input.ParseMode != "MarkdownV2" {
+		t.Error("Expected chained parse mode to be set")
+	}
+
+	if text.input.LinkPreviewOptions == nil {
+		t.Error("Expected chained link preview options to be set")
+	}
+}
+
+// ==============================================
+// Edge Cases and Integration Tests
+// ==============================================
+
+func TestPhoto_EmptyCaption(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile).Caption(g.String(""))
+
+	if photo.input.Caption != "" {
+		t.Error("Expected empty caption to be preserved")
+	}
+}
+
+func TestText_EmptyMessage(t *testing.T) {
+	text := Text(g.String(""))
+
+	if text.input.MessageText != "" {
+		t.Error("Expected empty message text to be preserved")
+	}
+}
+
+func TestPhoto_MultipleParseModes(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile).HTML().Markdown()
+
+	// Last one should win
+	if photo.input.ParseMode != "MarkdownV2" {
+		t.Error("Expected last parse mode (MarkdownV2) to win")
+	}
+}
+
+func TestText_MultipleParseModes(t *testing.T) {
+	text := Text(g.String("Test")).Markdown().HTML()
+
+	// Last one should win
+	if text.input.ParseMode != "HTML" {
+		t.Error("Expected last parse mode (HTML) to win")
+	}
+}
+
+func TestPhoto_DefaultValues(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile)
+
+	// Test default values
+	if photo.input.Caption != "" {
+		t.Error("Expected default caption to be empty")
+	}
+
+	if photo.input.ParseMode != "" {
+		t.Error("Expected default parse mode to be empty")
+	}
+
+	if photo.input.ShowCaptionAboveMedia {
+		t.Error("Expected default ShowCaptionAboveMedia to be false")
+	}
+
+	if photo.input.HasSpoiler {
+		t.Error("Expected default HasSpoiler to be false")
+	}
+
+	if photo.input.CaptionEntities != nil {
+		t.Error("Expected default caption entities to be nil")
+	}
+}
+
+func TestText_DefaultValues(t *testing.T) {
+	text := input.Text(g.String("Test message"))
+
+	// Test default values
+	if text.input.ParseMode != "" {
+		t.Error("Expected default parse mode to be empty")
+	}
+
+	if text.input.Entities != nil {
+		t.Error("Expected default entities to be nil")
+	}
+
+	if text.input.LinkPreviewOptions != nil {
+		t.Error("Expected default link preview options to be nil")
+	}
+}
+
+func TestMediaInterfaceCompliance(t *testing.T) {
+	// Test that MediaPhoto implements Media interface
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile)
+
+	var media Media = photo
+	built := media.Build()
+
+	if built == nil {
+		t.Error("Expected Media interface Build() to return non-nil")
+	}
+
+	if _, ok := built.(gotgbot.InputMediaPhoto); !ok {
+		t.Errorf("Expected InputMediaPhoto from Media interface, got %T", built)
+	}
+}
+
+func TestMessageContentInterfaceCompliance(t *testing.T) {
+	// Test that MessageText implements MessageContent interface
+	text := input.Text(g.String("Test message"))
+
+	var content MessageContent = text
+	built := content.Build()
+
+	if built == nil {
+		t.Error("Expected MessageContent interface Build() to return non-nil")
+	}
+
+	if _, ok := built.(gotgbot.InputTextMessageContent); !ok {
+		t.Errorf("Expected InputTextMessageContent from MessageContent interface, got %T", built)
+	}
+}
+
+func TestPhoto_BuildIdempotency(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/photo.jpg")}
+	photo := input.Photo(mockFile).Caption(g.String("Test"))
+
+	// Build multiple times
+	built1 := photo.Build()
+	built2 := photo.Build()
+
+	// Should be equivalent
+	photo1, ok1 := built1.(gotgbot.InputMediaPhoto)
+	photo2, ok2 := built2.(gotgbot.InputMediaPhoto)
+
+	if !ok1 || !ok2 {
+		t.Error("Expected both builds to return InputMediaPhoto")
+	}
+
+	if photo1.Caption != photo2.Caption {
+		t.Error("Expected builds to be consistent")
+	}
+}
+
+func TestText_BuildIdempotency(t *testing.T) {
+	text := input.Text(g.String("Test message")).HTML()
+
+	// Build multiple times
+	built1 := text.Build()
+	built2 := text.Build()
+
+	// Should be equivalent
+	text1, ok1 := built1.(gotgbot.InputTextMessageContent)
+	text2, ok2 := built2.(gotgbot.InputTextMessageContent)
+
+	if !ok1 || !ok2 {
+		t.Error("Expected both builds to return InputTextMessageContent")
+	}
+
+	if text1.MessageText != text2.MessageText {
+		t.Error("Expected builds to be consistent")
+	}
+
+	if text1.ParseMode != text2.ParseMode {
+		t.Error("Expected builds to be consistent")
+	}
+}
+
+// ==============================================
+// MediaVideo Tests
+// ==============================================
+
+func TestVideo_Creation(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile)
+
+	if video == nil {
+		t.Error("Expected Video to be created")
+	}
+
+	if video.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if video.input.Media != mockFile.Doc {
+		t.Error("Expected media to be set correctly")
+	}
+}
+
+func TestMediaVideo_Cover(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile)
+	cover := g.String("https://example.com/cover.jpg")
+
+	result := video.Cover(cover)
+
+	if result != video {
+		t.Error("Expected fluent interface")
+	}
+
+	if video.input.Cover != cover.Std() {
+		t.Errorf("Expected cover '%s', got '%s'", cover.Std(), video.input.Cover)
+	}
+}
+
+func TestMediaVideo_Thumbnail(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile)
+	thumbnailFile := file.InputFile{Doc: gotgbot.InputFileByReader("thumb.jpg", nil)}
+
+	result := video.Thumbnail(thumbnailFile)
+
+	if result != video {
+		t.Error("Expected fluent interface")
+	}
+}
+
+func TestMediaVideo_Size(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile)
+	width, height := int64(1920), int64(1080)
+
+	result := video.Size(width, height)
+
+	if result != video {
+		t.Error("Expected fluent interface")
+	}
+
+	if video.input.Width != width {
+		t.Errorf("Expected width %d, got %d", width, video.input.Width)
+	}
+
+	if video.input.Height != height {
+		t.Errorf("Expected height %d, got %d", height, video.input.Height)
+	}
+}
+
+func TestMediaVideo_Duration(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile)
+	duration := time.Minute * 5
+
+	result := video.Duration(duration)
+
+	if result != video {
+		t.Error("Expected fluent interface")
+	}
+
+	expectedSeconds := int64(duration.Seconds())
+	if video.input.Duration != expectedSeconds {
+		t.Errorf("Expected duration %d seconds, got %d", expectedSeconds, video.input.Duration)
+	}
+}
+
+func TestMediaVideo_StartAt(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile)
+	startTime := time.Second * 30
+
+	result := video.StartAt(startTime)
+
+	if result != video {
+		t.Error("Expected fluent interface")
+	}
+
+	expectedSeconds := int64(startTime.Seconds())
+	if video.input.StartTimestamp != expectedSeconds {
+		t.Errorf("Expected start timestamp %d seconds, got %d", expectedSeconds, video.input.StartTimestamp)
+	}
+}
+
+func TestMediaVideo_Streamable(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile)
+
+	if video.input.SupportsStreaming {
+		t.Error("Expected default SupportsStreaming to be false")
+	}
+
+	result := video.Streamable()
+
+	if result != video {
+		t.Error("Expected fluent interface")
+	}
+
+	if !video.input.SupportsStreaming {
+		t.Error("Expected SupportsStreaming to be true after calling Streamable")
+	}
+}
+
+func TestMediaVideo_Spoiler(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile)
+
+	if video.input.HasSpoiler {
+		t.Error("Expected default HasSpoiler to be false")
+	}
+
+	result := video.Spoiler()
+
+	if result != video {
+		t.Error("Expected fluent interface")
+	}
+
+	if !video.input.HasSpoiler {
+		t.Error("Expected HasSpoiler to be true after calling Spoiler")
+	}
+}
+
+func TestMediaVideo_Build(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile).
+		Caption(g.String("Test video")).
+		Size(1920, 1080).
+		Duration(time.Minute * 3).
+		Streamable().
+		Spoiler()
+
+	built := video.Build()
+
+	if built == nil {
+		t.Error("Expected Build to return non-nil InputMedia")
+	}
+
+	videoMedia, ok := built.(gotgbot.InputMediaVideo)
+	if !ok {
+		t.Errorf("Expected InputMediaVideo, got %T", built)
+	}
+
+	if videoMedia.Caption != "Test video" {
+		t.Error("Expected caption to be preserved")
+	}
+
+	if videoMedia.Width != 1920 || videoMedia.Height != 1080 {
+		t.Error("Expected size to be preserved")
+	}
+
+	if videoMedia.Duration != 180 {
+		t.Error("Expected duration to be preserved")
+	}
+
+	if !videoMedia.SupportsStreaming {
+		t.Error("Expected SupportsStreaming to be preserved")
+	}
+
+	if !videoMedia.HasSpoiler {
+		t.Error("Expected HasSpoiler to be preserved")
+	}
+}
+
+func TestMediaVideo_ChainedMethods(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+
+	video := Video(mockFile).
+		Cover(g.String("https://example.com/cover.jpg")).
+		Caption(g.String("Chained video")).
+		HTML().
+		Size(1280, 720).
+		Duration(time.Minute * 2).
+		StartAt(time.Second * 10).
+		Streamable().
+		ShowCaptionAboveMedia().
+		Spoiler()
+
+	if video.input.Cover != "https://example.com/cover.jpg" {
+		t.Error("Expected chained cover to be set")
+	}
+
+	if video.input.Caption != "Chained video" {
+		t.Error("Expected chained caption to be set")
+	}
+
+	if video.input.ParseMode != "HTML" {
+		t.Error("Expected chained parse mode to be set")
+	}
+
+	if video.input.Width != 1280 || video.input.Height != 720 {
+		t.Error("Expected chained size to be set")
+	}
+
+	if video.input.Duration != 120 {
+		t.Error("Expected chained duration to be set")
+	}
+
+	if video.input.StartTimestamp != 10 {
+		t.Error("Expected chained start timestamp to be set")
+	}
+
+	if !video.input.SupportsStreaming {
+		t.Error("Expected chained streaming support to be set")
+	}
+
+	if !video.input.ShowCaptionAboveMedia {
+		t.Error("Expected chained ShowCaptionAboveMedia to be set")
+	}
+
+	if !video.input.HasSpoiler {
+		t.Error("Expected chained HasSpoiler to be set")
+	}
+}
+
+// ==============================================
+// PollChoice Tests
+// ==============================================
+
+func TestChoice_Creation(t *testing.T) {
+	text := g.String("Option 1")
+	choice := Choice(text)
+
+	if choice == nil {
+		t.Error("Expected Choice to be created")
+	}
+
+	if choice.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if choice.input.Text != text.Std() {
+		t.Errorf("Expected text '%s', got '%s'", text.Std(), choice.input.Text)
+	}
+}
+
+func TestPollChoice_HTML(t *testing.T) {
+	choice := Choice(g.String("HTML option"))
+
+	result := choice.HTML()
+
+	if result != choice {
+		t.Error("Expected fluent interface")
+	}
+
+	if choice.input.TextParseMode != "HTML" {
+		t.Errorf("Expected parse mode 'HTML', got '%s'", choice.input.TextParseMode)
+	}
+}
+
+func TestPollChoice_Markdown(t *testing.T) {
+	choice := Choice(g.String("Markdown option"))
+
+	result := choice.Markdown()
+
+	if result != choice {
+		t.Error("Expected fluent interface")
+	}
+
+	if choice.input.TextParseMode != "MarkdownV2" {
+		t.Errorf("Expected parse mode 'MarkdownV2', got '%s'", choice.input.TextParseMode)
+	}
+}
+
+func TestPollChoice_TextEntities(t *testing.T) {
+	choice := Choice(g.String("Entities option"))
+
+	ent := entities.New(g.String("test text")).Bold("test")
+	result := choice.TextEntities(*ent)
+
+	if result != choice {
+		t.Error("Expected fluent interface")
+	}
+
+	if choice.input.TextEntities == nil {
+		t.Error("Expected text entities to be set")
+	}
+}
+
+func TestPollChoice_Build(t *testing.T) {
+	choice := Choice(g.String("Build option")).
+		HTML().
+		TextEntities(*entities.New(g.String("test")).Bold("test"))
+
+	built := choice.Build()
+
+	// Test type - PollChoice.Build() returns gotgbot.InputPollOption directly
+	if built.Text != "Build option" {
+		t.Error("Expected text to be preserved in built result")
+	}
+
+	if built.TextParseMode != "HTML" {
+		t.Error("Expected parse mode to be preserved in built result")
+	}
+
+	if built.TextEntities == nil {
+		t.Error("Expected text entities to be preserved in built result")
+	}
+}
+
+func TestPollChoice_ChainedMethods(t *testing.T) {
+	choice := Choice(g.String("Chained option")).
+		Markdown().
+		TextEntities(*entities.New(g.String("test")).Italic("test"))
+
+	if choice.input.Text != "Chained option" {
+		t.Error("Expected chained text to be set")
+	}
+
+	if choice.input.TextParseMode != "MarkdownV2" {
+		t.Error("Expected chained parse mode to be set")
+	}
+
+	if choice.input.TextEntities == nil {
+		t.Error("Expected chained text entities to be set")
+	}
+}
+
+func TestPollChoice_DefaultValues(t *testing.T) {
+	choice := Choice(g.String("Default option"))
+
+	if choice.input.TextParseMode != "" {
+		t.Error("Expected default parse mode to be empty")
+	}
+
+	if choice.input.TextEntities != nil {
+		t.Error("Expected default text entities to be nil")
+	}
+}
+
+func TestPollChoice_EmptyText(t *testing.T) {
+	choice := Choice(g.String(""))
+
+	if choice.input.Text != "" {
+		t.Error("Expected empty text to be preserved")
+	}
+}
+
+func TestPollChoice_MultipleParseModes(t *testing.T) {
+	choice := Choice(g.String("Multi mode")).HTML().Markdown()
+
+	// Last one should win
+	if choice.input.TextParseMode != "MarkdownV2" {
+		t.Error("Expected last parse mode (MarkdownV2) to win")
+	}
+}
+
+// ==============================================
+// Interface Compliance Tests
+// ==============================================
+
+func TestAllMediaInterfaceCompliance(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/media")}
+
+	// Test MediaPhoto
+	var photoMedia Media = Photo(mockFile)
+	photoBuilt := photoMedia.Build()
+	if photoBuilt == nil {
+		t.Error("Expected MediaPhoto to implement Media interface")
+	}
+
+	// Test MediaVideo
+	var videoMedia Media = Video(mockFile)
+	videoBuilt := videoMedia.Build()
+	if videoBuilt == nil {
+		t.Error("Expected MediaVideo to implement Media interface")
+	}
+}
+
+func TestAllMessageContentInterfaceCompliance(t *testing.T) {
+	// Test MessageText
+	var textContent MessageContent = Text(g.String("Test"))
+	textBuilt := textContent.Build()
+	if textBuilt == nil {
+		t.Error("Expected MessageText to implement MessageContent interface")
+	}
+}
+
+func TestAllPollOptionInterfaceCompliance(t *testing.T) {
+	// Test PollChoice
+	var pollOption PollOption = Choice(g.String("Option"))
+	pollBuilt := pollOption.Build()
+	if pollBuilt.Text != "Option" {
+		t.Error("Expected PollChoice to implement PollOption interface")
+	}
+}
+
+// ==============================================
+// Error Cases and Edge Cases
+// ==============================================
+
+func TestVideo_ZeroDuration(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile).Duration(0)
+
+	if video.input.Duration != 0 {
+		t.Error("Expected zero duration to be preserved")
+	}
+}
+
+func TestVideo_NegativeDuration(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile).Duration(-time.Second * 10)
+
+	// Should accept negative duration (converted to -10 seconds)
+	if video.input.Duration != -10 {
+		t.Errorf("Expected -10 seconds, got %d", video.input.Duration)
+	}
+}
+
+func TestVideo_ZeroSize(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+	video := Video(mockFile).Size(0, 0)
+
+	if video.input.Width != 0 || video.input.Height != 0 {
+		t.Error("Expected zero size to be preserved")
+	}
+}
+
+func TestVideo_LargeDurations(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/video.mp4")}
+
+	// Test very large duration
+	largeDuration := time.Hour * 24 * 365 // One year
+	video := Video(mockFile).Duration(largeDuration)
+
+	expectedSeconds := int64(largeDuration.Seconds())
+	if video.input.Duration != expectedSeconds {
+		t.Error("Expected large duration to be handled correctly")
+	}
+}
+
+// ==============================================
+// MediaAudio Tests
+// ==============================================
+
+func TestAudio_Creation(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile)
+
+	if audio == nil {
+		t.Error("Expected Audio to be created")
+	}
+
+	if audio.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if audio.input.Media != mockFile.Doc {
+		t.Error("Expected media to be set correctly")
+	}
+}
+
+func TestMediaAudio_Thumbnail(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile)
+	thumbnailFile := file.InputFile{Doc: gotgbot.InputFileByReader("thumb.jpg", nil)}
+
+	result := audio.Thumbnail(thumbnailFile)
+
+	if result != audio {
+		t.Error("Expected fluent interface")
+	}
+}
+
+func TestMediaAudio_Caption(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile)
+	caption := g.String("Test audio caption")
+
+	result := audio.Caption(caption)
+
+	if result != audio {
+		t.Error("Expected fluent interface")
+	}
+
+	if audio.input.Caption != caption.Std() {
+		t.Errorf("Expected caption '%s', got '%s'", caption.Std(), audio.input.Caption)
+	}
+}
+
+func TestMediaAudio_HTML(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile)
+
+	result := audio.HTML()
+
+	if result != audio {
+		t.Error("Expected fluent interface")
+	}
+
+	if audio.input.ParseMode != "HTML" {
+		t.Errorf("Expected parse mode 'HTML', got '%s'", audio.input.ParseMode)
+	}
+}
+
+func TestMediaAudio_Markdown(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile)
+
+	result := audio.Markdown()
+
+	if result != audio {
+		t.Error("Expected fluent interface")
+	}
+
+	if audio.input.ParseMode != "MarkdownV2" {
+		t.Errorf("Expected parse mode 'MarkdownV2', got '%s'", audio.input.ParseMode)
+	}
+}
+
+func TestMediaAudio_CaptionEntities(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile)
+
+	ent := entities.New(g.String("test text")).Bold("test")
+	result := audio.CaptionEntities(*ent)
+
+	if result != audio {
+		t.Error("Expected fluent interface")
+	}
+
+	if audio.input.CaptionEntities == nil {
+		t.Error("Expected caption entities to be set")
+	}
+}
+
+func TestMediaAudio_Duration(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile)
+	duration := time.Minute*3 + time.Second*30
+
+	result := audio.Duration(duration)
+
+	if result != audio {
+		t.Error("Expected fluent interface")
+	}
+
+	expectedSeconds := int64(duration.Seconds())
+	if audio.input.Duration != expectedSeconds {
+		t.Errorf("Expected duration %d seconds, got %d", expectedSeconds, audio.input.Duration)
+	}
+}
+
+func TestMediaAudio_Performer(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile)
+	performer := g.String("Test Artist")
+
+	result := audio.Performer(performer)
+
+	if result != audio {
+		t.Error("Expected fluent interface")
+	}
+
+	if audio.input.Performer != performer.Std() {
+		t.Errorf("Expected performer '%s', got '%s'", performer.Std(), audio.input.Performer)
+	}
+}
+
+func TestMediaAudio_Title(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile)
+	title := g.String("Test Song")
+
+	result := audio.Title(title)
+
+	if result != audio {
+		t.Error("Expected fluent interface")
+	}
+
+	if audio.input.Title != title.Std() {
+		t.Errorf("Expected title '%s', got '%s'", title.Std(), audio.input.Title)
+	}
+}
+
+func TestMediaAudio_Build(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile).
+		Caption(g.String("Test audio")).
+		HTML().
+		Duration(time.Minute * 4).
+		Performer(g.String("Artist Name")).
+		Title(g.String("Song Title"))
+
+	built := audio.Build()
+
+	if built == nil {
+		t.Error("Expected Build to return non-nil InputMedia")
+	}
+
+	audioMedia, ok := built.(gotgbot.InputMediaAudio)
+	if !ok {
+		t.Errorf("Expected InputMediaAudio, got %T", built)
+	}
+
+	if audioMedia.Caption != "Test audio" {
+		t.Error("Expected caption to be preserved")
+	}
+
+	if audioMedia.ParseMode != "HTML" {
+		t.Error("Expected parse mode to be preserved")
+	}
+
+	if audioMedia.Duration != 240 {
+		t.Error("Expected duration to be preserved")
+	}
+
+	if audioMedia.Performer != "Artist Name" {
+		t.Error("Expected performer to be preserved")
+	}
+
+	if audioMedia.Title != "Song Title" {
+		t.Error("Expected title to be preserved")
+	}
+}
+
+func TestMediaAudio_ChainedMethods(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+
+	audio := Audio(mockFile).
+		Caption(g.String("Chained audio")).
+		Markdown().
+		Duration(time.Minute * 2).
+		Performer(g.String("Chained Artist")).
+		Title(g.String("Chained Song"))
+
+	if audio.input.Caption != "Chained audio" {
+		t.Error("Expected chained caption to be set")
+	}
+
+	if audio.input.ParseMode != "MarkdownV2" {
+		t.Error("Expected chained parse mode to be set")
+	}
+
+	if audio.input.Duration != 120 {
+		t.Error("Expected chained duration to be set")
+	}
+
+	if audio.input.Performer != "Chained Artist" {
+		t.Error("Expected chained performer to be set")
+	}
+
+	if audio.input.Title != "Chained Song" {
+		t.Error("Expected chained title to be set")
+	}
+}
+
+func TestMediaAudio_DefaultValues(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile)
+
+	if audio.input.Caption != "" {
+		t.Error("Expected default caption to be empty")
+	}
+
+	if audio.input.ParseMode != "" {
+		t.Error("Expected default parse mode to be empty")
+	}
+
+	if audio.input.Duration != 0 {
+		t.Error("Expected default duration to be 0")
+	}
+
+	if audio.input.Performer != "" {
+		t.Error("Expected default performer to be empty")
+	}
+
+	if audio.input.Title != "" {
+		t.Error("Expected default title to be empty")
+	}
+
+	if audio.input.CaptionEntities != nil {
+		t.Error("Expected default caption entities to be nil")
+	}
+}
+
+// ==============================================
+// MessageLocation Tests
+// ==============================================
+
+func TestLocation_Creation(t *testing.T) {
+	lat, lon := 40.7128, -74.0060
+	location := Location(lat, lon)
+
+	if location == nil {
+		t.Error("Expected Location to be created")
+	}
+
+	if location.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if location.input.Latitude != lat {
+		t.Errorf("Expected latitude %f, got %f", lat, location.input.Latitude)
+	}
+
+	if location.input.Longitude != lon {
+		t.Errorf("Expected longitude %f, got %f", lon, location.input.Longitude)
+	}
+}
+
+func TestMessageLocation_HorizontalAccuracy(t *testing.T) {
+	location := Location(40.7128, -74.0060)
+	accuracy := 100.5
+
+	result := location.HorizontalAccuracy(accuracy)
+
+	if result != location {
+		t.Error("Expected fluent interface")
+	}
+
+	if location.input.HorizontalAccuracy != accuracy {
+		t.Errorf("Expected accuracy %f, got %f", accuracy, location.input.HorizontalAccuracy)
+	}
+}
+
+func TestMessageLocation_LivePeriod(t *testing.T) {
+	location := Location(40.7128, -74.0060)
+	period := int64(3600)
+
+	result := location.LivePeriod(period)
+
+	if result != location {
+		t.Error("Expected fluent interface")
+	}
+
+	if location.input.LivePeriod != period {
+		t.Errorf("Expected live period %d, got %d", period, location.input.LivePeriod)
+	}
+}
+
+func TestMessageLocation_Heading(t *testing.T) {
+	location := Location(40.7128, -74.0060)
+	heading := int64(90)
+
+	result := location.Heading(heading)
+
+	if result != location {
+		t.Error("Expected fluent interface")
+	}
+
+	if location.input.Heading != heading {
+		t.Errorf("Expected heading %d, got %d", heading, location.input.Heading)
+	}
+}
+
+func TestMessageLocation_ProximityAlertRadius(t *testing.T) {
+	location := Location(40.7128, -74.0060)
+	radius := int64(500)
+
+	result := location.ProximityAlertRadius(radius)
+
+	if result != location {
+		t.Error("Expected fluent interface")
+	}
+
+	if location.input.ProximityAlertRadius != radius {
+		t.Errorf("Expected proximity alert radius %d, got %d", radius, location.input.ProximityAlertRadius)
+	}
+}
+
+func TestMessageLocation_Build(t *testing.T) {
+	lat, lon := 40.7128, -74.0060
+	location := Location(lat, lon).
+		HorizontalAccuracy(50.0).
+		LivePeriod(1800).
+		Heading(45).
+		ProximityAlertRadius(100)
+
+	built := location.Build()
+
+	if built == nil {
+		t.Error("Expected Build to return non-nil InputMessageContent")
+	}
+
+	locationContent, ok := built.(gotgbot.InputLocationMessageContent)
+	if !ok {
+		t.Errorf("Expected InputLocationMessageContent, got %T", built)
+	}
+
+	if locationContent.Latitude != lat {
+		t.Error("Expected latitude to be preserved")
+	}
+
+	if locationContent.Longitude != lon {
+		t.Error("Expected longitude to be preserved")
+	}
+
+	if locationContent.HorizontalAccuracy != 50.0 {
+		t.Error("Expected horizontal accuracy to be preserved")
+	}
+
+	if locationContent.LivePeriod != 1800 {
+		t.Error("Expected live period to be preserved")
+	}
+
+	if locationContent.Heading != 45 {
+		t.Error("Expected heading to be preserved")
+	}
+
+	if locationContent.ProximityAlertRadius != 100 {
+		t.Error("Expected proximity alert radius to be preserved")
+	}
+}
+
+func TestMessageLocation_ChainedMethods(t *testing.T) {
+	location := Location(51.5074, -0.1278).
+		HorizontalAccuracy(25.0).
+		LivePeriod(7200).
+		Heading(180).
+		ProximityAlertRadius(200)
+
+	if location.input.Latitude != 51.5074 {
+		t.Error("Expected chained latitude to be set")
+	}
+
+	if location.input.Longitude != -0.1278 {
+		t.Error("Expected chained longitude to be set")
+	}
+
+	if location.input.HorizontalAccuracy != 25.0 {
+		t.Error("Expected chained horizontal accuracy to be set")
+	}
+
+	if location.input.LivePeriod != 7200 {
+		t.Error("Expected chained live period to be set")
+	}
+
+	if location.input.Heading != 180 {
+		t.Error("Expected chained heading to be set")
+	}
+
+	if location.input.ProximityAlertRadius != 200 {
+		t.Error("Expected chained proximity alert radius to be set")
+	}
+}
+
+func TestMessageLocation_DefaultValues(t *testing.T) {
+	location := Location(0, 0)
+
+	if location.input.HorizontalAccuracy != 0 {
+		t.Error("Expected default horizontal accuracy to be 0")
+	}
+
+	if location.input.LivePeriod != 0 {
+		t.Error("Expected default live period to be 0")
+	}
+
+	if location.input.Heading != 0 {
+		t.Error("Expected default heading to be 0")
+	}
+
+	if location.input.ProximityAlertRadius != 0 {
+		t.Error("Expected default proximity alert radius to be 0")
+	}
+}
+
+func TestMessageLocation_EdgeCases(t *testing.T) {
+	// Test extreme coordinates
+	extremeLocation := Location(90.0, 180.0)
+	if extremeLocation.input.Latitude != 90.0 || extremeLocation.input.Longitude != 180.0 {
+		t.Error("Expected extreme coordinates to be preserved")
+	}
+
+	// Test negative coordinates
+	negativeLocation := Location(-90.0, -180.0)
+	if negativeLocation.input.Latitude != -90.0 || negativeLocation.input.Longitude != -180.0 {
+		t.Error("Expected negative coordinates to be preserved")
+	}
+
+	// Test zero coordinates
+	zeroLocation := Location(0.0, 0.0)
+	if zeroLocation.input.Latitude != 0.0 || zeroLocation.input.Longitude != 0.0 {
+		t.Error("Expected zero coordinates to be preserved")
+	}
+}
+
+// ==============================================
+// Checklist Tests
+// ==============================================
+
+func TestNewChecklist_Creation(t *testing.T) {
+	title := g.String("Test Checklist")
+	tasks := g.NewSlice[gotgbot.InputChecklistTask]()
+
+	checklist := NewChecklist(title, tasks)
+
+	if checklist == nil {
+		t.Error("Expected Checklist to be created")
+	}
+
+	if checklist.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if checklist.input.Title != title.Std() {
+		t.Errorf("Expected title '%s', got '%s'", title.Std(), checklist.input.Title)
+	}
+
+	if len(checklist.input.Tasks) != 0 {
+		t.Error("Expected empty tasks slice")
+	}
+}
+
+func TestNewChecklist_WithTasks(t *testing.T) {
+	title := g.String("Shopping List")
+	tasks := g.NewSlice[gotgbot.InputChecklistTask]().Append(
+		gotgbot.InputChecklistTask{Text: "Buy milk"},
+		gotgbot.InputChecklistTask{Text: "Buy bread"},
+	)
+
+	checklist := NewChecklist(title, tasks)
+
+	if len(checklist.input.Tasks) != 2 {
+		t.Errorf("Expected 2 tasks, got %d", len(checklist.input.Tasks))
+	}
+
+	if checklist.input.Tasks[0].Text != "Buy milk" {
+		t.Error("Expected first task text to match")
+	}
+
+	if checklist.input.Tasks[1].Text != "Buy bread" {
+		t.Error("Expected second task text to match")
+	}
+}
+
+func TestChecklist_Build(t *testing.T) {
+	title := g.String("Build Test")
+	tasks := g.NewSlice[gotgbot.InputChecklistTask]().Append(gotgbot.InputChecklistTask{Text: "Test task"})
+
+	checklist := NewChecklist(title, tasks)
+	built := checklist.Build()
+
+	// Checklist.Build() returns gotgbot.InputChecklist directly
+	if built.Title != "Build Test" {
+		t.Error("Expected title to be preserved in built result")
+	}
+
+	if len(built.Tasks) != 1 {
+		t.Error("Expected tasks to be preserved in built result")
+	}
+
+	if built.Tasks[0].Text != "Test task" {
+		t.Error("Expected task text to be preserved in built result")
+	}
+}
+
+func TestChecklist_EmptyTitle(t *testing.T) {
+	title := g.String("")
+	tasks := g.NewSlice[gotgbot.InputChecklistTask]()
+
+	checklist := NewChecklist(title, tasks)
+
+	if checklist.input.Title != "" {
+		t.Error("Expected empty title to be preserved")
+	}
+}
+
+func TestChecklist_NilTasks(t *testing.T) {
+	title := g.String("Nil Tasks Test")
+	var tasks g.Slice[gotgbot.InputChecklistTask]
+
+	checklist := NewChecklist(title, tasks)
+
+	// Should handle nil tasks gracefully - nil is allowed
+	if checklist == nil {
+		t.Error("Expected checklist to be created even with nil tasks")
+	}
+
+	if checklist.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+}
+
+// ==============================================
+// Extended Interface Compliance Tests
+// ==============================================
+
+func TestExtendedMediaInterfaceCompliance(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/media")}
+
+	// Test MediaAudio
+	var audioMedia Media = Audio(mockFile)
+	audioBuilt := audioMedia.Build()
+	if audioBuilt == nil {
+		t.Error("Expected MediaAudio to implement Media interface")
+	}
+
+	if _, ok := audioBuilt.(gotgbot.InputMediaAudio); !ok {
+		t.Errorf("Expected InputMediaAudio from interface, got %T", audioBuilt)
+	}
+}
+
+func TestExtendedMessageContentInterfaceCompliance(t *testing.T) {
+	// Test MessageLocation
+	var locationContent MessageContent = Location(40.7128, -74.0060)
+	locationBuilt := locationContent.Build()
+	if locationBuilt == nil {
+		t.Error("Expected MessageLocation to implement MessageContent interface")
+	}
+
+	if _, ok := locationBuilt.(gotgbot.InputLocationMessageContent); !ok {
+		t.Errorf("Expected InputLocationMessageContent from interface, got %T", locationBuilt)
+	}
+}
+
+// ==============================================
+// Audio Edge Cases
+// ==============================================
+
+func TestAudio_ZeroDuration(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile).Duration(0)
+
+	if audio.input.Duration != 0 {
+		t.Error("Expected zero duration to be preserved")
+	}
+}
+
+func TestAudio_NegativeDuration(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile).Duration(-time.Second * 5)
+
+	if audio.input.Duration != -5 {
+		t.Errorf("Expected -5 seconds, got %d", audio.input.Duration)
+	}
+}
+
+func TestAudio_EmptyStrings(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/audio.mp3")}
+	audio := Audio(mockFile).
+		Performer(g.String("")).
+		Title(g.String("")).
+		Caption(g.String(""))
+
+	if audio.input.Performer != "" {
+		t.Error("Expected empty performer to be preserved")
+	}
+
+	if audio.input.Title != "" {
+		t.Error("Expected empty title to be preserved")
+	}
+
+	if audio.input.Caption != "" {
+		t.Error("Expected empty caption to be preserved")
+	}
+}
+
+// ==============================================
+// MediaAnimation Tests
+// ==============================================
+
+func TestAnimation_Creation(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile)
+
+	if animation == nil {
+		t.Error("Expected Animation to be created")
+	}
+
+	if animation.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if animation.input.Media != mockFile.Doc {
+		t.Error("Expected media to be set correctly")
+	}
+}
+
+func TestMediaAnimation_Thumbnail(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile)
+	thumbnailFile := file.InputFile{Doc: gotgbot.InputFileByReader("thumb.jpg", nil)}
+
+	result := animation.Thumbnail(thumbnailFile)
+
+	if result != animation {
+		t.Error("Expected fluent interface")
+	}
+}
+
+func TestMediaAnimation_Caption(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile)
+	caption := g.String("Test animation caption")
+
+	result := animation.Caption(caption)
+
+	if result != animation {
+		t.Error("Expected fluent interface")
+	}
+
+	if animation.input.Caption != caption.Std() {
+		t.Errorf("Expected caption '%s', got '%s'", caption.Std(), animation.input.Caption)
+	}
+}
+
+func TestMediaAnimation_HTML(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile)
+
+	result := animation.HTML()
+
+	if result != animation {
+		t.Error("Expected fluent interface")
+	}
+
+	if animation.input.ParseMode != "HTML" {
+		t.Errorf("Expected parse mode 'HTML', got '%s'", animation.input.ParseMode)
+	}
+}
+
+func TestMediaAnimation_Markdown(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile)
+
+	result := animation.Markdown()
+
+	if result != animation {
+		t.Error("Expected fluent interface")
+	}
+
+	if animation.input.ParseMode != "MarkdownV2" {
+		t.Errorf("Expected parse mode 'MarkdownV2', got '%s'", animation.input.ParseMode)
+	}
+}
+
+func TestMediaAnimation_CaptionEntities(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile)
+
+	ent := entities.New(g.String("test text")).Bold("test")
+	result := animation.CaptionEntities(*ent)
+
+	if result != animation {
+		t.Error("Expected fluent interface")
+	}
+
+	if animation.input.CaptionEntities == nil {
+		t.Error("Expected caption entities to be set")
+	}
+}
+
+func TestMediaAnimation_ShowCaptionAboveMedia(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile)
+
+	result := animation.ShowCaptionAboveMedia()
+
+	if result != animation {
+		t.Error("Expected fluent interface")
+	}
+
+	if !animation.input.ShowCaptionAboveMedia {
+		t.Error("Expected ShowCaptionAboveMedia to be true")
+	}
+}
+
+func TestMediaAnimation_Size(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile)
+	width, height := int64(640), int64(480)
+
+	result := animation.Size(width, height)
+
+	if result != animation {
+		t.Error("Expected fluent interface")
+	}
+
+	if animation.input.Width != width {
+		t.Errorf("Expected width %d, got %d", width, animation.input.Width)
+	}
+
+	if animation.input.Height != height {
+		t.Errorf("Expected height %d, got %d", height, animation.input.Height)
+	}
+}
+
+func TestMediaAnimation_Duration(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile)
+	duration := time.Second * 15
+
+	result := animation.Duration(duration)
+
+	if result != animation {
+		t.Error("Expected fluent interface")
+	}
+
+	expectedSeconds := int64(duration.Seconds())
+	if animation.input.Duration != expectedSeconds {
+		t.Errorf("Expected duration %d seconds, got %d", expectedSeconds, animation.input.Duration)
+	}
+}
+
+func TestMediaAnimation_Spoiler(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile)
+
+	result := animation.Spoiler()
+
+	if result != animation {
+		t.Error("Expected fluent interface")
+	}
+
+	if !animation.input.HasSpoiler {
+		t.Error("Expected HasSpoiler to be true")
+	}
+}
+
+func TestMediaAnimation_Build(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile).
+		Caption(g.String("Test animation")).
+		HTML().
+		Size(800, 600).
+		Duration(time.Second * 30).
+		ShowCaptionAboveMedia().
+		Spoiler()
+
+	built := animation.Build()
+
+	if built == nil {
+		t.Error("Expected Build to return non-nil InputMedia")
+	}
+
+	animationMedia, ok := built.(gotgbot.InputMediaAnimation)
+	if !ok {
+		t.Errorf("Expected InputMediaAnimation, got %T", built)
+	}
+
+	if animationMedia.Caption != "Test animation" {
+		t.Error("Expected caption to be preserved")
+	}
+
+	if animationMedia.ParseMode != "HTML" {
+		t.Error("Expected parse mode to be preserved")
+	}
+
+	if animationMedia.Width != 800 {
+		t.Error("Expected width to be preserved")
+	}
+
+	if animationMedia.Height != 600 {
+		t.Error("Expected height to be preserved")
+	}
+
+	if animationMedia.Duration != 30 {
+		t.Error("Expected duration to be preserved")
+	}
+
+	if !animationMedia.ShowCaptionAboveMedia {
+		t.Error("Expected ShowCaptionAboveMedia to be preserved")
+	}
+
+	if !animationMedia.HasSpoiler {
+		t.Error("Expected HasSpoiler to be preserved")
+	}
+}
+
+func TestMediaAnimation_ChainedMethods(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+
+	animation := Animation(mockFile).
+		Caption(g.String("Chained animation")).
+		Markdown().
+		Size(1920, 1080).
+		Duration(time.Minute).
+		Spoiler()
+
+	if animation.input.Caption != "Chained animation" {
+		t.Error("Expected chained caption to be set")
+	}
+
+	if animation.input.ParseMode != "MarkdownV2" {
+		t.Error("Expected chained parse mode to be set")
+	}
+
+	if animation.input.Width != 1920 {
+		t.Error("Expected chained width to be set")
+	}
+
+	if animation.input.Height != 1080 {
+		t.Error("Expected chained height to be set")
+	}
+
+	if animation.input.Duration != 60 {
+		t.Error("Expected chained duration to be set")
+	}
+
+	if !animation.input.HasSpoiler {
+		t.Error("Expected chained spoiler to be set")
+	}
+}
+
+func TestMediaAnimation_DefaultValues(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/animation.gif")}
+	animation := Animation(mockFile)
+
+	if animation.input.Caption != "" {
+		t.Error("Expected default caption to be empty")
+	}
+
+	if animation.input.ParseMode != "" {
+		t.Error("Expected default parse mode to be empty")
+	}
+
+	if animation.input.Width != 0 {
+		t.Error("Expected default width to be 0")
+	}
+
+	if animation.input.Height != 0 {
+		t.Error("Expected default height to be 0")
+	}
+
+	if animation.input.Duration != 0 {
+		t.Error("Expected default duration to be 0")
+	}
+
+	if animation.input.ShowCaptionAboveMedia {
+		t.Error("Expected default ShowCaptionAboveMedia to be false")
+	}
+
+	if animation.input.HasSpoiler {
+		t.Error("Expected default HasSpoiler to be false")
+	}
+
+	if animation.input.CaptionEntities != nil {
+		t.Error("Expected default caption entities to be nil")
+	}
+}
+
+// ==============================================
+// MediaDocument Tests
+// ==============================================
+
+func TestDocument_Creation(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/document.pdf")}
+	document := Document(mockFile)
+
+	if document == nil {
+		t.Error("Expected Document to be created")
+	}
+
+	if document.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if document.input.Media != mockFile.Doc {
+		t.Error("Expected media to be set correctly")
+	}
+}
+
+func TestMediaDocument_Thumbnail(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/document.pdf")}
+	document := Document(mockFile)
+	thumbnailFile := file.InputFile{Doc: gotgbot.InputFileByReader("thumb.jpg", nil)}
+
+	result := document.Thumbnail(thumbnailFile)
+
+	if result != document {
+		t.Error("Expected fluent interface")
+	}
+}
+
+func TestMediaDocument_Caption(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/document.pdf")}
+	document := Document(mockFile)
+	caption := g.String("Test document caption")
+
+	result := document.Caption(caption)
+
+	if result != document {
+		t.Error("Expected fluent interface")
+	}
+
+	if document.input.Caption != caption.Std() {
+		t.Errorf("Expected caption '%s', got '%s'", caption.Std(), document.input.Caption)
+	}
+}
+
+func TestMediaDocument_HTML(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/document.pdf")}
+	document := Document(mockFile)
+
+	result := document.HTML()
+
+	if result != document {
+		t.Error("Expected fluent interface")
+	}
+
+	if document.input.ParseMode != "HTML" {
+		t.Errorf("Expected parse mode 'HTML', got '%s'", document.input.ParseMode)
+	}
+}
+
+func TestMediaDocument_Markdown(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/document.pdf")}
+	document := Document(mockFile)
+
+	result := document.Markdown()
+
+	if result != document {
+		t.Error("Expected fluent interface")
+	}
+
+	if document.input.ParseMode != "MarkdownV2" {
+		t.Errorf("Expected parse mode 'MarkdownV2', got '%s'", document.input.ParseMode)
+	}
+}
+
+func TestMediaDocument_CaptionEntities(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/document.pdf")}
+	document := Document(mockFile)
+
+	ent := entities.New(g.String("test text")).Bold("test")
+	result := document.CaptionEntities(*ent)
+
+	if result != document {
+		t.Error("Expected fluent interface")
+	}
+
+	if document.input.CaptionEntities == nil {
+		t.Error("Expected caption entities to be set")
+	}
+}
+
+func TestMediaDocument_DisableContentTypeDetection(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/document.pdf")}
+	document := Document(mockFile)
+
+	result := document.DisableContentTypeDetection()
+
+	if result != document {
+		t.Error("Expected fluent interface")
+	}
+
+	if !document.input.DisableContentTypeDetection {
+		t.Error("Expected DisableContentTypeDetection to be true")
+	}
+}
+
+func TestMediaDocument_Build(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/document.pdf")}
+	document := Document(mockFile).
+		Caption(g.String("Test document")).
+		HTML().
+		DisableContentTypeDetection()
+
+	built := document.Build()
+
+	if built == nil {
+		t.Error("Expected Build to return non-nil InputMedia")
+	}
+
+	documentMedia, ok := built.(gotgbot.InputMediaDocument)
+	if !ok {
+		t.Errorf("Expected InputMediaDocument, got %T", built)
+	}
+
+	if documentMedia.Caption != "Test document" {
+		t.Error("Expected caption to be preserved")
+	}
+
+	if documentMedia.ParseMode != "HTML" {
+		t.Error("Expected parse mode to be preserved")
+	}
+
+	if !documentMedia.DisableContentTypeDetection {
+		t.Error("Expected DisableContentTypeDetection to be preserved")
+	}
+}
+
+func TestMediaDocument_ChainedMethods(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/document.pdf")}
+
+	document := Document(mockFile).
+		Caption(g.String("Chained document")).
+		Markdown().
+		DisableContentTypeDetection()
+
+	if document.input.Caption != "Chained document" {
+		t.Error("Expected chained caption to be set")
+	}
+
+	if document.input.ParseMode != "MarkdownV2" {
+		t.Error("Expected chained parse mode to be set")
+	}
+
+	if !document.input.DisableContentTypeDetection {
+		t.Error("Expected chained DisableContentTypeDetection to be set")
+	}
+}
+
+func TestMediaDocument_DefaultValues(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/document.pdf")}
+	document := Document(mockFile)
+
+	if document.input.Caption != "" {
+		t.Error("Expected default caption to be empty")
+	}
+
+	if document.input.ParseMode != "" {
+		t.Error("Expected default parse mode to be empty")
+	}
+
+	if document.input.DisableContentTypeDetection {
+		t.Error("Expected default DisableContentTypeDetection to be false")
+	}
+
+	if document.input.CaptionEntities != nil {
+		t.Error("Expected default caption entities to be nil")
+	}
+}
+
+// ==============================================
+// MessageContact Tests
+// ==============================================
+
+func TestContact_Creation(t *testing.T) {
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+	contact := Contact(phoneNumber, firstName)
+
+	if contact == nil {
+		t.Error("Expected Contact to be created")
+	}
+
+	if contact.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if contact.input.PhoneNumber != phoneNumber.Std() {
+		t.Errorf("Expected phone number '%s', got '%s'", phoneNumber.Std(), contact.input.PhoneNumber)
+	}
+
+	if contact.input.FirstName != firstName.Std() {
+		t.Errorf("Expected first name '%s', got '%s'", firstName.Std(), contact.input.FirstName)
+	}
+}
+
+func TestMessageContact_LastName(t *testing.T) {
+	contact := Contact(g.String("+1234567890"), g.String("John"))
+	lastName := g.String("Doe")
+
+	result := contact.LastName(lastName)
+
+	if result != contact {
+		t.Error("Expected fluent interface")
+	}
+
+	if contact.input.LastName != lastName.Std() {
+		t.Errorf("Expected last name '%s', got '%s'", lastName.Std(), contact.input.LastName)
+	}
+}
+
+func TestMessageContact_Vcard(t *testing.T) {
+	contact := Contact(g.String("+1234567890"), g.String("John"))
+	vcard := g.String("BEGIN:VCARD\nVERSION:3.0\nFN:John Doe\nEND:VCARD")
+
+	result := contact.Vcard(vcard)
+
+	if result != contact {
+		t.Error("Expected fluent interface")
+	}
+
+	if contact.input.Vcard != vcard.Std() {
+		t.Errorf("Expected vcard '%s', got '%s'", vcard.Std(), contact.input.Vcard)
+	}
+}
+
+func TestMessageContact_Build(t *testing.T) {
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+	contact := Contact(phoneNumber, firstName).
+		LastName(g.String("Doe")).
+		Vcard(g.String("BEGIN:VCARD\nVERSION:3.0\nFN:John Doe\nEND:VCARD"))
+
+	built := contact.Build()
+
+	if built == nil {
+		t.Error("Expected Build to return non-nil InputMessageContent")
+	}
+
+	contactContent, ok := built.(gotgbot.InputContactMessageContent)
+	if !ok {
+		t.Errorf("Expected InputContactMessageContent, got %T", built)
+	}
+
+	if contactContent.PhoneNumber != phoneNumber.Std() {
+		t.Error("Expected phone number to be preserved")
+	}
+
+	if contactContent.FirstName != firstName.Std() {
+		t.Error("Expected first name to be preserved")
+	}
+
+	if contactContent.LastName != "Doe" {
+		t.Error("Expected last name to be preserved")
+	}
+
+	if contactContent.Vcard == "" {
+		t.Error("Expected vcard to be preserved")
+	}
+}
+
+func TestMessageContact_ChainedMethods(t *testing.T) {
+	contact := Contact(g.String("+9876543210"), g.String("Jane")).
+		LastName(g.String("Smith")).
+		Vcard(g.String("BEGIN:VCARD\nVERSION:3.0\nFN:Jane Smith\nEND:VCARD"))
+
+	if contact.input.PhoneNumber != "+9876543210" {
+		t.Error("Expected chained phone number to be set")
+	}
+
+	if contact.input.FirstName != "Jane" {
+		t.Error("Expected chained first name to be set")
+	}
+
+	if contact.input.LastName != "Smith" {
+		t.Error("Expected chained last name to be set")
+	}
+
+	if contact.input.Vcard == "" {
+		t.Error("Expected chained vcard to be set")
+	}
+}
+
+func TestMessageContact_DefaultValues(t *testing.T) {
+	contact := Contact(g.String("+1111111111"), g.String("Test"))
+
+	if contact.input.LastName != "" {
+		t.Error("Expected default last name to be empty")
+	}
+
+	if contact.input.Vcard != "" {
+		t.Error("Expected default vcard to be empty")
+	}
+}
+
+func TestMessageContact_EmptyStrings(t *testing.T) {
+	contact := Contact(g.String(""), g.String("")).
+		LastName(g.String("")).
+		Vcard(g.String(""))
+
+	if contact.input.PhoneNumber != "" {
+		t.Error("Expected empty phone number to be preserved")
+	}
+
+	if contact.input.FirstName != "" {
+		t.Error("Expected empty first name to be preserved")
+	}
+
+	if contact.input.LastName != "" {
+		t.Error("Expected empty last name to be preserved")
+	}
+
+	if contact.input.Vcard != "" {
+		t.Error("Expected empty vcard to be preserved")
+	}
+}
+
+// ==============================================
+// MessageVenue Tests
+// ==============================================
+
+func TestVenue_Creation(t *testing.T) {
+	lat, lon := 40.7589, -73.9851
+	title := g.String("Empire State Building")
+	address := g.String("20 W 34th St, New York, NY 10001")
+	venue := Venue(lat, lon, title, address)
+
+	if venue == nil {
+		t.Error("Expected Venue to be created")
+	}
+
+	if venue.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if venue.input.Latitude != lat {
+		t.Errorf("Expected latitude %f, got %f", lat, venue.input.Latitude)
+	}
+
+	if venue.input.Longitude != lon {
+		t.Errorf("Expected longitude %f, got %f", lon, venue.input.Longitude)
+	}
+
+	if venue.input.Title != title.Std() {
+		t.Errorf("Expected title '%s', got '%s'", title.Std(), venue.input.Title)
+	}
+
+	if venue.input.Address != address.Std() {
+		t.Errorf("Expected address '%s', got '%s'", address.Std(), venue.input.Address)
+	}
+}
+
+func TestMessageVenue_FoursquareID(t *testing.T) {
+	venue := Venue(40.7589, -73.9851, g.String("Test Venue"), g.String("Test Address"))
+	fsqID := g.String("4b5e662a70c603bb")
+
+	result := venue.FoursquareID(fsqID)
+
+	if result != venue {
+		t.Error("Expected fluent interface")
+	}
+
+	if venue.input.FoursquareId != fsqID.Std() {
+		t.Errorf("Expected Foursquare ID '%s', got '%s'", fsqID.Std(), venue.input.FoursquareId)
+	}
+}
+
+func TestMessageVenue_FoursquareType(t *testing.T) {
+	venue := Venue(40.7589, -73.9851, g.String("Test Venue"), g.String("Test Address"))
+	fsqType := g.String("arts_entertainment/default")
+
+	result := venue.FoursquareType(fsqType)
+
+	if result != venue {
+		t.Error("Expected fluent interface")
+	}
+
+	if venue.input.FoursquareType != fsqType.Std() {
+		t.Errorf("Expected Foursquare type '%s', got '%s'", fsqType.Std(), venue.input.FoursquareType)
+	}
+}
+
+func TestMessageVenue_GooglePlaceID(t *testing.T) {
+	venue := Venue(40.7589, -73.9851, g.String("Test Venue"), g.String("Test Address"))
+	placeID := g.String("ChIJaXQRs6lZwokRY6tbFzGg-pw")
+
+	result := venue.GooglePlaceID(placeID)
+
+	if result != venue {
+		t.Error("Expected fluent interface")
+	}
+
+	if venue.input.GooglePlaceId != placeID.Std() {
+		t.Errorf("Expected Google Place ID '%s', got '%s'", placeID.Std(), venue.input.GooglePlaceId)
+	}
+}
+
+func TestMessageVenue_GooglePlaceType(t *testing.T) {
+	venue := Venue(40.7589, -73.9851, g.String("Test Venue"), g.String("Test Address"))
+	placeType := g.String("tourist_attraction")
+
+	result := venue.GooglePlaceType(placeType)
+
+	if result != venue {
+		t.Error("Expected fluent interface")
+	}
+
+	if venue.input.GooglePlaceType != placeType.Std() {
+		t.Errorf("Expected Google Place type '%s', got '%s'", placeType.Std(), venue.input.GooglePlaceType)
+	}
+}
+
+func TestMessageVenue_Build(t *testing.T) {
+	lat, lon := 40.7589, -73.9851
+	title := g.String("Empire State Building")
+	address := g.String("20 W 34th St, New York, NY 10001")
+	venue := Venue(lat, lon, title, address).
+		FoursquareID(g.String("4b5e662a70c603bb")).
+		FoursquareType(g.String("arts_entertainment/default")).
+		GooglePlaceID(g.String("ChIJaXQRs6lZwokRY6tbFzGg-pw")).
+		GooglePlaceType(g.String("tourist_attraction"))
+
+	built := venue.Build()
+
+	if built == nil {
+		t.Error("Expected Build to return non-nil InputMessageContent")
+	}
+
+	venueContent, ok := built.(gotgbot.InputVenueMessageContent)
+	if !ok {
+		t.Errorf("Expected InputVenueMessageContent, got %T", built)
+	}
+
+	if venueContent.Latitude != lat {
+		t.Error("Expected latitude to be preserved")
+	}
+
+	if venueContent.Longitude != lon {
+		t.Error("Expected longitude to be preserved")
+	}
+
+	if venueContent.Title != title.Std() {
+		t.Error("Expected title to be preserved")
+	}
+
+	if venueContent.Address != address.Std() {
+		t.Error("Expected address to be preserved")
+	}
+
+	if venueContent.FoursquareId != "4b5e662a70c603bb" {
+		t.Error("Expected Foursquare ID to be preserved")
+	}
+
+	if venueContent.FoursquareType != "arts_entertainment/default" {
+		t.Error("Expected Foursquare type to be preserved")
+	}
+
+	if venueContent.GooglePlaceId != "ChIJaXQRs6lZwokRY6tbFzGg-pw" {
+		t.Error("Expected Google Place ID to be preserved")
+	}
+
+	if venueContent.GooglePlaceType != "tourist_attraction" {
+		t.Error("Expected Google Place type to be preserved")
+	}
+}
+
+func TestMessageVenue_ChainedMethods(t *testing.T) {
+	venue := Venue(51.5074, -0.1278, g.String("Big Ben"), g.String("Westminster, London SW1A 0AA, UK")).
+		FoursquareID(g.String("test_fsq_id")).
+		FoursquareType(g.String("test_fsq_type")).
+		GooglePlaceID(g.String("test_google_id")).
+		GooglePlaceType(g.String("test_google_type"))
+
+	if venue.input.Latitude != 51.5074 {
+		t.Error("Expected chained latitude to be set")
+	}
+
+	if venue.input.Longitude != -0.1278 {
+		t.Error("Expected chained longitude to be set")
+	}
+
+	if venue.input.Title != "Big Ben" {
+		t.Error("Expected chained title to be set")
+	}
+
+	if venue.input.Address != "Westminster, London SW1A 0AA, UK" {
+		t.Error("Expected chained address to be set")
+	}
+
+	if venue.input.FoursquareId != "test_fsq_id" {
+		t.Error("Expected chained Foursquare ID to be set")
+	}
+
+	if venue.input.FoursquareType != "test_fsq_type" {
+		t.Error("Expected chained Foursquare type to be set")
+	}
+
+	if venue.input.GooglePlaceId != "test_google_id" {
+		t.Error("Expected chained Google Place ID to be set")
+	}
+
+	if venue.input.GooglePlaceType != "test_google_type" {
+		t.Error("Expected chained Google Place type to be set")
+	}
+}
+
+func TestMessageVenue_DefaultValues(t *testing.T) {
+	venue := Venue(0, 0, g.String("Test"), g.String("Test Address"))
+
+	if venue.input.FoursquareId != "" {
+		t.Error("Expected default Foursquare ID to be empty")
+	}
+
+	if venue.input.FoursquareType != "" {
+		t.Error("Expected default Foursquare type to be empty")
+	}
+
+	if venue.input.GooglePlaceId != "" {
+		t.Error("Expected default Google Place ID to be empty")
+	}
+
+	if venue.input.GooglePlaceType != "" {
+		t.Error("Expected default Google Place type to be empty")
+	}
+}
+
+func TestMessageVenue_EmptyStrings(t *testing.T) {
+	venue := Venue(0, 0, g.String(""), g.String("")).
+		FoursquareID(g.String("")).
+		FoursquareType(g.String("")).
+		GooglePlaceID(g.String("")).
+		GooglePlaceType(g.String(""))
+
+	if venue.input.Title != "" {
+		t.Error("Expected empty title to be preserved")
+	}
+
+	if venue.input.Address != "" {
+		t.Error("Expected empty address to be preserved")
+	}
+
+	if venue.input.FoursquareId != "" {
+		t.Error("Expected empty Foursquare ID to be preserved")
+	}
+
+	if venue.input.FoursquareType != "" {
+		t.Error("Expected empty Foursquare type to be preserved")
+	}
+
+	if venue.input.GooglePlaceId != "" {
+		t.Error("Expected empty Google Place ID to be preserved")
+	}
+
+	if venue.input.GooglePlaceType != "" {
+		t.Error("Expected empty Google Place type to be preserved")
+	}
+}
+
+// ==============================================
+// Sticker Tests
+// ==============================================
+
+func TestNewSticker_Creation(t *testing.T) {
+	sticker := g.String("CAACAgIAAxkBAAEBCgACYOZEYAAB1_gGF3IWUWwqZgABEQADBAADbwAABCBjAAEfBA")
+	format := g.String("static")
+	emojiList := g.NewSlice[g.String]().Append("😀", "😃")
+
+	stickerBuilder := NewSticker(sticker, format, emojiList)
+
+	if stickerBuilder == nil {
+		t.Error("Expected Sticker to be created")
+	}
+
+	if stickerBuilder.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if stickerBuilder.input.Sticker != sticker.Std() {
+		t.Errorf("Expected sticker '%s', got '%s'", sticker.Std(), stickerBuilder.input.Sticker)
+	}
+
+	if stickerBuilder.input.Format != format.Std() {
+		t.Errorf("Expected format '%s', got '%s'", format.Std(), stickerBuilder.input.Format)
+	}
+
+	if len(stickerBuilder.input.EmojiList) != 2 {
+		t.Errorf("Expected 2 emojis, got %d", len(stickerBuilder.input.EmojiList))
+	}
+
+	if stickerBuilder.input.EmojiList[0] != "😀" {
+		t.Error("Expected first emoji to match")
+	}
+
+	if stickerBuilder.input.EmojiList[1] != "😃" {
+		t.Error("Expected second emoji to match")
+	}
+}
+
+func TestSticker_MaskPosition(t *testing.T) {
+	sticker := NewSticker(g.String("test_sticker"), g.String("static"), g.NewSlice[g.String]().Append("😀"))
+	maskPos := &gotgbot.MaskPosition{
+		Point:  "forehead",
+		XShift: 0.5,
+		YShift: 0.2,
+		Scale:  1.0,
+	}
+
+	result := sticker.MaskPosition(maskPos)
+
+	if result != sticker {
+		t.Error("Expected fluent interface")
+	}
+
+	if sticker.input.MaskPosition == nil {
+		t.Error("Expected mask position to be set")
+	}
+
+	if sticker.input.MaskPosition.Point != "forehead" {
+		t.Error("Expected mask position point to match")
+	}
+}
+
+func TestSticker_Keywords(t *testing.T) {
+	sticker := NewSticker(g.String("test_sticker"), g.String("static"), g.NewSlice[g.String]().Append("😀"))
+	keywords := g.NewSlice[g.String]().Append("happy", "smile", "joy")
+
+	result := sticker.Keywords(keywords)
+
+	if result != sticker {
+		t.Error("Expected fluent interface")
+	}
+
+	if len(sticker.input.Keywords) != 3 {
+		t.Errorf("Expected 3 keywords, got %d", len(sticker.input.Keywords))
+	}
+
+	if sticker.input.Keywords[0] != "happy" {
+		t.Error("Expected first keyword to match")
+	}
+
+	if sticker.input.Keywords[1] != "smile" {
+		t.Error("Expected second keyword to match")
+	}
+
+	if sticker.input.Keywords[2] != "joy" {
+		t.Error("Expected third keyword to match")
+	}
+}
+
+func TestSticker_Build(t *testing.T) {
+	sticker := NewSticker(
+		g.String("CAACAgIAAxkBAAEBCgACYOZEYAAB1_gGF3IWUWwqZgABEQADBAADbwAABCBjAAEfBA"),
+		g.String("animated"),
+		g.NewSlice[g.String]().Append("😀", "😃"),
+	).Keywords(g.NewSlice[g.String]().Append("happy"))
+
+	built := sticker.Build()
+
+	// Sticker.Build() returns gotgbot.InputSticker directly
+	if built.Sticker != "CAACAgIAAxkBAAEBCgACYOZEYAAB1_gGF3IWUWwqZgABEQADBAADbwAABCBjAAEfBA" {
+		t.Error("Expected sticker to be preserved in built result")
+	}
+
+	if built.Format != "animated" {
+		t.Error("Expected format to be preserved in built result")
+	}
+
+	if len(built.EmojiList) != 2 {
+		t.Error("Expected emoji list to be preserved in built result")
+	}
+
+	if len(built.Keywords) != 1 {
+		t.Error("Expected keywords to be preserved in built result")
+	}
+
+	if built.Keywords[0] != "happy" {
+		t.Error("Expected keyword to be preserved in built result")
+	}
+}
+
+func TestSticker_ChainedMethods(t *testing.T) {
+	maskPos := &gotgbot.MaskPosition{Point: "eyes", XShift: 0.0, YShift: 0.0, Scale: 1.5}
+
+	sticker := NewSticker(
+		g.String("test_sticker_chained"),
+		g.String("video"),
+		g.NewSlice[g.String]().Append("🎉"),
+	).MaskPosition(maskPos).Keywords(g.NewSlice[g.String]().Append("party", "celebration"))
+
+	if sticker.input.Sticker != "test_sticker_chained" {
+		t.Error("Expected chained sticker to be set")
+	}
+
+	if sticker.input.Format != "video" {
+		t.Error("Expected chained format to be set")
+	}
+
+	if len(sticker.input.EmojiList) != 1 {
+		t.Error("Expected chained emoji list to be set")
+	}
+
+	if sticker.input.EmojiList[0] != "🎉" {
+		t.Error("Expected chained emoji to be set")
+	}
+
+	if sticker.input.MaskPosition == nil {
+		t.Error("Expected chained mask position to be set")
+	}
+
+	if sticker.input.MaskPosition.Point != "eyes" {
+		t.Error("Expected chained mask position point to be set")
+	}
+
+	if len(sticker.input.Keywords) != 2 {
+		t.Error("Expected chained keywords to be set")
+	}
+
+	if sticker.input.Keywords[0] != "party" {
+		t.Error("Expected first chained keyword to be set")
+	}
+
+	if sticker.input.Keywords[1] != "celebration" {
+		t.Error("Expected second chained keyword to be set")
+	}
+}
+
+func TestSticker_DefaultValues(t *testing.T) {
+	sticker := NewSticker(g.String("test"), g.String("static"), g.NewSlice[g.String]().Append("😀"))
+
+	if sticker.input.MaskPosition != nil {
+		t.Error("Expected default mask position to be nil")
+	}
+
+	if sticker.input.Keywords != nil {
+		t.Error("Expected default keywords to be nil")
+	}
+}
+
+func TestSticker_EmptyValues(t *testing.T) {
+	sticker := NewSticker(g.String(""), g.String(""), g.NewSlice[g.String]())
+
+	if sticker.input.Sticker != "" {
+		t.Error("Expected empty sticker to be preserved")
+	}
+
+	if sticker.input.Format != "" {
+		t.Error("Expected empty format to be preserved")
+	}
+
+	if len(sticker.input.EmojiList) != 0 {
+		t.Error("Expected empty emoji list to be preserved")
+	}
+}
+
+// ==============================================
+// StoryContentPhoto Tests
+// ==============================================
+
+func TestStoryPhoto_Creation(t *testing.T) {
+	photo := g.String("AgACAgIAAxkBAAEBCgACYOZEYAAB1_gGF3IWUWwqZgABEQADBAADbwAABCBjAAEfBA")
+	storyPhoto := StoryPhoto(photo)
+
+	if storyPhoto == nil {
+		t.Error("Expected StoryContentPhoto to be created")
+	}
+
+	if storyPhoto.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if storyPhoto.input.Photo != photo.Std() {
+		t.Errorf("Expected photo '%s', got '%s'", photo.Std(), storyPhoto.input.Photo)
+	}
+}
+
+func TestStoryContentPhoto_Build(t *testing.T) {
+	photo := g.String("AgACAgIAAxkBAAEBCgACYOZEYAAB1_gGF3IWUWwqZgABEQADBAADbwAABCBjAAEfBA")
+	storyPhoto := StoryPhoto(photo)
+
+	built := storyPhoto.Build()
+
+	if built == nil {
+		t.Error("Expected Build to return non-nil InputStoryContent")
+	}
+
+	photoContent, ok := built.(gotgbot.InputStoryContentPhoto)
+	if !ok {
+		t.Errorf("Expected InputStoryContentPhoto, got %T", built)
+	}
+
+	if photoContent.Photo != photo.Std() {
+		t.Error("Expected photo to be preserved in built result")
+	}
+}
+
+func TestStoryContentPhoto_EmptyPhoto(t *testing.T) {
+	storyPhoto := StoryPhoto(g.String(""))
+
+	if storyPhoto.input.Photo != "" {
+		t.Error("Expected empty photo to be preserved")
+	}
+}
+
+// ==============================================
+// ProfilePhotoStatic Tests
+// ==============================================
+
+func TestStaticPhoto_Creation(t *testing.T) {
+	photo := g.String("AgACAgIAAxkBAAEBCgACYOZEYAAB1_gGF3IWUWwqZgABEQADBAADbwAABCBjAAEfBA")
+	profilePhoto := StaticPhoto(photo)
+
+	if profilePhoto == nil {
+		t.Error("Expected ProfilePhotoStatic to be created")
+	}
+
+	if profilePhoto.input == nil {
+		t.Error("Expected input to be initialized")
+	}
+
+	if profilePhoto.input.Photo != photo.Std() {
+		t.Errorf("Expected photo '%s', got '%s'", photo.Std(), profilePhoto.input.Photo)
+	}
+}
+
+func TestProfilePhotoStatic_Build(t *testing.T) {
+	photo := g.String("AgACAgIAAxkBAAEBCgACYOZEYAAB1_gGF3IWUWwqZgABEQADBAADbwAABCBjAAEfBA")
+	profilePhoto := StaticPhoto(photo)
+
+	built := profilePhoto.Build()
+
+	if built == nil {
+		t.Error("Expected Build to return non-nil InputProfilePhoto")
+	}
+
+	staticContent, ok := built.(gotgbot.InputProfilePhotoStatic)
+	if !ok {
+		t.Errorf("Expected InputProfilePhotoStatic, got %T", built)
+	}
+
+	if staticContent.Photo != photo.Std() {
+		t.Error("Expected photo to be preserved in built result")
+	}
+}
+
+func TestProfilePhotoStatic_EmptyPhoto(t *testing.T) {
+	profilePhoto := StaticPhoto(g.String(""))
+
+	if profilePhoto.input.Photo != "" {
+		t.Error("Expected empty photo to be preserved")
+	}
+}
+
+// ==============================================
+// Extended Interface Compliance Tests
+// ==============================================
+
+func TestAdditionalInterfaceCompliance(t *testing.T) {
+	mockFile := file.InputFile{Doc: gotgbot.InputFileByURL("https://example.com/media")}
+
+	// Test MediaAnimation
+	var animationMedia Media = Animation(mockFile)
+	animationBuilt := animationMedia.Build()
+	if animationBuilt == nil {
+		t.Error("Expected MediaAnimation to implement Media interface")
+	}
+
+	if _, ok := animationBuilt.(gotgbot.InputMediaAnimation); !ok {
+		t.Errorf("Expected InputMediaAnimation from interface, got %T", animationBuilt)
+	}
+
+	// Test MediaDocument
+	var documentMedia Media = Document(mockFile)
+	documentBuilt := documentMedia.Build()
+	if documentBuilt == nil {
+		t.Error("Expected MediaDocument to implement Media interface")
+	}
+
+	if _, ok := documentBuilt.(gotgbot.InputMediaDocument); !ok {
+		t.Errorf("Expected InputMediaDocument from interface, got %T", documentBuilt)
+	}
+
+	// Test MessageContact
+	var contactContent MessageContent = Contact(g.String("+1234567890"), g.String("John"))
+	contactBuilt := contactContent.Build()
+	if contactBuilt == nil {
+		t.Error("Expected MessageContact to implement MessageContent interface")
+	}
+
+	if _, ok := contactBuilt.(gotgbot.InputContactMessageContent); !ok {
+		t.Errorf("Expected InputContactMessageContent from interface, got %T", contactBuilt)
+	}
+
+	// Test MessageVenue
+	var venueContent MessageContent = Venue(40.7589, -73.9851, g.String("Test"), g.String("Test Address"))
+	venueBuilt := venueContent.Build()
+	if venueBuilt == nil {
+		t.Error("Expected MessageVenue to implement MessageContent interface")
+	}
+
+	if _, ok := venueBuilt.(gotgbot.InputVenueMessageContent); !ok {
+		t.Errorf("Expected InputVenueMessageContent from interface, got %T", venueBuilt)
+	}
+
+	// Test StoryContentPhoto
+	var storyContent StoryContent = StoryPhoto(g.String("test_photo"))
+	storyBuilt := storyContent.Build()
+	if storyBuilt == nil {
+		t.Error("Expected StoryContentPhoto to implement StoryContent interface")
+	}
+
+	if _, ok := storyBuilt.(gotgbot.InputStoryContentPhoto); !ok {
+		t.Errorf("Expected InputStoryContentPhoto from interface, got %T", storyBuilt)
+	}
+
+	// Test ProfilePhotoStatic
+	var profilePhoto ProfilePhoto = StaticPhoto(g.String("test_photo"))
+	profileBuilt := profilePhoto.Build()
+	if profileBuilt == nil {
+		t.Error("Expected ProfilePhotoStatic to implement ProfilePhoto interface")
+	}
+
+	if _, ok := profileBuilt.(gotgbot.InputProfilePhotoStatic); !ok {
+		t.Errorf("Expected InputProfilePhotoStatic from interface, got %T", profileBuilt)
+	}
+}
