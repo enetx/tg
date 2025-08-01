@@ -3,6 +3,7 @@ package bot
 import (
 	"encoding/json"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -18,6 +19,7 @@ type Bot struct {
 	token       g.String                  // Bot token for API authentication
 	dispatcher  *ext.Dispatcher           // Event dispatcher for handling updates
 	updater     *ext.Updater              // Updater for receiving updates
+	mu          sync.RWMutex              // Protects concurrent access to middlewares
 	middlewares g.Slice[handlers.Handler] // Global middleware stack
 	On          *handlers.Handlers        // Event handlers for different update types
 	raw         *gotgbot.Bot              // Raw gotgbot instance for direct API access
@@ -94,12 +96,19 @@ func (b *Bot) HandleWebhook(data []byte) error {
 
 // Use adds a global middleware to the bot.
 func (b *Bot) Use(middleware handlers.Handler) *Bot {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
 	b.middlewares.Push(middleware)
+
 	return b
 }
 
 // Middlewares returns the current global middleware stack.
 func (b *Bot) Middlewares() g.Slice[handlers.Handler] {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+
 	return b.middlewares
 }
 
