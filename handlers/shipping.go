@@ -37,3 +37,11 @@ func (h *ShippingHandlers) HasPayloadPrefix(prefix g.String, fn Handler) *Shippi
 	}, fn)
 	return h
 }
+
+// InvoicePayload handles shipping queries with a specific invoice payload.
+func (h *ShippingHandlers) InvoicePayload(payload g.String, fn Handler) *ShippingHandlers {
+	h.handleShippingQuery(func(s *gotgbot.ShippingQuery) bool {
+		return s != nil && g.String(s.InvoicePayload) == payload
+	}, fn)
+	return h
+}

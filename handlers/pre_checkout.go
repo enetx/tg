@@ -37,3 +37,11 @@ func (h *PreCheckoutHandlers) HasPayloadPrefix(prefix g.String, fn Handler) *Pre
 	}, fn)
 	return h
 }
+
+// Currency handles pre-checkout queries that match the given currency.
+func (h *PreCheckoutHandlers) Currency(currency g.String, fn Handler) *PreCheckoutHandlers {
+	h.handlePreCheckoutQuery(func(p *gotgbot.PreCheckoutQuery) bool {
+		return p != nil && g.String(p.Currency).Eq(currency)
+	}, fn)
+	return h
+}

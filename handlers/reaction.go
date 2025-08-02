@@ -51,6 +51,14 @@ func (h *ReactionHandlers) ChatID(id int64, fn Handler) *ReactionHandlers {
 	return h
 }
 
+// MessageID handles reactions for a specific message.
+func (h *ReactionHandlers) MessageID(id int64, fn Handler) *ReactionHandlers {
+	h.handleReaction(func(mru *gotgbot.MessageReactionUpdated) bool {
+		return mru != nil && mru.MessageId == id
+	}, fn)
+	return h
+}
+
 // NewReactionEmoji handles reactions where the specified emoji was added.
 func (h *ReactionHandlers) NewReactionEmoji(emoji g.String, fn Handler) *ReactionHandlers {
 	h.handleReaction(func(mru *gotgbot.MessageReactionUpdated) bool {
