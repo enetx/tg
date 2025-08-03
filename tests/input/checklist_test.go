@@ -9,7 +9,7 @@ import (
 )
 
 func TestNewChecklist(t *testing.T) {
-	tasks := g.SliceOf[gotgbot.InputChecklistTask](
+	tasks := g.SliceOf(
 		gotgbot.InputChecklistTask{Text: "Task 1"},
 		gotgbot.InputChecklistTask{Text: "Task 2"},
 	)
@@ -21,7 +21,7 @@ func TestNewChecklist(t *testing.T) {
 }
 
 func TestChecklist_Build(t *testing.T) {
-	tasks := g.SliceOf[gotgbot.InputChecklistTask](
+	tasks := g.SliceOf(
 		gotgbot.InputChecklistTask{Text: "Task 1"},
 		gotgbot.InputChecklistTask{Text: "Task 2"},
 	)
@@ -61,7 +61,7 @@ func TestChecklist_EmptyTasks(t *testing.T) {
 }
 
 func TestChecklist_BuildReturnsCorrectType(t *testing.T) {
-	tasks := g.SliceOf[gotgbot.InputChecklistTask](
+	tasks := g.SliceOf(
 		gotgbot.InputChecklistTask{Text: "Task 1"},
 	)
 
@@ -69,13 +69,13 @@ func TestChecklist_BuildReturnsCorrectType(t *testing.T) {
 	built := checklist.Build()
 
 	// Verify that Build() returns the correct type
-	if _, ok := interface{}(built).(gotgbot.InputChecklist); !ok {
+	if _, ok := any(built).(gotgbot.InputChecklist); !ok {
 		t.Error("Expected Build() to return gotgbot.InputChecklist")
 	}
 }
 
 func TestChecklist_MultipleBuilds(t *testing.T) {
-	tasks := g.SliceOf[gotgbot.InputChecklistTask](
+	tasks := g.SliceOf(
 		gotgbot.InputChecklistTask{Text: "Task 1"},
 	)
 

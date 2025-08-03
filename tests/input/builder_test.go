@@ -7,47 +7,6 @@ import (
 	"github.com/enetx/tg/input"
 )
 
-func TestBuilder_InterfaceDefinitions(t *testing.T) {
-	// Test that all interface types are correctly defined
-	// This ensures the interfaces can be used in type assertions
-
-	// Test Media interface
-	var media input.Media
-	if media != nil {
-		t.Error("Expected Media interface to be nil by default")
-	}
-
-	// Test MessageContent interface
-	var messageContent input.MessageContent
-	if messageContent != nil {
-		t.Error("Expected MessageContent interface to be nil by default")
-	}
-
-	// Test PaidMedia interface
-	var paidMedia input.PaidMedia
-	if paidMedia != nil {
-		t.Error("Expected PaidMedia interface to be nil by default")
-	}
-
-	// Test ProfilePhoto interface
-	var profilePhoto input.ProfilePhoto
-	if profilePhoto != nil {
-		t.Error("Expected ProfilePhoto interface to be nil by default")
-	}
-
-	// Test StoryContent interface
-	var storyContent input.StoryContent
-	if storyContent != nil {
-		t.Error("Expected StoryContent interface to be nil by default")
-	}
-
-	// Test PollOption interface
-	var pollOption input.PollOption
-	if pollOption != nil {
-		t.Error("Expected PollOption interface to be nil by default")
-	}
-}
-
 func TestBuilder_InterfaceImplementations(t *testing.T) {
 	// Test that concrete types properly implement their interfaces
 
