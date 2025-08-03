@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/tg/file"
 	"github.com/enetx/tg/input"
 )
 
@@ -21,7 +22,7 @@ type CreateNewStickerSet struct {
 // StickerBuilder represents a builder for individual stickers.
 type StickerBuilder struct {
 	parent  *CreateNewStickerSet
-	sticker *input.Sticker
+	sticker *input.InputSticker
 }
 
 // StickerType sets the type of stickers in the set.
@@ -37,8 +38,12 @@ func (cns *CreateNewStickerSet) NeedsRepainting() *CreateNewStickerSet {
 }
 
 // Sticker creates a new sticker builder for configuring individual sticker properties.
-func (cns *CreateNewStickerSet) Sticker(filename, format g.String, emojiList g.Slice[g.String]) *StickerBuilder {
-	sticker := input.NewSticker(filename, format, emojiList)
+func (cns *CreateNewStickerSet) Sticker(
+	filename file.InputFile,
+	format g.String,
+	emojiList g.Slice[g.String],
+) *StickerBuilder {
+	sticker := input.Sticker(filename, format, emojiList)
 
 	return &StickerBuilder{
 		parent:  cns,

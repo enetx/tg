@@ -10,7 +10,7 @@ import (
 // SetStickerKeywords represents a request to set sticker keywords.
 type SetStickerKeywords struct {
 	ctx      *Context
-	sticker  g.String
+	sticker  gotgbot.InputFileOrString
 	keywords g.Slice[g.String]
 	opts     *gotgbot.SetStickerKeywordsOpts
 }
@@ -46,5 +46,5 @@ func (ssk *SetStickerKeywords) APIURL(url g.String) *SetStickerKeywords {
 // Send sets the sticker keywords.
 func (ssk *SetStickerKeywords) Send() g.Result[bool] {
 	ssk.opts.Keywords = ssk.keywords.ToStringSlice()
-	return g.ResultOf(ssk.ctx.Bot.Raw().SetStickerKeywords(ssk.sticker.Std(), ssk.opts))
+	return g.ResultOf(ssk.ctx.Bot.Raw().SetStickerKeywords(ssk.sticker, ssk.opts))
 }

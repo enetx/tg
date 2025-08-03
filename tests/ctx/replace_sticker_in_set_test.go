@@ -7,6 +7,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/file"
 )
 
 func TestContext_ReplaceStickerInSet(t *testing.T) {
@@ -21,7 +22,7 @@ func TestContext_ReplaceStickerInSet(t *testing.T) {
 	name := g.String("test_sticker_set")
 	oldSticker := g.String("old_sticker_id")
 	newSticker := gotgbot.InputSticker{
-		Sticker:   "new_sticker.png",
+		Sticker:   file.Input("new_sticker.png").UnwrapOrDefault().Doc,
 		Format:    "static",
 		EmojiList: []string{"😀"},
 	}

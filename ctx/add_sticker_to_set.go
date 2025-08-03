@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/tg/file"
 )
 
 // AddStickerToSet represents a request to add a sticker to an existing set.
@@ -17,8 +18,8 @@ type AddStickerToSet struct {
 }
 
 // File sets the sticker file.
-func (ats *AddStickerToSet) File(filename g.String) *AddStickerToSet {
-	ats.sticker.Sticker = filename.Std()
+func (ats *AddStickerToSet) File(filename file.InputFile) *AddStickerToSet {
+	ats.sticker.Sticker = filename.Doc
 	return ats
 }
 

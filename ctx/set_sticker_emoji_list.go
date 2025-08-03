@@ -10,7 +10,7 @@ import (
 // SetStickerEmojiList represents a request to set sticker emoji list.
 type SetStickerEmojiList struct {
 	ctx       *Context
-	sticker   g.String
+	sticker   gotgbot.InputFileOrString
 	emojiList g.Slice[g.String]
 	opts      *gotgbot.SetStickerEmojiListOpts
 }
@@ -46,6 +46,6 @@ func (ssel *SetStickerEmojiList) APIURL(url g.String) *SetStickerEmojiList {
 // Send sets the sticker emoji list.
 func (ssel *SetStickerEmojiList) Send() g.Result[bool] {
 	return g.ResultOf(ssel.ctx.Bot.Raw().
-		SetStickerEmojiList(ssel.sticker.Std(), ssel.emojiList.ToStringSlice(), ssel.opts),
+		SetStickerEmojiList(ssel.sticker, ssel.emojiList.ToStringSlice(), ssel.opts),
 	)
 }

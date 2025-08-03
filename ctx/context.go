@@ -973,19 +973,19 @@ func (ctx *Context) DeleteStickerSet(name g.String) *DeleteStickerSet {
 }
 
 // DeleteStickerFromSet deletes a sticker from a set.
-func (ctx *Context) DeleteStickerFromSet(sticker g.String) *DeleteStickerFromSet {
+func (ctx *Context) DeleteStickerFromSet(sticker file.InputFile) *DeleteStickerFromSet {
 	return &DeleteStickerFromSet{
 		ctx:     ctx,
-		sticker: sticker,
+		sticker: sticker.Doc,
 		opts:    new(gotgbot.DeleteStickerFromSetOpts),
 	}
 }
 
 // SetStickerPositionInSet sets the position of a sticker in a set.
-func (ctx *Context) SetStickerPositionInSet(sticker g.String, position int64) *SetStickerPositionInSet {
+func (ctx *Context) SetStickerPositionInSet(sticker file.InputFile, position int64) *SetStickerPositionInSet {
 	return &SetStickerPositionInSet{
 		ctx:      ctx,
-		sticker:  sticker,
+		sticker:  sticker.Doc,
 		position: position,
 		opts:     new(gotgbot.SetStickerPositionInSetOpts),
 	}
@@ -1036,28 +1036,28 @@ func (ctx *Context) SetUserEmojiStatus(userID int64) *SetUserEmojiStatus {
 }
 
 // SetStickerEmojiList sets the emoji list for a sticker.
-func (ctx *Context) SetStickerEmojiList(sticker g.String) *SetStickerEmojiList {
+func (ctx *Context) SetStickerEmojiList(sticker file.InputFile) *SetStickerEmojiList {
 	return &SetStickerEmojiList{
 		ctx:     ctx,
-		sticker: sticker,
+		sticker: sticker.Doc,
 		opts:    new(gotgbot.SetStickerEmojiListOpts),
 	}
 }
 
 // SetStickerKeywords sets keywords for a sticker.
-func (ctx *Context) SetStickerKeywords(sticker g.String) *SetStickerKeywords {
+func (ctx *Context) SetStickerKeywords(sticker file.InputFile) *SetStickerKeywords {
 	return &SetStickerKeywords{
 		ctx:     ctx,
-		sticker: sticker,
+		sticker: sticker.Doc,
 		opts:    new(gotgbot.SetStickerKeywordsOpts),
 	}
 }
 
 // SetStickerMaskPosition sets the mask position for a sticker.
-func (ctx *Context) SetStickerMaskPosition(sticker g.String) *SetStickerMaskPosition {
+func (ctx *Context) SetStickerMaskPosition(sticker file.InputFile) *SetStickerMaskPosition {
 	return &SetStickerMaskPosition{
 		ctx:     ctx,
-		sticker: sticker,
+		sticker: sticker.Doc,
 		opts:    new(gotgbot.SetStickerMaskPositionOpts),
 	}
 }

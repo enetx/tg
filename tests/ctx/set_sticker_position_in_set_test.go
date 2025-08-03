@@ -7,6 +7,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/file"
 )
 
 func TestContext_SetStickerPositionInSet(t *testing.T) {
@@ -20,7 +21,7 @@ func TestContext_SetStickerPositionInSet(t *testing.T) {
 	sticker := g.String("sticker_id_123")
 	position := int64(2)
 
-	result := ctx.SetStickerPositionInSet(sticker, position)
+	result := ctx.SetStickerPositionInSet(file.Input(sticker).UnwrapOrDefault(), position)
 
 	if result == nil {
 		t.Error("Expected SetStickerPositionInSet builder to be created")

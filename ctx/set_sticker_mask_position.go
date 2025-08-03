@@ -10,13 +10,16 @@ import (
 // SetStickerMaskPosition represents a request to set sticker mask position.
 type SetStickerMaskPosition struct {
 	ctx          *Context
-	sticker      g.String
+	sticker      gotgbot.InputFileOrString
 	maskPosition *gotgbot.MaskPosition
 	opts         *gotgbot.SetStickerMaskPositionOpts
 }
 
 // MaskPosition sets the mask position for the sticker.
-func (ssmp *SetStickerMaskPosition) MaskPosition(point g.String, xShift, yShift, scale float64) *SetStickerMaskPosition {
+func (ssmp *SetStickerMaskPosition) MaskPosition(
+	point g.String,
+	xShift, yShift, scale float64,
+) *SetStickerMaskPosition {
 	ssmp.maskPosition = &gotgbot.MaskPosition{
 		Point:  point.Std(),
 		XShift: xShift,
@@ -52,5 +55,5 @@ func (ssmp *SetStickerMaskPosition) APIURL(url g.String) *SetStickerMaskPosition
 // Send sets the sticker mask position.
 func (ssmp *SetStickerMaskPosition) Send() g.Result[bool] {
 	ssmp.opts.MaskPosition = ssmp.maskPosition
-	return g.ResultOf(ssmp.ctx.Bot.Raw().SetStickerMaskPosition(ssmp.sticker.Std(), ssmp.opts))
+	return g.ResultOf(ssmp.ctx.Bot.Raw().SetStickerMaskPosition(ssmp.sticker, ssmp.opts))
 }

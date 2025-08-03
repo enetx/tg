@@ -10,7 +10,7 @@ import (
 // DeleteStickerFromSet represents a request to delete a sticker from a set.
 type DeleteStickerFromSet struct {
 	ctx     *Context
-	sticker g.String
+	sticker gotgbot.InputFileOrString
 	opts    *gotgbot.DeleteStickerFromSetOpts
 }
 
@@ -38,5 +38,5 @@ func (dsfs *DeleteStickerFromSet) APIURL(url g.String) *DeleteStickerFromSet {
 
 // Send deletes the sticker from the set.
 func (dsfs *DeleteStickerFromSet) Send() g.Result[bool] {
-	return g.ResultOf(dsfs.ctx.Bot.Raw().DeleteStickerFromSet(dsfs.sticker.Std(), dsfs.opts))
+	return g.ResultOf(dsfs.ctx.Bot.Raw().DeleteStickerFromSet(dsfs.sticker, dsfs.opts))
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/file"
 )
 
 func TestContext_SetStickerKeywords(t *testing.T) {
@@ -19,7 +20,7 @@ func TestContext_SetStickerKeywords(t *testing.T) {
 	ctx := ctx.New(bot, rawCtx)
 	sticker := g.String("sticker_id_123")
 
-	result := ctx.SetStickerKeywords(sticker)
+	result := ctx.SetStickerKeywords(file.Input(sticker).UnwrapOrDefault())
 
 	if result == nil {
 		t.Error("Expected SetStickerKeywords builder to be created")

@@ -10,7 +10,7 @@ import (
 // SetStickerPositionInSet represents a request to set sticker position in set.
 type SetStickerPositionInSet struct {
 	ctx      *Context
-	sticker  g.String
+	sticker  gotgbot.InputFileOrString
 	position int64
 	opts     *gotgbot.SetStickerPositionInSetOpts
 }
@@ -39,5 +39,5 @@ func (sspis *SetStickerPositionInSet) APIURL(url g.String) *SetStickerPositionIn
 
 // Send sets the sticker position in the set.
 func (sspis *SetStickerPositionInSet) Send() g.Result[bool] {
-	return g.ResultOf(sspis.ctx.Bot.Raw().SetStickerPositionInSet(sspis.sticker.Std(), int64(sspis.position), sspis.opts))
+	return g.ResultOf(sspis.ctx.Bot.Raw().SetStickerPositionInSet(sspis.sticker, int64(sspis.position), sspis.opts))
 }

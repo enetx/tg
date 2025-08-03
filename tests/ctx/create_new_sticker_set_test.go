@@ -7,6 +7,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/file"
 )
 
 func TestContext_CreateNewStickerSet(t *testing.T) {
@@ -42,7 +43,7 @@ func TestContext_CreateNewStickerSet(t *testing.T) {
 	emojiList := g.Slice[g.String]{}
 	emojiList.Push(g.String("😀"))
 	stickerBuilder := withRepainting.Sticker(
-		g.String("sticker.png"),
+		file.Input("sticker.png").UnwrapOrDefault(),
 		g.String("static"),
 		emojiList,
 	)

@@ -7,6 +7,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/file"
 )
 
 func TestContext_DeleteStickerFromSet(t *testing.T) {
@@ -19,7 +20,7 @@ func TestContext_DeleteStickerFromSet(t *testing.T) {
 	ctx := ctx.New(bot, rawCtx)
 	sticker := g.String("BAADAgADQQADBREAAYpMOJJhMdJWAg")
 
-	result := ctx.DeleteStickerFromSet(sticker)
+	result := ctx.DeleteStickerFromSet(file.Input(sticker).UnwrapOrDefault())
 
 	if result == nil {
 		t.Error("Expected DeleteStickerFromSet builder to be created")

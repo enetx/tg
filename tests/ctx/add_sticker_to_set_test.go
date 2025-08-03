@@ -8,6 +8,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/file"
 )
 
 func TestContext_AddStickerToSet(t *testing.T) {
@@ -28,7 +29,7 @@ func TestContext_AddStickerToSet(t *testing.T) {
 	}
 
 	// Test File method
-	result = result.File(g.String("test_sticker.png"))
+	result = result.File(file.Input("test_sticker.png").UnwrapOrDefault())
 	if result == nil {
 		t.Error("File method should return AddStickerToSet for chaining")
 	}
@@ -40,14 +41,14 @@ func TestContext_AddStickerToSet(t *testing.T) {
 	}
 
 	// Test EmojiList method
-	emojis := g.SliceOf[g.String](g.String("😀"), g.String("😁"))
+	emojis := g.SliceOf(g.String("😀"), g.String("😁"))
 	result = result.EmojiList(emojis)
 	if result == nil {
 		t.Error("EmojiList method should return AddStickerToSet for chaining")
 	}
 
 	// Test Keywords method
-	keywords := g.SliceOf[g.String](g.String("happy"), g.String("smile"))
+	keywords := g.SliceOf(g.String("happy"), g.String("smile"))
 	result = result.Keywords(keywords)
 	if result == nil {
 		t.Error("Keywords method should return AddStickerToSet for chaining")
@@ -85,10 +86,10 @@ func TestAddStickerToSet_CompleteChain(t *testing.T) {
 
 	// Test complete method chaining
 	result := testCtx.AddStickerToSet(userID, name).
-		File(g.String("sticker.webp")).
+		File(file.Input("sticker.webp").UnwrapOrDefault()).
 		Format(g.String("animated")).
-		EmojiList(g.SliceOf[g.String](g.String("🎉"), g.String("🎊"))).
-		Keywords(g.SliceOf[g.String](g.String("party"), g.String("celebration"))).
+		EmojiList(g.SliceOf(g.String("🎉"), g.String("🎊"))).
+		Keywords(g.SliceOf(g.String("party"), g.String("celebration"))).
 		MaskPosition(g.String("eyes"), 0.0, 0.0, 2.0).
 		Timeout(60 * time.Second).
 		APIURL(g.String("https://custom-api.telegram.org"))
@@ -116,7 +117,7 @@ func TestAddStickerToSet_EmptyValues(t *testing.T) {
 
 	// Test with empty values in methods
 	result = result.
-		File(g.String("")).
+		File(file.Input("").UnwrapOrDefault()).
 		Format(g.String("")).
 		EmojiList(g.Slice[g.String]{}).
 		Keywords(g.Slice[g.String]{})
