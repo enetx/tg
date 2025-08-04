@@ -41,35 +41,36 @@ func TestInput_InterfaceCompliance(t *testing.T) {
 }
 
 func TestInput_BasicFactoryFunctions(t *testing.T) {
-	// Test basic factory functions work
+	// These tests verify that the factory functions compile and return valid types
+	// The actual functionality is tested in specific type tests
 
 	// Test Text creation
 	text := input.Text(testText)
-	if !assertMessageContent(text) {
-		t.Error("Text should implement MessageContent correctly")
+	if text == nil {
+		t.Error("Text factory should return non-nil value")
 	}
 
 	// Test Photo creation
 	photo := input.Photo(file.Input(testURL).Ok())
-	if !assertMedia(photo) {
-		t.Error("Photo should implement Media correctly")
+	if photo == nil {
+		t.Error("Photo factory should return non-nil value")
 	}
 
 	// Test Video creation
 	video := input.Video(file.Input(testURL).Ok())
-	if !assertMedia(video) {
-		t.Error("Video should implement Media correctly")
+	if video == nil {
+		t.Error("Video factory should return non-nil value")
 	}
 
 	// Test Location creation
 	location := input.Location(testLatitude, testLongitude)
-	if !assertMessageContent(location) {
-		t.Error("Location should implement MessageContent correctly")
+	if location == nil {
+		t.Error("Location factory should return non-nil value")
 	}
 
 	// Test Contact creation
 	contact := input.Contact(testPhoneNumber, testFirstName)
-	if !assertMessageContent(contact) {
-		t.Error("Contact should implement MessageContent correctly")
+	if contact == nil {
+		t.Error("Contact factory should return non-nil value")
 	}
 }

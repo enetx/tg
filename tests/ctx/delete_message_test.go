@@ -351,7 +351,7 @@ func TestDeleteMessage_BulkDeletion(t *testing.T) {
 		t.Run(scenario.name, func(t *testing.T) {
 			for i := 0; i < scenario.messageCount; i++ {
 				messageID := scenario.startMsgID + int64(i)
-				
+
 				result := testCtx.DeleteMessage().
 					ChatID(chatID).
 					MessageID(messageID)

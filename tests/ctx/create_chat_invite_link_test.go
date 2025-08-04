@@ -194,10 +194,10 @@ func TestCreateChatInviteLink_ExpirationTimes(t *testing.T) {
 		now.Add(2 * time.Hour),
 		now.Add(12 * time.Hour),
 		now.Add(48 * time.Hour),
-		now.AddDate(0, 0, 7),  // 1 week
-		now.AddDate(0, 1, 0),  // 1 month
-		now.AddDate(0, 3, 0),  // 3 months
-		now.AddDate(1, 0, 0),  // 1 year
+		now.AddDate(0, 0, 7), // 1 week
+		now.AddDate(0, 1, 0), // 1 month
+		now.AddDate(0, 3, 0), // 3 months
+		now.AddDate(1, 0, 0), // 1 year
 	}
 
 	for _, expireTime := range expiresAtTimes {
@@ -235,14 +235,14 @@ func TestCreateChatInviteLink_MemberLimits(t *testing.T) {
 
 	// Test various member limits
 	memberLimits := []int64{
-		1,    // Single user
-		5,    // Small group
-		10,   // Medium group
-		25,   // Large group
-		50,   // Very large group
-		100,  // Maximum typical limit
-		500,  // Enterprise level
-		1000, // Large enterprise
+		1,     // Single user
+		5,     // Small group
+		10,    // Medium group
+		25,    // Large group
+		50,    // Very large group
+		100,   // Maximum typical limit
+		500,   // Enterprise level
+		1000,  // Large enterprise
 		99999, // Very high limit
 	}
 

@@ -296,18 +296,18 @@ func TestCreateInvoiceLink_SubscriptionPeriods(t *testing.T) {
 
 	// Test various subscription periods (in seconds)
 	subscriptionPeriods := []struct {
-		name     string
-		period   int64
+		name        string
+		period      int64
 		description string
 	}{
-		{"Weekly", 604800, "7 days subscription"},         // 7 * 24 * 60 * 60
-		{"Bi-Weekly", 1209600, "14 days subscription"},    // 14 * 24 * 60 * 60
-		{"Monthly", 2592000, "30 days subscription"},      // 30 * 24 * 60 * 60
-		{"Quarterly", 7776000, "90 days subscription"},    // 90 * 24 * 60 * 60
+		{"Weekly", 604800, "7 days subscription"},          // 7 * 24 * 60 * 60
+		{"Bi-Weekly", 1209600, "14 days subscription"},     // 14 * 24 * 60 * 60
+		{"Monthly", 2592000, "30 days subscription"},       // 30 * 24 * 60 * 60
+		{"Quarterly", 7776000, "90 days subscription"},     // 90 * 24 * 60 * 60
 		{"Semi-Annual", 15552000, "180 days subscription"}, // 180 * 24 * 60 * 60
-		{"Annual", 31536000, "365 days subscription"},     // 365 * 24 * 60 * 60
-		{"Custom 3 Days", 259200, "3 days trial"},         // 3 * 24 * 60 * 60
-		{"Custom 6 Months", 15724800, "186 days exact"},   // 186 * 24 * 60 * 60
+		{"Annual", 31536000, "365 days subscription"},      // 365 * 24 * 60 * 60
+		{"Custom 3 Days", 259200, "3 days trial"},          // 3 * 24 * 60 * 60
+		{"Custom 6 Months", 15724800, "186 days exact"},    // 186 * 24 * 60 * 60
 	}
 
 	for _, period := range subscriptionPeriods {
@@ -512,14 +512,14 @@ func TestCreateInvoiceLink_CustomerInformation(t *testing.T) {
 
 	// Test various customer information requirements
 	infoScenarios := []struct {
-		name        string
-		needName    bool
-		needPhone   bool
-		needEmail   bool
+		name         string
+		needName     bool
+		needPhone    bool
+		needEmail    bool
 		needShipping bool
-		sendPhone   bool
-		sendEmail   bool
-		description string
+		sendPhone    bool
+		sendEmail    bool
+		description  string
 	}{
 		{"Minimal", false, false, false, false, false, false, "No customer info required"},
 		{"Name Only", true, false, false, false, false, false, "Only name required"},
@@ -840,7 +840,7 @@ func TestCreateInvoiceLink_MethodCoverage(t *testing.T) {
 	// Order 2: Different sequence
 	result2 := testCtx.CreateInvoiceLink(title, description, payload, currency).
 		APIURL(g.String("https://reordered-api.example.com")).
-		Timeout(60 * time.Second).
+		Timeout(60*time.Second).
 		Flexible().
 		SendEmail().
 		SendPhone().

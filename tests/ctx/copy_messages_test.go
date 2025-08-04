@@ -195,9 +195,9 @@ func TestCopyMessages_ChatIdentifiers(t *testing.T) {
 
 	// Test various chat ID combinations
 	testCases := []struct {
-		name       string
-		fromChatID int64
-		toChatID   int64
+		name        string
+		fromChatID  int64
+		toChatID    int64
 		description string
 	}{
 		{"Private to Private", 123, 456, "Copy from private to private chat"},
@@ -243,10 +243,10 @@ func TestCopyMessages_ForumFeatures(t *testing.T) {
 
 	// Test various thread IDs
 	threadIDs := []int64{
-		1,   // General topic
-		123, // Regular topic
-		456, // Another topic
-		999, // High ID topic
+		1,         // General topic
+		123,       // Regular topic
+		456,       // Another topic
+		999,       // High ID topic
 		123456789, // Very high ID topic
 	}
 
@@ -471,9 +471,9 @@ func TestCopyMessages_BulkOperations(t *testing.T) {
 
 	// Test bulk copy scenarios
 	bulkScenarios := []struct {
-		name        string
+		name         string
 		messageCount int
-		description string
+		description  string
 	}{
 		{"Small Batch", 5, "Small batch of messages"},
 		{"Medium Batch", 25, "Medium batch of messages"},

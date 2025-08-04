@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/enetx/g"
 	. "github.com/enetx/tg/keyboard"
 )
 
@@ -257,16 +258,16 @@ func TestButtonGetter_Methods(t *testing.T) {
 func TestButton_ChainedMethods(t *testing.T) {
 	// Test complete method chaining
 	btn := NewButton().
-		Text("Chained Button").
-		Callback("chained_callback").
-		On("Active State").
-		Off("Inactive State").
+		Text(g.String("Chained Button")).
+		Callback(g.String("chained_callback")).
+		On(g.String("Active State")).
+		Off(g.String("Inactive State")).
 		SetActive(true)
 
-	if btn.Get.Text() != "Chained Button" {
+	if btn.Get.Text().Std() != "Chained Button" {
 		t.Error("Expected chained text to be set")
 	}
-	if btn.Get.Callback() != "chained_callback" {
+	if btn.Get.Callback().Std() != "chained_callback" {
 		t.Error("Expected chained callback to be set")
 	}
 	if !btn.Get.IsToggle() {
@@ -274,5 +275,63 @@ func TestButton_ChainedMethods(t *testing.T) {
 	}
 	if !btn.Get.IsActive() {
 		t.Error("Expected chained button to be active")
+	}
+}
+
+func TestButton_BuildToggleText(t *testing.T) {
+	// Test toggle text behavior in build
+	btn := NewButton().
+		On(g.String("ON_TEXT")).
+		Off(g.String("OFF_TEXT"))
+
+	// Test inactive state shows OFF text
+	btn.SetActive(false)
+	built := btn.Build()
+	if built.Text != "OFF_TEXT" {
+		t.Errorf("Expected 'OFF_TEXT' when inactive, got '%s'", built.Text)
+	}
+
+	// Test active state shows ON text
+	btn.SetActive(true)
+	built = btn.Build()
+	if built.Text != "ON_TEXT" {
+		t.Errorf("Expected 'ON_TEXT' when active, got '%s'", built.Text)
+	}
+}
+
+func TestButton_BuildNormalButton(t *testing.T) {
+	// Test normal button (non-toggle) build
+	btn := NewButton().
+		Text(g.String("Normal Button")).
+		Callback(g.String("normal_callback"))
+
+	built := btn.Build()
+	if built.Text != "Normal Button" {
+		t.Errorf("Expected 'Normal Button', got '%s'", built.Text)
+	}
+	if built.CallbackData != "normal_callback" {
+		t.Errorf("Expected 'normal_callback', got '%s'", built.CallbackData)
+	}
+}
+
+func TestButton_EmptyInitialization(t *testing.T) {
+	// Test button with empty initialization
+	btn := NewButton()
+
+	// All getters should return empty/default values
+	if btn.Get.Text().Std() != "" {
+		t.Errorf("Expected empty text, got '%s'", btn.Get.Text().Std())
+	}
+	if btn.Get.Callback().Std() != "" {
+		t.Errorf("Expected empty callback, got '%s'", btn.Get.Callback().Std())
+	}
+	if btn.Get.URL().Std() != "" {
+		t.Errorf("Expected empty URL, got '%s'", btn.Get.URL().Std())
+	}
+	if btn.Get.IsToggle() {
+		t.Error("Expected IsToggle to be false initially")
+	}
+	if btn.Get.IsActive() {
+		t.Error("Expected IsActive to be false initially")
 	}
 }

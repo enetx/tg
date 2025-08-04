@@ -92,11 +92,11 @@ func TestCreateChatSubscriptionInviteLink_SubscriptionPeriods(t *testing.T) {
 		period      int64
 		description string
 	}{
-		{"Weekly", 604800, "7 days subscription"},     // 7 * 24 * 60 * 60
-		{"Monthly", 2592000, "30 days subscription"},   // 30 * 24 * 60 * 60
-		{"Quarterly", 7776000, "90 days subscription"}, // 90 * 24 * 60 * 60
-		{"Yearly", 31536000, "365 days subscription"},  // 365 * 24 * 60 * 60
-		{"Custom 14 Days", 1209600, "14 days subscription"},   // 14 * 24 * 60 * 60
+		{"Weekly", 604800, "7 days subscription"},              // 7 * 24 * 60 * 60
+		{"Monthly", 2592000, "30 days subscription"},           // 30 * 24 * 60 * 60
+		{"Quarterly", 7776000, "90 days subscription"},         // 90 * 24 * 60 * 60
+		{"Yearly", 31536000, "365 days subscription"},          // 365 * 24 * 60 * 60
+		{"Custom 14 Days", 1209600, "14 days subscription"},    // 14 * 24 * 60 * 60
 		{"Custom 6 Months", 15552000, "180 days subscription"}, // 180 * 24 * 60 * 60
 	}
 
@@ -194,8 +194,8 @@ func TestCreateChatSubscriptionInviteLink_SubscriptionNames(t *testing.T) {
 		"Enterprise Business Package",
 		"Ultra VIP Exclusive Access",
 		"Developer Pro Subscription",
-		"", // Empty name (should work)
-		"A", // Single character
+		"",                                // Empty name (should work)
+		"A",                               // Single character
 		"This is exactly 32 characters!!", // Max length (32 chars)
 	}
 
@@ -238,10 +238,10 @@ func TestCreateChatSubscriptionInviteLink_SubscriptionCombinations(t *testing.T)
 
 	// Test realistic subscription combinations
 	subscriptionCombos := []struct {
-		name   string
-		period int64
-		price  int64
-		linkName string
+		name        string
+		period      int64
+		price       int64
+		linkName    string
 		description string
 	}{
 		{"Weekly Basic", 604800, 25, "Weekly Basic", "Weekly basic subscription"},
@@ -447,8 +447,8 @@ func TestCreateChatSubscriptionInviteLink_MethodCoverage(t *testing.T) {
 		price  int64
 		name   string
 	}{
-		{604800, 50, "Weekly Basic"},     // 7 days, 50 stars
-		{2592000, 100, "Monthly Standard"}, // 30 days, 100 stars
+		{604800, 50, "Weekly Basic"},        // 7 days, 50 stars
+		{2592000, 100, "Monthly Standard"},  // 30 days, 100 stars
 		{7776000, 300, "Quarterly Premium"}, // 90 days, 300 stars
 		{31536000, 1000, "Annual VIP"},      // 365 days, 1000 stars
 	}

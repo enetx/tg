@@ -145,8 +145,8 @@ func TestCreateForumTopic_IconColors(t *testing.T) {
 
 	// Test various icon colors (RGB format)
 	iconColors := []struct {
-		name  string
-		color int64
+		name        string
+		color       int64
 		description string
 	}{
 		{"Red", 0xFF0000, "Pure red color"},
@@ -221,8 +221,8 @@ func TestCreateForumTopic_CustomEmojis(t *testing.T) {
 		"5000000000000000000",
 		"1111111111111111111",
 		"9999999999999999999",
-		"123",     // Short ID
-		"987654",  // Medium ID
+		"123",                           // Short ID
+		"987654",                        // Medium ID
 		"12345678901234567890123456789", // Very long ID
 	}
 
@@ -454,7 +454,7 @@ func TestCreateForumTopic_MethodCoverage(t *testing.T) {
 		ChatID(chatID).
 		ChatID(-1002000000000). // Should override first
 		IconColor(0xFF0000).
-		IconColor(0x00FF00). // Should override first
+		IconColor(0x00FF00).                                // Should override first
 		IconCustomEmojiID(g.String("5789134455711613990")). // Should override color
 		Timeout(30 * time.Second).
 		Timeout(60 * time.Second) // Should override first
@@ -466,7 +466,7 @@ func TestCreateForumTopic_MethodCoverage(t *testing.T) {
 	// Test both icon options (emoji should override color)
 	result4 := testCtx.CreateForumTopic(topicName).
 		ChatID(chatID).
-		IconColor(0xFF0000).           // Red color
+		IconColor(0xFF0000).                               // Red color
 		IconCustomEmojiID(g.String("5789134455711613991")) // Custom emoji overrides color
 
 	if result4 == nil {
@@ -481,10 +481,10 @@ func TestCreateForumTopic_MethodCoverage(t *testing.T) {
 
 	// Test various topic configurations
 	topicConfigs := []struct {
-		name       string
-		topicName  string
-		iconType   string
-		iconColor  int64
+		name        string
+		topicName   string
+		iconType    string
+		iconColor   int64
 		customEmoji string
 	}{
 		{"Development Topic", "💻 Development Discussion", "color", 0x4ECDC4, ""},

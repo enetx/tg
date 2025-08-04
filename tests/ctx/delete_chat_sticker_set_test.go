@@ -69,9 +69,9 @@ func TestDeleteChatStickerSet_ChatTypes(t *testing.T) {
 
 	// Test sticker set deletion for various supergroup types
 	chatTypes := []struct {
-		name   string
-		chatID int64
-		type_  string
+		name        string
+		chatID      int64
+		type_       string
 		description string
 	}{
 		{"Standard Supergroup", -1001234567890, "supergroup", "Regular supergroup with sticker set"},
@@ -173,12 +173,12 @@ func TestDeleteChatStickerSet_AdminScenarios(t *testing.T) {
 
 	// Test various admin scenarios for sticker set deletion
 	adminScenarios := []struct {
-		name         string
-		chatID       int64
-		adminType    string
-		urgency      string
-		timeout      time.Duration
-		description  string
+		name        string
+		chatID      int64
+		adminType   string
+		urgency     string
+		timeout     time.Duration
+		description string
 	}{
 		{"Owner Cleanup", -1001234567890, "owner", "normal", 30 * time.Second, "Owner removing outdated stickers"},
 		{"Admin Moderation", -1001987654321, "admin", "urgent", 10 * time.Second, "Admin removing inappropriate stickers"},

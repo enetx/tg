@@ -106,6 +106,7 @@ func (b *Button) Delete() {
 }
 
 // Toggle-related methods
+
 // On sets the text to display when the toggle button is in the active state.
 func (b *Button) On(text g.String) *Button {
 	b.isToggle = true
@@ -143,8 +144,8 @@ func (b *Button) Flip() *Button {
 	return b
 }
 
-// build constructs the final gotgbot.InlineKeyboardButton with toggle state applied.
-func (b *Button) build() gotgbot.InlineKeyboardButton {
+// Build constructs the final gotgbot.InlineKeyboardButton with toggle state applied.
+func (b *Button) Build() gotgbot.InlineKeyboardButton {
 	btn := *b.raw
 
 	if b.isToggle {

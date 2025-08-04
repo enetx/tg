@@ -38,7 +38,7 @@ func (b *InlineKeyboard) Button(btn *Button) *InlineKeyboard {
 
 	if btn.raw.Pay {
 		btn.attach(b)
-		return b.addToLastRow(btn.build())
+		return b.addToLastRow(btn.Build())
 	}
 
 	cb := btn.raw.CallbackData
@@ -49,14 +49,14 @@ func (b *InlineKeyboard) Button(btn *Button) *InlineKeyboard {
 	for i, row := range b.rows {
 		for j := range row {
 			if b.rows[i][j].CallbackData == cb {
-				b.rows[i][j] = btn.build()
+				b.rows[i][j] = btn.Build()
 				return b
 			}
 		}
 	}
 
 	btn.attach(b)
-	return b.addToLastRow(btn.build())
+	return b.addToLastRow(btn.Build())
 }
 
 // update refreshes an existing button in the keyboard based on its callback data.
@@ -70,13 +70,13 @@ func (b *InlineKeyboard) update(btn *Button) *InlineKeyboard {
 	for i, row := range b.rows {
 		for j := range row {
 			if b.rows[i][j].CallbackData == cb {
-				b.rows[i][j] = btn.build()
+				b.rows[i][j] = btn.Build()
 				return b
 			}
 		}
 	}
 
-	return b.addToLastRow(btn.build())
+	return b.addToLastRow(btn.Build())
 }
 
 // Text adds a text button with callback data to the current row.
@@ -202,7 +202,7 @@ func (b *InlineKeyboard) Edit(handler func(btn *Button)) *InlineKeyboard {
 			handler(btn)
 
 			if !btn.deleted {
-				nrow.Push(btn.build())
+				nrow.Push(btn.Build())
 			}
 		}
 
