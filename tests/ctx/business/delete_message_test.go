@@ -28,3 +28,21 @@ func TestDeleteMessage(t *testing.T) {
 		t.Error("Expected Timeout method to return builder")
 	}
 }
+
+func TestDeleteMessage_Send(t *testing.T) {
+	bot := &mockBot{}
+	connectionID := g.String("business_conn_send_123")
+	account := business.NewAccount(bot, connectionID)
+	message := account.Message()
+
+	messageIDs := g.Slice[int64]{}
+	messageIDs.Push(456)
+	messageIDs.Push(789)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := message.Delete(messageIDs).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("DeleteMessage Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}

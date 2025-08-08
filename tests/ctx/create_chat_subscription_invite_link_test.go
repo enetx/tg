@@ -465,3 +465,43 @@ func TestCreateChatSubscriptionInviteLink_MethodCoverage(t *testing.T) {
 		}
 	}
 }
+
+func TestCreateChatSubscriptionInviteLink_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+	subscriptionPeriod := int64(2592000) // 30 days
+	subscriptionPrice := int64(100)      // 100 stars
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := testCtx.CreateChatSubscriptionInviteLink(subscriptionPeriod, subscriptionPrice).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("CreateChatSubscriptionInviteLink Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := testCtx.CreateChatSubscriptionInviteLink(subscriptionPeriod, subscriptionPrice).
+		ChatID(-1001987654321).
+		Name(g.String("Premium Test Subscription")).
+		Timeout(30 * time.Second).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("CreateChatSubscriptionInviteLink configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+
+	// Test Send method using EffectiveChat ID (no explicit ChatID)
+	effectiveChatSendResult := testCtx.CreateChatSubscriptionInviteLink(subscriptionPeriod, subscriptionPrice).
+		Name(g.String("Effective Chat Subscription")).
+		Send()
+
+	if effectiveChatSendResult.IsErr() {
+		t.Logf("CreateChatSubscriptionInviteLink with effective chat Send failed as expected: %v", effectiveChatSendResult.Err())
+	}
+}

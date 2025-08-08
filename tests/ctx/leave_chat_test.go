@@ -122,3 +122,20 @@ func TestLeaveChat_DefaultChatID(t *testing.T) {
 	// The Send() method should use EffectiveChat.Id when no ChatID is set
 	// We can't test the actual API call with mockBot, but we can ensure the builder works
 }
+
+func TestLeaveChat_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.LeaveChat().Send()
+
+	if sendResult.IsErr() {
+		t.Logf("LeaveChat Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}

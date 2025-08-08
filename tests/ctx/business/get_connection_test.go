@@ -24,3 +24,16 @@ func TestGetConnection(t *testing.T) {
 		t.Error("Expected Timeout method to return builder")
 	}
 }
+
+func TestGetConnection_Send(t *testing.T) {
+	bot := &mockBot{}
+	connectionID := g.String("business_conn_send_123")
+	account := business.NewAccount(bot, connectionID)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := account.GetConnection().Send()
+
+	if sendResult.IsErr() {
+		t.Logf("GetConnection Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}

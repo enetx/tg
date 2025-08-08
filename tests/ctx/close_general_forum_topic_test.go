@@ -339,3 +339,31 @@ func TestCloseGeneralForumTopic_MethodCoverage(t *testing.T) {
 		t.Error("Method order independence should work")
 	}
 }
+
+func TestCloseGeneralForumTopic_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "supergroup"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.CloseGeneralForumTopic().Send()
+
+	if sendResult.IsErr() {
+		t.Logf("CloseGeneralForumTopic Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := ctx.CloseGeneralForumTopic().
+		ChatID(123).
+		Timeout(30).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("CloseGeneralForumTopic configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}

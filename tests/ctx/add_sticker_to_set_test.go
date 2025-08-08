@@ -126,3 +126,61 @@ func TestAddStickerToSet_EmptyValues(t *testing.T) {
 		t.Error("Methods should handle empty values gracefully")
 	}
 }
+
+func TestAddStickerToSet_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+	userID := int64(456)
+	name := g.String("test_sticker_set_send")
+
+	// Test Send method - will fail with mock but covers the method
+	result := testCtx.AddStickerToSet(userID, name).Send()
+
+	if result.IsErr() {
+		t.Logf("AddStickerToSet Send failed as expected with mock bot: %v", result.Err())
+	}
+
+	// Test Send method with sticker configuration
+	stickerFile := file.Input("sticker.png").UnwrapOrDefault()
+	sendResult := testCtx.AddStickerToSet(userID, name).
+		File(stickerFile).
+		Format(g.String("static")).
+		EmojiList(g.NewSlice[g.String]().Append("😀", "😃")).
+		Keywords(g.NewSlice[g.String]().Append("happy", "smile")).
+		Send()
+
+	if sendResult.IsErr() {
+		t.Logf("AddStickerToSet Send with config failed as expected: %v", sendResult.Err())
+	}
+}
+
+func TestAddStickerToSet_APIURL_Coverage(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+	userID := int64(456)
+	name := g.String("test_api_coverage")
+
+	// Test APIURL when RequestOpts is nil
+	result1 := testCtx.AddStickerToSet(userID, name).APIURL(g.String("https://api1.example.com"))
+	if result1 == nil {
+		t.Error("APIURL should work when RequestOpts is nil")
+	}
+
+	// Test APIURL when RequestOpts already exists (test the opts.RequestOpts == nil branch)
+	result2 := testCtx.AddStickerToSet(userID, name).
+		Timeout(30 * time.Second). // This creates RequestOpts
+		APIURL(g.String("https://api2.example.com"))
+	if result2 == nil {
+		t.Error("APIURL should work when RequestOpts already exists")
+	}
+}

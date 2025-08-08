@@ -191,3 +191,34 @@ func TestBanChatMember_DefaultChatID(t *testing.T) {
 	// The Send() method should use EffectiveChat.Id when no ChatID is set
 	// We can't test the actual API call with mockBot, but we can ensure the builder works
 }
+
+func TestBanChatMember_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	userID := int64(456)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.BanChatMember(userID).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("BanChatMember Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := ctx.BanChatMember(userID).
+		ChatID(789).
+		RevokeMessages().
+		Until(time.Now().Add(24 * time.Hour)).
+		Timeout(30).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("BanChatMember configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}

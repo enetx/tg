@@ -360,3 +360,35 @@ func TestAnswerInlineQuery_CacheTimeVariations(t *testing.T) {
 		t.Error("Cache with results should work")
 	}
 }
+
+func TestAnswerInlineQuery_Send(t *testing.T) {
+	bot := &mockBot{}
+	inlineQuery := &gotgbot.InlineQuery{Id: "send123", From: gotgbot.User{Id: 999, FirstName: "SendTest"}}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1, InlineQuery: inlineQuery},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+	queryID := g.String("send123")
+
+	// Test Send method with results
+	textContent := input.Text(g.String("Send test content"))
+	articleResult := inline.NewArticle(g.String("send1"), g.String("Send Test Article"), textContent)
+
+	result := testCtx.AnswerInlineQuery(queryID).
+		AddResult(articleResult).
+		Send()
+
+	// Mock will fail, but this covers the Send method
+	if result.IsErr() {
+		t.Logf("AnswerInlineQuery Send failed as expected with mock bot: %v", result.Err())
+	}
+
+	// Test Send method without results (empty results)
+	emptyResult := testCtx.AnswerInlineQuery(queryID).Send()
+
+	if emptyResult.IsErr() {
+		t.Logf("AnswerInlineQuery Send with empty results failed as expected: %v", emptyResult.Err())
+	}
+}

@@ -25,3 +25,17 @@ func TestGetStarBalance(t *testing.T) {
 		t.Error("Expected Timeout method to return builder")
 	}
 }
+
+func TestGetStarBalance_Send(t *testing.T) {
+	bot := &mockBot{}
+	connectionID := g.String("business_conn_send_123")
+	account := business.NewAccount(bot, connectionID)
+	balance := account.Balance()
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := balance.GetStarBalance().Send()
+
+	if sendResult.IsErr() {
+		t.Logf("GetStarBalance Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}

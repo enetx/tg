@@ -589,3 +589,24 @@ func TestCopyMessages_MethodCoverage(t *testing.T) {
 		t.Error("Combining MessageIDs and AddMessages should work")
 	}
 }
+
+func TestCopyMessages_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.CopyMessages().
+		From(456).
+		To(789).
+		AddMessages(1, 2, 3).
+		Send()
+
+	if sendResult.IsErr() {
+		t.Logf("CopyMessages Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}

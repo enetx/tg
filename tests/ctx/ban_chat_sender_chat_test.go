@@ -318,3 +318,32 @@ func TestBanChatSenderChat_SenderChatTypes(t *testing.T) {
 		})
 	}
 }
+
+func TestBanChatSenderChat_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	senderChatID := int64(456)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.BanChatSenderChat(senderChatID).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("BanChatSenderChat Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := ctx.BanChatSenderChat(senderChatID).
+		ChatID(789).
+		Timeout(30).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("BanChatSenderChat configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}

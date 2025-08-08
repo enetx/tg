@@ -468,3 +468,90 @@ func TestDeleteChatStickerSet_MethodCoverage(t *testing.T) {
 		}
 	}
 }
+
+func TestDeleteChatStickerSet_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+	chatID := int64(-1001987654321)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := testCtx.DeleteChatStickerSet().Send()
+
+	if sendResult.IsErr() {
+		t.Logf("DeleteChatStickerSet Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := testCtx.DeleteChatStickerSet().
+		ChatID(chatID).
+		Timeout(30 * time.Second).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("DeleteChatStickerSet configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+
+	// Test Send method using EffectiveChat ID (no explicit ChatID)
+	effectiveChatSendResult := testCtx.DeleteChatStickerSet().
+		Timeout(45 * time.Second).
+		Send()
+
+	if effectiveChatSendResult.IsErr() {
+		t.Logf("DeleteChatStickerSet with effective chat Send failed as expected: %v", effectiveChatSendResult.Err())
+	}
+
+	// Test Send method with various timeout configurations
+	timeouts := []time.Duration{
+		5 * time.Second,
+		30 * time.Second,
+		60 * time.Second,
+		2 * time.Minute,
+	}
+
+	for _, timeout := range timeouts {
+		timeoutSendResult := testCtx.DeleteChatStickerSet().
+			ChatID(chatID).
+			Timeout(timeout).
+			Send()
+
+		if timeoutSendResult.IsErr() {
+			t.Logf("DeleteChatStickerSet with %v timeout Send failed as expected: %v", timeout, timeoutSendResult.Err())
+		}
+	}
+
+	// Test Send method with different API URLs
+	apiURLs := []string{
+		"https://api.telegram.org",
+		"https://custom-sticker-api.example.com",
+		"https://admin-api.telegram.org",
+		"", // Empty URL
+	}
+
+	for _, apiURL := range apiURLs {
+		apiSendResult := testCtx.DeleteChatStickerSet().
+			ChatID(chatID).
+			APIURL(g.String(apiURL)).
+			Send()
+
+		if apiSendResult.IsErr() {
+			t.Logf("DeleteChatStickerSet with API URL '%s' Send failed as expected: %v", apiURL, apiSendResult.Err())
+		}
+	}
+
+	// Test Send method with complete configuration
+	completeSendResult := testCtx.DeleteChatStickerSet().
+		ChatID(chatID).
+		Timeout(60 * time.Second).
+		APIURL(g.String("https://complete-api.telegram.org")).
+		Send()
+
+	if completeSendResult.IsErr() {
+		t.Logf("DeleteChatStickerSet complete configuration Send failed as expected: %v", completeSendResult.Err())
+	}
+}

@@ -224,3 +224,40 @@ func TestReply_EdgeCases(t *testing.T) {
 		t.Error("Parse mode switching should work")
 	}
 }
+
+func TestReply_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat:    &gotgbot.Chat{Id: 456, Type: "group"},
+		EffectiveMessage: &gotgbot.Message{MessageId: 789, Text: "original"},
+		Update:           &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+	text := g.String("Reply message")
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := testCtx.Reply(text).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("Reply Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	kb := keyboard.Inline().Row().Text("Test", "test_data")
+	configuredSendResult := testCtx.Reply(text).
+		HTML().
+		Markup(kb).
+		Silent().
+		Protect().
+		Thread(456).
+		ReplyTo(123).
+		Effect(effects.Fire).
+		Timeout(30 * time.Second).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("Reply configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}

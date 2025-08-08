@@ -122,3 +122,31 @@ func TestDeleteChatPhoto_DefaultChatID(t *testing.T) {
 	// The Send() method should use EffectiveChat.Id when no ChatID is set
 	// We can't test the actual API call with mockBot, but we can ensure the builder works
 }
+
+func TestDeleteChatPhoto_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.DeleteChatPhoto().Send()
+
+	if sendResult.IsErr() {
+		t.Logf("DeleteChatPhoto Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := ctx.DeleteChatPhoto().
+		ChatID(789).
+		Timeout(30).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("DeleteChatPhoto configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}

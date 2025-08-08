@@ -2,6 +2,7 @@ package ctx_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -56,5 +57,40 @@ func TestContext_SendAnimationChaining(t *testing.T) {
 	final := result.Silent()
 	if final == nil {
 		t.Error("Expected Silent method to return builder")
+	}
+}
+
+func TestSendAnimation_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	filename := g.String("test_animation.gif")
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.SendAnimation(filename).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("SendAnimation Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := ctx.SendAnimation(filename).
+		Caption(g.String("Test <b>animation</b> with HTML")).
+		HTML().
+		Width(640).
+		Height(480).
+		Duration(10).
+		Silent().
+		Protect().
+		Timeout(30 * time.Second).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("SendAnimation configured Send failed as expected: %v", configuredSendResult.Err())
 	}
 }

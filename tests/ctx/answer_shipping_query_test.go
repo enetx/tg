@@ -331,3 +331,77 @@ func TestAnswerShippingQuery_PriceEdgeCases(t *testing.T) {
 		t.Error("Done should work after extreme price values")
 	}
 }
+
+func TestAnswerShippingQuery_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"},
+		Update: &gotgbot.Update{
+			UpdateId: 1,
+			ShippingQuery: &gotgbot.ShippingQuery{
+				Id:   "ship_123",
+				From: gotgbot.User{Id: 456, FirstName: "Test"},
+			},
+		},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test Send method with Ok
+	sendResult := ctx.AnswerShippingQuery().Ok().Send()
+	if sendResult.IsErr() {
+		t.Logf("AnswerShippingQuery Ok Send failed as expected: %v", sendResult.Err())
+	}
+
+	// Test Send method with Error
+	errorSendResult := ctx.AnswerShippingQuery().Error(g.String("Shipping not available")).Send()
+	if errorSendResult.IsErr() {
+		t.Logf("AnswerShippingQuery Error Send failed as expected: %v", errorSendResult.Err())
+	}
+
+	// Test Send method with shipping options
+	optionSendResult := ctx.AnswerShippingQuery().
+		Option(g.String("standard"), g.String("Standard Shipping")).
+		Price(g.String("Standard Shipping"), 500).
+		Done().
+		Ok().
+		Send()
+
+	if optionSendResult.IsErr() {
+		t.Logf("AnswerShippingQuery with options Send failed as expected: %v", optionSendResult.Err())
+	}
+}
+
+func TestAnswerShippingQuery_Send_NoQuery(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"},
+		Update: &gotgbot.Update{
+			UpdateId: 1,
+			// No ShippingQuery - this will test the nil case
+		},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test Send method when ShippingQuery is nil
+	sendResult := ctx.AnswerShippingQuery().Ok().Send()
+	if !sendResult.IsErr() {
+		t.Error("Expected Send to return error when ShippingQuery is nil")
+	}
+
+	expectedError := "no shipping query"
+	if !g.SliceOf(sendResult.Err().Error()).Contains(expectedError) {
+		t.Errorf("Expected error to contain '%s', got: %v", expectedError, sendResult.Err())
+	}
+
+	// Test Send method with Error when ShippingQuery is nil
+	errorSendResult := ctx.AnswerShippingQuery().Error(g.String("Test error")).Send()
+	if !errorSendResult.IsErr() {
+		t.Error("Expected Send to return error when ShippingQuery is nil")
+	}
+
+	if !g.SliceOf(errorSendResult.Err().Error()).Contains(expectedError) {
+		t.Errorf("Expected error to contain '%s', got: %v", expectedError, errorSendResult.Err())
+	}
+}

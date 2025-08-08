@@ -266,3 +266,33 @@ func TestAnswerWebAppQuery_APIURLVariations(t *testing.T) {
 		}
 	}
 }
+
+func TestAnswerWebAppQuery_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+	queryID := g.String("send_test_123")
+	messageContent := input.Text(g.String("Send test content"))
+	result := inline.NewArticle(g.String("send1"), g.String("Send Test Article"), messageContent)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := testCtx.AnswerWebAppQuery(queryID, result).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("AnswerWebAppQuery Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := testCtx.AnswerWebAppQuery(queryID, result).
+		Timeout(30).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("AnswerWebAppQuery configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}

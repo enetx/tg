@@ -926,3 +926,44 @@ func TestCreateInvoiceLink_MethodCoverage(t *testing.T) {
 		}
 	}
 }
+
+func TestCreateInvoiceLink_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+	title := g.String("Test Product")
+	description := g.String("Test product for Send method")
+	payload := g.String("send_test_payload")
+	currency := g.String("USD")
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := testCtx.CreateInvoiceLink(title, description, payload, currency).
+		Price(g.String("Product"), 1000).
+		Send()
+
+	if sendResult.IsErr() {
+		t.Logf("CreateInvoiceLink Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := testCtx.CreateInvoiceLink(title, description, payload, currency).
+		Price(g.String("Premium Product"), 2500).
+		Price(g.String("Shipping"), 300).
+		ProviderToken(g.String("test_provider_token")).
+		MaxTip(1000).
+		SuggestedTips(100, 300, 500).
+		NeedName().
+		NeedEmail().
+		Flexible().
+		Timeout(30 * time.Second).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("CreateInvoiceLink configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}

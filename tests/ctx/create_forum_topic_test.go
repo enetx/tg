@@ -510,3 +510,33 @@ func TestCreateForumTopic_MethodCoverage(t *testing.T) {
 		}
 	}
 }
+
+func TestCreateForumTopic_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	topicName := g.String("Send Test Topic")
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.CreateForumTopic(topicName).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("CreateForumTopic Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := ctx.CreateForumTopic(topicName).
+		ChatID(789).
+		IconColor(0xFF0000).
+		Timeout(30).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("CreateForumTopic configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}

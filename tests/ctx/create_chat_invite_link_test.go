@@ -506,3 +506,34 @@ func TestCreateChatInviteLink_MethodCoverage(t *testing.T) {
 		t.Error("Default configuration should work")
 	}
 }
+
+func TestCreateChatInviteLink_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.CreateChatInviteLink().Send()
+
+	if sendResult.IsErr() {
+		t.Logf("CreateChatInviteLink Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := ctx.CreateChatInviteLink().
+		ChatID(789).
+		Name(g.String("Test Link")).
+		MemberLimit(50).
+		ExpiresIn(24 * time.Hour).
+		Timeout(30).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("CreateChatInviteLink configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}

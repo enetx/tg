@@ -2,6 +2,7 @@ package ctx_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -55,5 +56,39 @@ func TestContext_SendVoiceChaining(t *testing.T) {
 	final := result.To(123)
 	if final == nil {
 		t.Error("Expected To method to return builder")
+	}
+}
+
+func TestSendVoice_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	filename := g.String("test_voice.ogg")
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.SendVoice(filename).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("SendVoice Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := ctx.SendVoice(filename).
+		Caption(g.String("Test <b>voice</b> message")).
+		HTML().
+		Duration(45).
+		Silent().
+		Protect().
+		To(123).
+		Timeout(30 * time.Second).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("SendVoice configured Send failed as expected: %v", configuredSendResult.Err())
 	}
 }

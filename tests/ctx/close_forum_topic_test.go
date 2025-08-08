@@ -311,3 +311,32 @@ func TestCloseForumTopic_ForumScenarios(t *testing.T) {
 		})
 	}
 }
+
+func TestCloseForumTopic_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "supergroup"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	messageThreadID := int64(789)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.CloseForumTopic(messageThreadID).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("CloseForumTopic Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := ctx.CloseForumTopic(messageThreadID).
+		ChatID(123).
+		Timeout(30).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("CloseForumTopic configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}

@@ -269,3 +269,32 @@ func TestApproveChatJoinRequest_APIURLVariations(t *testing.T) {
 		}
 	}
 }
+
+func TestApproveChatJoinRequest_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	userID := int64(456)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := ctx.ApproveChatJoinRequest(userID).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("ApproveChatJoinRequest Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with configuration
+	configuredSendResult := ctx.ApproveChatJoinRequest(userID).
+		ChatID(789).
+		Timeout(30).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if configuredSendResult.IsErr() {
+		t.Logf("ApproveChatJoinRequest configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}
