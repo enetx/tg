@@ -364,3 +364,20 @@ func TestEditMessageChecklist_EdgeCases(t *testing.T) {
 		t.Logf("EditMessageChecklist with too many tasks Send failed as expected: %v", tooManyTasksResult.Err())
 	}
 }
+
+func TestEditMessageChecklist_APIURL_NilRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	
+	// Test APIURL when RequestOpts is nil (covers the nil branch)
+	result := ctx.EditMessageChecklist(g.String("Test Checklist"))
+	if result == nil {
+		t.Error("EditMessageChecklist should return builder")
+	}
+	
+	// This should create RequestOpts and set APIURL
+	apiResult := result.APIURL(g.String("https://api.test.com"))
+	if apiResult == nil {
+		t.Error("APIURL should return builder when RequestOpts is nil")
+	}
+}

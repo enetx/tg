@@ -333,3 +333,39 @@ func TestSendAudio_Thread(t *testing.T) {
 		}
 	}
 }
+
+func TestSendAudio_ErrorHandling(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	
+	// Test with invalid filename that should cause file.Input to fail
+	invalidFilename := g.String("")  // Empty filename should cause an error
+	result := ctx.SendAudio(invalidFilename)
+	
+	// The builder should still be created even with error
+	if result == nil {
+		t.Error("SendAudio should return builder even with invalid filename")
+	}
+	
+	// Test that Send() properly handles the error
+	sendResult := result.Send()
+	if !sendResult.IsErr() {
+		t.Error("Send should fail with empty filename")
+	} else {
+		t.Logf("Send failed as expected with empty filename: %v", sendResult.Err())
+	}
+	
+	// Test with nonexistent file
+	nonexistentFile := g.String("/nonexistent/path/to/audio.mp3")
+	result2 := ctx.SendAudio(nonexistentFile)
+	if result2 == nil {
+		t.Error("SendAudio should return builder even with nonexistent file")
+	}
+	
+	sendResult2 := result2.Send()
+	if !sendResult2.IsErr() {
+		t.Error("Send should fail with nonexistent file")
+	} else {
+		t.Logf("Send failed as expected with nonexistent file: %v", sendResult2.Err())
+	}
+}

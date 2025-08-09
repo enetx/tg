@@ -409,3 +409,25 @@ func TestSendAnimation_To(t *testing.T) {
 		}
 	}
 }
+
+func TestSendAnimation_ErrorHandling(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	
+	// Test with invalid filename that should cause file.Input to fail
+	invalidFilename := g.String("")  // Empty filename should cause an error
+	result := ctx.SendAnimation(invalidFilename)
+	
+	// The builder should still be created even with error
+	if result == nil {
+		t.Error("SendAnimation should return builder even with invalid filename")
+	}
+	
+	// Test that Send() properly handles the error
+	sendResult := result.Send()
+	if !sendResult.IsErr() {
+		t.Error("Send should fail with empty filename")
+	} else {
+		t.Logf("Send failed as expected with empty filename: %v", sendResult.Err())
+	}
+}

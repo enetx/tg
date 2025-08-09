@@ -278,3 +278,36 @@ func TestForwardMessages_Send(t *testing.T) {
 		t.Logf("ForwardMessages configured Send failed as expected: %v", configuredSendResult.Err())
 	}
 }
+
+func TestForwardMessages_Send_ErrorBranches(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	
+	// Test Send with no message IDs (should fail)
+	result1 := ctx.ForwardMessages().From(123).Send()
+	if !result1.IsErr() {
+		t.Error("Send should fail with no message IDs")
+	} else {
+		t.Logf("Send failed as expected with no message IDs: %v", result1.Err())
+	}
+	
+	// Test Send with too many message IDs (> 100, should fail)
+	tooManyIDs := make([]int64, 101)
+	for i := range tooManyIDs {
+		tooManyIDs[i] = int64(i + 1)
+	}
+	result2 := ctx.ForwardMessages().From(123).MessageIDs(tooManyIDs).Send()
+	if !result2.IsErr() {
+		t.Error("Send should fail with too many message IDs")
+	} else {
+		t.Logf("Send failed as expected with too many message IDs: %v", result2.Err())
+	}
+	
+	// Test Send without From chat ID (should fail)
+	result3 := ctx.ForwardMessages().MessageIDs([]int64{123}).Send()
+	if !result3.IsErr() {
+		t.Error("Send should fail without From chat ID")
+	} else {
+		t.Logf("Send failed as expected without From chat ID: %v", result3.Err())
+	}
+}

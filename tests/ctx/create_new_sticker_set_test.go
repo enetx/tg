@@ -208,3 +208,29 @@ func TestCreateNewStickerSet_Send(t *testing.T) {
 		t.Logf("CreateNewStickerSet configured Send failed as expected: %v", configuredSendResult.Err())
 	}
 }
+
+func TestCreateNewStickerSet_APIURL_NilRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	userID := int64(123)
+	name := g.String("test_sticker_set")
+	title := g.String("Test Sticker Set")
+	
+	// Test APIURL when RequestOpts is nil (covers the nil branch)
+	result := ctx.CreateNewStickerSet(userID, name, title)
+	if result == nil {
+		t.Error("CreateNewStickerSet should return builder")
+	}
+	
+	// This should create RequestOpts and set APIURL
+	apiResult := result.APIURL(g.String("https://api.test.com"))
+	if apiResult == nil {
+		t.Error("APIURL should return builder when RequestOpts is nil")
+	}
+	
+	// Test chaining after APIURL sets RequestOpts
+	chainResult := apiResult.APIURL(g.String("https://api2.test.com"))
+	if chainResult == nil {
+		t.Error("APIURL should still return builder after RequestOpts is created")
+	}
+}

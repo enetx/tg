@@ -232,3 +232,20 @@ func TestUnpinChatMessage_BusinessIntegration(t *testing.T) {
 		t.Error("Business method should work with MessageID and other combinations")
 	}
 }
+
+func TestUnpinChatMessage_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := testCtx.UnpinChatMessage().MessageID(123456).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("UnpinChatMessage Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}

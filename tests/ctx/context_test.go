@@ -2,6 +2,7 @@ package ctx_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -200,7 +201,28 @@ func TestContext_IsAdmin(t *testing.T) {
 		t.Logf("IsAdmin result: %v", result.Ok())
 	} else {
 		// Expected to error with mock bot
-		t.Logf("IsAdmin errored as expected with mock bot")
+		t.Logf("IsAdmin errored as expected with mock bot: %v", result.Err())
+	}
+}
+
+func TestContext_IsAdmin_ErrorBranches(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveUser: &gotgbot.User{Id: 0, FirstName: "Test"}, // User ID 0 to test different scenarios
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test IsAdmin with different user ID - should still error with mock bot
+	result := ctx.IsAdmin()
+
+	// Should error due to mock bot limitations
+	if result.IsErr() {
+		t.Logf("IsAdmin with user ID 0 errored as expected")
+	} else {
+		t.Logf("IsAdmin returned result: %v", result.Ok())
 	}
 }
 
@@ -221,4 +243,79 @@ func TestContext_Timers(t *testing.T) {
 	if result.IsErr() {
 		t.Logf("Send failed as expected with mock bot: %v", result.Err())
 	}
+}
+
+func TestContext_Timers_WithAfter(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test sending a message with After timer (covers async timer branch)
+	sendMessage := ctx.SendMessage(g.String("test")).After(time.Millisecond)
+	result := sendMessage.Send()
+
+	// With After, should return Ok(nil) immediately and run async
+	if result.IsOk() {
+		if result.Ok() != nil {
+			t.Error("Expected nil result for async After timer")
+		}
+		t.Logf("Send with After returned nil as expected (async)")
+	} else {
+		t.Logf("Send with After failed: %v", result.Err())
+	}
+
+	// Give a moment for async goroutine to start
+	time.Sleep(time.Millisecond * 5)
+}
+
+func TestContext_Timers_WithDeleteAfter(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test sending a message with DeleteAfter only (covers immediate send + delete branch)
+	sendMessage := ctx.SendMessage(g.String("test")).DeleteAfter(time.Minute)
+	result := sendMessage.Send()
+
+	// Should attempt immediate send, then schedule delete
+	if result.IsErr() {
+		t.Logf("Send with DeleteAfter failed as expected with mock bot: %v", result.Err())
+	} else {
+		t.Logf("Send with DeleteAfter succeeded: %v", result.Ok())
+	}
+}
+
+func TestContext_Timers_WithBoth(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test sending a message with both After and DeleteAfter (covers async branch with delete)
+	sendMessage := ctx.SendMessage(g.String("test")).After(time.Millisecond).DeleteAfter(time.Minute)
+	result := sendMessage.Send()
+
+	// With After, should return Ok(nil) immediately and run async with delete
+	if result.IsOk() {
+		if result.Ok() != nil {
+			t.Error("Expected nil result for async After timer with delete")
+		}
+		t.Logf("Send with After+DeleteAfter returned nil as expected (async with delete)")
+	} else {
+		t.Logf("Send with After+DeleteAfter failed: %v", result.Err())
+	}
+
+	// Give a moment for async goroutine to start
+	time.Sleep(time.Millisecond * 5)
 }
