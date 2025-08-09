@@ -8,6 +8,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/types/effects"
 )
 
 func TestContext_SendGame(t *testing.T) {
@@ -88,5 +90,62 @@ func TestSendGame_Send(t *testing.T) {
 
 	if configuredSendResult.IsErr() {
 		t.Logf("SendGame configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}
+
+func TestSendGame_After(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	if ctx.SendGame(g.String("test_game")).After(time.Minute) == nil {
+		t.Error("After should return builder")
+	}
+}
+
+func TestSendGame_DeleteAfter(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	if ctx.SendGame(g.String("test_game")).DeleteAfter(time.Hour) == nil {
+		t.Error("DeleteAfter should return builder")
+	}
+}
+
+func TestSendGame_AllowPaidBroadcast(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	if ctx.SendGame(g.String("test_game")).AllowPaidBroadcast() == nil {
+		t.Error("AllowPaidBroadcast should return builder")
+	}
+}
+
+func TestSendGame_Effect(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	if ctx.SendGame(g.String("test_game")).Effect(effects.Fire) == nil {
+		t.Error("Effect should return builder")
+	}
+}
+
+func TestSendGame_ReplyTo(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	if ctx.SendGame(g.String("test_game")).ReplyTo(123) == nil {
+		t.Error("ReplyTo should return builder")
+	}
+}
+
+func TestSendGame_Markup(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	btn1 := keyboard.NewButton().Text(g.String("Play")).Callback(g.String("play"))
+	if ctx.SendGame(g.String("test_game")).Markup(keyboard.Inline().Button(btn1)) == nil {
+		t.Error("Markup should return builder")
+	}
+}
+
+func TestSendGame_Business(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	if ctx.SendGame(g.String("test_game")).Business(g.String("biz_123")) == nil {
+		t.Error("Business should return builder")
 	}
 }

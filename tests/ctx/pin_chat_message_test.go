@@ -194,3 +194,43 @@ func TestPinChatMessage_BusinessIntegration(t *testing.T) {
 		t.Error("Business method should work with other method combinations")
 	}
 }
+
+func TestPinChatMessage_Send(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+	messageID := int64(123456)
+
+	// Test Send method - will fail with mock but covers the method
+	sendResult := testCtx.PinChatMessage(messageID).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("PinChatMessage Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+
+	// Test Send method with all options
+	sendWithOptionsResult := testCtx.PinChatMessage(messageID).
+		ChatID(-1001987654321).
+		Business(g.String("business_conn_123")).
+		Silent().
+		Timeout(30 * time.Second).
+		APIURL(g.String("https://api.telegram.org")).
+		Send()
+
+	if sendWithOptionsResult.IsErr() {
+		t.Logf("PinChatMessage Send with options failed as expected with mock bot: %v", sendWithOptionsResult.Err())
+	}
+
+	// Test Send method using default chat ID (from effective chat)
+	sendWithDefaultChatResult := testCtx.PinChatMessage(messageID).
+		Silent().
+		Send()
+
+	if sendWithDefaultChatResult.IsErr() {
+		t.Logf("PinChatMessage Send with default chat ID failed as expected with mock bot: %v", sendWithDefaultChatResult.Err())
+	}
+}

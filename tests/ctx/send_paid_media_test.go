@@ -8,6 +8,9 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/file"
+	"github.com/enetx/tg/input"
+	"github.com/enetx/tg/keyboard"
 )
 
 func TestContext_SendPaidMedia(t *testing.T) {
@@ -86,5 +89,97 @@ func TestSendPaidMedia_Send(t *testing.T) {
 
 	if configuredSendResult.IsErr() {
 		t.Logf("SendPaidMedia configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}
+
+func TestSendPaidMedia_Photo(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+	photoResult := file.Input(g.String("https://example.com/photo.jpg"))
+	if photoResult.IsErr() {
+		t.Skip("Unable to create photo input for testing")
+	}
+	photo := input.PaidPhoto(photoResult.Unwrap())
+	if ctx.SendPaidMedia(starCount).Photo(photo) == nil {
+		t.Error("Photo should return builder")
+	}
+}
+
+func TestSendPaidMedia_Video(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+	videoResult := file.Input(g.String("https://example.com/video.mp4"))
+	if videoResult.IsErr() {
+		t.Skip("Unable to create video input for testing")
+	}
+	video := input.PaidVideo(videoResult.Unwrap())
+	if ctx.SendPaidMedia(starCount).Video(video) == nil {
+		t.Error("Video should return builder")
+	}
+}
+
+func TestSendPaidMedia_Business(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+	if ctx.SendPaidMedia(starCount).Business(g.String("biz_123")) == nil {
+		t.Error("Business should return builder")
+	}
+}
+
+func TestSendPaidMedia_Payload(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+	if ctx.SendPaidMedia(starCount).Payload(g.String("custom_payload_123")) == nil {
+		t.Error("Payload should return builder")
+	}
+}
+
+func TestSendPaidMedia_Markdown(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+	if ctx.SendPaidMedia(starCount).Markdown() == nil {
+		t.Error("Markdown should return builder")
+	}
+}
+
+func TestSendPaidMedia_ShowCaptionAbove(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+	if ctx.SendPaidMedia(starCount).ShowCaptionAbove() == nil {
+		t.Error("ShowCaptionAbove should return builder")
+	}
+}
+
+func TestSendPaidMedia_AllowPaidBroadcast(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+	if ctx.SendPaidMedia(starCount).AllowPaidBroadcast() == nil {
+		t.Error("AllowPaidBroadcast should return builder")
+	}
+}
+
+func TestSendPaidMedia_ReplyTo(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+	if ctx.SendPaidMedia(starCount).ReplyTo(123) == nil {
+		t.Error("ReplyTo should return builder")
+	}
+}
+
+func TestSendPaidMedia_Markup(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+	btn1 := keyboard.NewButton().Text(g.String("Buy Now")).Callback(g.String("buy_now"))
+	if ctx.SendPaidMedia(starCount).Markup(keyboard.Inline().Button(btn1)) == nil {
+		t.Error("Markup should return builder")
 	}
 }

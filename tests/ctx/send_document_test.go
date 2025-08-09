@@ -8,6 +8,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/entities"
+	"github.com/enetx/tg/keyboard"
 )
 
 func TestContext_SendDocument(t *testing.T) {
@@ -91,5 +93,97 @@ func TestSendDocument_Send(t *testing.T) {
 
 	if configuredSendResult.IsErr() {
 		t.Logf("SendDocument configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}
+
+func TestSendDocument_CaptionEntities(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+	ent := entities.New(g.String("Bold text")).Bold(g.String("Bold"))
+	if ctx.SendDocument(filename).CaptionEntities(ent) == nil {
+		t.Error("CaptionEntities should return builder")
+	}
+}
+
+func TestSendDocument_After(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+	if ctx.SendDocument(filename).After(time.Minute) == nil {
+		t.Error("After should return builder")
+	}
+}
+
+func TestSendDocument_DeleteAfter(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+	if ctx.SendDocument(filename).DeleteAfter(time.Hour) == nil {
+		t.Error("DeleteAfter should return builder")
+	}
+}
+
+func TestSendDocument_Markdown(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+	if ctx.SendDocument(filename).Markdown() == nil {
+		t.Error("Markdown should return builder")
+	}
+}
+
+func TestSendDocument_Markup(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+	btn1 := keyboard.NewButton().Text(g.String("Test")).Callback(g.String("test"))
+	if ctx.SendDocument(filename).Markup(keyboard.Inline().Button(btn1)) == nil {
+		t.Error("Markup should return builder")
+	}
+}
+
+func TestSendDocument_Thumbnail(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+	if ctx.SendDocument(filename).Thumbnail(g.String("thumb.jpg")) == nil {
+		t.Error("Thumbnail should return builder")
+	}
+}
+
+func TestSendDocument_ReplyTo(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+	if ctx.SendDocument(filename).ReplyTo(123) == nil {
+		t.Error("ReplyTo should return builder")
+	}
+}
+
+func TestSendDocument_Business(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+	if ctx.SendDocument(filename).Business(g.String("biz_123")) == nil {
+		t.Error("Business should return builder")
+	}
+}
+
+func TestSendDocument_Thread(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+	if ctx.SendDocument(filename).Thread(456) == nil {
+		t.Error("Thread should return builder")
+	}
+}
+
+func TestSendDocument_DisableContentTypeDetection(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+	if ctx.SendDocument(filename).DisableContentTypeDetection() == nil {
+		t.Error("DisableContentTypeDetection should return builder")
 	}
 }

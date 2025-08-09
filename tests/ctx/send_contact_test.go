@@ -8,6 +8,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/keyboard"
 )
 
 func TestContext_SendContact(t *testing.T) {
@@ -92,5 +93,175 @@ func TestSendContact_Send(t *testing.T) {
 
 	if configuredSendResult.IsErr() {
 		t.Logf("SendContact configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}
+
+func TestSendContact_After(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+
+	durations := []time.Duration{
+		time.Second,
+		time.Minute,
+		time.Hour,
+		0,
+	}
+
+	for _, duration := range durations {
+		result := ctx.SendContact(phoneNumber, firstName).After(duration)
+		if result == nil {
+			t.Errorf("After method should return SendContact builder for chaining with duration: %v", duration)
+		}
+
+		chainedResult := result.After(time.Second * 30)
+		if chainedResult == nil {
+			t.Errorf("After method should support chaining and override with duration: %v", duration)
+		}
+	}
+}
+
+func TestSendContact_DeleteAfter(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+
+	durations := []time.Duration{
+		time.Second * 30,
+		time.Minute * 5,
+		time.Hour,
+		0,
+	}
+
+	for _, duration := range durations {
+		result := ctx.SendContact(phoneNumber, firstName).DeleteAfter(duration)
+		if result == nil {
+			t.Errorf("DeleteAfter method should return SendContact builder for chaining with duration: %v", duration)
+		}
+
+		chainedResult := result.DeleteAfter(time.Minute * 10)
+		if chainedResult == nil {
+			t.Errorf("DeleteAfter method should support chaining and override with duration: %v", duration)
+		}
+	}
+}
+
+func TestSendContact_Markup(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+
+	btn1 := keyboard.NewButton().Text(g.String("Test Button")).Callback(g.String("test_data"))
+	inlineKeyboard := keyboard.Inline().Button(btn1)
+
+	result := ctx.SendContact(phoneNumber, firstName).Markup(inlineKeyboard)
+	if result == nil {
+		t.Error("Markup method should return SendContact builder for chaining with inline keyboard")
+	}
+
+	replyKeyboard := keyboard.Reply()
+	chainedResult := result.Markup(replyKeyboard)
+	if chainedResult == nil {
+		t.Error("Markup method should support chaining and override with reply keyboard")
+	}
+}
+
+func TestSendContact_ReplyTo(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+
+	messageIDs := []int64{1, 123, 456, 999}
+
+	for _, messageID := range messageIDs {
+		result := ctx.SendContact(phoneNumber, firstName).ReplyTo(messageID)
+		if result == nil {
+			t.Errorf("ReplyTo method should return SendContact builder for chaining with messageID: %d", messageID)
+		}
+
+		chainedResult := result.ReplyTo(messageID + 100)
+		if chainedResult == nil {
+			t.Errorf("ReplyTo method should support chaining and override with messageID: %d", messageID)
+		}
+	}
+}
+
+func TestSendContact_Business(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+
+	businessIDs := []string{
+		"business_123",
+		"conn_456",
+		"",
+	}
+
+	for _, businessID := range businessIDs {
+		result := ctx.SendContact(phoneNumber, firstName).Business(g.String(businessID))
+		if result == nil {
+			t.Errorf("Business method should return SendContact builder for chaining with businessID: %s", businessID)
+		}
+
+		chainedResult := result.Business(g.String("override_business"))
+		if chainedResult == nil {
+			t.Errorf("Business method should support chaining and override with businessID: %s", businessID)
+		}
+	}
+}
+
+func TestSendContact_Thread(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+
+	threadIDs := []int64{1, 123, 456, 0}
+
+	for _, threadID := range threadIDs {
+		result := ctx.SendContact(phoneNumber, firstName).Thread(threadID)
+		if result == nil {
+			t.Errorf("Thread method should return SendContact builder for chaining with threadID: %d", threadID)
+		}
+
+		chainedResult := result.Thread(threadID + 100)
+		if chainedResult == nil {
+			t.Errorf("Thread method should support chaining and override with threadID: %d", threadID)
+		}
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/keyboard"
 )
 
 func TestContext_SendLocation(t *testing.T) {
@@ -88,5 +89,78 @@ func TestSendLocation_Send(t *testing.T) {
 
 	if configuredSendResult.IsErr() {
 		t.Logf("SendLocation configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}
+
+func TestSendLocation_After(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	lat, lon := 40.7128, -74.0060
+	if ctx.SendLocation(lat, lon).After(time.Minute) == nil {
+		t.Error("After should return builder")
+	}
+}
+
+func TestSendLocation_DeleteAfter(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	lat, lon := 40.7128, -74.0060
+	if ctx.SendLocation(lat, lon).DeleteAfter(time.Hour) == nil {
+		t.Error("DeleteAfter should return builder")
+	}
+}
+
+func TestSendLocation_Markup(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	lat, lon := 40.7128, -74.0060
+	btn1 := keyboard.NewButton().Text(g.String("View Map")).URL(g.String("https://maps.google.com"))
+	if ctx.SendLocation(lat, lon).Markup(keyboard.Inline().Button(btn1)) == nil {
+		t.Error("Markup should return builder")
+	}
+}
+
+func TestSendLocation_LiveFor(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	lat, lon := 40.7128, -74.0060
+	if ctx.SendLocation(lat, lon).LiveFor(time.Hour) == nil {
+		t.Error("LiveFor should return builder")
+	}
+}
+
+func TestSendLocation_HorizontalAccuracy(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	lat, lon := 40.7128, -74.0060
+	if ctx.SendLocation(lat, lon).HorizontalAccuracy(1.5) == nil {
+		t.Error("HorizontalAccuracy should return builder")
+	}
+}
+
+func TestSendLocation_ReplyTo(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	lat, lon := 40.7128, -74.0060
+	if ctx.SendLocation(lat, lon).ReplyTo(123) == nil {
+		t.Error("ReplyTo should return builder")
+	}
+}
+
+func TestSendLocation_Business(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	lat, lon := 40.7128, -74.0060
+	if ctx.SendLocation(lat, lon).Business(g.String("biz_123")) == nil {
+		t.Error("Business should return builder")
+	}
+}
+
+func TestSendLocation_Thread(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	lat, lon := 40.7128, -74.0060
+	if ctx.SendLocation(lat, lon).Thread(456) == nil {
+		t.Error("Thread should return builder")
 	}
 }

@@ -8,6 +8,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/types/effects"
 )
 
 func TestContext_SendDice(t *testing.T) {
@@ -85,5 +87,207 @@ func TestSendDice_Send(t *testing.T) {
 
 	if configuredSendResult.IsErr() {
 		t.Logf("SendDice configured Send failed as expected: %v", configuredSendResult.Err())
+	}
+}
+
+func TestSendDice_After(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	durations := []time.Duration{time.Second, time.Minute, time.Hour, 0}
+	for _, duration := range durations {
+		result := ctx.SendDice().After(duration)
+		if result == nil {
+			t.Errorf("After method should return SendDice builder for chaining with duration: %v", duration)
+		}
+	}
+}
+
+func TestSendDice_DeleteAfter(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	durations := []time.Duration{time.Second * 30, time.Minute * 5, time.Hour, 0}
+	for _, duration := range durations {
+		result := ctx.SendDice().DeleteAfter(duration)
+		if result == nil {
+			t.Errorf("DeleteAfter method should return SendDice builder for chaining with duration: %v", duration)
+		}
+	}
+}
+
+func TestSendDice_Dart(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	result := ctx.SendDice().Dart()
+	if result == nil {
+		t.Error("Dart method should return SendDice builder for chaining")
+	}
+}
+
+func TestSendDice_Slot(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	result := ctx.SendDice().Slot()
+	if result == nil {
+		t.Error("Slot method should return SendDice builder for chaining")
+	}
+}
+
+func TestSendDice_Ball(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	result := ctx.SendDice().Ball()
+	if result == nil {
+		t.Error("Ball method should return SendDice builder for chaining")
+	}
+}
+
+func TestSendDice_Soccer(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	result := ctx.SendDice().Soccer()
+	if result == nil {
+		t.Error("Soccer method should return SendDice builder for chaining")
+	}
+}
+
+func TestSendDice_Bowling(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	result := ctx.SendDice().Bowling()
+	if result == nil {
+		t.Error("Bowling method should return SendDice builder for chaining")
+	}
+}
+
+func TestSendDice_Thread(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	threadIDs := []int64{1, 123, 456, 0}
+	for _, threadID := range threadIDs {
+		result := ctx.SendDice().Thread(threadID)
+		if result == nil {
+			t.Errorf("Thread method should return SendDice builder for chaining with threadID: %d", threadID)
+		}
+	}
+}
+
+func TestSendDice_AllowPaidBroadcast(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	result := ctx.SendDice().AllowPaidBroadcast()
+	if result == nil {
+		t.Error("AllowPaidBroadcast method should return SendDice builder for chaining")
+	}
+}
+
+func TestSendDice_Effect(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	result := ctx.SendDice().Effect(effects.Fire)
+	if result == nil {
+		t.Error("Effect method should return SendDice builder for chaining")
+	}
+}
+
+func TestSendDice_ReplyTo(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	messageIDs := []int64{1, 123, 456, 999}
+	for _, messageID := range messageIDs {
+		result := ctx.SendDice().ReplyTo(messageID)
+		if result == nil {
+			t.Errorf("ReplyTo method should return SendDice builder for chaining with messageID: %d", messageID)
+		}
+	}
+}
+
+func TestSendDice_Markup(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	btn1 := keyboard.NewButton().Text(g.String("Test Button")).Callback(g.String("test_data"))
+	inlineKeyboard := keyboard.Inline().Button(btn1)
+
+	result := ctx.SendDice().Markup(inlineKeyboard)
+	if result == nil {
+		t.Error("Markup method should return SendDice builder for chaining")
+	}
+}
+
+func TestSendDice_Business(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	businessIDs := []string{"business_123", "conn_456", ""}
+	for _, businessID := range businessIDs {
+		result := ctx.SendDice().Business(g.String(businessID))
+		if result == nil {
+			t.Errorf("Business method should return SendDice builder for chaining with businessID: %s", businessID)
+		}
 	}
 }

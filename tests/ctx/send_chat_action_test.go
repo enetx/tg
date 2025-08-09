@@ -83,3 +83,231 @@ func TestSendChatAction_Send(t *testing.T) {
 		t.Logf("SendChatAction configured Send failed as expected: %v", configuredSendResult.Err())
 	}
 }
+
+func TestSendChatAction_Business(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	businessIDs := []string{
+		"business_123",
+		"conn_456",
+		"",
+	}
+
+	for _, businessID := range businessIDs {
+		result := ctx.SendChatAction().Business(g.String(businessID))
+		if result == nil {
+			t.Errorf("Business method should return SendChatAction builder for chaining with businessID: %s", businessID)
+		}
+
+		chainedResult := result.Business(g.String("override_business"))
+		if chainedResult == nil {
+			t.Errorf("Business method should support chaining and override with businessID: %s", businessID)
+		}
+	}
+}
+
+func TestSendChatAction_UploadPhoto(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	result := ctx.SendChatAction().UploadPhoto()
+	if result == nil {
+		t.Error("UploadPhoto method should return SendChatAction builder for chaining")
+	}
+
+	chainedResult := result.UploadPhoto()
+	if chainedResult == nil {
+		t.Error("UploadPhoto method should support chaining")
+	}
+}
+
+func TestSendChatAction_RecordVideo(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	result := ctx.SendChatAction().RecordVideo()
+	if result == nil {
+		t.Error("RecordVideo method should return SendChatAction builder for chaining")
+	}
+
+	chainedResult := result.RecordVideo()
+	if chainedResult == nil {
+		t.Error("RecordVideo method should support chaining")
+	}
+}
+
+func TestSendChatAction_UploadVideo(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	result := ctx.SendChatAction().UploadVideo()
+	if result == nil {
+		t.Error("UploadVideo method should return SendChatAction builder for chaining")
+	}
+
+	chainedResult := result.UploadVideo()
+	if chainedResult == nil {
+		t.Error("UploadVideo method should support chaining")
+	}
+}
+
+func TestSendChatAction_RecordVoice(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	result := ctx.SendChatAction().RecordVoice()
+	if result == nil {
+		t.Error("RecordVoice method should return SendChatAction builder for chaining")
+	}
+
+	chainedResult := result.RecordVoice()
+	if chainedResult == nil {
+		t.Error("RecordVoice method should support chaining")
+	}
+}
+
+func TestSendChatAction_UploadVoice(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	result := ctx.SendChatAction().UploadVoice()
+	if result == nil {
+		t.Error("UploadVoice method should return SendChatAction builder for chaining")
+	}
+
+	chainedResult := result.UploadVoice()
+	if chainedResult == nil {
+		t.Error("UploadVoice method should support chaining")
+	}
+}
+
+func TestSendChatAction_UploadDocument(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	result := ctx.SendChatAction().UploadDocument()
+	if result == nil {
+		t.Error("UploadDocument method should return SendChatAction builder for chaining")
+	}
+
+	chainedResult := result.UploadDocument()
+	if chainedResult == nil {
+		t.Error("UploadDocument method should support chaining")
+	}
+}
+
+func TestSendChatAction_ChooseSticker(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	result := ctx.SendChatAction().ChooseSticker()
+	if result == nil {
+		t.Error("ChooseSticker method should return SendChatAction builder for chaining")
+	}
+
+	chainedResult := result.ChooseSticker()
+	if chainedResult == nil {
+		t.Error("ChooseSticker method should support chaining")
+	}
+}
+
+func TestSendChatAction_FindLocation(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	result := ctx.SendChatAction().FindLocation()
+	if result == nil {
+		t.Error("FindLocation method should return SendChatAction builder for chaining")
+	}
+
+	chainedResult := result.FindLocation()
+	if chainedResult == nil {
+		t.Error("FindLocation method should support chaining")
+	}
+}
+
+func TestSendChatAction_RecordVideoNote(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	result := ctx.SendChatAction().RecordVideoNote()
+	if result == nil {
+		t.Error("RecordVideoNote method should return SendChatAction builder for chaining")
+	}
+
+	chainedResult := result.RecordVideoNote()
+	if chainedResult == nil {
+		t.Error("RecordVideoNote method should support chaining")
+	}
+}
+
+func TestSendChatAction_UploadVideoNote(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	result := ctx.SendChatAction().UploadVideoNote()
+	if result == nil {
+		t.Error("UploadVideoNote method should return SendChatAction builder for chaining")
+	}
+
+	chainedResult := result.UploadVideoNote()
+	if chainedResult == nil {
+		t.Error("UploadVideoNote method should support chaining")
+	}
+}

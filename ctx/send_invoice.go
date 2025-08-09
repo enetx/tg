@@ -6,6 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/types/effects"
 )
 
 type SendInvoice struct {
@@ -138,8 +139,8 @@ func (si *SendInvoice) AllowPaidBroadcast() *SendInvoice {
 }
 
 // Effect sets a message effect for the invoice message.
-func (si *SendInvoice) Effect(effect string) *SendInvoice {
-	si.opts.MessageEffectId = effect
+func (si *SendInvoice) Effect(effect effects.EffectType) *SendInvoice {
+	si.opts.MessageEffectId = effect.String()
 	return si
 }
 
