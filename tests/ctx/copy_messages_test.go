@@ -610,3 +610,107 @@ func TestCopyMessages_Send(t *testing.T) {
 		t.Logf("CopyMessages Send failed as expected with mock bot: %v", sendResult.Err())
 	}
 }
+
+// Test Send method error conditions for complete coverage
+func TestCopyMessages_SendErrorConditions(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "group"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test 1: Error when no message IDs specified
+	emptyIDsResult := ctx.CopyMessages().
+		From(456).
+		To(789).
+		Send()
+
+	if emptyIDsResult.IsOk() {
+		t.Error("Expected error for empty message IDs")
+	}
+	if !emptyIDsResult.IsErr() {
+		t.Error("Expected error result for empty message IDs")
+	} else {
+		err := emptyIDsResult.Err()
+		if err.Error() != "no message IDs specified for copying" {
+			t.Errorf("Expected specific error message, got: %v", err)
+		}
+	}
+
+	// Test 2: Error when too many message IDs (>100)
+	tooManyIDs := make([]int64, 101)
+	for i := 0; i < 101; i++ {
+		tooManyIDs[i] = int64(i + 1)
+	}
+
+	tooManyResult := ctx.CopyMessages().
+		From(456).
+		To(789).
+		MessageIDs(tooManyIDs).
+		Send()
+
+	if tooManyResult.IsOk() {
+		t.Error("Expected error for too many message IDs")
+	}
+	if !tooManyResult.IsErr() {
+		t.Error("Expected error result for too many message IDs")
+	} else {
+		err := tooManyResult.Err()
+		expectedMsg := "too many message IDs: 101 (maximum 100)"
+		if err.Error() != expectedMsg {
+			t.Errorf("Expected error '%s', got: %v", expectedMsg, err)
+		}
+	}
+
+	// Test 3: Error when source chat ID not specified
+	noFromChatResult := ctx.CopyMessages().
+		To(789).
+		MessageIDs([]int64{1, 2, 3}).
+		Send()
+
+	if noFromChatResult.IsOk() {
+		t.Error("Expected error when source chat ID not specified")
+	}
+	if !noFromChatResult.IsErr() {
+		t.Error("Expected error result when source chat ID not specified")
+	} else {
+		err := noFromChatResult.Err()
+		if err.Error() != "source chat ID must be specified" {
+			t.Errorf("Expected specific error message, got: %v", err)
+		}
+	}
+
+	// Test 4: Test Send with exactly 100 message IDs (boundary condition)
+	maxAllowedIDs := make([]int64, 100)
+	for i := 0; i < 100; i++ {
+		maxAllowedIDs[i] = int64(i + 1)
+	}
+
+	maxResult := ctx.CopyMessages().
+		From(456).
+		To(789).
+		MessageIDs(maxAllowedIDs).
+		Send()
+
+	// Should not error on validation, but will error on API call with mock bot
+	if maxResult.IsOk() {
+		t.Log("Max allowed IDs test succeeded (unexpected with mock bot)")
+	} else {
+		t.Logf("Max allowed IDs test failed as expected with mock bot: %v", maxResult.Err())
+	}
+
+	// Test 5: Test Send without explicit To() - should use effective chat
+	implicitToResult := ctx.CopyMessages().
+		From(456).
+		MessageIDs([]int64{1, 2, 3}).
+		Send()
+
+	// Should not error on validation, but will error on API call with mock bot
+	if implicitToResult.IsOk() {
+		t.Log("Implicit To() test succeeded (unexpected with mock bot)")
+	} else {
+		t.Logf("Implicit To() test failed as expected with mock bot: %v", implicitToResult.Err())
+	}
+}

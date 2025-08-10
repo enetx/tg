@@ -99,7 +99,10 @@ func TestSendVideo_Send(t *testing.T) {
 
 func TestSendVideo_CaptionEntities(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	ent := entities.New(g.String("Bold text")).Bold(g.String("Bold"))
 	if ctx.SendVideo(filename).CaptionEntities(ent) == nil {
@@ -109,7 +112,10 @@ func TestSendVideo_CaptionEntities(t *testing.T) {
 
 func TestSendVideo_After(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).After(time.Minute) == nil {
 		t.Error("After should return builder")
@@ -118,7 +124,10 @@ func TestSendVideo_After(t *testing.T) {
 
 func TestSendVideo_DeleteAfter(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).DeleteAfter(time.Hour) == nil {
 		t.Error("DeleteAfter should return builder")
@@ -127,7 +136,10 @@ func TestSendVideo_DeleteAfter(t *testing.T) {
 
 func TestSendVideo_Thumbnail(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).Thumbnail(g.String("thumb.jpg")) == nil {
 		t.Error("Thumbnail should return builder")
@@ -136,7 +148,10 @@ func TestSendVideo_Thumbnail(t *testing.T) {
 
 func TestSendVideo_Spoiler(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).Spoiler() == nil {
 		t.Error("Spoiler should return builder")
@@ -145,7 +160,10 @@ func TestSendVideo_Spoiler(t *testing.T) {
 
 func TestSendVideo_Streamable(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).Streamable() == nil {
 		t.Error("Streamable should return builder")
@@ -154,7 +172,10 @@ func TestSendVideo_Streamable(t *testing.T) {
 
 func TestSendVideo_Markdown(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).Markdown() == nil {
 		t.Error("Markdown should return builder")
@@ -163,7 +184,10 @@ func TestSendVideo_Markdown(t *testing.T) {
 
 func TestSendVideo_Markup(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	btn1 := keyboard.NewButton().Text(g.String("Watch Video")).Callback(g.String("watch_video"))
 	if ctx.SendVideo(filename).Markup(keyboard.Inline().Button(btn1)) == nil {
@@ -173,7 +197,10 @@ func TestSendVideo_Markup(t *testing.T) {
 
 func TestSendVideo_ReplyTo(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).ReplyTo(123) == nil {
 		t.Error("ReplyTo should return builder")
@@ -182,7 +209,10 @@ func TestSendVideo_ReplyTo(t *testing.T) {
 
 func TestSendVideo_Business(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).Business(g.String("biz_123")) == nil {
 		t.Error("Business should return builder")
@@ -191,7 +221,10 @@ func TestSendVideo_Business(t *testing.T) {
 
 func TestSendVideo_Thread(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).Thread(456) == nil {
 		t.Error("Thread should return builder")
@@ -200,7 +233,10 @@ func TestSendVideo_Thread(t *testing.T) {
 
 func TestSendVideo_ShowCaptionAboveMedia(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).ShowCaptionAboveMedia() == nil {
 		t.Error("ShowCaptionAboveMedia should return builder")
@@ -209,7 +245,10 @@ func TestSendVideo_ShowCaptionAboveMedia(t *testing.T) {
 
 func TestSendVideo_Cover(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).Cover(g.String("cover.jpg")) == nil {
 		t.Error("Cover should return builder")
@@ -218,7 +257,10 @@ func TestSendVideo_Cover(t *testing.T) {
 
 func TestSendVideo_StartAt(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).StartAt(30*time.Second) == nil {
 		t.Error("StartAt should return builder")
@@ -227,7 +269,10 @@ func TestSendVideo_StartAt(t *testing.T) {
 
 func TestSendVideo_ApplyMetadata(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).ApplyMetadata() == nil {
 		t.Error("ApplyMetadata should return builder")
@@ -236,7 +281,10 @@ func TestSendVideo_ApplyMetadata(t *testing.T) {
 
 func TestSendVideo_GenerateThumbnail(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 	if ctx.SendVideo(filename).GenerateThumbnail() == nil {
 		t.Error("GenerateThumbnail should return builder")
@@ -245,7 +293,10 @@ func TestSendVideo_GenerateThumbnail(t *testing.T) {
 
 func TestSendVideo_GenerateThumbnailErrorHandling(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// Test GenerateThumbnail with no file set (should cause error)
 	filename := g.String("")
@@ -268,12 +319,29 @@ func TestSendVideo_GenerateThumbnailErrorHandling(t *testing.T) {
 
 func TestSendVideo_GenerateThumbnailWithSeekTime(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	filename := g.String("video.mp4")
 
 	// Test GenerateThumbnail with custom seek time
-	result := ctx.SendVideo(filename).GenerateThumbnail(g.String("00:01:30"))
+	result := ctx.SendVideo(filename).GenerateThumbnail(g.String("00:00:10"))
+	if result == nil {
+		t.Error("GenerateThumbnail with seek time should return builder")
+	}
+
+	// Test that Send() handles any errors from GenerateThumbnail
+	sendResult := result.Send()
+	if sendResult.IsOk() {
+		t.Log("GenerateThumbnail with seek time succeeded (unexpected in test environment)")
+	} else {
+		t.Logf("GenerateThumbnail with seek time failed as expected in test environment: %v", sendResult.Err())
+	}
+
+	// Test GenerateThumbnail with custom seek time
+	result = ctx.SendVideo(filename).GenerateThumbnail(g.String("00:01:30"))
 	if result == nil {
 		t.Error("GenerateThumbnail with seek time should return builder")
 	}
@@ -281,7 +349,10 @@ func TestSendVideo_GenerateThumbnailWithSeekTime(t *testing.T) {
 
 func TestSendVideo_GenerateThumbnailWithoutDuration(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// Create a temporary file
 	tempFile := "/tmp/test_video_notmeta.mp4"
@@ -306,7 +377,10 @@ func TestSendVideo_GenerateThumbnailWithoutDuration(t *testing.T) {
 
 func TestSendVideo_GenerateThumbnailWithApplyMetadata(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// Create a temporary file
 	tempFile := "/tmp/test_video_meta.mp4"
@@ -332,7 +406,10 @@ func TestSendVideo_GenerateThumbnailWithApplyMetadata(t *testing.T) {
 
 func TestSendVideo_ErrorHandling(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// Test with invalid filename that should cause file.Input to fail
 	invalidFilename := g.String("") // Empty filename should cause an error
@@ -368,7 +445,10 @@ func TestSendVideo_ErrorHandling(t *testing.T) {
 
 func TestSendVideo_APIURLWithExistingRequestOpts(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("test.mp4")
 
 	// First set Timeout to create RequestOpts, then test APIURL
@@ -383,7 +463,10 @@ func TestSendVideo_APIURLWithExistingRequestOpts(t *testing.T) {
 
 func TestSendVideo_CoverErrorHandling(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("test.mp4")
 
 	// Test Cover with invalid file (error case)
@@ -405,7 +488,10 @@ func TestSendVideo_CoverErrorHandling(t *testing.T) {
 
 func TestSendVideo_ApplyMetadataErrorHandling(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// Test ApplyMetadata without file (error case)
 	result := ctx.SendVideo(g.String("nonexistent.mp4")).ApplyMetadata()
@@ -426,7 +512,10 @@ func TestSendVideo_ApplyMetadataErrorHandling(t *testing.T) {
 
 func TestSendVideo_ThumbnailErrorHandling(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("video.mp4")
 
 	// Test Thumbnail method with error
@@ -438,7 +527,10 @@ func TestSendVideo_ThumbnailErrorHandling(t *testing.T) {
 
 func TestSendVideo_FileClosingComplexScenarios(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// Create temporary files
 	tempVideo := "/tmp/test_video.mp4"
@@ -466,5 +558,89 @@ func TestSendVideo_FileClosingComplexScenarios(t *testing.T) {
 	sendResult := result.Send()
 	if sendResult.IsErr() {
 		t.Logf("Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}
+
+// Test ApplyMetadata error conditions for better coverage
+func TestSendVideo_ApplyMetadataErrorConditions(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
+
+	// Test ApplyMetadata with empty filename - should cause error
+	emptyFilename := g.String("")
+	result := ctx.SendVideo(emptyFilename)
+
+	// Call ApplyMetadata - this should cause error since file is not properly set
+	metadataResult := result.ApplyMetadata()
+	if metadataResult == nil {
+		t.Error("ApplyMetadata should return builder even with error")
+	}
+
+	// Test that Send() handles the error
+	sendResult := metadataResult.Send()
+	if !sendResult.IsErr() {
+		t.Error("Send should fail when ApplyMetadata has error")
+	} else {
+		t.Logf("Send failed as expected with ApplyMetadata error: %v", sendResult.Err())
+	}
+
+	// Test ApplyMetadata with non-existent file
+	nonExistentFile := g.String("/nonexistent/video.mp4")
+	result2 := ctx.SendVideo(nonExistentFile).ApplyMetadata()
+	if result2 == nil {
+		t.Error("ApplyMetadata should return builder even with non-existent file")
+	}
+
+	// Test that Send() handles the error from non-existent file
+	sendResult2 := result2.Send()
+	if sendResult2.IsOk() {
+		t.Log("ApplyMetadata with non-existent file succeeded (unexpected)")
+	} else {
+		t.Logf("ApplyMetadata with non-existent file failed as expected: %v", sendResult2.Err())
+	}
+}
+
+// Test GenerateThumbnail additional error conditions for better coverage
+func TestSendVideo_GenerateThumbnailAdditionalErrors(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
+
+	// Test GenerateThumbnail with empty filename - should cause error
+	emptyFilename := g.String("")
+	result := ctx.SendVideo(emptyFilename)
+
+	// Call GenerateThumbnail - this should cause error since file is not set
+	thumbnailResult := result.GenerateThumbnail()
+	if thumbnailResult == nil {
+		t.Error("GenerateThumbnail should return builder even with error")
+	}
+
+	// Test that Send() handles the error
+	sendResult := thumbnailResult.Send()
+	if !sendResult.IsErr() {
+		t.Error("Send should fail when GenerateThumbnail has error")
+	} else {
+		t.Logf("Send failed as expected with GenerateThumbnail error: %v", sendResult.Err())
+	}
+
+	// Test GenerateThumbnail with non-existent file and custom seek time
+	nonExistentFile := g.String("/nonexistent/video.mp4")
+	result2 := ctx.SendVideo(nonExistentFile).GenerateThumbnail(g.String("00:00:05"))
+	if result2 == nil {
+		t.Error("GenerateThumbnail should return builder even with non-existent file")
+	}
+
+	// Test that Send() handles the error from non-existent file
+	sendResult2 := result2.Send()
+	if sendResult2.IsOk() {
+		t.Log("GenerateThumbnail with non-existent file succeeded (unexpected)")
+	} else {
+		t.Logf("GenerateThumbnail with non-existent file failed as expected: %v", sendResult2.Err())
 	}
 }
