@@ -262,3 +262,29 @@ func TestReplyKeyboard_Empty(t *testing.T) {
 		t.Errorf("Expected 0 rows in empty keyboard, got %d", len(markup.Keyboard))
 	}
 }
+
+// Test addToLastRow with empty keyboard (should create new row)
+func TestReplyKeyboard_AddToEmptyKeyboard(t *testing.T) {
+	keyboard := Reply()
+
+	// Add button without calling Row() first - should create new row
+	keyboard.Text("First Button")
+
+	rawMarkup := keyboard.Markup()
+	markup, ok := rawMarkup.(gotgbot.ReplyKeyboardMarkup)
+	if !ok {
+		t.Fatal("Expected ReplyKeyboardMarkup")
+	}
+
+	if len(markup.Keyboard) != 1 {
+		t.Errorf("Expected 1 row after adding button to empty keyboard, got %d", len(markup.Keyboard))
+	}
+
+	if len(markup.Keyboard[0]) != 1 {
+		t.Errorf("Expected 1 button in new row, got %d", len(markup.Keyboard[0]))
+	}
+
+	if markup.Keyboard[0][0].Text != "First Button" {
+		t.Errorf("Expected button text 'First Button', got '%s'", markup.Keyboard[0][0].Text)
+	}
+}

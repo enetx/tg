@@ -82,6 +82,25 @@ func TestCachedVoice_Markdown(t *testing.T) {
 	}
 }
 
+func TestCachedVoice_CaptionEntities(t *testing.T) {
+	cached := inline.NewCachedVoice(testID, testFileID, testTitle)
+	entities := createTestEntities()
+
+	result := cached.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return CachedVoice")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultCachedVoice); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedVoice")
+	}
+}
+
 func TestCachedVoice_Markup(t *testing.T) {
 	cached := inline.NewCachedVoice(testID, testFileID, testTitle)
 	keyboard := createTestKeyboard()

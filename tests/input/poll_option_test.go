@@ -61,6 +61,28 @@ func TestChoice_Markdown(t *testing.T) {
 	}
 }
 
+func TestChoice_TextEntities(t *testing.T) {
+	optionText := g.String("Option A")
+	choice := input.Choice(optionText)
+	entities := createTestEntities()
+	result := choice.TextEntities(entities)
+	if result == nil {
+		t.Error("Expected TextEntities method to return PollChoice")
+	}
+	if result != choice {
+		t.Error("Expected TextEntities to return same PollChoice instance")
+	}
+
+	built := result.Build()
+	if v, ok := interface{}(built).(gotgbot.InputPollOption); ok {
+		if len(v.TextEntities) == 0 {
+			t.Error("Expected TextEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputPollOption")
+	}
+}
+
 func TestChoice_Build(t *testing.T) {
 	optionText := g.String("Option A")
 	choice := input.Choice(optionText)

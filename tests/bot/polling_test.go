@@ -194,8 +194,7 @@ func TestPolling_Offset(t *testing.T) {
 
 func TestPolling_Start(t *testing.T) {
 	// Skip this test to avoid blocking in CI/test environment
+	// The Start method is a blocking operation that requires real bot connection
+	// Coverage for this method would need integration tests with a valid bot token
 	t.Skip("Skipping Start() test as it's a blocking method that requires real bot connection")
-
-	// The method exists and is covered by integration tests
-	// This comment ensures the method is at least referenced for coverage purposes
 }

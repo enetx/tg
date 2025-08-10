@@ -163,6 +163,158 @@ func TestInvoice_Photo(t *testing.T) {
 	}
 }
 
+func TestInvoice_SuggestedTips(t *testing.T) {
+	title := g.String("Test Product")
+	description := g.String("Test Description")
+	payload := g.String("test_payload")
+	currency := g.String("USD")
+
+	invoice := input.Invoice(title, description, payload, currency)
+	tips := []int64{100, 200, 500}
+	result := invoice.SuggestedTips(tips...)
+	if result == nil {
+		t.Error("Expected SuggestedTips method to return MessageInvoice")
+	}
+	if result != invoice {
+		t.Error("Expected SuggestedTips to return same MessageInvoice instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputInvoiceMessageContent); ok {
+		if len(v.SuggestedTipAmounts) != 3 {
+			t.Error("Expected SuggestedTipAmounts to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputInvoiceMessageContent")
+	}
+}
+
+func TestInvoice_ProviderData(t *testing.T) {
+	title := g.String("Test Product")
+	description := g.String("Test Description")
+	payload := g.String("test_payload")
+	currency := g.String("USD")
+
+	invoice := input.Invoice(title, description, payload, currency)
+	data := g.String(`{"test": "data"}`)
+	result := invoice.ProviderData(data)
+	if result == nil {
+		t.Error("Expected ProviderData method to return MessageInvoice")
+	}
+	if result != invoice {
+		t.Error("Expected ProviderData to return same MessageInvoice instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputInvoiceMessageContent); ok {
+		if v.ProviderData != data.Std() {
+			t.Error("Expected ProviderData to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputInvoiceMessageContent")
+	}
+}
+
+func TestInvoice_NeedEmail(t *testing.T) {
+	title := g.String("Test Product")
+	description := g.String("Test Description")
+	payload := g.String("test_payload")
+	currency := g.String("USD")
+
+	invoice := input.Invoice(title, description, payload, currency)
+	result := invoice.NeedEmail()
+	if result == nil {
+		t.Error("Expected NeedEmail method to return MessageInvoice")
+	}
+	if result != invoice {
+		t.Error("Expected NeedEmail to return same MessageInvoice instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputInvoiceMessageContent); ok {
+		if !v.NeedEmail {
+			t.Error("Expected NeedEmail to be set to true")
+		}
+	} else {
+		t.Error("Expected result to be InputInvoiceMessageContent")
+	}
+}
+
+func TestInvoice_NeedShipping(t *testing.T) {
+	title := g.String("Test Product")
+	description := g.String("Test Description")
+	payload := g.String("test_payload")
+	currency := g.String("USD")
+
+	invoice := input.Invoice(title, description, payload, currency)
+	result := invoice.NeedShipping()
+	if result == nil {
+		t.Error("Expected NeedShipping method to return MessageInvoice")
+	}
+	if result != invoice {
+		t.Error("Expected NeedShipping to return same MessageInvoice instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputInvoiceMessageContent); ok {
+		if !v.NeedShippingAddress {
+			t.Error("Expected NeedShippingAddress to be set to true")
+		}
+	} else {
+		t.Error("Expected result to be InputInvoiceMessageContent")
+	}
+}
+
+func TestInvoice_SendPhone(t *testing.T) {
+	title := g.String("Test Product")
+	description := g.String("Test Description")
+	payload := g.String("test_payload")
+	currency := g.String("USD")
+
+	invoice := input.Invoice(title, description, payload, currency)
+	result := invoice.SendPhone()
+	if result == nil {
+		t.Error("Expected SendPhone method to return MessageInvoice")
+	}
+	if result != invoice {
+		t.Error("Expected SendPhone to return same MessageInvoice instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputInvoiceMessageContent); ok {
+		if !v.SendPhoneNumberToProvider {
+			t.Error("Expected SendPhoneNumberToProvider to be set to true")
+		}
+	} else {
+		t.Error("Expected result to be InputInvoiceMessageContent")
+	}
+}
+
+func TestInvoice_SendEmail(t *testing.T) {
+	title := g.String("Test Product")
+	description := g.String("Test Description")
+	payload := g.String("test_payload")
+	currency := g.String("USD")
+
+	invoice := input.Invoice(title, description, payload, currency)
+	result := invoice.SendEmail()
+	if result == nil {
+		t.Error("Expected SendEmail method to return MessageInvoice")
+	}
+	if result != invoice {
+		t.Error("Expected SendEmail to return same MessageInvoice instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputInvoiceMessageContent); ok {
+		if !v.SendEmailToProvider {
+			t.Error("Expected SendEmailToProvider to be set to true")
+		}
+	} else {
+		t.Error("Expected result to be InputInvoiceMessageContent")
+	}
+}
+
 func TestInvoice_MethodChaining(t *testing.T) {
 	title := g.String("Test Product")
 	description := g.String("Test Description")

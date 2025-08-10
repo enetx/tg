@@ -83,6 +83,52 @@ func TestAnimation_Markdown(t *testing.T) {
 	}
 }
 
+func TestAnimation_Thumbnail(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	thumbnailFile := file.Input(testThumbnailURL).Ok()
+	animation := input.Animation(mediaFile)
+
+	result := animation.Thumbnail(thumbnailFile)
+	if result == nil {
+		t.Error("Expected Thumbnail method to return MediaAnimation")
+	}
+	if result != animation {
+		t.Error("Expected Thumbnail to return same MediaAnimation instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaAnimation); ok {
+		if v.Thumbnail == nil {
+			t.Error("Expected Thumbnail to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaAnimation")
+	}
+}
+
+func TestAnimation_CaptionEntities(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	animation := input.Animation(mediaFile)
+	entities := createTestEntities()
+
+	result := animation.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return MediaAnimation")
+	}
+	if result != animation {
+		t.Error("Expected CaptionEntities to return same MediaAnimation instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaAnimation); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaAnimation")
+	}
+}
+
 func TestAnimation_ShowCaptionAboveMedia(t *testing.T) {
 	mediaFile := file.Input(testURL).Ok()
 	animation := input.Animation(mediaFile)

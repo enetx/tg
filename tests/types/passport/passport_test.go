@@ -231,3 +231,28 @@ func TestErrors(t *testing.T) {
 		t.Errorf("Expected 2 errors, got %d", errors.Len())
 	}
 }
+
+func TestPassportError_Build_DefaultCase(t *testing.T) {
+	// Test the default case in Build method through UnspecifiedError
+	// The default case should be equivalent to UnspecifiedError
+	elementType := passport.PersonalDetails
+	elementHash := g.String("test_hash")
+	message := g.String("Default case test")
+
+	error := passport.NewUnspecifiedError(elementType, elementHash, message)
+
+	built := error.Build()
+	if unspecifiedError, ok := built.(*gotgbot.PassportElementErrorUnspecified); ok {
+		if unspecifiedError.Type != elementType.String() {
+			t.Errorf("Expected Type %s, got %s", elementType.String(), unspecifiedError.Type)
+		}
+		if unspecifiedError.ElementHash != elementHash.Std() {
+			t.Errorf("Expected ElementHash %s, got %s", elementHash.Std(), unspecifiedError.ElementHash)
+		}
+		if unspecifiedError.Message != message.Std() {
+			t.Errorf("Expected Message %s, got %s", message.Std(), unspecifiedError.Message)
+		}
+	} else {
+		t.Error("Expected result to be PassportElementErrorUnspecified")
+	}
+}

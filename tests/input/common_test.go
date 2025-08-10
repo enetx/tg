@@ -2,22 +2,24 @@ package input_test
 
 import (
 	"github.com/enetx/g"
+	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/input"
 )
 
 // Common test data
 var (
-	testText        = g.String("Test message text")
-	testURL         = g.String("https://example.com/test.jpg")
-	testFileID      = g.String("BAADBAADrwADBREAAYdaWKOKDj8X")
-	testCaption     = g.String("Test caption")
-	testLatitude    = 40.7128
-	testLongitude   = -74.0060
-	testTitle       = g.String("Test Title")
-	testAddress     = g.String("New York, NY")
-	testPhoneNumber = g.String("+1234567890")
-	testFirstName   = g.String("John")
-	testLastName    = g.String("Doe")
+	testText         = g.String("Test message text")
+	testURL          = g.String("https://example.com/test.jpg")
+	testThumbnailURL = g.String("https://example.com/thumbnail.jpg")
+	testFileID       = g.String("BAADBAADrwADBREAAYdaWKOKDj8X")
+	testCaption      = g.String("Test caption")
+	testLatitude     = 40.7128
+	testLongitude    = -74.0060
+	testTitle        = g.String("Test Title")
+	testAddress      = g.String("New York, NY")
+	testPhoneNumber  = g.String("+1234567890")
+	testFirstName    = g.String("John")
+	testLastName     = g.String("Doe")
 )
 
 // Helper functions to test interface implementations
@@ -48,4 +50,8 @@ func assertPollOption(po input.PollOption) bool {
 	built := po.Build()
 	// Check if the built result is not empty (text should be set)
 	return built.Text != ""
+}
+
+func createTestEntities() entities.Entities {
+	return *entities.New(g.String("Test text with bold")).Bold("bold")
 }

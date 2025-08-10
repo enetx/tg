@@ -100,6 +100,80 @@ func TestCachedPhoto_HTML(t *testing.T) {
 	}
 }
 
+func TestCachedPhoto_Markdown(t *testing.T) {
+	cached := inline.NewCachedPhoto(testID, testFileID)
+
+	result := cached.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return CachedPhoto")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultCachedPhoto); ok {
+		if v.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedPhoto")
+	}
+}
+
+func TestCachedPhoto_CaptionEntities(t *testing.T) {
+	cached := inline.NewCachedPhoto(testID, testFileID)
+	entities := createTestEntities()
+
+	result := cached.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return CachedPhoto")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultCachedPhoto); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedPhoto")
+	}
+}
+
+func TestCachedPhoto_ShowCaptionAboveMedia(t *testing.T) {
+	cached := inline.NewCachedPhoto(testID, testFileID)
+
+	result := cached.ShowCaptionAboveMedia()
+	if result == nil {
+		t.Error("Expected ShowCaptionAboveMedia method to return CachedPhoto")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultCachedPhoto); ok {
+		if !v.ShowCaptionAboveMedia {
+			t.Error("Expected ShowCaptionAboveMedia to be true")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedPhoto")
+	}
+}
+
+func TestCachedPhoto_InputMessageContent(t *testing.T) {
+	cached := inline.NewCachedPhoto(testID, testFileID)
+	messageContent := createTestMessageContent()
+
+	result := cached.InputMessageContent(messageContent)
+	if result == nil {
+		t.Error("Expected InputMessageContent method to return CachedPhoto")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultCachedPhoto); ok {
+		if v.InputMessageContent == nil {
+			t.Error("Expected InputMessageContent to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedPhoto")
+	}
+}
+
 func TestCachedPhoto_Markup(t *testing.T) {
 	cached := inline.NewCachedPhoto(testID, testFileID)
 	keyboard := createTestKeyboard()

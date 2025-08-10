@@ -261,3 +261,29 @@ func TestWebhook_Register_ValidConfiguration(t *testing.T) {
 		_ = err
 	}
 }
+
+func TestWebhook_Certificate(t *testing.T) {
+	token := g.String("123456:ABCDEF-test-token-here")
+	result := bot.New(token).DisableTokenCheck().Build()
+
+	if result.IsErr() {
+		t.Errorf("Failed to create bot: %v", result.Err())
+		return
+	}
+
+	botInstance := result.Ok()
+
+	// Test Certificate method with non-existent file - should panic
+	defer func() {
+		if r := recover(); r != nil {
+			// This is expected behavior with non-existent file
+			t.Logf("Certificate panicked as expected: %v", r)
+		}
+	}()
+
+	// This will panic but we catch it above for coverage
+	botInstance.Webhook().Certificate("/nonexistent/cert.pem")
+
+	// Should not reach here with non-existent file
+	t.Error("Expected Certificate to panic with non-existent file, but it didn't")
+}

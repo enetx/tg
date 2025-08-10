@@ -110,6 +110,43 @@ func TestVideo_HTML(t *testing.T) {
 	}
 }
 
+func TestVideo_Markdown(t *testing.T) {
+	video := inline.NewVideo(testID, testURL, g.String("video/mp4"), testThumbnailURL, testTitle)
+
+	result := video.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return Video")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultVideo); ok {
+		if v.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultVideo")
+	}
+}
+
+func TestVideo_CaptionEntities(t *testing.T) {
+	video := inline.NewVideo(testID, testURL, g.String("video/mp4"), testThumbnailURL, testTitle)
+	entities := createTestEntities()
+
+	result := video.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return Video")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultVideo); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultVideo")
+	}
+}
+
 func TestVideo_ShowCaptionAboveMedia(t *testing.T) {
 	video := inline.NewVideo(testID, testURL, g.String("video/mp4"), testThumbnailURL, testTitle)
 	result := video.ShowCaptionAboveMedia()

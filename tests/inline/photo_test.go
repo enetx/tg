@@ -127,6 +127,80 @@ func TestPhoto_HTML(t *testing.T) {
 	}
 }
 
+func TestPhoto_Markdown(t *testing.T) {
+	photo := inline.NewPhoto(testID, testURL, testThumbnailURL)
+
+	result := photo.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return Photo")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultPhoto); ok {
+		if v.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultPhoto")
+	}
+}
+
+func TestPhoto_CaptionEntities(t *testing.T) {
+	photo := inline.NewPhoto(testID, testURL, testThumbnailURL)
+	entities := createTestEntities()
+
+	result := photo.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return Photo")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultPhoto); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultPhoto")
+	}
+}
+
+func TestPhoto_ShowCaptionAboveMedia(t *testing.T) {
+	photo := inline.NewPhoto(testID, testURL, testThumbnailURL)
+
+	result := photo.ShowCaptionAboveMedia()
+	if result == nil {
+		t.Error("Expected ShowCaptionAboveMedia method to return Photo")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultPhoto); ok {
+		if !v.ShowCaptionAboveMedia {
+			t.Error("Expected ShowCaptionAboveMedia to be true")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultPhoto")
+	}
+}
+
+func TestPhoto_InputMessageContent(t *testing.T) {
+	photo := inline.NewPhoto(testID, testURL, testThumbnailURL)
+	messageContent := createTestMessageContent()
+
+	result := photo.InputMessageContent(messageContent)
+	if result == nil {
+		t.Error("Expected InputMessageContent method to return Photo")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultPhoto); ok {
+		if v.InputMessageContent == nil {
+			t.Error("Expected InputMessageContent to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultPhoto")
+	}
+}
+
 func TestPhoto_MethodChaining(t *testing.T) {
 	result := inline.NewPhoto(testID, testURL, testThumbnailURL).
 		Size(800, 600).

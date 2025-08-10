@@ -99,6 +99,43 @@ func TestDocument_HTML(t *testing.T) {
 	}
 }
 
+func TestDocument_Markdown(t *testing.T) {
+	doc := inline.NewDocument(testID, testTitle, testURL, g.String("application/pdf"))
+
+	result := doc.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return Document")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultDocument); ok {
+		if v.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultDocument")
+	}
+}
+
+func TestDocument_CaptionEntities(t *testing.T) {
+	doc := inline.NewDocument(testID, testTitle, testURL, g.String("application/pdf"))
+	entities := createTestEntities()
+
+	result := doc.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return Document")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultDocument); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultDocument")
+	}
+}
+
 func TestDocument_MethodChaining(t *testing.T) {
 	result := inline.NewDocument(testID, testTitle, testURL, g.String("application/pdf")).
 		Caption(testCaption).

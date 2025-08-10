@@ -63,6 +63,74 @@ func TestAudio_HTML(t *testing.T) {
 	}
 }
 
+func TestAudio_Thumbnail(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	thumbnailFile := file.Input(testThumbnailURL).Ok()
+	audio := input.Audio(mediaFile)
+
+	result := audio.Thumbnail(thumbnailFile)
+	if result == nil {
+		t.Error("Expected Thumbnail method to return MediaAudio")
+	}
+	if result != audio {
+		t.Error("Expected Thumbnail to return same MediaAudio instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaAudio); ok {
+		if v.Thumbnail == nil {
+			t.Error("Expected Thumbnail to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaAudio")
+	}
+}
+
+func TestAudio_Markdown(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	audio := input.Audio(mediaFile)
+
+	result := audio.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return MediaAudio")
+	}
+	if result != audio {
+		t.Error("Expected Markdown to return same MediaAudio instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaAudio); ok {
+		if v.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaAudio")
+	}
+}
+
+func TestAudio_CaptionEntities(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	audio := input.Audio(mediaFile)
+	entities := createTestEntities()
+
+	result := audio.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return MediaAudio")
+	}
+	if result != audio {
+		t.Error("Expected CaptionEntities to return same MediaAudio instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaAudio); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaAudio")
+	}
+}
+
 func TestAudio_Duration(t *testing.T) {
 	mediaFile := file.Input(testURL).Ok()
 	audio := input.Audio(mediaFile)

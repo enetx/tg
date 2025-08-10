@@ -438,3 +438,248 @@ func TestInlineKeyboard_Edit(t *testing.T) {
 		t.Error("Expected no rows to remain after deleting all buttons")
 	}
 }
+
+func TestInlineKeyboard_ButtonWithParent(t *testing.T) {
+	// Test Button method and parent attachment
+	keyboard := Inline()
+	btn := NewButton().Text("Toggle").Callback("toggle").On("ON").Off("OFF")
+
+	// Add button to keyboard, which should attach parent
+	keyboard.Button(btn)
+
+	// Test SetActive with parent (should trigger update method)
+	btn.SetActive(true)
+	if !btn.Get.IsActive() {
+		t.Error("Expected button to be active after SetActive(true)")
+	}
+
+	// Test Flip with parent (should trigger update method)
+	btn.Flip()
+	if btn.Get.IsActive() {
+		t.Error("Expected button to be inactive after Flip()")
+	}
+
+	// Test update method indirectly by checking keyboard state
+	markup := keyboard.Markup().(gotgbot.InlineKeyboardMarkup)
+	if len(markup.InlineKeyboard) == 0 || len(markup.InlineKeyboard[0]) == 0 {
+		t.Error("Expected at least one button in keyboard")
+	}
+
+	// Verify button text shows toggle state
+	btnText := markup.InlineKeyboard[0][0].Text
+	if btnText != "OFF" {
+		t.Errorf("Expected button text to show 'OFF', got '%s'", btnText)
+	}
+}
+
+func TestInlineKeyboard_ButtonUpdateExisting(t *testing.T) {
+	// Test update method by updating existing button
+	keyboard := Inline().Row().Text("Original", "same_callback")
+
+	// Create new button with same callback data
+	newBtn := NewButton().Text("Updated").Callback("same_callback")
+
+	// Add button - should update existing one
+	keyboard.Button(newBtn)
+
+	markup := keyboard.Markup().(gotgbot.InlineKeyboardMarkup)
+	if len(markup.InlineKeyboard) != 1 || len(markup.InlineKeyboard[0]) != 1 {
+		t.Error("Expected exactly one button after update")
+	}
+
+	if markup.InlineKeyboard[0][0].Text != "Updated" {
+		t.Errorf("Expected updated button text 'Updated', got '%s'", markup.InlineKeyboard[0][0].Text)
+	}
+}
+
+func TestInlineKeyboard_ButtonWithPayment(t *testing.T) {
+	// Test Button method with Pay button (different code path)
+	keyboard := Inline()
+	btn := NewButton().Text("Pay Now").Pay()
+
+	// Add payment button to keyboard
+	keyboard.Button(btn)
+
+	markup := keyboard.Markup().(gotgbot.InlineKeyboardMarkup)
+	if len(markup.InlineKeyboard) == 0 || len(markup.InlineKeyboard[0]) == 0 {
+		t.Error("Expected at least one button in keyboard")
+	}
+
+	if !markup.InlineKeyboard[0][0].Pay {
+		t.Error("Expected button to have Pay flag set")
+	}
+}
+
+func TestInlineKeyboard_ButtonNilHandling(t *testing.T) {
+	// Test Button method with nil button
+	keyboard := Inline()
+	result := keyboard.Button(nil)
+
+	if result != keyboard {
+		t.Error("Expected Button(nil) to return same keyboard instance")
+	}
+
+	// Test Button method with button that has nil raw
+	btn := &Button{} // Empty button without raw
+	result2 := keyboard.Button(btn)
+
+	if result2 != keyboard {
+		t.Error("Expected Button with nil raw to return same keyboard instance")
+	}
+}
+
+func TestInlineKeyboard_UpdateMethodDirectAccess(t *testing.T) {
+	// Test update method by creating button with callback and then using SetActive
+	keyboard := Inline()
+	btn := NewButton().Text("Test").Callback("test_cb").On("Active").Off("Inactive")
+
+	// Add to keyboard to attach parent
+	keyboard.Button(btn)
+
+	// Initial state - should be inactive
+	btn.SetActive(false)
+	markup1 := keyboard.Markup().(gotgbot.InlineKeyboardMarkup)
+	if markup1.InlineKeyboard[0][0].Text != "Inactive" {
+		t.Error("Expected initial state to be 'Inactive'")
+	}
+
+	// Change state - should trigger update
+	btn.SetActive(true)
+	markup2 := keyboard.Markup().(gotgbot.InlineKeyboardMarkup)
+	if markup2.InlineKeyboard[0][0].Text != "Active" {
+		t.Error("Expected state to change to 'Active' after SetActive(true)")
+	}
+
+	// Test Flip - should trigger update again
+	btn.Flip()
+	markup3 := keyboard.Markup().(gotgbot.InlineKeyboardMarkup)
+	if markup3.InlineKeyboard[0][0].Text != "Inactive" {
+		t.Error("Expected state to change to 'Inactive' after Flip()")
+	}
+}
+
+// Additional tests for missing coverage
+func TestInlineKeyboard_FromMarkupPointer(t *testing.T) {
+	// Test fromMarkup with pointer type (covers pointer case)
+	original := &gotgbot.InlineKeyboardMarkup{
+		InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
+			{{Text: "Test Pointer", CallbackData: "test_ptr"}},
+		},
+	}
+
+	keyboard := Inline(original)
+	result := keyboard.Markup().(gotgbot.InlineKeyboardMarkup)
+
+	if len(result.InlineKeyboard) != 1 {
+		t.Errorf("Expected 1 row, got %d", len(result.InlineKeyboard))
+	}
+
+	if result.InlineKeyboard[0][0].Text != "Test Pointer" {
+		t.Errorf("Expected button text 'Test Pointer', got '%s'", result.InlineKeyboard[0][0].Text)
+	}
+}
+
+func TestInlineKeyboard_FromNilKeyboard(t *testing.T) {
+	// Test fromKeyboard with nil keyboard (covers nil check)
+	keyboard := Inline()
+	result := keyboard.Button(nil) // This should use fromKeyboard with nil
+	if result != keyboard {
+		t.Error("Expected fromKeyboard with nil to return same keyboard")
+	}
+}
+
+func TestInlineKeyboard_UpdateWithNilOrEmptyCallback(t *testing.T) {
+	// Test update method with button without callback data
+	keyboard := Inline().Row().Text("Original", "original_cb")
+
+	// Test update with button that has nil raw
+	btn := &Button{} // Empty button
+	result := keyboard.Button(btn)
+	if result != keyboard {
+		t.Error("Expected update with nil raw to return same keyboard")
+	}
+
+	// Test update with button that has empty callback
+	btn2 := NewButton().Text("No Callback")
+	result2 := keyboard.Button(btn2)
+	if result2 != keyboard {
+		t.Error("Expected update with empty callback to return same keyboard")
+	}
+}
+
+func TestInlineKeyboard_UpdateAddToNewRow(t *testing.T) {
+	// Test update method when button is not found - should add to new row
+	keyboard := Inline().Row().Text("Existing", "existing_cb")
+
+	// Create button with different callback that doesn't exist
+	newBtn := NewButton().Text("New Button").Callback("new_cb")
+	keyboard.Button(newBtn)
+
+	// Should add to last row since button not found
+	markup := keyboard.Markup().(gotgbot.InlineKeyboardMarkup)
+	if len(markup.InlineKeyboard) != 1 {
+		t.Error("Expected 1 row after adding new button")
+	}
+	if len(markup.InlineKeyboard[0]) != 2 {
+		t.Error("Expected 2 buttons in row after adding new button")
+	}
+}
+
+func TestInlineKeyboard_ConstructorWithNilMarkup(t *testing.T) {
+	// Test Inline constructor with various nil inputs
+	keyboard1 := Inline(nil)
+	if keyboard1 == nil {
+		t.Error("Expected keyboard to be created with nil input")
+	}
+
+	// Test with ReplyMarkup that's not InlineKeyboardMarkup
+	var wrongMarkup gotgbot.ReplyMarkup = gotgbot.ReplyKeyboardMarkup{}
+	keyboard2 := Inline(wrongMarkup)
+	if keyboard2 == nil {
+		t.Error("Expected keyboard to be created with wrong markup type")
+	}
+
+	markup2 := keyboard2.Markup().(gotgbot.InlineKeyboardMarkup)
+	if len(markup2.InlineKeyboard) != 0 {
+		t.Error("Expected empty keyboard with wrong markup type")
+	}
+}
+
+func TestInlineKeyboard_FromKeyboardValueType(t *testing.T) {
+	// Test fromKeyboard with gotgbot.InlineKeyboardMarkup value type (not pointer)
+	// Create a keyboard that will return value type from Markup()
+	original := gotgbot.InlineKeyboardMarkup{
+		InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
+			{{Text: "Value Type", CallbackData: "value_cb"}},
+		},
+	}
+
+	// Test fromMarkup with value type
+	target := Inline(original)
+	resultMarkup := target.Markup().(gotgbot.InlineKeyboardMarkup)
+
+	if len(resultMarkup.InlineKeyboard) != 1 {
+		t.Error("Expected 1 row after copying value type markup")
+	}
+
+	if resultMarkup.InlineKeyboard[0][0].Text != "Value Type" {
+		t.Error("Expected copied value type button text to match")
+	}
+}
+
+func TestInlineKeyboard_FromKeyboardDefaultCase(t *testing.T) {
+	// Create a mock keyboard that returns an unexpected markup type
+	// This tests the default case in fromKeyboard switch statement
+	// Test with non-keyboard markup (this should hit default case and return same keyboard)
+	var nonKeyboardMarkup gotgbot.ReplyMarkup = gotgbot.ReplyKeyboardRemove{}
+	result := Inline(nonKeyboardMarkup)
+
+	if result == nil {
+		t.Error("Expected keyboard to be created even with unsupported markup type")
+	}
+
+	markup := result.Markup().(gotgbot.InlineKeyboardMarkup)
+	if len(markup.InlineKeyboard) != 0 {
+		t.Error("Expected empty keyboard with unsupported markup type")
+	}
+}

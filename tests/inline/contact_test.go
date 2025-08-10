@@ -104,6 +104,25 @@ func TestContact_ThumbnailSize(t *testing.T) {
 	}
 }
 
+func TestContact_InputMessageContent(t *testing.T) {
+	contact := inline.NewContact(testID, g.String("+1234567890"), g.String("John"))
+	messageContent := createTestMessageContent()
+
+	result := contact.InputMessageContent(messageContent)
+	if result == nil {
+		t.Error("Expected InputMessageContent method to return Contact")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultContact); ok {
+		if v.InputMessageContent == nil {
+			t.Error("Expected InputMessageContent to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultContact")
+	}
+}
+
 func TestContact_MethodChaining(t *testing.T) {
 	result := inline.NewContact(testID, g.String("+1234567890"), g.String("John")).
 		LastName(g.String("Doe")).

@@ -82,6 +82,29 @@ func TestPhoto_Markdown(t *testing.T) {
 	}
 }
 
+func TestPhoto_CaptionEntities(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	photo := input.Photo(mediaFile)
+	entities := createTestEntities()
+
+	result := photo.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return MediaPhoto")
+	}
+	if result != photo {
+		t.Error("Expected CaptionEntities to return same MediaPhoto instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaPhoto); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaPhoto")
+	}
+}
+
 func TestPhoto_ShowCaptionAboveMedia(t *testing.T) {
 	mediaFile := file.Input(testURL).Ok()
 	photo := input.Photo(mediaFile)

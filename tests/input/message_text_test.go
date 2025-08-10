@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/input"
+	"github.com/enetx/tg/preview"
 )
 
 func TestText(t *testing.T) {
@@ -51,6 +53,48 @@ func TestText_Markdown(t *testing.T) {
 	if v, ok := built.(gotgbot.InputTextMessageContent); ok {
 		if v.ParseMode != "MarkdownV2" {
 			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InputTextMessageContent")
+	}
+}
+
+func TestText_Entities(t *testing.T) {
+	text := input.Text(testText)
+	entities := createTestEntities()
+	result := text.Entities(entities)
+	if result == nil {
+		t.Error("Expected Entities method to return MessageText")
+	}
+	if result != text {
+		t.Error("Expected Entities to return same MessageText instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputTextMessageContent); ok {
+		if len(v.Entities) == 0 {
+			t.Error("Expected Entities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputTextMessageContent")
+	}
+}
+
+func TestText_Preview(t *testing.T) {
+	text := input.Text(testText)
+	previewOpts := preview.New().URL(g.String("https://example.com"))
+	result := text.Preview(previewOpts)
+	if result == nil {
+		t.Error("Expected Preview method to return MessageText")
+	}
+	if result != text {
+		t.Error("Expected Preview to return same MessageText instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputTextMessageContent); ok {
+		if v.LinkPreviewOptions == nil {
+			t.Error("Expected LinkPreviewOptions to be set")
 		}
 	} else {
 		t.Error("Expected result to be InputTextMessageContent")

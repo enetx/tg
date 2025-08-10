@@ -121,6 +121,61 @@ func TestMpeg4Gif_ThumbnailMimeType(t *testing.T) {
 	}
 }
 
+func TestMpeg4Gif_HTML(t *testing.T) {
+	mpeg4Gif := inline.NewMpeg4Gif(testID, testURL, testThumbnailURL)
+
+	result := mpeg4Gif.HTML()
+	if result == nil {
+		t.Error("Expected HTML method to return Mpeg4Gif")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultMpeg4Gif); ok {
+		if v.ParseMode != "HTML" {
+			t.Error("Expected ParseMode to be set to HTML")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultMpeg4Gif")
+	}
+}
+
+func TestMpeg4Gif_Markdown(t *testing.T) {
+	mpeg4Gif := inline.NewMpeg4Gif(testID, testURL, testThumbnailURL)
+
+	result := mpeg4Gif.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return Mpeg4Gif")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultMpeg4Gif); ok {
+		if v.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultMpeg4Gif")
+	}
+}
+
+func TestMpeg4Gif_CaptionEntities(t *testing.T) {
+	mpeg4Gif := inline.NewMpeg4Gif(testID, testURL, testThumbnailURL)
+	entities := createTestEntities()
+
+	result := mpeg4Gif.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return Mpeg4Gif")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultMpeg4Gif); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultMpeg4Gif")
+	}
+}
+
 func TestMpeg4Gif_MethodChaining(t *testing.T) {
 	mimeType := g.String("image/jpeg")
 	messageContent := createTestMessageContent()

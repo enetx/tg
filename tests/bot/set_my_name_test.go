@@ -63,3 +63,27 @@ func TestSetMyName_ChainedMethods(t *testing.T) {
 		t.Error("Expected APIURL method to return request")
 	}
 }
+
+func TestSetMyName_Send(t *testing.T) {
+	token := g.String("123456:ABCDEF-test-token-here")
+	result := bot.New(token).DisableTokenCheck().Build()
+
+	if result.IsErr() {
+		t.Errorf("Failed to create bot: %v", result.Err())
+		return
+	}
+
+	bot := result.Ok()
+	req := bot.SetMyName().Name("Test Bot Name")
+
+	// Test Send method - expect it to fail with invalid token but increase coverage
+	result2 := req.Send()
+	if result2.IsOk() {
+		t.Error("Expected Send to fail with invalid token, but it succeeded")
+	}
+	// We expect this to fail, so check that it failed
+	if result2.IsErr() {
+		// This is expected behavior with invalid token
+		t.Logf("Send failed as expected: %v", result2.Err())
+	}
+}

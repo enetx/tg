@@ -82,6 +82,52 @@ func TestDocument_Markdown(t *testing.T) {
 	}
 }
 
+func TestDocument_Thumbnail(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	thumbnailFile := file.Input(testThumbnailURL).Ok()
+	document := input.Document(mediaFile)
+
+	result := document.Thumbnail(thumbnailFile)
+	if result == nil {
+		t.Error("Expected Thumbnail method to return MediaDocument")
+	}
+	if result != document {
+		t.Error("Expected Thumbnail to return same MediaDocument instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaDocument); ok {
+		if v.Thumbnail == nil {
+			t.Error("Expected Thumbnail to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaDocument")
+	}
+}
+
+func TestDocument_CaptionEntities(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	document := input.Document(mediaFile)
+	entities := createTestEntities()
+
+	result := document.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return MediaDocument")
+	}
+	if result != document {
+		t.Error("Expected CaptionEntities to return same MediaDocument instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaDocument); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaDocument")
+	}
+}
+
 func TestDocument_DisableContentTypeDetection(t *testing.T) {
 	mediaFile := file.Input(testURL).Ok()
 	document := input.Document(mediaFile)

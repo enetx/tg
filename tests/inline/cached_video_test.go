@@ -82,6 +82,43 @@ func TestCachedVideo_HTML(t *testing.T) {
 	}
 }
 
+func TestCachedVideo_Markdown(t *testing.T) {
+	cached := inline.NewCachedVideo(testID, testFileID, testTitle)
+
+	result := cached.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return CachedVideo")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultCachedVideo); ok {
+		if v.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedVideo")
+	}
+}
+
+func TestCachedVideo_CaptionEntities(t *testing.T) {
+	cached := inline.NewCachedVideo(testID, testFileID, testTitle)
+	entities := createTestEntities()
+
+	result := cached.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return CachedVideo")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultCachedVideo); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedVideo")
+	}
+}
+
 func TestCachedVideo_ShowCaptionAboveMedia(t *testing.T) {
 	cached := inline.NewCachedVideo(testID, testFileID, testTitle)
 

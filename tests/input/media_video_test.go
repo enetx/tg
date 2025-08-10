@@ -150,6 +150,140 @@ func TestVideo_Cover(t *testing.T) {
 	}
 }
 
+func TestVideo_HTML(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	video := input.Video(mediaFile)
+
+	result := video.HTML()
+	if result == nil {
+		t.Error("Expected HTML method to return MediaVideo")
+	}
+	if result != video {
+		t.Error("Expected HTML to return same MediaVideo instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaVideo); ok {
+		if v.ParseMode != "HTML" {
+			t.Error("Expected ParseMode to be set to HTML")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaVideo")
+	}
+}
+
+func TestVideo_Thumbnail(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	thumbnailFile := file.Input(testThumbnailURL).Ok()
+	video := input.Video(mediaFile)
+
+	result := video.Thumbnail(thumbnailFile)
+	if result == nil {
+		t.Error("Expected Thumbnail method to return MediaVideo")
+	}
+	if result != video {
+		t.Error("Expected Thumbnail to return same MediaVideo instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaVideo); ok {
+		if v.Thumbnail == nil {
+			t.Error("Expected Thumbnail to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaVideo")
+	}
+}
+
+func TestVideo_Markdown(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	video := input.Video(mediaFile)
+
+	result := video.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return MediaVideo")
+	}
+	if result != video {
+		t.Error("Expected Markdown to return same MediaVideo instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaVideo); ok {
+		if v.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaVideo")
+	}
+}
+
+func TestVideo_CaptionEntities(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	video := input.Video(mediaFile)
+	entities := createTestEntities()
+
+	result := video.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return MediaVideo")
+	}
+	if result != video {
+		t.Error("Expected CaptionEntities to return same MediaVideo instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaVideo); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaVideo")
+	}
+}
+
+func TestVideo_ShowCaptionAboveMedia(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	video := input.Video(mediaFile)
+
+	result := video.ShowCaptionAboveMedia()
+	if result == nil {
+		t.Error("Expected ShowCaptionAboveMedia method to return MediaVideo")
+	}
+	if result != video {
+		t.Error("Expected ShowCaptionAboveMedia to return same MediaVideo instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaVideo); ok {
+		if !v.ShowCaptionAboveMedia {
+			t.Error("Expected ShowCaptionAboveMedia to be true")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaVideo")
+	}
+}
+
+func TestVideo_Spoiler(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	video := input.Video(mediaFile)
+
+	result := video.Spoiler()
+	if result == nil {
+		t.Error("Expected Spoiler method to return MediaVideo")
+	}
+	if result != video {
+		t.Error("Expected Spoiler to return same MediaVideo instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputMediaVideo); ok {
+		if !v.HasSpoiler {
+			t.Error("Expected HasSpoiler to be true")
+		}
+	} else {
+		t.Error("Expected result to be InputMediaVideo")
+	}
+}
+
 func TestVideo_MethodChaining(t *testing.T) {
 	mediaFile := file.Input(testURL).Ok()
 	coverURL := g.String("https://example.com/cover.jpg")

@@ -43,6 +43,29 @@ func TestPaidVideo_Cover(t *testing.T) {
 	}
 }
 
+func TestPaidVideo_Thumbnail(t *testing.T) {
+	mediaFile := file.Input(testURL).Ok()
+	thumbnailFile := file.Input(testThumbnailURL).Ok()
+	paidVideo := input.PaidVideo(mediaFile)
+
+	result := paidVideo.Thumbnail(thumbnailFile)
+	if result == nil {
+		t.Error("Expected Thumbnail method to return PaidMediaVideo")
+	}
+	if result != paidVideo {
+		t.Error("Expected Thumbnail to return same PaidMediaVideo instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InputPaidMediaVideo); ok {
+		if v.Thumbnail == nil {
+			t.Error("Expected Thumbnail to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InputPaidMediaVideo")
+	}
+}
+
 func TestPaidVideo_Width(t *testing.T) {
 	mediaFile := file.Input(testURL).Ok()
 	paidVideo := input.PaidVideo(mediaFile)

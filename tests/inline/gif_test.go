@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/inline"
 )
 
@@ -113,6 +114,62 @@ func TestGif_HTML(t *testing.T) {
 	if v, ok := built.(gotgbot.InlineQueryResultGif); ok {
 		if v.ParseMode != "HTML" {
 			t.Error("Expected ParseMode to be set to HTML")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultGif")
+	}
+}
+
+func TestGif_ThumbnailMimeType(t *testing.T) {
+	gif := inline.NewGif(testID, testURL, testThumbnailURL)
+	mimeType := g.String("image/jpeg")
+
+	result := gif.ThumbnailMimeType(mimeType)
+	if result == nil {
+		t.Error("Expected ThumbnailMimeType method to return Gif")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultGif); ok {
+		if v.ThumbnailMimeType != mimeType.Std() {
+			t.Error("Expected ThumbnailMimeType to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultGif")
+	}
+}
+
+func TestGif_Markdown(t *testing.T) {
+	gif := inline.NewGif(testID, testURL, testThumbnailURL)
+
+	result := gif.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return Gif")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultGif); ok {
+		if v.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultGif")
+	}
+}
+
+func TestGif_CaptionEntities(t *testing.T) {
+	gif := inline.NewGif(testID, testURL, testThumbnailURL)
+	entities := createTestEntities()
+
+	result := gif.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return Gif")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultGif); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
 		}
 	} else {
 		t.Error("Expected result to be InlineQueryResultGif")

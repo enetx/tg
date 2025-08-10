@@ -100,6 +100,43 @@ func TestCachedMpeg4Gif_ShowCaptionAboveMedia(t *testing.T) {
 	}
 }
 
+func TestCachedMpeg4Gif_Markdown(t *testing.T) {
+	cached := inline.NewCachedMpeg4Gif(testID, testFileID)
+
+	result := cached.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return CachedMpeg4Gif")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultCachedMpeg4Gif); ok {
+		if v.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedMpeg4Gif")
+	}
+}
+
+func TestCachedMpeg4Gif_CaptionEntities(t *testing.T) {
+	cached := inline.NewCachedMpeg4Gif(testID, testFileID)
+	entities := createTestEntities()
+
+	result := cached.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return CachedMpeg4Gif")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultCachedMpeg4Gif); ok {
+		if len(v.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedMpeg4Gif")
+	}
+}
+
 func TestCachedMpeg4Gif_Markup(t *testing.T) {
 	cached := inline.NewCachedMpeg4Gif(testID, testFileID)
 	keyboard := createTestKeyboard()
