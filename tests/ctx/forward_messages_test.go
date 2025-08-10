@@ -282,7 +282,7 @@ func TestForwardMessages_Send(t *testing.T) {
 func TestForwardMessages_Send_ErrorBranches(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
-	
+
 	// Test Send with no message IDs (should fail)
 	result1 := ctx.ForwardMessages().From(123).Send()
 	if !result1.IsErr() {
@@ -290,7 +290,7 @@ func TestForwardMessages_Send_ErrorBranches(t *testing.T) {
 	} else {
 		t.Logf("Send failed as expected with no message IDs: %v", result1.Err())
 	}
-	
+
 	// Test Send with too many message IDs (> 100, should fail)
 	tooManyIDs := make([]int64, 101)
 	for i := range tooManyIDs {
@@ -302,12 +302,26 @@ func TestForwardMessages_Send_ErrorBranches(t *testing.T) {
 	} else {
 		t.Logf("Send failed as expected with too many message IDs: %v", result2.Err())
 	}
-	
+
 	// Test Send without From chat ID (should fail)
 	result3 := ctx.ForwardMessages().MessageIDs([]int64{123}).Send()
 	if !result3.IsErr() {
 		t.Error("Send should fail without From chat ID")
 	} else {
 		t.Logf("Send failed as expected without From chat ID: %v", result3.Err())
+	}
+}
+
+func TestForwardMessages_APIURLWithExistingRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// First set Timeout to create RequestOpts, then test APIURL
+	result := ctx.ForwardMessages().
+		Timeout(15 * time.Second).                         // This creates RequestOpts
+		APIURL(g.String("https://custom.api.example.com")) // This should use existing RequestOpts
+
+	if result == nil {
+		t.Error("APIURL with existing RequestOpts should return builder")
 	}
 }

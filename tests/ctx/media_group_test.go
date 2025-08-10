@@ -69,11 +69,13 @@ func TestMediaGroup_Send(t *testing.T) {
 
 	ctx := ctx.New(bot, rawCtx)
 
-	// Test Send method - will fail with mock but covers the method
+	// Test Send method with no media - should return error
 	sendResult := ctx.MediaGroup().Send()
 
-	if sendResult.IsErr() {
-		t.Logf("MediaGroup Send failed as expected with mock bot: %v", sendResult.Err())
+	if !sendResult.IsErr() {
+		t.Error("Send should return error for empty media group")
+	} else {
+		t.Logf("MediaGroup Send with no media returned error as expected: %v", sendResult.Err())
 	}
 
 	// Test Send method with configuration
@@ -86,8 +88,61 @@ func TestMediaGroup_Send(t *testing.T) {
 		APIURL(g.String("https://api.example.com")).
 		Send()
 
-	if configuredSendResult.IsErr() {
-		t.Logf("MediaGroup configured Send failed as expected: %v", configuredSendResult.Err())
+	if !configuredSendResult.IsErr() {
+		t.Error("Send should return error for empty media group even with configuration")
+	} else {
+		t.Logf("MediaGroup configured Send with no media returned error as expected: %v", configuredSendResult.Err())
+	}
+}
+
+func TestMediaGroup_SendWithMedia(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// Add media to the group
+	photoInputFile := file.Input(g.String("https://example.com/photo1.jpg"))
+	if photoInputFile.IsErr() {
+		t.Skip("Unable to create photo input for testing")
+	}
+	photo := input.Photo(photoInputFile.Unwrap())
+
+	// Test Send method with media - will fail with mock bot but covers the media path
+	sendResult := ctx.MediaGroup().Photo(photo).Send()
+
+	if sendResult.IsErr() {
+		t.Logf("MediaGroup Send with media failed as expected with mock bot: %v", sendResult.Err())
+	}
+}
+
+func TestMediaGroup_SendWithAllOptions(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// Add media to the group
+	photoInputFile := file.Input(g.String("https://example.com/photo1.jpg"))
+	if photoInputFile.IsErr() {
+		t.Skip("Unable to create photo input for testing")
+	}
+	photo := input.Photo(photoInputFile.Unwrap())
+
+	// Test Send method with all options and media
+	sendResult := ctx.MediaGroup().
+		Photo(photo).
+		Silent().
+		Protect().
+		AllowPaidBroadcast().
+		Effect(effects.Fire).
+		Business(g.String("biz_123")).
+		Thread(456).
+		ReplyTo(123).
+		To(789).
+		Timeout(30 * time.Second).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	// This will fail with mock bot, but covers all option paths
+	if sendResult.IsErr() {
+		t.Logf("MediaGroup Send with all options failed as expected: %v", sendResult.Err())
 	}
 }
 

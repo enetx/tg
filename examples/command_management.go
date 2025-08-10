@@ -342,12 +342,8 @@ func main() {
 		buttonText := args[0]
 		webAppURL := args[1]
 
-		webApp := gotgbot.WebAppInfo{
-			Url: webAppURL.Std(),
-		}
-
 		result := ctx.SetChatMenuButton().
-			WebAppMenu(buttonText, webApp).
+			WebAppMenu(buttonText, webAppURL).
 			Send()
 
 		if result.IsErr() {

@@ -183,3 +183,110 @@ func TestSendPaidMedia_Markup(t *testing.T) {
 		t.Error("Markup should return builder")
 	}
 }
+
+func TestSendPaidMedia_SendWithError(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+
+	// Test Send with no media - should return error
+	sendResult := ctx.SendPaidMedia(starCount).Send()
+
+	if !sendResult.IsErr() {
+		t.Error("Send should return error for no media specified")
+	} else {
+		t.Logf("SendPaidMedia Send with no media returned error as expected: %v", sendResult.Err())
+	}
+}
+
+func TestSendPaidMedia_SendWithValidMedia(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+
+	// Add valid media
+	photoResult := file.Input(g.String("https://example.com/photo.jpg"))
+	if photoResult.IsErr() {
+		t.Skip("Unable to create photo input for testing")
+	}
+	photo := input.PaidPhoto(photoResult.Unwrap())
+
+	sendResult := ctx.SendPaidMedia(starCount).Photo(photo).Send()
+
+	// This will fail with mock bot, but covers the valid media path
+	if sendResult.IsErr() {
+		t.Logf("SendPaidMedia Send with valid media failed as expected: %v", sendResult.Err())
+	}
+}
+
+func TestSendPaidMedia_SendWithTooManyMedia(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+
+	// Add 11 media items (over the limit of 10)
+	photoResult := file.Input(g.String("https://example.com/photo.jpg"))
+	if photoResult.IsErr() {
+		t.Skip("Unable to create photo input for testing")
+	}
+
+	builder := ctx.SendPaidMedia(starCount)
+
+	// Add 11 photos to exceed the limit
+	for i := 0; i < 11; i++ {
+		photo := input.PaidPhoto(photoResult.Unwrap())
+		builder = builder.Photo(photo)
+	}
+
+	sendResult := builder.Send()
+
+	if !sendResult.IsErr() {
+		t.Error("Send should return error for too many media items")
+	} else {
+		t.Logf("SendPaidMedia Send with too many media returned error as expected: %v", sendResult.Err())
+	}
+}
+
+func TestSendPaidMedia_SendWithInvalidStarCount(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// Test with star count = 0 (below minimum)
+	photoResult := file.Input(g.String("https://example.com/photo.jpg"))
+	if photoResult.IsErr() {
+		t.Skip("Unable to create photo input for testing")
+	}
+	photo := input.PaidPhoto(photoResult.Unwrap())
+
+	sendResult := ctx.SendPaidMedia(0).Photo(photo).Send()
+
+	if !sendResult.IsErr() {
+		t.Error("Send should return error for invalid star count (0)")
+	} else {
+		t.Logf("SendPaidMedia Send with invalid star count (0) returned error as expected: %v", sendResult.Err())
+	}
+
+	// Test with star count = 10001 (above maximum)
+	sendResult2 := ctx.SendPaidMedia(10001).Photo(photo).Send()
+
+	if !sendResult2.IsErr() {
+		t.Error("Send should return error for invalid star count (10001)")
+	} else {
+		t.Logf("SendPaidMedia Send with invalid star count (10001) returned error as expected: %v", sendResult2.Err())
+	}
+}
+
+func TestSendPaidMedia_APIURLWithExistingRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	starCount := int64(100)
+
+	// First set Timeout to create RequestOpts, then test APIURL
+	result := ctx.SendPaidMedia(starCount).
+		Timeout(15 * time.Second).                         // This creates RequestOpts
+		APIURL(g.String("https://custom.api.example.com")) // This should use existing RequestOpts
+
+	if result == nil {
+		t.Error("APIURL with existing RequestOpts should return builder")
+	}
+}

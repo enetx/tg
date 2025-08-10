@@ -1,6 +1,7 @@
 package ctx_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -246,5 +247,106 @@ func TestSendChecklist_ReplyTo(t *testing.T) {
 		if chainedResult == nil {
 			t.Errorf("ReplyTo method should support chaining and override with messageID: %d", messageID)
 		}
+	}
+}
+
+func TestSendChecklist_SendWithNoTasks(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	title := g.String("Empty Checklist")
+	intro := g.String("Test intro")
+
+	// Test Send with no tasks - should return error
+	sendResult := ctx.SendChecklist(title, intro).Send()
+
+	if !sendResult.IsErr() {
+		t.Error("Send should return error for checklist with no tasks")
+	} else {
+		t.Logf("SendChecklist Send with no tasks returned error as expected: %v", sendResult.Err())
+	}
+}
+
+func TestSendChecklist_SendWithValidTasks(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	title := g.String("Valid Checklist")
+	intro := g.String("Test intro")
+
+	// Add a valid task
+	sendResult := ctx.SendChecklist(title, intro).
+		Task(g.String("Task 1")).Add().
+		Send()
+
+	// This will fail with mock bot, but covers the valid tasks path
+	if sendResult.IsErr() {
+		t.Logf("SendChecklist Send with valid tasks failed as expected: %v", sendResult.Err())
+	}
+}
+
+func TestSendChecklist_SendWithTooManyTasks(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	title := g.String("Overloaded Checklist")
+	intro := g.String("Test intro")
+
+	builder := ctx.SendChecklist(title, intro)
+
+	// Add 101 tasks to exceed the limit of 100
+	for i := 0; i < 101; i++ {
+		taskText := g.String(fmt.Sprintf("Task %d", i+1))
+		builder = builder.Task(taskText).Add()
+	}
+
+	sendResult := builder.Send()
+
+	if !sendResult.IsErr() {
+		t.Error("Send should return error for too many tasks")
+	} else {
+		t.Logf("SendChecklist Send with too many tasks returned error as expected: %v", sendResult.Err())
+	}
+}
+
+func TestSendChecklist_APIURLWithExistingRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	title := g.String("Test Checklist")
+	intro := g.String("Test intro")
+
+	// First set Timeout to create RequestOpts, then test APIURL
+	result := ctx.SendChecklist(title, intro).
+		Timeout(15 * time.Second).                         // This creates RequestOpts
+		APIURL(g.String("https://custom.api.example.com")) // This should use existing RequestOpts
+
+	if result == nil {
+		t.Error("APIURL with existing RequestOpts should return builder")
+	}
+}
+
+func TestSendChecklist_TimersIntegration(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	title := g.String("Timed Checklist")
+	intro := g.String("Test intro")
+
+	// Test with After and DeleteAfter to cover timer integration
+	result := ctx.SendChecklist(title, intro).
+		Task(g.String("Timed task")).Add().
+		After(time.Second).
+		DeleteAfter(time.Minute)
+
+	if result == nil {
+		t.Error("Checklist with timers should return builder")
+	}
+
+	sendResult := result.Send()
+
+	// This will fail with mock bot, but covers the timer integration path
+	if sendResult.IsErr() {
+		t.Logf("SendChecklist Send with timers failed as expected: %v", sendResult.Err())
 	}
 }

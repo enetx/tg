@@ -164,3 +164,17 @@ func TestSendLocation_Thread(t *testing.T) {
 		t.Error("Thread should return builder")
 	}
 }
+
+func TestSendLocation_APIURLWithExistingRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// First set Timeout to create RequestOpts, then test APIURL
+	result := ctx.SendLocation(40.7128, -74.0060).
+		Timeout(15 * time.Second).                         // This creates RequestOpts
+		APIURL(g.String("https://custom.api.example.com")) // This should use existing RequestOpts
+
+	if result == nil {
+		t.Error("APIURL with existing RequestOpts should return builder")
+	}
+}

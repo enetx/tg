@@ -149,3 +149,17 @@ func TestSendGame_Business(t *testing.T) {
 		t.Error("Business should return builder")
 	}
 }
+
+func TestSendGame_APIURLWithExistingRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// First set Timeout to create RequestOpts, then test APIURL
+	result := ctx.SendGame(g.String("test_game")).
+		Timeout(15 * time.Second).                         // This creates RequestOpts
+		APIURL(g.String("https://custom.api.example.com")) // This should use existing RequestOpts
+
+	if result == nil {
+		t.Error("APIURL with existing RequestOpts should return builder")
+	}
+}

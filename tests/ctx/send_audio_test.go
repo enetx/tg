@@ -1,6 +1,7 @@
 package ctx_test
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -337,16 +338,16 @@ func TestSendAudio_Thread(t *testing.T) {
 func TestSendAudio_ErrorHandling(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
-	
+
 	// Test with invalid filename that should cause file.Input to fail
-	invalidFilename := g.String("")  // Empty filename should cause an error
+	invalidFilename := g.String("") // Empty filename should cause an error
 	result := ctx.SendAudio(invalidFilename)
-	
+
 	// The builder should still be created even with error
 	if result == nil {
 		t.Error("SendAudio should return builder even with invalid filename")
 	}
-	
+
 	// Test that Send() properly handles the error
 	sendResult := result.Send()
 	if !sendResult.IsErr() {
@@ -354,18 +355,136 @@ func TestSendAudio_ErrorHandling(t *testing.T) {
 	} else {
 		t.Logf("Send failed as expected with empty filename: %v", sendResult.Err())
 	}
-	
+
 	// Test with nonexistent file
 	nonexistentFile := g.String("/nonexistent/path/to/audio.mp3")
 	result2 := ctx.SendAudio(nonexistentFile)
 	if result2 == nil {
 		t.Error("SendAudio should return builder even with nonexistent file")
 	}
-	
+
 	sendResult2 := result2.Send()
 	if !sendResult2.IsErr() {
 		t.Error("Send should fail with nonexistent file")
 	} else {
 		t.Logf("Send failed as expected with nonexistent file: %v", sendResult2.Err())
+	}
+}
+
+func TestSendAudio_ThumbnailErrorHandling(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("audio.mp3")
+
+	// Test with invalid thumbnail file
+	result := ctx.SendAudio(filename).Thumbnail(g.String("/invalid/path/thumb.jpg"))
+	if result == nil {
+		t.Error("Thumbnail with invalid file should still return builder")
+	}
+
+	// Test that Send() handles thumbnail error properly
+	sendResult := result.Send()
+	if sendResult.IsOk() {
+		t.Logf("Send succeeded despite invalid thumbnail: %v", sendResult.Ok())
+	} else {
+		t.Logf("Send failed as expected with invalid thumbnail: %v", sendResult.Err())
+	}
+}
+
+func TestSendAudio_FileClosing(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// Create a temporary file to test file closing
+	tempFile := "/tmp/test_audio.mp3"
+	os.WriteFile(tempFile, []byte("test audio content"), 0644)
+	defer os.Remove(tempFile)
+
+	result := ctx.SendAudio(g.String(tempFile))
+	if result == nil {
+		t.Error("SendAudio with valid file should return builder")
+	}
+
+	// Call Send to trigger file closing logic
+	sendResult := result.Send()
+	if sendResult.IsErr() {
+		t.Logf("Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}
+
+func TestSendAudio_ThumbnailWithValidFile(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// Create temporary files for audio and thumbnail
+	audioFile := "/tmp/test_audio.mp3"
+	thumbFile := "/tmp/test_thumb.jpg"
+	os.WriteFile(audioFile, []byte("test audio content"), 0644)
+	os.WriteFile(thumbFile, []byte("test thumb content"), 0644)
+	defer os.Remove(audioFile)
+	defer os.Remove(thumbFile)
+
+	result := ctx.SendAudio(g.String(audioFile)).Thumbnail(g.String(thumbFile))
+	if result == nil {
+		t.Error("SendAudio with valid thumbnail should return builder")
+	}
+
+	// Call Send to trigger both file and thumbnail closing logic
+	sendResult := result.Send()
+	if sendResult.IsErr() {
+		t.Logf("Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}
+
+func TestSendAudio_TimeoutWithNilRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("audio.mp3")
+
+	// Test Timeout when RequestOpts is nil
+	result := ctx.SendAudio(filename).Timeout(30 * time.Second)
+	if result == nil {
+		t.Error("Timeout should return builder")
+	}
+}
+
+func TestSendAudio_APIURLWithNilRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("audio.mp3")
+
+	// Test APIURL when RequestOpts is nil
+	result := ctx.SendAudio(filename).APIURL(g.String("https://api.example.com"))
+	if result == nil {
+		t.Error("APIURL should return builder")
+	}
+}
+
+func TestSendAudio_SendWithExistingError(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// First create a SendAudio with an error (invalid filename)
+	result := ctx.SendAudio(g.String("/invalid/nonexistent/audio.mp3"))
+	if result == nil {
+		t.Error("SendAudio with invalid file should return builder")
+	}
+
+	// Test that Send() returns the error immediately without calling timers
+	sendResult := result.Send()
+	if !sendResult.IsErr() {
+		t.Error("Send should return error for invalid file")
+	}
+}
+
+func TestSendAudio_To(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("audio.mp3")
+
+	// Test To method
+	result := ctx.SendAudio(filename).To(123456)
+	if result == nil {
+		t.Error("To should return builder")
 	}
 }

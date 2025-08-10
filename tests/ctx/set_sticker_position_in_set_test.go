@@ -40,7 +40,9 @@ func TestSetStickerPositionInSet_APIURL(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	sticker := g.String("sticker_id_123")
 	position := int64(2)
-	if ctx.SetStickerPositionInSet(file.Input(sticker).UnwrapOrDefault(), position).APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.SetStickerPositionInSet(file.Input(sticker).UnwrapOrDefault(), position).APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestSetStickerPositionInSet_Send(t *testing.T) {
@@ -48,9 +50,9 @@ func TestSetStickerPositionInSet_Send(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	sticker := g.String("sticker_id_123")
 	position := int64(2)
-	
+
 	sendResult := ctx.SetStickerPositionInSet(file.Input(sticker).UnwrapOrDefault(), position).Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("SetStickerPositionInSet Send failed as expected with mock bot: %v", sendResult.Err())
 	}

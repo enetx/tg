@@ -39,7 +39,9 @@ func TestSetStickerSetTitle_APIURL(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	name := g.String("test_sticker_set")
 	title := g.String("Updated Title")
-	if ctx.SetStickerSetTitle(name, title).APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.SetStickerSetTitle(name, title).APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestSetStickerSetTitle_Send(t *testing.T) {
@@ -47,9 +49,9 @@ func TestSetStickerSetTitle_Send(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	name := g.String("test_sticker_set")
 	title := g.String("Updated Title")
-	
+
 	sendResult := ctx.SetStickerSetTitle(name, title).Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("SetStickerSetTitle Send failed as expected with mock bot: %v", sendResult.Err())
 	}

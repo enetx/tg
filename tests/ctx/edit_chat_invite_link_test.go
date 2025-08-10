@@ -205,13 +205,13 @@ func TestEditChatInviteLink_APIURL_NilRequestOpts(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
 	inviteLink := g.String("https://t.me/+ABC123")
-	
+
 	// Test APIURL when RequestOpts is nil (covers the nil branch)
 	result := ctx.EditChatInviteLink(inviteLink)
 	if result == nil {
 		t.Error("EditChatInviteLink should return builder")
 	}
-	
+
 	// This should create RequestOpts and set APIURL
 	apiResult := result.APIURL(g.String("https://api.test.com"))
 	if apiResult == nil {

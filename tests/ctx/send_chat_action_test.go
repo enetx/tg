@@ -311,3 +311,17 @@ func TestSendChatAction_UploadVideoNote(t *testing.T) {
 		t.Error("UploadVideoNote method should support chaining")
 	}
 }
+
+func TestSendChatAction_APIURLWithExistingRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// First set Timeout to create RequestOpts, then test APIURL
+	result := ctx.SendChatAction().
+		Timeout(15 * time.Second).                         // This creates RequestOpts
+		APIURL(g.String("https://custom.api.example.com")) // This should use existing RequestOpts
+
+	if result == nil {
+		t.Error("APIURL with existing RequestOpts should return builder")
+	}
+}

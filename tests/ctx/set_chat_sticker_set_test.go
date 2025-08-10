@@ -37,23 +37,27 @@ func TestSetChatStickerSet_Timeout(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
 	stickerSetName := g.String("test_sticker_set")
-	if ctx.SetChatStickerSet(stickerSetName).Timeout(time.Minute) == nil { t.Error("Timeout should return builder") }
+	if ctx.SetChatStickerSet(stickerSetName).Timeout(time.Minute) == nil {
+		t.Error("Timeout should return builder")
+	}
 }
 
 func TestSetChatStickerSet_APIURL(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
 	stickerSetName := g.String("test_sticker_set")
-	if ctx.SetChatStickerSet(stickerSetName).APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.SetChatStickerSet(stickerSetName).APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestSetChatStickerSet_Send(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
 	stickerSetName := g.String("test_sticker_set")
-	
+
 	sendResult := ctx.SetChatStickerSet(stickerSetName).Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("SetChatStickerSet Send failed as expected with mock bot: %v", sendResult.Err())
 	}

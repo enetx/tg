@@ -107,7 +107,9 @@ func TestSendVenue_After(t *testing.T) {
 	lat, lon := 40.7128, -74.0060
 	title := g.String("Test Venue")
 	address := g.String("123 Test St")
-	if ctx.SendVenue(lat, lon, title, address).After(time.Minute) == nil { t.Error("After should return builder") }
+	if ctx.SendVenue(lat, lon, title, address).After(time.Minute) == nil {
+		t.Error("After should return builder")
+	}
 }
 
 func TestSendVenue_DeleteAfter(t *testing.T) {
@@ -116,7 +118,9 @@ func TestSendVenue_DeleteAfter(t *testing.T) {
 	lat, lon := 40.7128, -74.0060
 	title := g.String("Test Venue")
 	address := g.String("123 Test St")
-	if ctx.SendVenue(lat, lon, title, address).DeleteAfter(time.Hour) == nil { t.Error("DeleteAfter should return builder") }
+	if ctx.SendVenue(lat, lon, title, address).DeleteAfter(time.Hour) == nil {
+		t.Error("DeleteAfter should return builder")
+	}
 }
 
 func TestSendVenue_Markup(t *testing.T) {
@@ -126,7 +130,9 @@ func TestSendVenue_Markup(t *testing.T) {
 	title := g.String("Test Venue")
 	address := g.String("123 Test St")
 	btn1 := keyboard.NewButton().Text(g.String("View Venue")).URL(g.String("https://maps.google.com"))
-	if ctx.SendVenue(lat, lon, title, address).Markup(keyboard.Inline().Button(btn1)) == nil { t.Error("Markup should return builder") }
+	if ctx.SendVenue(lat, lon, title, address).Markup(keyboard.Inline().Button(btn1)) == nil {
+		t.Error("Markup should return builder")
+	}
 }
 
 func TestSendVenue_ReplyTo(t *testing.T) {
@@ -135,7 +141,9 @@ func TestSendVenue_ReplyTo(t *testing.T) {
 	lat, lon := 40.7128, -74.0060
 	title := g.String("Test Venue")
 	address := g.String("123 Test St")
-	if ctx.SendVenue(lat, lon, title, address).ReplyTo(123) == nil { t.Error("ReplyTo should return builder") }
+	if ctx.SendVenue(lat, lon, title, address).ReplyTo(123) == nil {
+		t.Error("ReplyTo should return builder")
+	}
 }
 
 func TestSendVenue_Business(t *testing.T) {
@@ -144,7 +152,9 @@ func TestSendVenue_Business(t *testing.T) {
 	lat, lon := 40.7128, -74.0060
 	title := g.String("Test Venue")
 	address := g.String("123 Test St")
-	if ctx.SendVenue(lat, lon, title, address).Business(g.String("biz_123")) == nil { t.Error("Business should return builder") }
+	if ctx.SendVenue(lat, lon, title, address).Business(g.String("biz_123")) == nil {
+		t.Error("Business should return builder")
+	}
 }
 
 func TestSendVenue_Thread(t *testing.T) {
@@ -153,5 +163,21 @@ func TestSendVenue_Thread(t *testing.T) {
 	lat, lon := 40.7128, -74.0060
 	title := g.String("Test Venue")
 	address := g.String("123 Test St")
-	if ctx.SendVenue(lat, lon, title, address).Thread(456) == nil { t.Error("Thread should return builder") }
+	if ctx.SendVenue(lat, lon, title, address).Thread(456) == nil {
+		t.Error("Thread should return builder")
+	}
+}
+
+func TestSendVenue_APIURLWithExistingRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// First set Timeout to create RequestOpts, then test APIURL
+	result := ctx.SendVenue(40.7128, -74.0060, g.String("Test Venue"), g.String("123 Test St")).
+		Timeout(15 * time.Second).                         // This creates RequestOpts
+		APIURL(g.String("https://custom.api.example.com")) // This should use existing RequestOpts
+
+	if result == nil {
+		t.Error("APIURL with existing RequestOpts should return builder")
+	}
 }

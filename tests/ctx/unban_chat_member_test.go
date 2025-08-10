@@ -59,23 +59,27 @@ func TestUnbanChatMember_Timeout(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
 	userID := int64(123456)
-	if ctx.UnbanChatMember(userID).Timeout(time.Minute) == nil { t.Error("Timeout should return builder") }
+	if ctx.UnbanChatMember(userID).Timeout(time.Minute) == nil {
+		t.Error("Timeout should return builder")
+	}
 }
 
 func TestUnbanChatMember_APIURL(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
 	userID := int64(123456)
-	if ctx.UnbanChatMember(userID).APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.UnbanChatMember(userID).APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestUnbanChatMember_Send(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
 	userID := int64(123456)
-	
+
 	sendResult := ctx.UnbanChatMember(userID).OnlyIfBanned().Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("UnbanChatMember Send failed as expected with mock bot: %v", sendResult.Err())
 	}

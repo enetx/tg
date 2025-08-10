@@ -292,3 +292,17 @@ func TestEditMessageReplyMarkup_ComprehensiveWorkflow(t *testing.T) {
 		t.Logf("EditMessageReplyMarkup with nil keyboard Send failed as expected: %v", nilKBResult.Err())
 	}
 }
+
+func TestEditMessageReplyMarkup_APIURLWithExistingRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// First set Timeout to create RequestOpts, then test APIURL
+	result := ctx.EditMessageReplyMarkup(keyboard.Inline().Text("Test", "test")).
+		Timeout(15 * time.Second).                         // This creates RequestOpts
+		APIURL(g.String("https://custom.api.example.com")) // This should use existing RequestOpts
+
+	if result == nil {
+		t.Error("APIURL with existing RequestOpts should return builder")
+	}
+}

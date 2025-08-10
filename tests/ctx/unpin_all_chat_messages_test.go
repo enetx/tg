@@ -55,21 +55,25 @@ func TestContext_UnpinAllChatMessagesChaining(t *testing.T) {
 func TestUnpinAllChatMessages_Timeout(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
-	if ctx.UnpinAllChatMessages().Timeout(time.Minute) == nil { t.Error("Timeout should return builder") }
+	if ctx.UnpinAllChatMessages().Timeout(time.Minute) == nil {
+		t.Error("Timeout should return builder")
+	}
 }
 
 func TestUnpinAllChatMessages_APIURL(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
-	if ctx.UnpinAllChatMessages().APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.UnpinAllChatMessages().APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestUnpinAllChatMessages_Send(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
-	
+
 	sendResult := ctx.UnpinAllChatMessages().Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("UnpinAllChatMessages Send failed as expected with mock bot: %v", sendResult.Err())
 	}

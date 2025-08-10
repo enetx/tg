@@ -37,23 +37,27 @@ func TestUnpinAllForumTopicMessages_Timeout(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
 	messageThreadID := int64(123)
-	if ctx.UnpinAllForumTopicMessages(messageThreadID).Timeout(time.Minute) == nil { t.Error("Timeout should return builder") }
+	if ctx.UnpinAllForumTopicMessages(messageThreadID).Timeout(time.Minute) == nil {
+		t.Error("Timeout should return builder")
+	}
 }
 
 func TestUnpinAllForumTopicMessages_APIURL(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
 	messageThreadID := int64(123)
-	if ctx.UnpinAllForumTopicMessages(messageThreadID).APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.UnpinAllForumTopicMessages(messageThreadID).APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestUnpinAllForumTopicMessages_Send(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
 	messageThreadID := int64(123)
-	
+
 	sendResult := ctx.UnpinAllForumTopicMessages(messageThreadID).Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("UnpinAllForumTopicMessages Send failed as expected with mock bot: %v", sendResult.Err())
 	}

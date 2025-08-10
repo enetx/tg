@@ -80,8 +80,7 @@ func TestContext_AnswerInlineQuery(t *testing.T) {
 	}
 
 	// Test WebApp method
-	webApp := &gotgbot.WebAppInfo{Url: "https://example.com/webapp"}
-	result = testCtx.AnswerInlineQuery(queryID).WebApp(webApp)
+	result = testCtx.AnswerInlineQuery(queryID).WebApp("https://example.com/webapp")
 	if result == nil {
 		t.Error("WebApp method should return AnswerInlineQuery for chaining")
 	}
@@ -125,10 +124,9 @@ func TestContext_AnswerInlineQueryChaining(t *testing.T) {
 	}
 
 	// Test WebApp chaining
-	webApp := &gotgbot.WebAppInfo{Url: "https://webapp.example.com"}
 	webAppResult := testCtx.AnswerInlineQuery(queryID).
 		ButtonText(g.String("Launch App")).
-		WebApp(webApp).
+		WebApp("https://webapp.example.com").
 		Personal()
 
 	if webAppResult == nil {
@@ -238,12 +236,6 @@ func TestAnswerInlineQuery_EdgeCases(t *testing.T) {
 		t.Error("AnswerInlineQuery should handle empty start parameter")
 	}
 
-	// Test with nil WebApp
-	result = testCtx.AnswerInlineQuery(queryID).WebApp(nil)
-	if result == nil {
-		t.Error("AnswerInlineQuery should handle nil WebApp")
-	}
-
 	// Test with zero timeout
 	result = testCtx.AnswerInlineQuery(queryID).Timeout(0 * time.Second)
 	if result == nil {
@@ -278,10 +270,9 @@ func TestAnswerInlineQuery_ButtonCombinations(t *testing.T) {
 	}
 
 	// Test button with WebApp
-	webApp := &gotgbot.WebAppInfo{Url: "https://myapp.example.com"}
 	result = testCtx.AnswerInlineQuery(queryID).
 		ButtonText(g.String("Open App")).
-		WebApp(webApp)
+		WebApp("https://myapp.example.com")
 
 	if result == nil {
 		t.Error("Button with WebApp should work")

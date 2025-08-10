@@ -72,12 +72,12 @@ func (aiq *AnswerInlineQuery) StartParameter(parameter g.String) *AnswerInlineQu
 }
 
 // WebApp sets the Web App that will be launched when the user presses the button.
-func (aiq *AnswerInlineQuery) WebApp(webApp *gotgbot.WebAppInfo) *AnswerInlineQuery {
+func (aiq *AnswerInlineQuery) WebApp(url g.String) *AnswerInlineQuery {
 	if aiq.opts.Button == nil {
 		aiq.opts.Button = new(gotgbot.InlineQueryResultsButton)
 	}
 
-	aiq.opts.Button.WebApp = webApp
+	aiq.opts.Button.WebApp = &gotgbot.WebAppInfo{Url: url.Std()}
 
 	return aiq
 }

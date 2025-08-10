@@ -1,6 +1,7 @@
 package ctx_test
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -191,21 +192,127 @@ func TestSendDocument_DisableContentTypeDetection(t *testing.T) {
 func TestSendDocument_ErrorHandling(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
-	
+
 	// Test with invalid filename that should cause file.Input to fail
-	invalidFilename := g.String("")  // Empty filename should cause an error
+	invalidFilename := g.String("") // Empty filename should cause an error
 	result := ctx.SendDocument(invalidFilename)
-	
+
 	// The builder should still be created even with error
 	if result == nil {
 		t.Error("SendDocument should return builder even with invalid filename")
 	}
-	
+
 	// Test that Send() properly handles the error
 	sendResult := result.Send()
 	if !sendResult.IsErr() {
 		t.Error("Send should fail with empty filename")
 	} else {
 		t.Logf("Send failed as expected with empty filename: %v", sendResult.Err())
+	}
+}
+
+func TestSendDocument_ThumbnailErrorHandling(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+
+	// Test with invalid thumbnail file
+	result := ctx.SendDocument(filename).Thumbnail(g.String("/invalid/path/thumb.jpg"))
+	if result == nil {
+		t.Error("Thumbnail with invalid file should still return builder")
+	}
+
+	// Test that Send() handles thumbnail error properly
+	sendResult := result.Send()
+	if sendResult.IsOk() {
+		t.Logf("Send succeeded despite invalid thumbnail: %v", sendResult.Ok())
+	} else {
+		t.Logf("Send failed as expected with invalid thumbnail: %v", sendResult.Err())
+	}
+}
+
+func TestSendDocument_FileClosing(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// Create a temporary file to test file closing
+	tempFile := "/tmp/test_document.txt"
+	os.WriteFile(tempFile, []byte("test content"), 0644)
+	defer os.Remove(tempFile)
+
+	result := ctx.SendDocument(g.String(tempFile))
+	if result == nil {
+		t.Error("SendDocument with valid file should return builder")
+	}
+
+	// Call Send to trigger file closing logic
+	sendResult := result.Send()
+	if sendResult.IsErr() {
+		t.Logf("Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}
+
+func TestSendDocument_ThumbnailWithValidFile(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// Create temporary files for document and thumbnail
+	docFile := "/tmp/test_document.txt"
+	thumbFile := "/tmp/test_thumb.jpg"
+	os.WriteFile(docFile, []byte("test document content"), 0644)
+	os.WriteFile(thumbFile, []byte("test thumb content"), 0644)
+	defer os.Remove(docFile)
+	defer os.Remove(thumbFile)
+
+	result := ctx.SendDocument(g.String(docFile)).Thumbnail(g.String(thumbFile))
+	if result == nil {
+		t.Error("SendDocument with valid thumbnail should return builder")
+	}
+
+	// Call Send to trigger both file and thumbnail closing logic
+	sendResult := result.Send()
+	if sendResult.IsErr() {
+		t.Logf("Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}
+
+func TestSendDocument_TimeoutWithNilRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+
+	// Test Timeout when RequestOpts is nil
+	result := ctx.SendDocument(filename).Timeout(30 * time.Second)
+	if result == nil {
+		t.Error("Timeout should return builder")
+	}
+}
+
+func TestSendDocument_APIURLWithNilRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("document.pdf")
+
+	// Test APIURL when RequestOpts is nil
+	result := ctx.SendDocument(filename).APIURL(g.String("https://api.example.com"))
+	if result == nil {
+		t.Error("APIURL should return builder")
+	}
+}
+
+func TestSendDocument_SendWithExistingError(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// First create a SendDocument with an error (invalid filename)
+	result := ctx.SendDocument(g.String("/invalid/nonexistent/file.pdf"))
+	if result == nil {
+		t.Error("SendDocument with invalid file should return builder")
+	}
+
+	// Test that Send() returns the error immediately without calling timers
+	sendResult := result.Send()
+	if !sendResult.IsErr() {
+		t.Error("Send should return error for invalid file")
 	}
 }

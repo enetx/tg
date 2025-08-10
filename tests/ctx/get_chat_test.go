@@ -79,3 +79,22 @@ func TestGetChat_Send(t *testing.T) {
 		t.Logf("GetChat configured Send failed as expected: %v", configuredSendResult.Err())
 	}
 }
+
+func TestGetChat_APIURLWithExistingRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// First set Timeout to create RequestOpts, then test APIURL
+	result := ctx.GetChat().
+		Timeout(15 * time.Second).                         // This creates RequestOpts
+		APIURL(g.String("https://custom.api.example.com")) // This should use existing RequestOpts
+
+	if result == nil {
+		t.Error("APIURL with existing RequestOpts should return builder")
+	}
+}

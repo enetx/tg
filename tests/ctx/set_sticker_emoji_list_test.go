@@ -45,20 +45,22 @@ func TestSetStickerEmojiList_APIURL(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	sticker := g.String("sticker_id_123")
-	if ctx.SetStickerEmojiList(file.Input(sticker).UnwrapOrDefault()).APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.SetStickerEmojiList(file.Input(sticker).UnwrapOrDefault()).APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestSetStickerEmojiList_Send(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	sticker := g.String("sticker_id_123")
-	
+
 	emojiList := g.Slice[g.String]{}
 	emojiList.Push(g.String("😀"))
 	emojiList.Push(g.String("😎"))
-	
+
 	sendResult := ctx.SetStickerEmojiList(file.Input(sticker).UnwrapOrDefault()).EmojiList(emojiList).Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("SetStickerEmojiList Send failed as expected with mock bot: %v", sendResult.Err())
 	}

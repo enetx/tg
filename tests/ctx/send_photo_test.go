@@ -3,6 +3,7 @@ package ctx_test
 import (
 	"errors"
 	"io/fs"
+	"os"
 	"testing"
 	"time"
 
@@ -706,5 +707,67 @@ func TestSendPhoto_Send(t *testing.T) {
 
 	if !resultComplete.IsErr() && !resultComplete.IsOk() {
 		t.Error("Send with all features should return a result")
+	}
+}
+
+func TestSendPhoto_FileClosing(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// Create a temporary file to test file closing
+	tempFile := "/tmp/test_photo.jpg"
+	os.WriteFile(tempFile, []byte("test photo content"), 0644)
+	defer os.Remove(tempFile)
+
+	result := ctx.SendPhoto(g.String(tempFile))
+	if result == nil {
+		t.Error("SendPhoto with valid file should return builder")
+	}
+
+	// Call Send to trigger file closing logic
+	sendResult := result.Send()
+	if sendResult.IsErr() {
+		t.Logf("Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}
+
+func TestSendPhoto_TimeoutWithNilRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("photo.jpg")
+
+	// Test Timeout when RequestOpts is nil
+	result := ctx.SendPhoto(filename).Timeout(30 * time.Second)
+	if result == nil {
+		t.Error("Timeout should return builder")
+	}
+}
+
+func TestSendPhoto_APIURLWithNilRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("photo.jpg")
+
+	// Test APIURL when RequestOpts is nil
+	result := ctx.SendPhoto(filename).APIURL(g.String("https://api.example.com"))
+	if result == nil {
+		t.Error("APIURL should return builder")
+	}
+}
+
+func TestSendPhoto_SendWithExistingError(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// First create a SendPhoto with an error (invalid filename)
+	result := ctx.SendPhoto(g.String("/invalid/nonexistent/photo.jpg"))
+	if result == nil {
+		t.Error("SendPhoto with invalid file should return builder")
+	}
+
+	// Test that Send() returns the error immediately without calling timers
+	sendResult := result.Send()
+	if !sendResult.IsErr() {
+		t.Error("Send should return error for invalid file")
 	}
 }

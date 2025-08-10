@@ -215,19 +215,19 @@ func TestCreateNewStickerSet_APIURL_NilRequestOpts(t *testing.T) {
 	userID := int64(123)
 	name := g.String("test_sticker_set")
 	title := g.String("Test Sticker Set")
-	
+
 	// Test APIURL when RequestOpts is nil (covers the nil branch)
 	result := ctx.CreateNewStickerSet(userID, name, title)
 	if result == nil {
 		t.Error("CreateNewStickerSet should return builder")
 	}
-	
+
 	// This should create RequestOpts and set APIURL
 	apiResult := result.APIURL(g.String("https://api.test.com"))
 	if apiResult == nil {
 		t.Error("APIURL should return builder when RequestOpts is nil")
 	}
-	
+
 	// Test chaining after APIURL sets RequestOpts
 	chainResult := apiResult.APIURL(g.String("https://api2.test.com"))
 	if chainResult == nil {

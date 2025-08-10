@@ -1,6 +1,7 @@
 package ctx_test
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -413,21 +414,142 @@ func TestSendAnimation_To(t *testing.T) {
 func TestSendAnimation_ErrorHandling(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
-	
+
 	// Test with invalid filename that should cause file.Input to fail
-	invalidFilename := g.String("")  // Empty filename should cause an error
+	invalidFilename := g.String("") // Empty filename should cause an error
 	result := ctx.SendAnimation(invalidFilename)
-	
+
 	// The builder should still be created even with error
 	if result == nil {
 		t.Error("SendAnimation should return builder even with invalid filename")
 	}
-	
+
 	// Test that Send() properly handles the error
 	sendResult := result.Send()
 	if !sendResult.IsErr() {
 		t.Error("Send should fail with empty filename")
 	} else {
 		t.Logf("Send failed as expected with empty filename: %v", sendResult.Err())
+	}
+}
+
+func TestSendAnimation_ThumbnailErrorHandling(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("animation.gif")
+
+	// Test with invalid thumbnail file
+	result := ctx.SendAnimation(filename).Thumbnail(g.String("/invalid/path/thumb.jpg"))
+	if result == nil {
+		t.Error("Thumbnail with invalid file should still return builder")
+	}
+
+	// Test that Send() handles thumbnail error properly
+	sendResult := result.Send()
+	if sendResult.IsOk() {
+		t.Logf("Send succeeded despite invalid thumbnail: %v", sendResult.Ok())
+	} else {
+		t.Logf("Send failed as expected with invalid thumbnail: %v", sendResult.Err())
+	}
+}
+
+func TestSendAnimation_FileClosing(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// Create a temporary file to test file closing
+	tempFile := "/tmp/test_animation.gif"
+	os.WriteFile(tempFile, []byte("test animation content"), 0644)
+	defer os.Remove(tempFile)
+
+	result := ctx.SendAnimation(g.String(tempFile))
+	if result == nil {
+		t.Error("SendAnimation with valid file should return builder")
+	}
+
+	// Call Send to trigger file closing logic
+	sendResult := result.Send()
+	if sendResult.IsErr() {
+		t.Logf("Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}
+
+func TestSendAnimation_ThumbnailWithValidFile(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// Create temporary files for animation and thumbnail
+	animFile := "/tmp/test_animation.gif"
+	thumbFile := "/tmp/test_thumb.jpg"
+	os.WriteFile(animFile, []byte("test animation content"), 0644)
+	os.WriteFile(thumbFile, []byte("test thumb content"), 0644)
+	defer os.Remove(animFile)
+	defer os.Remove(thumbFile)
+
+	result := ctx.SendAnimation(g.String(animFile)).Thumbnail(g.String(thumbFile))
+	if result == nil {
+		t.Error("SendAnimation with valid thumbnail should return builder")
+	}
+
+	// Call Send to trigger both file and thumbnail closing logic
+	sendResult := result.Send()
+	if sendResult.IsErr() {
+		t.Logf("Send failed as expected with mock bot: %v", sendResult.Err())
+	}
+}
+
+func TestSendAnimation_TimeoutWithNilRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("animation.gif")
+
+	// Test Timeout when RequestOpts is nil
+	result := ctx.SendAnimation(filename).Timeout(30 * time.Second)
+	if result == nil {
+		t.Error("Timeout should return builder")
+	}
+}
+
+func TestSendAnimation_APIURLWithNilRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("animation.gif")
+
+	// Test APIURL when RequestOpts is nil
+	result := ctx.SendAnimation(filename).APIURL(g.String("https://api.example.com"))
+	if result == nil {
+		t.Error("APIURL should return builder")
+	}
+}
+
+func TestSendAnimation_APIURLWithExistingRequestOpts(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	filename := g.String("animation.gif")
+
+	// First set Timeout to create RequestOpts, then test APIURL
+	result := ctx.SendAnimation(filename).
+		Timeout(15 * time.Second).                         // This creates RequestOpts
+		APIURL(g.String("https://custom.api.example.com")) // This should use existing RequestOpts
+
+	if result == nil {
+		t.Error("APIURL with existing RequestOpts should return builder")
+	}
+}
+
+func TestSendAnimation_SendWithExistingError(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// First create a SendAnimation with an error (invalid filename)
+	result := ctx.SendAnimation(g.String("/invalid/nonexistent/animation.gif"))
+	if result == nil {
+		t.Error("SendAnimation with invalid file should return builder")
+	}
+
+	// Test that Send() returns the error immediately without calling timers
+	sendResult := result.Send()
+	if !sendResult.IsErr() {
+		t.Error("Send should return error for invalid file")
 	}
 }

@@ -34,10 +34,10 @@ func (scmb *SetChatMenuButton) DefaultMenu() *SetChatMenuButton {
 }
 
 // WebAppMenu sets a web app menu button.
-func (scmb *SetChatMenuButton) WebAppMenu(text g.String, webApp gotgbot.WebAppInfo) *SetChatMenuButton {
+func (scmb *SetChatMenuButton) WebAppMenu(text, url g.String) *SetChatMenuButton {
 	scmb.menuButton = gotgbot.MenuButtonWebApp{
 		Text:   text.Std(),
-		WebApp: webApp,
+		WebApp: gotgbot.WebAppInfo{Url: url.Std()},
 	}
 
 	return scmb

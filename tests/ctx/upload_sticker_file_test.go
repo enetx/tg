@@ -39,7 +39,9 @@ func TestUploadStickerFile_File(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	userID := int64(456)
 	stickerFormat := g.String("static")
-	if ctx.UploadStickerFile(userID, stickerFormat).File(g.String("sticker.png")) == nil { t.Error("File should return builder") }
+	if ctx.UploadStickerFile(userID, stickerFormat).File(g.String("sticker.png")) == nil {
+		t.Error("File should return builder")
+	}
 }
 
 func TestUploadStickerFile_Format(t *testing.T) {
@@ -47,7 +49,9 @@ func TestUploadStickerFile_Format(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	userID := int64(456)
 	stickerFormat := g.String("static")
-	if ctx.UploadStickerFile(userID, stickerFormat).Format(g.String("animated")) == nil { t.Error("Format should return builder") }
+	if ctx.UploadStickerFile(userID, stickerFormat).Format(g.String("animated")) == nil {
+		t.Error("Format should return builder")
+	}
 }
 
 func TestUploadStickerFile_APIURL(t *testing.T) {
@@ -55,7 +59,9 @@ func TestUploadStickerFile_APIURL(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	userID := int64(456)
 	stickerFormat := g.String("static")
-	if ctx.UploadStickerFile(userID, stickerFormat).APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.UploadStickerFile(userID, stickerFormat).APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestUploadStickerFile_Send(t *testing.T) {
@@ -63,9 +69,9 @@ func TestUploadStickerFile_Send(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	userID := int64(456)
 	stickerFormat := g.String("static")
-	
+
 	sendResult := ctx.UploadStickerFile(userID, stickerFormat).Format(g.String("animated")).Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("UploadStickerFile Send failed as expected with mock bot: %v", sendResult.Err())
 	}

@@ -39,7 +39,9 @@ func TestUpgradeGift_KeepOriginalDetails(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	businessConnectionID := g.String("business_conn_123")
 	giftID := g.String("gift_123")
-	if ctx.UpgradeGift(businessConnectionID, giftID).KeepOriginalDetails() == nil { t.Error("KeepOriginalDetails should return builder") }
+	if ctx.UpgradeGift(businessConnectionID, giftID).KeepOriginalDetails() == nil {
+		t.Error("KeepOriginalDetails should return builder")
+	}
 }
 
 func TestUpgradeGift_StarCount(t *testing.T) {
@@ -47,7 +49,9 @@ func TestUpgradeGift_StarCount(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	businessConnectionID := g.String("business_conn_123")
 	giftID := g.String("gift_123")
-	if ctx.UpgradeGift(businessConnectionID, giftID).StarCount(100) == nil { t.Error("StarCount should return builder") }
+	if ctx.UpgradeGift(businessConnectionID, giftID).StarCount(100) == nil {
+		t.Error("StarCount should return builder")
+	}
 }
 
 func TestUpgradeGift_APIURL(t *testing.T) {
@@ -55,7 +59,9 @@ func TestUpgradeGift_APIURL(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	businessConnectionID := g.String("business_conn_123")
 	giftID := g.String("gift_123")
-	if ctx.UpgradeGift(businessConnectionID, giftID).APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.UpgradeGift(businessConnectionID, giftID).APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestUpgradeGift_Send(t *testing.T) {
@@ -63,9 +69,9 @@ func TestUpgradeGift_Send(t *testing.T) {
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	businessConnectionID := g.String("business_conn_123")
 	giftID := g.String("gift_123")
-	
+
 	sendResult := ctx.UpgradeGift(businessConnectionID, giftID).KeepOriginalDetails().StarCount(50).Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("UpgradeGift Send failed as expected with mock bot: %v", sendResult.Err())
 	}

@@ -41,7 +41,9 @@ func TestTransferGift_StarCount(t *testing.T) {
 	businessConnectionID := g.String("business_conn_123")
 	giftID := g.String("gift_123")
 	userID := int64(456)
-	if ctx.TransferGift(businessConnectionID, giftID, userID).StarCount(100) == nil { t.Error("StarCount should return builder") }
+	if ctx.TransferGift(businessConnectionID, giftID, userID).StarCount(100) == nil {
+		t.Error("StarCount should return builder")
+	}
 }
 
 func TestTransferGift_APIURL(t *testing.T) {
@@ -50,7 +52,9 @@ func TestTransferGift_APIURL(t *testing.T) {
 	businessConnectionID := g.String("business_conn_123")
 	giftID := g.String("gift_123")
 	userID := int64(456)
-	if ctx.TransferGift(businessConnectionID, giftID, userID).APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.TransferGift(businessConnectionID, giftID, userID).APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestTransferGift_Send(t *testing.T) {
@@ -59,9 +63,9 @@ func TestTransferGift_Send(t *testing.T) {
 	businessConnectionID := g.String("business_conn_123")
 	giftID := g.String("gift_123")
 	userID := int64(456)
-	
+
 	sendResult := ctx.TransferGift(businessConnectionID, giftID, userID).StarCount(50).Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("TransferGift Send failed as expected with mock bot: %v", sendResult.Err())
 	}

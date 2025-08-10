@@ -37,23 +37,27 @@ func TestVerifyUser_CustomDescription(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	userID := int64(456)
-	if ctx.VerifyUser(userID).CustomDescription(g.String("Verified user")) == nil { t.Error("CustomDescription should return builder") }
+	if ctx.VerifyUser(userID).CustomDescription(g.String("Verified user")) == nil {
+		t.Error("CustomDescription should return builder")
+	}
 }
 
 func TestVerifyUser_APIURL(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	userID := int64(456)
-	if ctx.VerifyUser(userID).APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.VerifyUser(userID).APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestVerifyUser_Send(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	userID := int64(456)
-	
+
 	sendResult := ctx.VerifyUser(userID).CustomDescription(g.String("Test verification")).Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("VerifyUser Send failed as expected with mock bot: %v", sendResult.Err())
 	}

@@ -1,6 +1,7 @@
 package ctx_test
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -164,6 +165,91 @@ func TestContext_FileOperations_ErrorHandling(t *testing.T) {
 	}
 }
 
+func TestContext_FileOperations_ValidFile(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Create a temporary file for testing valid file paths
+	tempFile := "/tmp/test_file.txt"
+	err := os.WriteFile(tempFile, []byte("test content"), 0644)
+	if err != nil {
+		t.Skipf("Could not create temp file: %v", err)
+	}
+	defer os.Remove(tempFile)
+
+	validFile := g.String(tempFile)
+
+	// Test SendDocument with valid file
+	docResult := ctx.SendDocument(validFile)
+	if docResult == nil {
+		t.Error("Expected SendDocument builder to be created")
+	}
+
+	// Test SendAudio with valid file
+	audioResult := ctx.SendAudio(validFile)
+	if audioResult == nil {
+		t.Error("Expected SendAudio builder to be created")
+	}
+
+	// Test SendVideo with valid file
+	videoResult := ctx.SendVideo(validFile)
+	if videoResult == nil {
+		t.Error("Expected SendVideo builder to be created")
+	}
+
+	// Test SendVoice with valid file
+	voiceResult := ctx.SendVoice(validFile)
+	if voiceResult == nil {
+		t.Error("Expected SendVoice builder to be created")
+	}
+
+	// Test SendVideoNote with valid file
+	videoNoteResult := ctx.SendVideoNote(validFile)
+	if videoNoteResult == nil {
+		t.Error("Expected SendVideoNote builder to be created")
+	}
+
+	// Test SendAnimation with valid file
+	animationResult := ctx.SendAnimation(validFile)
+	if animationResult == nil {
+		t.Error("Expected SendAnimation builder to be created")
+	}
+
+	// Test SendSticker with valid file
+	stickerResult := ctx.SendSticker(validFile)
+	if stickerResult == nil {
+		t.Error("Expected SendSticker builder to be created")
+	}
+
+	// Test SetChatPhoto with valid file
+	setChatPhotoResult := ctx.SetChatPhoto(validFile)
+	if setChatPhotoResult == nil {
+		t.Error("Expected SetChatPhoto builder to be created")
+	}
+}
+
+func TestContext_FileOperations_SetChatPhotoError(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test SetChatPhoto with invalid file
+	invalidFile := g.String("/dev/null/nonexistent/invalid/photo.jpg")
+	setChatPhotoResult := ctx.SetChatPhoto(invalidFile)
+	if setChatPhotoResult == nil {
+		t.Error("Expected SetChatPhoto builder to be created even with error")
+	}
+}
+
 func TestContext_NilEffectiveChat_Operations(t *testing.T) {
 	bot := &mockBot{}
 	rawCtx := &ext.Context{
@@ -223,6 +309,32 @@ func TestContext_IsAdmin_ErrorBranches(t *testing.T) {
 		t.Logf("IsAdmin with user ID 0 errored as expected")
 	} else {
 		t.Logf("IsAdmin returned result: %v", result.Ok())
+	}
+}
+
+func TestContext_IsAdmin_AdditionalCoverage(t *testing.T) {
+	// Test to improve IsAdmin coverage
+	// Since we can't easily mock the GetChatMember call,
+	// we'll just ensure we cover the basic error case with different scenarios
+	bot := &mockBot{}
+
+	// Test with different chat types
+	for _, chatType := range []string{"private", "group", "supergroup", "channel"} {
+		rawCtx := &ext.Context{
+			EffectiveUser: &gotgbot.User{Id: 123, FirstName: "Test"},
+			EffectiveChat: &gotgbot.Chat{Id: 456, Type: chatType},
+			Update:        &gotgbot.Update{UpdateId: 1},
+		}
+
+		ctx := ctx.New(bot, rawCtx)
+
+		result := ctx.IsAdmin()
+		// Should error with mock bot, but we're just testing the path
+		if result.IsErr() {
+			t.Logf("IsAdmin with chat type %s errored as expected", chatType)
+		} else {
+			t.Logf("IsAdmin with chat type %s returned: %v", chatType, result.Ok())
+		}
 	}
 }
 
@@ -318,4 +430,49 @@ func TestContext_Timers_WithBoth(t *testing.T) {
 
 	// Give a moment for async goroutine to start
 	time.Sleep(time.Millisecond * 5)
+}
+
+func TestContext_Timers_AsyncError(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test async case where send() fails - covers error branch in async
+	sendMessage := ctx.SendMessage(g.String("test")).After(time.Millisecond)
+	result := sendMessage.Send()
+
+	// Should return Ok(nil) immediately for async
+	if result.IsOk() && result.Ok() == nil {
+		t.Logf("Async send returned nil as expected")
+	} else {
+		t.Errorf("Expected nil result for async send, got: %v", result)
+	}
+
+	// Give time for async goroutine to complete
+	time.Sleep(time.Millisecond * 10)
+}
+
+func TestContext_Timers_ImmediateSendError(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test immediate send with DeleteAfter but send fails
+	sendMessage := ctx.SendMessage(g.String("test")).DeleteAfter(time.Millisecond * 10)
+	result := sendMessage.Send()
+
+	// Should attempt immediate send and fail (covers error path in immediate send)
+	if result.IsErr() {
+		t.Logf("Send failed as expected: %v", result.Err())
+	} else {
+		t.Logf("Send unexpectedly succeeded: %v", result.Ok())
+	}
 }

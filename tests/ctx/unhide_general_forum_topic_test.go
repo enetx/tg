@@ -35,21 +35,25 @@ func TestContext_UnhideGeneralForumTopic(t *testing.T) {
 func TestUnhideGeneralForumTopic_Timeout(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
-	if ctx.UnhideGeneralForumTopic().Timeout(time.Minute) == nil { t.Error("Timeout should return builder") }
+	if ctx.UnhideGeneralForumTopic().Timeout(time.Minute) == nil {
+		t.Error("Timeout should return builder")
+	}
 }
 
 func TestUnhideGeneralForumTopic_APIURL(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
-	if ctx.UnhideGeneralForumTopic().APIURL(g.String("https://api.example.com")) == nil { t.Error("APIURL should return builder") }
+	if ctx.UnhideGeneralForumTopic().APIURL(g.String("https://api.example.com")) == nil {
+		t.Error("APIURL should return builder")
+	}
 }
 
 func TestUnhideGeneralForumTopic_Send(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"}, Update: &gotgbot.Update{UpdateId: 1}})
-	
+
 	sendResult := ctx.UnhideGeneralForumTopic().Send()
-	
+
 	if sendResult.IsErr() {
 		t.Logf("UnhideGeneralForumTopic Send failed as expected with mock bot: %v", sendResult.Err())
 	}
