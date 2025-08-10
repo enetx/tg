@@ -7,6 +7,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/enetx/tg/badge.svg?branch=main&service=github)](https://coveralls.io/github/enetx/tg?branch=main)
 [![Go](https://github.com/enetx/tg/actions/workflows/go.yml/badge.svg)](https://github.com/enetx/tg/actions/workflows/go.yml)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/enetx/tg)
+[![Telegram Bot API Version][TelegramVersionBadge]][TelegramLastVersion]
 
 Modern and elegant wrapper around [gotgbot](https://github.com/PaulSonOfLars/gotgbot) with convenient API and functional programming style support.
 
@@ -665,3 +666,9 @@ MIT License. See `LICENSE` file for details.
 - Create GitHub issues for bug reports
 - Use discussions for questions and suggestions
 - Explore examples in the `examples/` folder
+
+[TelegramBotAPI]: https://core.telegram.org/bots/api
+
+[TelegramVersionBadge]: https://img.shields.io/static/v1?label=Supported%20Telegram%20Bot%20API&color=29a1d4&logo=telegram&message=v9.1
+
+[TelegramLastVersion]: https://core.telegram.org/bots/api#july-3-2025
