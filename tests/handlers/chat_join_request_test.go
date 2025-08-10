@@ -51,6 +51,21 @@ func TestChatJoinRequestHandlers_ChatID(t *testing.T) {
 	}
 }
 
+func TestChatJoinRequestHandlers_HasInviteLink(t *testing.T) {
+	bot := NewMockBot()
+	chatJoinRequestHandlers := &handlers.ChatJoinRequestHandlers{Bot: bot}
+
+	result := chatJoinRequestHandlers.HasInviteLink(MockHandler)
+
+	if result == nil {
+		t.Error("HasInviteLink should return ChatJoinRequestHandlers")
+	}
+
+	if result != chatJoinRequestHandlers {
+		t.Error("HasInviteLink should return the same ChatJoinRequestHandlers instance for chaining")
+	}
+}
+
 func TestChatJoinRequestHandlers_ChainedMethods(t *testing.T) {
 	bot := NewMockBot()
 	chatJoinRequestHandlers := &handlers.ChatJoinRequestHandlers{Bot: bot}

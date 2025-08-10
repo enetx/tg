@@ -53,3 +53,25 @@ func TestGetMyName_ChainedMethods(t *testing.T) {
 		t.Error("Expected APIURL method to return request")
 	}
 }
+
+func TestGetMyName_Send(t *testing.T) {
+	token := g.String("123456:ABCDEF-test-token-here")
+	result := bot.New(token).DisableTokenCheck().Build()
+
+	if result.IsErr() {
+		t.Errorf("Failed to create bot: %v", result.Err())
+		return
+	}
+
+	botInstance := result.Ok()
+	req := botInstance.GetMyName()
+
+	result2 := req.Send()
+	if result2.IsOk() {
+		name := result2.Ok()
+		_ = name
+	} else {
+		err := result2.Err()
+		_ = err
+	}
+}

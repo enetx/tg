@@ -100,6 +100,43 @@ func TestCachedGif_ShowCaptionAboveMedia(t *testing.T) {
 	}
 }
 
+func TestCachedGif_Markdown(t *testing.T) {
+	cachedGif := inline.NewCachedGif(testID, testFileID)
+
+	result := cachedGif.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return CachedGif")
+	}
+
+	built := result.Build()
+	if gifResult, ok := built.(gotgbot.InlineQueryResultCachedGif); ok {
+		if gifResult.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedGif")
+	}
+}
+
+func TestCachedGif_CaptionEntities(t *testing.T) {
+	cachedGif := inline.NewCachedGif(testID, testFileID)
+	entities := createTestEntities()
+
+	result := cachedGif.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return CachedGif")
+	}
+
+	built := result.Build()
+	if gifResult, ok := built.(gotgbot.InlineQueryResultCachedGif); ok {
+		if len(gifResult.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedGif")
+	}
+}
+
 func TestCachedGif_Markup(t *testing.T) {
 	cachedGif := inline.NewCachedGif(testID, testFileID)
 	keyboard := createTestKeyboard()

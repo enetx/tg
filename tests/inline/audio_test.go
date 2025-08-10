@@ -150,6 +150,81 @@ func TestAudio_Markup(t *testing.T) {
 	}
 }
 
+func TestAudio_Markdown(t *testing.T) {
+	audio := inline.NewAudio(testID, testURL, testTitle)
+
+	result := audio.Markdown()
+	if result == nil {
+		t.Error("Expected Markdown method to return Audio")
+	}
+
+	// Test method chaining returns same instance
+	if result != audio {
+		t.Error("Expected Markdown method to return same Audio instance")
+	}
+
+	built := result.Build()
+	if audioResult, ok := built.(gotgbot.InlineQueryResultAudio); ok {
+		if audioResult.ParseMode != "MarkdownV2" {
+			t.Error("Expected ParseMode to be set to MarkdownV2")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultAudio")
+	}
+}
+
+func TestAudio_CaptionEntities(t *testing.T) {
+	audio := inline.NewAudio(testID, testURL, testTitle)
+	testText := g.String("Bold text")
+	entities := testEntities(testText)
+
+	result := audio.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return Audio")
+	}
+
+	// Test method chaining returns same instance
+	if result != audio {
+		t.Error("Expected CaptionEntities method to return same Audio instance")
+	}
+
+	built := result.Build()
+	if audioResult, ok := built.(gotgbot.InlineQueryResultAudio); ok {
+		if len(audioResult.CaptionEntities) != 1 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+		if audioResult.CaptionEntities[0].Type != "bold" {
+			t.Error("Expected first entity to be bold")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultAudio")
+	}
+}
+
+func TestAudio_InputMessageContent(t *testing.T) {
+	audio := inline.NewAudio(testID, testURL, testTitle)
+	messageContent := createTestMessageContent()
+
+	result := audio.InputMessageContent(messageContent)
+	if result == nil {
+		t.Error("Expected InputMessageContent method to return Audio")
+	}
+
+	// Test method chaining returns same instance
+	if result != audio {
+		t.Error("Expected InputMessageContent method to return same Audio instance")
+	}
+
+	built := result.Build()
+	if audioResult, ok := built.(gotgbot.InlineQueryResultAudio); ok {
+		if audioResult.InputMessageContent == nil {
+			t.Error("Expected InputMessageContent to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultAudio")
+	}
+}
+
 func TestAudio_MethodChaining(t *testing.T) {
 	performer := g.String("Test Artist")
 	duration := 180 * time.Second

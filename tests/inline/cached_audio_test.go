@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/enetx/g"
 	"github.com/enetx/tg/inline"
 )
 
@@ -114,6 +115,34 @@ func TestCachedAudio_InputMessageContent(t *testing.T) {
 	if audioResult, ok := built.(gotgbot.InlineQueryResultCachedAudio); ok {
 		if audioResult.InputMessageContent == nil {
 			t.Error("Expected InputMessageContent to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedAudio")
+	}
+}
+
+func TestCachedAudio_CaptionEntities(t *testing.T) {
+	cachedAudio := inline.NewCachedAudio(testID, testFileID)
+	testText := g.String("Bold text")
+	entities := testEntities(testText)
+
+	result := cachedAudio.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return CachedAudio")
+	}
+
+	// Test method chaining returns same instance
+	if result != cachedAudio {
+		t.Error("Expected CaptionEntities method to return same CachedAudio instance")
+	}
+
+	built := result.Build()
+	if audioResult, ok := built.(gotgbot.InlineQueryResultCachedAudio); ok {
+		if len(audioResult.CaptionEntities) != 1 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+		if audioResult.CaptionEntities[0].Type != "bold" {
+			t.Error("Expected first entity to be bold")
 		}
 	} else {
 		t.Error("Expected result to be InlineQueryResultCachedAudio")

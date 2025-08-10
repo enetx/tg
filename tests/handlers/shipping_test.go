@@ -122,3 +122,18 @@ func TestShippingHandlers_WithNilHandler(t *testing.T) {
 		t.Error("Handler registration with nil handler should work")
 	}
 }
+
+func TestShippingHandlers_HasPayloadPrefix(t *testing.T) {
+	bot := NewMockBot()
+	shippingHandlers := &handlers.ShippingHandlers{Bot: bot}
+
+	result := shippingHandlers.HasPayloadPrefix(g.String("order_"), MockHandler)
+
+	if result == nil {
+		t.Error("HasPayloadPrefix should return ShippingHandlers")
+	}
+
+	if result != shippingHandlers {
+		t.Error("HasPayloadPrefix should return the same ShippingHandlers instance for chaining")
+	}
+}

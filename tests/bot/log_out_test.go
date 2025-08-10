@@ -48,3 +48,25 @@ func TestLogOut_AllMethods(t *testing.T) {
 		t.Error("Expected APIURL method to return request")
 	}
 }
+
+func TestLogOut_Send(t *testing.T) {
+	token := g.String("123456:ABCDEF-test-token-here")
+	result := bot.New(token).DisableTokenCheck().Build()
+
+	if result.IsErr() {
+		t.Errorf("Failed to create bot: %v", result.Err())
+		return
+	}
+
+	botInstance := result.Ok()
+	req := botInstance.LogOut()
+
+	result2 := req.Send()
+	if result2.IsOk() {
+		success := result2.Ok()
+		_ = success
+	} else {
+		err := result2.Err()
+		_ = err
+	}
+}

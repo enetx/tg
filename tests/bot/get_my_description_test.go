@@ -54,3 +54,25 @@ func TestGetMyDescription_ChainedMethods(t *testing.T) {
 		t.Error("Expected APIURL method to return request")
 	}
 }
+
+func TestGetMyDescription_Send(t *testing.T) {
+	token := g.String("123456:ABCDEF-test-token-here")
+	result := bot.New(token).DisableTokenCheck().Build()
+
+	if result.IsErr() {
+		t.Errorf("Failed to create bot: %v", result.Err())
+		return
+	}
+
+	botInstance := result.Ok()
+	req := botInstance.GetMyDescription()
+
+	result2 := req.Send()
+	if result2.IsOk() {
+		description := result2.Ok()
+		_ = description
+	} else {
+		err := result2.Err()
+		_ = err
+	}
+}

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/enetx/tg/handlers"
+	"github.com/enetx/tg/types/chatmember"
 )
 
 func TestChatMemberHandlers_Any(t *testing.T) {
@@ -129,5 +130,200 @@ func TestChatMemberHandlers_WithNilHandler(t *testing.T) {
 
 	if result == nil {
 		t.Error("Handler registration with nil handler should work")
+	}
+}
+
+func TestChatMemberHandlers_StatusChange(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.StatusChange(chatmember.Member, chatmember.Administrator, MockHandler)
+
+	if result == nil {
+		t.Error("StatusChange should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("StatusChange should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_Joined(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.Joined(MockHandler)
+
+	if result == nil {
+		t.Error("Joined should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("Joined should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_Left(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.Left(MockHandler)
+
+	if result == nil {
+		t.Error("Left should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("Left should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_Banned(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.Banned(MockHandler)
+
+	if result == nil {
+		t.Error("Banned should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("Banned should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_Unbanned(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.Unbanned(MockHandler)
+
+	if result == nil {
+		t.Error("Unbanned should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("Unbanned should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_Restricted(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.Restricted(MockHandler)
+
+	if result == nil {
+		t.Error("Restricted should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("Restricted should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_Unrestricted(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.Unrestricted(MockHandler)
+
+	if result == nil {
+		t.Error("Unrestricted should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("Unrestricted should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_Promoted(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.Promoted(MockHandler)
+
+	if result == nil {
+		t.Error("Promoted should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("Promoted should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_Demoted(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.Demoted(MockHandler)
+
+	if result == nil {
+		t.Error("Demoted should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("Demoted should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_UserID(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.UserID(123456789, MockHandler)
+
+	if result == nil {
+		t.Error("UserID should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("UserID should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_NewStatus(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.NewStatus(chatmember.Administrator, MockHandler)
+
+	if result == nil {
+		t.Error("NewStatus should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("NewStatus should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_OldStatus(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.OldStatus(chatmember.Member, MockHandler)
+
+	if result == nil {
+		t.Error("OldStatus should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("OldStatus should return the same ChatMemberHandlers instance for chaining")
+	}
+}
+
+func TestChatMemberHandlers_HasInviteLink(t *testing.T) {
+	bot := NewMockBot()
+	chatMemberHandlers := &handlers.ChatMemberHandlers{Bot: bot}
+
+	result := chatMemberHandlers.HasInviteLink(MockHandler)
+
+	if result == nil {
+		t.Error("HasInviteLink should return ChatMemberHandlers")
+	}
+
+	if result != chatMemberHandlers {
+		t.Error("HasInviteLink should return the same ChatMemberHandlers instance for chaining")
 	}
 }

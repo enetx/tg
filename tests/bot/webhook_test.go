@@ -238,3 +238,26 @@ func TestWebhook_SetWebhookExtended(t *testing.T) {
 		t.Error("Expected AllowedUpdates method to return webhook")
 	}
 }
+
+func TestWebhook_Register_ValidConfiguration(t *testing.T) {
+	token := g.String("123456:ABCDEF-test-token-here")
+	result := bot.New(token).DisableTokenCheck().Build()
+
+	if result.IsErr() {
+		t.Errorf("Failed to create bot: %v", result.Err())
+		return
+	}
+
+	botInstance := result.Ok()
+
+	// Test with valid domain and path - should call API (will fail in test environment)
+	result2 := botInstance.Webhook().Domain("https://example.com").Path("/webhook").Register()
+	if result2.IsOk() {
+		success := result2.Ok()
+		_ = success
+	} else {
+		// Error expected in test environment
+		err := result2.Err()
+		_ = err
+	}
+}

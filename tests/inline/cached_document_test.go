@@ -100,6 +100,25 @@ func TestCachedDocument_Markdown(t *testing.T) {
 	}
 }
 
+func TestCachedDocument_CaptionEntities(t *testing.T) {
+	cachedDoc := inline.NewCachedDocument(testID, testFileID, testTitle)
+	entities := createTestEntities()
+
+	result := cachedDoc.CaptionEntities(entities)
+	if result == nil {
+		t.Error("Expected CaptionEntities method to return CachedDocument")
+	}
+
+	built := result.Build()
+	if docResult, ok := built.(gotgbot.InlineQueryResultCachedDocument); ok {
+		if len(docResult.CaptionEntities) == 0 {
+			t.Error("Expected CaptionEntities to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultCachedDocument")
+	}
+}
+
 func TestCachedDocument_Markup(t *testing.T) {
 	cachedDoc := inline.NewCachedDocument(testID, testFileID, testTitle)
 	keyboard := createTestKeyboard()

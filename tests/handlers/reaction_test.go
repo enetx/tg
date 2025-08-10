@@ -116,3 +116,86 @@ func TestReactionHandlers_WithNilHandler(t *testing.T) {
 		t.Error("Nil handler should return same instance")
 	}
 }
+
+func TestReactionHandlers_FromPeerEdgeCases(t *testing.T) {
+	h := &handlers.ReactionHandlers{Bot: NewMockBot()}
+
+	// Test with zero peer ID
+	if r := h.FromPeer(0, MockHandler); r != h {
+		t.Error("FromPeer with zero should return same instance")
+	}
+
+	// Test with negative peer ID
+	if r := h.FromPeer(-123456789, MockHandler); r != h {
+		t.Error("FromPeer with negative ID should return same instance")
+	}
+
+	// Test with large peer ID
+	if r := h.FromPeer(9223372036854775807, MockHandler); r != h {
+		t.Error("FromPeer with large ID should return same instance")
+	}
+}
+
+func TestReactionHandlers_NewReactionEmojiEdgeCases(t *testing.T) {
+	h := &handlers.ReactionHandlers{Bot: NewMockBot()}
+
+	// Test with empty emoji
+	if r := h.NewReactionEmoji(g.String(""), MockHandler); r != h {
+		t.Error("NewReactionEmoji with empty string should return same instance")
+	}
+
+	// Test with single emoji
+	if r := h.NewReactionEmoji(g.String("👍"), MockHandler); r != h {
+		t.Error("NewReactionEmoji with thumbs up should return same instance")
+	}
+
+	// Test with multiple emojis
+	if r := h.NewReactionEmoji(g.String("👍👎❤️"), MockHandler); r != h {
+		t.Error("NewReactionEmoji with multiple emojis should return same instance")
+	}
+
+	// Test with text-based emoji
+	if r := h.NewReactionEmoji(g.String(":thumbsup:"), MockHandler); r != h {
+		t.Error("NewReactionEmoji with text emoji should return same instance")
+	}
+}
+
+func TestReactionHandlers_OldReactionEmojiEdgeCases(t *testing.T) {
+	h := &handlers.ReactionHandlers{Bot: NewMockBot()}
+
+	// Test with empty emoji
+	if r := h.OldReactionEmoji(g.String(""), MockHandler); r != h {
+		t.Error("OldReactionEmoji with empty string should return same instance")
+	}
+
+	// Test with single emoji
+	if r := h.OldReactionEmoji(g.String("👎"), MockHandler); r != h {
+		t.Error("OldReactionEmoji with thumbs down should return same instance")
+	}
+
+	// Test with multiple emojis
+	if r := h.OldReactionEmoji(g.String("😀😃😄"), MockHandler); r != h {
+		t.Error("OldReactionEmoji with multiple emojis should return same instance")
+	}
+
+	// Test with special characters
+	if r := h.OldReactionEmoji(g.String("🔥💯⚡"), MockHandler); r != h {
+		t.Error("OldReactionEmoji with special emojis should return same instance")
+	}
+}
+
+func TestReactionHandlers_ComprehensiveChaining(t *testing.T) {
+	h := &handlers.ReactionHandlers{Bot: NewMockBot()}
+
+	// Test comprehensive chaining with edge cases
+	result := h.Any(MockHandler).
+		FromPeer(0, MockHandler).
+		ChatID(-1001234567890, MockHandler).
+		MessageID(999999999, MockHandler).
+		NewReactionEmoji(g.String("🚀"), MockHandler).
+		OldReactionEmoji(g.String("⭐"), MockHandler)
+
+	if result != h {
+		t.Error("Comprehensive chaining should return same instance")
+	}
+}

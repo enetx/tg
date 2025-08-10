@@ -79,18 +79,51 @@ func TestNewHandlers(t *testing.T) {
 	}
 }
 
-func TestHandlers_Any_SkipRegistration(t *testing.T) {
-	// This test verifies that the Any method doesn't crash during compilation
-	// but skips actual handler registration which requires a full dispatcher setup
-	bot := &mockBot{}
+func TestHandlers_Any(t *testing.T) {
+	bot := NewMockBot()
 	h := handlers.NewHandlers(bot)
 
-	// Verify that the handlers structure is properly initialized
-	if h == nil {
-		t.Error("NewHandlers should return a non-nil Handlers instance")
+	// Test that Any method returns the bot instance
+	result := h.Any(MockHandler)
+
+	if result == nil {
+		t.Error("Any should return the bot instance")
 	}
 
-	// We don't test actual registration here because it requires proper
-	// gotgbot dispatcher setup which is complex for unit tests
-	// Integration tests would cover the full registration flow
+	if result != bot {
+		t.Error("Any should return the same bot instance")
+	}
+}
+
+func TestHandlers_Any_WithNilHandler(t *testing.T) {
+	bot := NewMockBot()
+	h := handlers.NewHandlers(bot)
+
+	// Test that Any method works with nil handler
+	result := h.Any(nil)
+
+	if result == nil {
+		t.Error("Any should return the bot instance even with nil handler")
+	}
+
+	if result != bot {
+		t.Error("Any should return the same bot instance")
+	}
+}
+
+func TestHandlers_Any_MultipleHandlers(t *testing.T) {
+	bot := NewMockBot()
+	h := handlers.NewHandlers(bot)
+
+	// Test chaining multiple Any calls
+	result1 := h.Any(MockHandler)
+	result2 := h.Any(MockHandler)
+
+	if result1 != result2 {
+		t.Error("Multiple Any calls should return consistent bot instance")
+	}
+
+	if result1 != bot || result2 != bot {
+		t.Error("Any should always return the same bot instance")
+	}
 }

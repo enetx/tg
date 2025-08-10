@@ -3,6 +3,7 @@ package inline_test
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/inline"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
@@ -42,6 +43,16 @@ func createTestInlineKeyboard() *gotgbot.InlineKeyboardMarkup {
 func createTestKeyboard() keyboard.Keyboard {
 	return keyboard.Inline().
 		URL(g.String("Test Button"), g.String("https://example.com"))
+}
+
+// Helper function to create test entities
+func testEntities(text g.String) entities.Entities {
+	return *entities.New(text).Bold("Bold")
+}
+
+// Helper function to create test entities without parameters
+func createTestEntities() entities.Entities {
+	return *entities.New(g.String("Test text with bold")).Bold("bold")
 }
 
 // Test the QueryResult interface implementation

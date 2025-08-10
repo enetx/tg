@@ -615,3 +615,28 @@ func TestMessageHandlers_PaymentHandlers(t *testing.T) {
 		})
 	}
 }
+
+func TestMessageHandlers_AdditionalEdgeCases(t *testing.T) {
+	bot := NewMockBot()
+	msgHandlers := &handlers.MessageHandlers{Bot: bot}
+
+	// Test additional handler creation methods to improve coverage
+	tests := []struct {
+		name    string
+		handler func() *handlers.MessageHandler
+	}{
+		{"AllowEdited", func() *handlers.MessageHandler { return msgHandlers.Any(MockHandler).AllowEdited() }},
+		{"AllowChannel", func() *handlers.MessageHandler { return msgHandlers.Any(MockHandler).AllowChannel() }},
+		{"AllowBusiness", func() *handlers.MessageHandler { return msgHandlers.Any(MockHandler).AllowBusiness() }},
+		{"Register", func() *handlers.MessageHandler { return msgHandlers.Any(MockHandler).Register() }},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			handler := test.handler()
+			if handler == nil {
+				t.Errorf("%s should return a MessageHandler", test.name)
+			}
+		})
+	}
+}
