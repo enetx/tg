@@ -105,7 +105,7 @@ func TestNamedHandlerImplementsNamedHandlerInterface(t *testing.T) {
 	}
 
 	// Check if it implements the Name() method
-	namer, ok := interface{}(handler).(interface{ Name() string })
+	namer, ok := any(handler).(interface{ Name() string })
 	if !ok {
 		t.Error("Named handler should implement Name() string method")
 	}

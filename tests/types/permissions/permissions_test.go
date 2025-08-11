@@ -10,12 +10,12 @@ func TestPermissions_Single(t *testing.T) {
 	tests := []struct {
 		name       string
 		permission permissions.Permission
-		checkFunc  func(*testing.T, interface{})
+		checkFunc  func(*testing.T, any)
 	}{
 		{
 			name:       "SendMessages",
 			permission: permissions.SendMessages,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -24,7 +24,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "SendAudios",
 			permission: permissions.SendAudios,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -33,7 +33,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "SendDocuments",
 			permission: permissions.SendDocuments,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -42,7 +42,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "SendPhotos",
 			permission: permissions.SendPhotos,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -51,7 +51,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "SendVideos",
 			permission: permissions.SendVideos,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -60,7 +60,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "SendVideoNotes",
 			permission: permissions.SendVideoNotes,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -69,7 +69,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "SendVoiceNotes",
 			permission: permissions.SendVoiceNotes,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -78,7 +78,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "SendPolls",
 			permission: permissions.SendPolls,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -87,7 +87,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "SendOtherMessages",
 			permission: permissions.SendOtherMessages,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -96,7 +96,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "AddWebPagePreviews",
 			permission: permissions.AddWebPagePreviews,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -105,7 +105,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "ChangeInfo",
 			permission: permissions.ChangeInfo,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -114,7 +114,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "InviteUsers",
 			permission: permissions.InviteUsers,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -123,7 +123,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "PinMessages",
 			permission: permissions.PinMessages,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -132,7 +132,7 @@ func TestPermissions_Single(t *testing.T) {
 		{
 			name:       "ManageTopics",
 			permission: permissions.ManageTopics,
-			checkFunc: func(t *testing.T, result interface{}) {
+			checkFunc: func(t *testing.T, result any) {
 				if result == nil {
 					t.Error("Expected non-nil result")
 				}
@@ -147,8 +147,8 @@ func TestPermissions_Single(t *testing.T) {
 				t.Error("Expected non-nil ChatPermissions")
 			}
 
-			// Convert to interface{} for the test function
-			tt.checkFunc(t, interface{}(result))
+			// Convert to any for the test function
+			tt.checkFunc(t, any(result))
 		})
 	}
 }

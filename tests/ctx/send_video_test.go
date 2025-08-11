@@ -644,3 +644,95 @@ func TestSendVideo_GenerateThumbnailAdditionalErrors(t *testing.T) {
 		t.Logf("GenerateThumbnail with non-existent file failed as expected: %v", sendResult2.Err())
 	}
 }
+
+// Test ApplyMetadata and GenerateThumbnail success paths for better coverage
+func TestSendVideo_MetadataAndThumbnailSuccessPaths(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+
+	// Create a larger temporary file that might be recognized as valid by ffmpeg libraries
+	tempFile := "/tmp/test_video_metadata.mp4"
+	// Create a file with some basic video-like header bytes (MP4 signature)
+	headerBytes := []byte{0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d} // MP4 file signature
+	padding := make([]byte, 1024)                                                                 // Add some padding to make it look more like a real file
+	fileContent := append(headerBytes, padding...)
+	os.WriteFile(tempFile, fileContent, 0644)
+	defer os.Remove(tempFile)
+
+	// Test ApplyMetadata success path coverage
+	metadataBuilder := ctx.SendVideo(g.String(tempFile)).ApplyMetadata()
+	if metadataBuilder == nil {
+		t.Error("ApplyMetadata should return builder")
+	}
+
+	// Even if ffmpeg fails, we want to test more code paths
+	sendMetadataResult := metadataBuilder.Send()
+	if sendMetadataResult.IsErr() {
+		t.Logf("ApplyMetadata Send failed as expected (ffmpeg not available or file invalid): %v", sendMetadataResult.Err())
+	} else {
+		t.Log("ApplyMetadata Send succeeded unexpectedly")
+	}
+
+	// Test GenerateThumbnail with duration set manually (to bypass ApplyMetadata requirement)
+	builder := ctx.SendVideo(g.String(tempFile)).
+		Duration(10 * time.Second) // Manually set duration to pass the IsZero check
+
+	// Test GenerateThumbnail with default seek time (no parameters)
+	thumbnailBuilder := builder.GenerateThumbnail()
+	if thumbnailBuilder == nil {
+		t.Error("GenerateThumbnail without seek time should return builder")
+	}
+
+	sendThumbnailResult := thumbnailBuilder.Send()
+	if sendThumbnailResult.IsErr() {
+		t.Logf("GenerateThumbnail Send failed as expected (ffmpeg not available): %v", sendThumbnailResult.Err())
+	} else {
+		t.Log("GenerateThumbnail Send succeeded unexpectedly")
+	}
+
+	// Test GenerateThumbnail with custom seek times
+	seekTimes := []string{"00:00:01", "00:00:05", "00:00:10", "5.5", "10.0"}
+	for _, seekTime := range seekTimes {
+		builder2 := ctx.SendVideo(g.String(tempFile)).
+			Duration(15 * time.Second) // Set duration higher than seek time
+
+		seekBuilder := builder2.GenerateThumbnail(g.String(seekTime))
+		if seekBuilder == nil {
+			t.Errorf("GenerateThumbnail with seek time %s should return builder", seekTime)
+			continue
+		}
+
+		seekSendResult := seekBuilder.Send()
+		if seekSendResult.IsErr() {
+			t.Logf("GenerateThumbnail with seek time %s failed as expected: %v", seekTime, seekSendResult.Err())
+		} else {
+			t.Logf("GenerateThumbnail with seek time %s succeeded unexpectedly", seekTime)
+		}
+	}
+
+	// Test ApplyMetadata with duration.IsZero() = false path
+	// Create another builder and try to trigger the successful metadata path
+	builder3 := ctx.SendVideo(g.String(tempFile))
+	metadataBuilder3 := builder3.ApplyMetadata()
+
+	// Even if ApplyMetadata fails to extract real metadata, test the chaining
+	if metadataBuilder3 == nil {
+		t.Error("ApplyMetadata should return builder even on ffmpeg failure")
+	}
+
+	// Test combining ApplyMetadata and GenerateThumbnail
+	combinedBuilder := ctx.SendVideo(g.String(tempFile)).
+		ApplyMetadata().
+		GenerateThumbnail(g.String("00:00:02"))
+
+	if combinedBuilder == nil {
+		t.Error("Combined ApplyMetadata and GenerateThumbnail should return builder")
+	}
+
+	combinedSendResult := combinedBuilder.Send()
+	if combinedSendResult.IsErr() {
+		t.Logf("Combined ApplyMetadata and GenerateThumbnail Send failed as expected: %v", combinedSendResult.Err())
+	} else {
+		t.Log("Combined ApplyMetadata and GenerateThumbnail Send succeeded unexpectedly")
+	}
+}

@@ -11,7 +11,7 @@ import (
 	"github.com/enetx/tg/handlers"
 )
 
-func MockHandlerType(t *testing.T) {
+func TestHandlerType(t *testing.T) {
 	// Test that Handler is a function type
 	var handler handlers.Handler = func(c *ctx.Context) error {
 		return nil
@@ -82,7 +82,7 @@ func TestWrapWithMiddleware(t *testing.T) {
 	}
 }
 
-func MockHandlerWithError(t *testing.T) {
+func TestHandlerWithError(t *testing.T) {
 	// Test handler that returns error
 	expectedErr := errors.New("test error")
 	handler := func(c *ctx.Context) error {
@@ -139,7 +139,7 @@ func TestMultipleMiddlewares(t *testing.T) {
 	}
 }
 
-func MockMiddlewareError(t *testing.T) {
+func TestMiddlewareError(t *testing.T) {
 	middlewareErr := errors.New("middleware error")
 
 	middleware := func(c *ctx.Context) error {
@@ -166,7 +166,7 @@ func MockMiddlewareError(t *testing.T) {
 	}
 }
 
-func MockHandlerChaining(t *testing.T) {
+func TestHandlerChaining(t *testing.T) {
 	// Test that multiple handlers can be chained
 	handler1 := func(c *ctx.Context) error {
 		return nil
@@ -189,7 +189,7 @@ func MockHandlerChaining(t *testing.T) {
 	}
 }
 
-func MockHandlerWithNilContext(t *testing.T) {
+func TestHandlerWithNilContext(t *testing.T) {
 	// Test handler behavior with nil context
 	handler := func(c *ctx.Context) error {
 		if c == nil {
@@ -268,7 +268,7 @@ func TestContextCreation(t *testing.T) {
 	}
 }
 
-func MockHandlerIntegration(t *testing.T) {
+func TestHandlerIntegration(t *testing.T) {
 	// Integration test: handler with real-like context
 	bot := NewMockBot()
 	handlerExecuted := false

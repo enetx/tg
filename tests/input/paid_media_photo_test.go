@@ -39,7 +39,7 @@ func TestPaidPhoto_BuildReturnsCorrectType(t *testing.T) {
 	built := paidPhoto.Build()
 
 	// Verify that Build() returns the correct type
-	if _, ok := interface{}(built).(gotgbot.InputPaidMediaPhoto); !ok {
+	if _, ok := any(built).(gotgbot.InputPaidMediaPhoto); !ok {
 		t.Error("Expected Build() to return gotgbot.InputPaidMediaPhoto")
 	}
 }

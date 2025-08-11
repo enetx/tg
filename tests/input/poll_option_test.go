@@ -31,7 +31,7 @@ func TestChoice_HTML(t *testing.T) {
 	}
 
 	built := result.Build()
-	if v, ok := interface{}(built).(gotgbot.InputPollOption); ok {
+	if v, ok := any(built).(gotgbot.InputPollOption); ok {
 		if v.TextParseMode != "HTML" {
 			t.Error("Expected TextParseMode to be set to HTML")
 		}
@@ -52,7 +52,7 @@ func TestChoice_Markdown(t *testing.T) {
 	}
 
 	built := result.Build()
-	if v, ok := interface{}(built).(gotgbot.InputPollOption); ok {
+	if v, ok := any(built).(gotgbot.InputPollOption); ok {
 		if v.TextParseMode != "MarkdownV2" {
 			t.Error("Expected TextParseMode to be set to MarkdownV2")
 		}
@@ -74,7 +74,7 @@ func TestChoice_TextEntities(t *testing.T) {
 	}
 
 	built := result.Build()
-	if v, ok := interface{}(built).(gotgbot.InputPollOption); ok {
+	if v, ok := any(built).(gotgbot.InputPollOption); ok {
 		if len(v.TextEntities) == 0 {
 			t.Error("Expected TextEntities to be set correctly")
 		}
@@ -88,7 +88,7 @@ func TestChoice_Build(t *testing.T) {
 	choice := input.Choice(optionText)
 	built := choice.Build()
 
-	if v, ok := interface{}(built).(gotgbot.InputPollOption); ok {
+	if v, ok := any(built).(gotgbot.InputPollOption); ok {
 		if v.Text != optionText.Std() {
 			t.Errorf("Expected option text to be %s, got %s", optionText.Std(), v.Text)
 		}
@@ -111,7 +111,7 @@ func TestChoice_MethodChaining(t *testing.T) {
 		t.Error("Expected chained Choice to build correctly")
 	}
 
-	if _, ok := interface{}(built).(gotgbot.InputPollOption); !ok {
+	if _, ok := any(built).(gotgbot.InputPollOption); !ok {
 		t.Error("Expected result to be InputPollOption")
 	}
 
@@ -128,7 +128,7 @@ func TestChoice_EmptyText(t *testing.T) {
 	}
 
 	built := choice.Build()
-	if v, ok := interface{}(built).(gotgbot.InputPollOption); ok {
+	if v, ok := any(built).(gotgbot.InputPollOption); ok {
 		if v.Text != "" {
 			t.Errorf("Expected empty text, got %s", v.Text)
 		}

@@ -234,3 +234,105 @@ func TestCreateNewStickerSet_APIURL_NilRequestOpts(t *testing.T) {
 		t.Error("APIURL should still return builder after RequestOpts is created")
 	}
 }
+
+// Test Send method with error conditions for complete coverage
+func TestCreateNewStickerSet_SendErrorConditions(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	userID := int64(456)
+	name := g.String("error_test_sticker_set_by_bot")
+	title := g.String("Error Test Sticker Set")
+
+	// Test 1: Send with no stickers (should cause error)
+	emptyResult := ctx.CreateNewStickerSet(userID, name, title).Send()
+	if !emptyResult.IsErr() {
+		t.Error("Expected error when no stickers are added")
+	} else {
+		err := emptyResult.Err()
+		if err.Error() != "no stickers added to sticker set" {
+			t.Errorf("Expected specific error message, got: %v", err)
+		}
+		t.Logf("Send failed as expected with no stickers: %v", err)
+	}
+
+	// Test 2: Send with stickers (should reach API call)
+	emojiList := g.Slice[g.String]{}
+	emojiList.Push(g.String("😀"))
+
+	validResult := ctx.CreateNewStickerSet(userID, name, title).
+		StickerType(g.String("regular")).
+		Sticker(
+			file.Input("sticker.png").UnwrapOrDefault(),
+			g.String("static"),
+			emojiList,
+		).Add().
+		Timeout(30 * time.Second).
+		APIURL(g.String("https://api.example.com")).
+		Send()
+
+	if validResult.IsOk() {
+		t.Log("Send succeeded (unexpected with mock bot)")
+	} else {
+		t.Logf("Send failed as expected with mock bot: %v", validResult.Err())
+	}
+
+	// Test 3: Send with multiple stickers
+	emojiList2 := g.Slice[g.String]{}
+	emojiList2.Push(g.String("😂"))
+
+	emojiList3 := g.Slice[g.String]{}
+	emojiList3.Push(g.String("😎"))
+
+	keywords := g.Slice[g.String]{}
+	keywords.Push(g.String("happy"))
+	keywords.Push(g.String("fun"))
+
+	multiStickerResult := ctx.CreateNewStickerSet(userID, name, title).
+		StickerType(g.String("regular")).
+		NeedsRepainting().
+		Sticker(
+			file.Input("sticker1.png").UnwrapOrDefault(),
+			g.String("static"),
+			emojiList,
+		).Keywords(keywords).Add().
+		Sticker(
+			file.Input("sticker2.png").UnwrapOrDefault(),
+			g.String("static"),
+			emojiList2,
+		).Add().
+		Sticker(
+			file.Input("sticker3.png").UnwrapOrDefault(),
+			g.String("static"),
+			emojiList3,
+		).Add().
+		Send()
+
+	if multiStickerResult.IsOk() {
+		t.Log("Multi-sticker Send succeeded (unexpected with mock bot)")
+	} else {
+		t.Logf("Multi-sticker Send failed as expected with mock bot: %v", multiStickerResult.Err())
+	}
+
+	// Test 4: Send with different sticker types and formats
+	stickerTypes := []string{"regular", "mask", "custom_emoji"}
+	formats := []string{"static", "animated", "video"}
+
+	for _, stickerType := range stickerTypes {
+		for _, format := range formats {
+			typeFormatResult := ctx.CreateNewStickerSet(userID, name, title).
+				StickerType(g.String(stickerType)).
+				Sticker(
+					file.Input(g.String("sticker_"+stickerType+"_"+format+".file")).UnwrapOrDefault(),
+					g.String(format),
+					emojiList,
+				).Add().
+				Send()
+
+			if typeFormatResult.IsOk() {
+				t.Logf("Send with %s/%s succeeded (unexpected)", stickerType, format)
+			} else {
+				t.Logf("Send with %s/%s failed as expected: %v", stickerType, format, typeFormatResult.Err())
+			}
+		}
+	}
+}

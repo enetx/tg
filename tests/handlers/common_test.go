@@ -24,8 +24,15 @@ type MockBot struct {
 
 // NewMockBot creates a new mock bot instance
 func NewMockBot() *MockBot {
+	dispatcher := ext.NewDispatcher(&ext.DispatcherOpts{
+		Error: func(b *gotgbot.Bot, ctx *ext.Context, err error) ext.DispatcherAction {
+			// Just log errors, don't stop processing
+			return ext.DispatcherActionNoop
+		},
+	})
+
 	return &MockBot{
-		dispatcher:  &ext.Dispatcher{},
+		dispatcher:  dispatcher,
 		updater:     &ext.Updater{},
 		rawBot:      &gotgbot.Bot{},
 		middlewares: g.NewSlice[handlers.Handler](),
@@ -39,8 +46,7 @@ func (m *MockBot) Raw() *gotgbot.Bot {
 
 // Dispatcher returns the ext.Dispatcher
 func (m *MockBot) Dispatcher() *ext.Dispatcher {
-	// Mock dispatcher that tracks handler operations
-	return &ext.Dispatcher{}
+	return m.dispatcher
 }
 
 // Updater returns the ext.Updater

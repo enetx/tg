@@ -43,7 +43,7 @@ func TestStaticPhoto_BuildReturnsCorrectType(t *testing.T) {
 	built := staticPhoto.Build()
 
 	// Verify that Build() returns the correct type
-	if _, ok := interface{}(built).(gotgbot.InputProfilePhotoStatic); !ok {
+	if _, ok := any(built).(gotgbot.InputProfilePhotoStatic); !ok {
 		t.Error("Expected Build() to return gotgbot.InputProfilePhotoStatic")
 	}
 }
