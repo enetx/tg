@@ -14,6 +14,7 @@ import (
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/types/effects"
 )
 
 func TestContext_SendPhoto(t *testing.T) {
@@ -191,6 +192,18 @@ func TestSendPhoto_AllMethods(t *testing.T) {
 	result = testCtx.SendPhoto(filename).SuggestedPost(nil)
 	if result == nil {
 		t.Error("SuggestedPost method should return SendPhoto for chaining")
+	}
+
+	// Test AllowPaidBroadcast method
+	result = testCtx.SendPhoto(filename).AllowPaidBroadcast()
+	if result == nil {
+		t.Error("AllowPaidBroadcast method should return SendPhoto for chaining")
+	}
+
+	// Test Effect method
+	result = testCtx.SendPhoto(filename).Effect(effects.Fire)
+	if result == nil {
+		t.Error("Effect method should return SendPhoto for chaining")
 	}
 }
 
@@ -725,7 +738,10 @@ func TestSendPhoto_Send(t *testing.T) {
 
 func TestSendPhoto_FileClosing(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// Create a temporary file to test file closing
 	tempFile := "/tmp/test_photo.jpg"
@@ -746,7 +762,10 @@ func TestSendPhoto_FileClosing(t *testing.T) {
 
 func TestSendPhoto_TimeoutWithNilRequestOpts(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("photo.jpg")
 
 	// Test Timeout when RequestOpts is nil
@@ -758,7 +777,10 @@ func TestSendPhoto_TimeoutWithNilRequestOpts(t *testing.T) {
 
 func TestSendPhoto_APIURLWithNilRequestOpts(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	filename := g.String("photo.jpg")
 
 	// Test APIURL when RequestOpts is nil
@@ -783,7 +805,10 @@ func TestSendPhoto_DirectMessagesTopic(t *testing.T) {
 	for _, topicID := range topicIDs {
 		result := ctx.SendPhoto(filename).DirectMessagesTopic(topicID)
 		if result == nil {
-			t.Errorf("DirectMessagesTopic method should return SendPhoto builder for chaining with topicID: %d", topicID)
+			t.Errorf(
+				"DirectMessagesTopic method should return SendPhoto builder for chaining with topicID: %d",
+				topicID,
+			)
 		}
 
 		chainedResult := result.DirectMessagesTopic(topicID + 100)
@@ -818,7 +843,10 @@ func TestSendPhoto_SuggestedPost(t *testing.T) {
 
 func TestSendPhoto_SendWithExistingError(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// First create a SendPhoto with an error (invalid filename)
 	result := ctx.SendPhoto(g.String("/invalid/nonexistent/photo.jpg"))

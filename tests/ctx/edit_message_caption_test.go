@@ -47,12 +47,6 @@ func TestContext_EditMessageCaption(t *testing.T) {
 		t.Error("Business method should return EditMessageCaption for chaining")
 	}
 
-	// Test ParseMode method
-	parseModeResult := result.ParseMode(g.String("HTML"))
-	if parseModeResult == nil {
-		t.Error("ParseMode method should return EditMessageCaption for chaining")
-	}
-
 	// Test Markdown method
 	markdownResult := result.Markdown()
 	if markdownResult == nil {
@@ -162,7 +156,11 @@ func TestEditMessageCaption_AllMethods(t *testing.T) {
 		// Test send with inline message ID
 		sendResult := inlineResult.Send()
 		if sendResult.IsErr() {
-			t.Logf("EditMessageCaption with inline message ID '%s' Send failed as expected: %v", inlineID, sendResult.Err())
+			t.Logf(
+				"EditMessageCaption with inline message ID '%s' Send failed as expected: %v",
+				inlineID,
+				sendResult.Err(),
+			)
 		}
 	}
 
@@ -188,31 +186,6 @@ func TestEditMessageCaption_AllMethods(t *testing.T) {
 		sendResult := businessResult.Send()
 		if sendResult.IsErr() {
 			t.Logf("EditMessageCaption with business ID '%s' Send failed as expected: %v", businessID, sendResult.Err())
-		}
-	}
-
-	// Test ParseMode functionality
-	parseModes := []string{
-		"HTML",
-		"MarkdownV2",
-		"Markdown",
-		"", // Empty parse mode
-	}
-
-	for _, mode := range parseModes {
-		parseModeResult := ctx.EditMessageCaption(caption).
-			ParseMode(g.String(mode)).
-			ChatID(456).
-			MessageID(789)
-
-		if parseModeResult == nil {
-			t.Errorf("ParseMode with '%s' should work", mode)
-		}
-
-		// Test send with parse mode
-		sendResult := parseModeResult.Send()
-		if sendResult.IsErr() {
-			t.Logf("EditMessageCaption with parse mode '%s' Send failed as expected: %v", mode, sendResult.Err())
 		}
 	}
 
@@ -295,7 +268,9 @@ func TestEditMessageCaption_APIURLCoverage(t *testing.T) {
 	// Test APIURL method with existing RequestOpts (covers the non-nil branch)
 	anotherFreshResult := ctx.EditMessageCaption(caption)
 	apiURLFirst := anotherFreshResult.APIURL(g.String("https://first-api.telegram.org")) // This creates RequestOpts
-	apiURLSecond := apiURLFirst.APIURL(g.String("https://second-api.telegram.org"))      // This uses existing RequestOpts
+	apiURLSecond := apiURLFirst.APIURL(
+		g.String("https://second-api.telegram.org"),
+	) // This uses existing RequestOpts
 	if apiURLSecond == nil {
 		t.Error("APIURL method should return EditMessageCaption for chaining with existing RequestOpts")
 	}

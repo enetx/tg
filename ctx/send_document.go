@@ -9,6 +9,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type SendDocument struct {
@@ -68,6 +69,18 @@ func (sd *SendDocument) Silent() *SendDocument {
 // Protect enables content protection for the document message.
 func (sd *SendDocument) Protect() *SendDocument {
 	sd.opts.ProtectContent = true
+	return sd
+}
+
+// AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
+func (sd *SendDocument) AllowPaidBroadcast() *SendDocument {
+	sd.opts.AllowPaidBroadcast = true
+	return sd
+}
+
+// Effect sets a message effect for the message.
+func (sd *SendDocument) Effect(effect effects.EffectType) *SendDocument {
+	sd.opts.MessageEffectId = effect.String()
 	return sd
 }
 

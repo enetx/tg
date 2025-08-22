@@ -11,6 +11,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type SendVideo struct {
@@ -119,6 +120,18 @@ func (sv *SendVideo) Silent() *SendVideo {
 // Protect enables content protection for the video message.
 func (sv *SendVideo) Protect() *SendVideo {
 	sv.opts.ProtectContent = true
+	return sv
+}
+
+// AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
+func (sv *SendVideo) AllowPaidBroadcast() *SendVideo {
+	sv.opts.AllowPaidBroadcast = true
+	return sv
+}
+
+// Effect sets a message effect for the message.
+func (sv *SendVideo) Effect(effect effects.EffectType) *SendVideo {
+	sv.opts.MessageEffectId = effect.String()
 	return sv
 }
 

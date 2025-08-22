@@ -164,6 +164,44 @@ func TestVideo_ShowCaptionAboveMedia(t *testing.T) {
 	}
 }
 
+func TestVideo_Markup(t *testing.T) {
+	video := inline.NewVideo(testID, testURL, g.String("video/mp4"), testThumbnailURL, testTitle)
+	keyboard := createTestKeyboard()
+
+	result := video.Markup(keyboard)
+	if result == nil {
+		t.Error("Expected Markup method to return Video")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultVideo); ok {
+		if v.ReplyMarkup == nil {
+			t.Error("Expected ReplyMarkup to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultVideo")
+	}
+}
+
+func TestVideo_InputMessageContent(t *testing.T) {
+	video := inline.NewVideo(testID, testURL, g.String("video/mp4"), testThumbnailURL, testTitle)
+	messageContent := createTestMessageContent()
+
+	result := video.InputMessageContent(messageContent)
+	if result == nil {
+		t.Error("Expected InputMessageContent method to return Video")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultVideo); ok {
+		if v.InputMessageContent == nil {
+			t.Error("Expected InputMessageContent to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultVideo")
+	}
+}
+
 func TestVideo_MethodChaining(t *testing.T) {
 	msg := createTestMessageContent()
 	result := inline.NewVideo(testID, testURL, g.String("video/mp4"), testThumbnailURL, testTitle).

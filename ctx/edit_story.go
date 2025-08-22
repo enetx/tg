@@ -37,12 +37,6 @@ func (es *EditStory) Markdown() *EditStory {
 	return es
 }
 
-// ParseMode sets the parse mode for the caption.
-func (es *EditStory) ParseMode(mode g.String) *EditStory {
-	es.opts.ParseMode = mode.Std()
-	return es
-}
-
 // CaptionEntities sets custom formatting entities for the caption.
 func (es *EditStory) CaptionEntities(e *entities.Entities) *EditStory {
 	es.opts.CaptionEntities = e.Std()

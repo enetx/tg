@@ -8,6 +8,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type SendVenue struct {
@@ -43,6 +44,18 @@ func (sv *SendVenue) Silent() *SendVenue {
 // Protect enables content protection for the venue message.
 func (sv *SendVenue) Protect() *SendVenue {
 	sv.opts.ProtectContent = true
+	return sv
+}
+
+// AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
+func (sv *SendVenue) AllowPaidBroadcast() *SendVenue {
+	sv.opts.AllowPaidBroadcast = true
+	return sv
+}
+
+// Effect sets a message effect for the message.
+func (sv *SendVenue) Effect(effect effects.EffectType) *SendVenue {
+	sv.opts.MessageEffectId = effect.String()
 	return sv
 }
 

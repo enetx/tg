@@ -136,6 +136,44 @@ func TestDocument_CaptionEntities(t *testing.T) {
 	}
 }
 
+func TestDocument_Markup(t *testing.T) {
+	doc := inline.NewDocument(testID, testTitle, testURL, g.String("application/pdf"))
+	keyboard := createTestKeyboard()
+
+	result := doc.Markup(keyboard)
+	if result == nil {
+		t.Error("Expected Markup method to return Document")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultDocument); ok {
+		if v.ReplyMarkup == nil {
+			t.Error("Expected ReplyMarkup to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultDocument")
+	}
+}
+
+func TestDocument_InputMessageContent(t *testing.T) {
+	doc := inline.NewDocument(testID, testTitle, testURL, g.String("application/pdf"))
+	messageContent := createTestMessageContent()
+
+	result := doc.InputMessageContent(messageContent)
+	if result == nil {
+		t.Error("Expected InputMessageContent method to return Document")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultDocument); ok {
+		if v.InputMessageContent == nil {
+			t.Error("Expected InputMessageContent to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultDocument")
+	}
+}
+
 func TestDocument_MethodChaining(t *testing.T) {
 	result := inline.NewDocument(testID, testTitle, testURL, g.String("application/pdf")).
 		Caption(testCaption).

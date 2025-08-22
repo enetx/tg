@@ -8,6 +8,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type SendVideoNote struct {
@@ -43,6 +44,18 @@ func (svn *SendVideoNote) Silent() *SendVideoNote {
 // Protect enables content protection for the video note message.
 func (svn *SendVideoNote) Protect() *SendVideoNote {
 	svn.opts.ProtectContent = true
+	return svn
+}
+
+// AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
+func (svn *SendVideoNote) AllowPaidBroadcast() *SendVideoNote {
+	svn.opts.AllowPaidBroadcast = true
+	return svn
+}
+
+// Effect sets a message effect for the message.
+func (svn *SendVideoNote) Effect(effect effects.EffectType) *SendVideoNote {
+	svn.opts.MessageEffectId = effect.String()
 	return svn
 }
 

@@ -73,43 +73,6 @@ func TestEditStory_Markdown(t *testing.T) {
 	}
 }
 
-func TestEditStory_ParseMode(t *testing.T) {
-	bot := &mockBot{}
-	rawCtx := &ext.Context{
-		EffectiveChat: &gotgbot.Chat{Id: 123, Type: "private"},
-		Update:        &gotgbot.Update{UpdateId: 1},
-	}
-
-	ctx := ctx.New(bot, rawCtx)
-	businessConnectionID := g.String("business_conn_123")
-	storyID := int64(456)
-	content := input.StoryPhoto(g.String("parsemode-photo.jpg"))
-
-	// Test various parse modes
-	parseModes := []string{
-		"HTML",
-		"MarkdownV2",
-		"Markdown",
-		"", // Empty parse mode
-	}
-
-	for _, mode := range parseModes {
-		parseModeResult := ctx.EditStory(businessConnectionID, storyID, content).
-			Caption(g.String("Story caption with parse mode")).
-			ParseMode(g.String(mode))
-
-		if parseModeResult == nil {
-			t.Errorf("ParseMode with '%s' should work", mode)
-		}
-
-		// Test send with parse mode
-		sendResult := parseModeResult.Send()
-		if sendResult.IsErr() {
-			t.Logf("EditStory with parse mode '%s' Send failed as expected: %v", mode, sendResult.Err())
-		}
-	}
-}
-
 func TestEditStory_CaptionEntities(t *testing.T) {
 	bot := &mockBot{}
 	rawCtx := &ext.Context{
@@ -250,8 +213,12 @@ func TestEditStory_APIURL(t *testing.T) {
 
 	// Test APIURL method with existing RequestOpts (covers the non-nil branch)
 	anotherFreshResult := ctx.EditStory(businessConnectionID, storyID, content)
-	apiURLFirst := anotherFreshResult.APIURL(g.String("https://first-story-api.telegram.org")) // This creates RequestOpts
-	apiURLSecond := apiURLFirst.APIURL(g.String("https://second-story-api.telegram.org"))      // This uses existing RequestOpts
+	apiURLFirst := anotherFreshResult.APIURL(
+		g.String("https://first-story-api.telegram.org"),
+	) // This creates RequestOpts
+	apiURLSecond := apiURLFirst.APIURL(
+		g.String("https://second-story-api.telegram.org"),
+	) // This uses existing RequestOpts
 	if apiURLSecond == nil {
 		t.Error("APIURL method should return EditStory for chaining with existing RequestOpts")
 	}
@@ -361,16 +328,5 @@ func TestEditStory_ComprehensiveWorkflow(t *testing.T) {
 
 	if markdownResult.IsErr() {
 		t.Logf("EditStory markdown workflow Send failed as expected: %v", markdownResult.Err())
-	}
-
-	// Test with custom parse mode
-	customParseModeResult := ctx.EditStory(businessConnectionID, storyID, content).
-		Caption(g.String("Custom parse mode story")).
-		ParseMode(g.String("CustomMode")).
-		Timeout(20 * time.Second).
-		Send()
-
-	if customParseModeResult.IsErr() {
-		t.Logf("EditStory custom parse mode workflow Send failed as expected: %v", customParseModeResult.Err())
 	}
 }

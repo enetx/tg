@@ -9,6 +9,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type SendAnimation struct {
@@ -68,6 +69,18 @@ func (sa *SendAnimation) Silent() *SendAnimation {
 // Protect enables content protection for the animation message.
 func (sa *SendAnimation) Protect() *SendAnimation {
 	sa.opts.ProtectContent = true
+	return sa
+}
+
+// AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
+func (sa *SendAnimation) AllowPaidBroadcast() *SendAnimation {
+	sa.opts.AllowPaidBroadcast = true
+	return sa
+}
+
+// Effect sets a message effect for the message.
+func (sa *SendAnimation) Effect(effect effects.EffectType) *SendAnimation {
+	sa.opts.MessageEffectId = effect.String()
 	return sa
 }
 

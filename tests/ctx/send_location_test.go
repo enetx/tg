@@ -10,6 +10,7 @@ import (
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/types/effects"
 )
 
 func TestContext_SendLocation(t *testing.T) {
@@ -57,6 +58,18 @@ func TestContext_SendLocationChaining(t *testing.T) {
 	final := result.Protect()
 	if final == nil {
 		t.Error("Expected Protect method to return builder")
+	}
+
+	// Test AllowPaidBroadcast method
+	result = ctx.SendLocation(lat, lon).AllowPaidBroadcast()
+	if result == nil {
+		t.Error("AllowPaidBroadcast method should return SendLocation for chaining")
+	}
+
+	// Test Effect method
+	result = ctx.SendLocation(lat, lon).Effect(effects.Fire)
+	if result == nil {
+		t.Error("Effect method should return SendLocation for chaining")
 	}
 }
 

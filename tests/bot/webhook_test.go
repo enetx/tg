@@ -278,12 +278,11 @@ func TestWebhook_Certificate(t *testing.T) {
 		if r := recover(); r != nil {
 			// This is expected behavior with non-existent file
 			t.Logf("Certificate panicked as expected: %v", r)
+		} else {
+			t.Error("Expected Certificate to panic with non-existent file, but it didn't")
 		}
 	}()
 
 	// This will panic but we catch it above for coverage
-	botInstance.Webhook().Certificate("/nonexistent/cert.pem")
-
-	// Should not reach here with non-existent file
-	t.Error("Expected Certificate to panic with non-existent file, but it didn't")
+	botInstance.Webhook().Certificate(g.String("/nonexistent/cert.pem"))
 }

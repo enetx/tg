@@ -10,6 +10,8 @@ import (
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 func TestContext_SendContact(t *testing.T) {
@@ -283,7 +285,10 @@ func TestSendContact_DirectMessagesTopic(t *testing.T) {
 	for _, topicID := range topicIDs {
 		result := ctx.SendContact(phoneNumber, firstName).DirectMessagesTopic(topicID)
 		if result == nil {
-			t.Errorf("DirectMessagesTopic method should return SendContact builder for chaining with topicID: %d", topicID)
+			t.Errorf(
+				"DirectMessagesTopic method should return SendContact builder for chaining with topicID: %d",
+				topicID,
+			)
 		}
 
 		chainedResult := result.DirectMessagesTopic(topicID + 100)
@@ -310,16 +315,60 @@ func TestSendContact_SuggestedPost(t *testing.T) {
 		t.Error("SuggestedPost method should return SendContact builder for chaining with nil params")
 	}
 
-	// Test chaining
-	chainedResult := result.SuggestedPost(nil)
+	// Test with valid params
+	suggestedParams := suggested.New()
+	chainedResult := result.SuggestedPost(suggestedParams)
 	if chainedResult == nil {
-		t.Error("SuggestedPost method should support chaining")
+		t.Error("SuggestedPost method should support chaining and override with valid params")
+	}
+}
+
+func TestSendContact_AllowPaidBroadcast(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+
+	result := ctx.SendContact(phoneNumber, firstName).AllowPaidBroadcast()
+	if result == nil {
+		t.Error("AllowPaidBroadcast method should return SendContact builder for chaining")
+	}
+}
+
+func TestSendContact_Effect(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+
+	result := ctx.SendContact(phoneNumber, firstName).Effect(effects.Fire)
+	if result == nil {
+		t.Error("Effect method should return SendContact builder for chaining")
+	}
+
+	// Test chaining with different effects
+	chainedResult := result.Effect(effects.Heart)
+	if chainedResult == nil {
+		t.Error("Effect method should support chaining and override with different effect")
 	}
 }
 
 func TestSendContact_APIURLWithExistingRequestOpts(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// First set Timeout to create RequestOpts, then test APIURL
 	result := ctx.SendContact(g.String("123456789"), g.String("John")).

@@ -8,6 +8,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type SendSticker struct {
@@ -42,6 +43,18 @@ func (ss *SendSticker) Silent() *SendSticker {
 // Protect enables content protection for the sticker message.
 func (ss *SendSticker) Protect() *SendSticker {
 	ss.opts.ProtectContent = true
+	return ss
+}
+
+// AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
+func (ss *SendSticker) AllowPaidBroadcast() *SendSticker {
+	ss.opts.AllowPaidBroadcast = true
+	return ss
+}
+
+// Effect sets a message effect for the message.
+func (ss *SendSticker) Effect(effect effects.EffectType) *SendSticker {
+	ss.opts.MessageEffectId = effect.String()
 	return ss
 }
 

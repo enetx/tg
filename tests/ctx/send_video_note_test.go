@@ -11,6 +11,7 @@ import (
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/types/effects"
 )
 
 func TestContext_SendVideoNote(t *testing.T) {
@@ -60,6 +61,18 @@ func TestContext_SendVideoNoteChaining(t *testing.T) {
 	final := result.Protect()
 	if final == nil {
 		t.Error("Expected Protect method to return builder")
+	}
+
+	// Test AllowPaidBroadcast method
+	result = ctx.SendVideoNote(filename).AllowPaidBroadcast()
+	if result == nil {
+		t.Error("AllowPaidBroadcast method should return SendVideoNote for chaining")
+	}
+
+	// Test Effect method
+	result = ctx.SendVideoNote(filename).Effect(effects.Fire)
+	if result == nil {
+		t.Error("Effect method should return SendVideoNote for chaining")
 	}
 }
 

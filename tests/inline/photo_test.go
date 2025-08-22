@@ -182,6 +182,25 @@ func TestPhoto_ShowCaptionAboveMedia(t *testing.T) {
 	}
 }
 
+func TestPhoto_Markup(t *testing.T) {
+	photo := inline.NewPhoto(testID, testURL, testThumbnailURL)
+	keyboard := createTestKeyboard()
+
+	result := photo.Markup(keyboard)
+	if result == nil {
+		t.Error("Expected Markup method to return Photo")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultPhoto); ok {
+		if v.ReplyMarkup == nil {
+			t.Error("Expected ReplyMarkup to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultPhoto")
+	}
+}
+
 func TestPhoto_InputMessageContent(t *testing.T) {
 	photo := inline.NewPhoto(testID, testURL, testThumbnailURL)
 	messageContent := createTestMessageContent()

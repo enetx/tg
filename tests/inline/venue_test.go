@@ -118,6 +118,65 @@ func TestVenue_ThumbnailURL(t *testing.T) {
 	}
 }
 
+func TestVenue_ThumbnailSize(t *testing.T) {
+	venue := inline.NewVenue(testID, 40.7128, -74.0060, testTitle, g.String("New York, NY"))
+
+	result := venue.ThumbnailSize(150, 150)
+	if result == nil {
+		t.Error("Expected ThumbnailSize method to return Venue")
+	}
+
+	built := result.Build()
+	if venueResult, ok := built.(gotgbot.InlineQueryResultVenue); ok {
+		if venueResult.ThumbnailWidth != 150 {
+			t.Error("Expected ThumbnailWidth to be set correctly")
+		}
+		if venueResult.ThumbnailHeight != 150 {
+			t.Error("Expected ThumbnailHeight to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultVenue")
+	}
+}
+
+func TestVenue_Markup(t *testing.T) {
+	venue := inline.NewVenue(testID, 40.7128, -74.0060, testTitle, g.String("New York, NY"))
+	keyboard := createTestKeyboard()
+
+	result := venue.Markup(keyboard)
+	if result == nil {
+		t.Error("Expected Markup method to return Venue")
+	}
+
+	built := result.Build()
+	if venueResult, ok := built.(gotgbot.InlineQueryResultVenue); ok {
+		if venueResult.ReplyMarkup == nil {
+			t.Error("Expected ReplyMarkup to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultVenue")
+	}
+}
+
+func TestVenue_InputMessageContent(t *testing.T) {
+	venue := inline.NewVenue(testID, 40.7128, -74.0060, testTitle, g.String("New York, NY"))
+	messageContent := createTestMessageContent()
+
+	result := venue.InputMessageContent(messageContent)
+	if result == nil {
+		t.Error("Expected InputMessageContent method to return Venue")
+	}
+
+	built := result.Build()
+	if venueResult, ok := built.(gotgbot.InlineQueryResultVenue); ok {
+		if venueResult.InputMessageContent == nil {
+			t.Error("Expected InputMessageContent to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultVenue")
+	}
+}
+
 func TestVenue_MethodChaining(t *testing.T) {
 	foursquareID := g.String("fs-id-123")
 	googleID := g.String("gplace-123")

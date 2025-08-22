@@ -10,6 +10,7 @@ import (
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/types/effects"
 )
 
 func TestContext_SendVenue(t *testing.T) {
@@ -62,6 +63,18 @@ func TestContext_SendVenueChaining(t *testing.T) {
 	final := result.Protect()
 	if final == nil {
 		t.Error("Expected Protect method to return builder")
+	}
+
+	// Test AllowPaidBroadcast method
+	result = ctx.SendVenue(lat, lon, title, address).AllowPaidBroadcast()
+	if result == nil {
+		t.Error("AllowPaidBroadcast method should return SendVenue for chaining")
+	}
+
+	// Test Effect method
+	result = ctx.SendVenue(lat, lon, title, address).Effect(effects.Fire)
+	if result == nil {
+		t.Error("Effect method should return SendVenue for chaining")
 	}
 }
 

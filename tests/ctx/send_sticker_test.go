@@ -11,6 +11,7 @@ import (
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/types/effects"
 )
 
 func TestContext_SendSticker(t *testing.T) {
@@ -59,6 +60,18 @@ func TestContext_SendStickerChaining(t *testing.T) {
 	final := result.Thread(456)
 	if final == nil {
 		t.Error("Expected Thread method to return builder")
+	}
+
+	// Test AllowPaidBroadcast method
+	result = ctx.SendSticker(sticker).AllowPaidBroadcast()
+	if result == nil {
+		t.Error("AllowPaidBroadcast method should return SendSticker for chaining")
+	}
+
+	// Test Effect method
+	result = ctx.SendSticker(sticker).Effect(effects.Fire)
+	if result == nil {
+		t.Error("Effect method should return SendSticker for chaining")
 	}
 }
 

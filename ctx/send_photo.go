@@ -9,6 +9,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type SendPhoto struct {
@@ -73,6 +74,18 @@ func (sp *SendPhoto) Silent() *SendPhoto {
 // Protect enables content protection for the photo message.
 func (sp *SendPhoto) Protect() *SendPhoto {
 	sp.opts.ProtectContent = true
+	return sp
+}
+
+// AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
+func (sp *SendPhoto) AllowPaidBroadcast() *SendPhoto {
+	sp.opts.AllowPaidBroadcast = true
+	return sp
+}
+
+// Effect sets a message effect for the message.
+func (sp *SendPhoto) Effect(effect effects.EffectType) *SendPhoto {
+	sp.opts.MessageEffectId = effect.String()
 	return sp
 }
 

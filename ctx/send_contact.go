@@ -8,6 +8,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type SendContact struct {
@@ -41,6 +42,18 @@ func (sc *SendContact) Silent() *SendContact {
 // Protect enables content protection for the contact message.
 func (sc *SendContact) Protect() *SendContact {
 	sc.opts.ProtectContent = true
+	return sc
+}
+
+// AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
+func (sc *SendContact) AllowPaidBroadcast() *SendContact {
+	sc.opts.AllowPaidBroadcast = true
+	return sc
+}
+
+// Effect sets a message effect for the message.
+func (sc *SendContact) Effect(effect effects.EffectType) *SendContact {
+	sc.opts.MessageEffectId = effect.String()
 	return sc
 }
 

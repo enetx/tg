@@ -95,7 +95,10 @@ func TestSendPaidMedia_Send(t *testing.T) {
 
 func TestSendPaidMedia_Photo(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 	photoResult := file.Input(g.String("https://example.com/photo.jpg"))
 	if photoResult.IsErr() {
@@ -109,7 +112,10 @@ func TestSendPaidMedia_Photo(t *testing.T) {
 
 func TestSendPaidMedia_Video(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 	videoResult := file.Input(g.String("https://example.com/video.mp4"))
 	if videoResult.IsErr() {
@@ -123,7 +129,10 @@ func TestSendPaidMedia_Video(t *testing.T) {
 
 func TestSendPaidMedia_Business(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 	if ctx.SendPaidMedia(starCount).Business(g.String("biz_123")) == nil {
 		t.Error("Business should return builder")
@@ -132,7 +141,10 @@ func TestSendPaidMedia_Business(t *testing.T) {
 
 func TestSendPaidMedia_Payload(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 	if ctx.SendPaidMedia(starCount).Payload(g.String("custom_payload_123")) == nil {
 		t.Error("Payload should return builder")
@@ -141,7 +153,10 @@ func TestSendPaidMedia_Payload(t *testing.T) {
 
 func TestSendPaidMedia_Markdown(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 	if ctx.SendPaidMedia(starCount).Markdown() == nil {
 		t.Error("Markdown should return builder")
@@ -150,7 +165,10 @@ func TestSendPaidMedia_Markdown(t *testing.T) {
 
 func TestSendPaidMedia_ShowCaptionAbove(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 	if ctx.SendPaidMedia(starCount).ShowCaptionAbove() == nil {
 		t.Error("ShowCaptionAbove should return builder")
@@ -159,7 +177,10 @@ func TestSendPaidMedia_ShowCaptionAbove(t *testing.T) {
 
 func TestSendPaidMedia_AllowPaidBroadcast(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 	if ctx.SendPaidMedia(starCount).AllowPaidBroadcast() == nil {
 		t.Error("AllowPaidBroadcast should return builder")
@@ -168,7 +189,10 @@ func TestSendPaidMedia_AllowPaidBroadcast(t *testing.T) {
 
 func TestSendPaidMedia_ReplyTo(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 	if ctx.SendPaidMedia(starCount).Reply(reply.New(123)) == nil {
 		t.Error("ReplyTo should return builder")
@@ -177,7 +201,10 @@ func TestSendPaidMedia_ReplyTo(t *testing.T) {
 
 func TestSendPaidMedia_Markup(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 	btn1 := keyboard.NewButton().Text(g.String("Buy Now")).Callback(g.String("buy_now"))
 	if ctx.SendPaidMedia(starCount).Markup(keyboard.Inline().Button(btn1)) == nil {
@@ -187,7 +214,10 @@ func TestSendPaidMedia_Markup(t *testing.T) {
 
 func TestSendPaidMedia_SendWithError(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 
 	// Test Send with no media - should return error
@@ -202,7 +232,10 @@ func TestSendPaidMedia_SendWithError(t *testing.T) {
 
 func TestSendPaidMedia_SendWithValidMedia(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 
 	// Add valid media
@@ -222,7 +255,10 @@ func TestSendPaidMedia_SendWithValidMedia(t *testing.T) {
 
 func TestSendPaidMedia_SendWithTooManyMedia(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 
 	// Add 11 media items (over the limit of 10)
@@ -250,7 +286,10 @@ func TestSendPaidMedia_SendWithTooManyMedia(t *testing.T) {
 
 func TestSendPaidMedia_SendWithInvalidStarCount(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// Test with star count = 0 (below minimum)
 	photoResult := file.Input(g.String("https://example.com/photo.jpg"))
@@ -292,7 +331,10 @@ func TestSendPaidMedia_DirectMessagesTopic(t *testing.T) {
 	for _, topicID := range topicIDs {
 		result := ctx.SendPaidMedia(starCount).DirectMessagesTopic(topicID)
 		if result == nil {
-			t.Errorf("DirectMessagesTopic method should return SendPaidMedia builder for chaining with topicID: %d", topicID)
+			t.Errorf(
+				"DirectMessagesTopic method should return SendPaidMedia builder for chaining with topicID: %d",
+				topicID,
+			)
 		}
 
 		chainedResult := result.DirectMessagesTopic(topicID + 100)
@@ -327,7 +369,10 @@ func TestSendPaidMedia_SuggestedPost(t *testing.T) {
 
 func TestSendPaidMedia_APIURLWithExistingRequestOpts(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 	starCount := int64(100)
 
 	// First set Timeout to create RequestOpts, then test APIURL

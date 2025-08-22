@@ -12,6 +12,7 @@ import (
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/types/effects"
 )
 
 func TestContext_SendAnimation(t *testing.T) {
@@ -61,6 +62,18 @@ func TestContext_SendAnimationChaining(t *testing.T) {
 	final := result.Silent()
 	if final == nil {
 		t.Error("Expected Silent method to return builder")
+	}
+
+	// Test AllowPaidBroadcast method
+	result = ctx.SendAnimation(filename).AllowPaidBroadcast()
+	if result == nil {
+		t.Error("AllowPaidBroadcast method should return SendAnimation for chaining")
+	}
+
+	// Test Effect method
+	result = ctx.SendAnimation(filename).Effect(effects.Fire)
+	if result == nil {
+		t.Error("Effect method should return SendAnimation for chaining")
 	}
 }
 

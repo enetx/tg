@@ -12,6 +12,7 @@ import (
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/types/effects"
 )
 
 func TestContext_SendDocument(t *testing.T) {
@@ -62,6 +63,18 @@ func TestContext_SendDocumentChaining(t *testing.T) {
 	final := result.Protect()
 	if final == nil {
 		t.Error("Expected protect method to return builder")
+	}
+
+	// Test AllowPaidBroadcast method
+	result = ctx.SendDocument(filename).AllowPaidBroadcast()
+	if result == nil {
+		t.Error("AllowPaidBroadcast method should return SendDocument for chaining")
+	}
+
+	// Test Effect method
+	result = ctx.SendDocument(filename).Effect(effects.Fire)
+	if result == nil {
+		t.Error("Effect method should return SendDocument for chaining")
 	}
 }
 

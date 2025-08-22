@@ -12,6 +12,7 @@ import (
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/types/effects"
 )
 
 func TestContext_SendAudio(t *testing.T) {
@@ -535,5 +536,17 @@ func TestSendAudio_To(t *testing.T) {
 	result := ctx.SendAudio(filename).To(123456)
 	if result == nil {
 		t.Error("To should return builder")
+	}
+
+	// Test AllowPaidBroadcast method
+	result = ctx.SendAudio(filename).AllowPaidBroadcast()
+	if result == nil {
+		t.Error("AllowPaidBroadcast method should return SendAudio for chaining")
+	}
+
+	// Test Effect method
+	result = ctx.SendAudio(filename).Effect(effects.Fire)
+	if result == nil {
+		t.Error("Effect method should return SendAudio for chaining")
 	}
 }

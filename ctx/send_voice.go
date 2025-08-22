@@ -9,6 +9,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type SendVoice struct {
@@ -67,6 +68,18 @@ func (sv *SendVoice) Silent() *SendVoice {
 // Protect enables content protection for the voice message.
 func (sv *SendVoice) Protect() *SendVoice {
 	sv.opts.ProtectContent = true
+	return sv
+}
+
+// AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
+func (sv *SendVoice) AllowPaidBroadcast() *SendVoice {
+	sv.opts.AllowPaidBroadcast = true
+	return sv
+}
+
+// Effect sets a message effect for the message.
+func (sv *SendVoice) Effect(effect effects.EffectType) *SendVoice {
+	sv.opts.MessageEffectId = effect.String()
 	return sv
 }
 

@@ -121,6 +121,68 @@ func TestLocation_ThumbnailURL(t *testing.T) {
 	}
 }
 
+func TestLocation_ThumbnailSize(t *testing.T) {
+	location := inline.NewLocation(testID, 40.7128, -74.0060, testTitle)
+
+	result := location.ThumbnailSize(150, 150)
+	if result == nil {
+		t.Error("Expected ThumbnailSize method to return Location")
+	}
+	if result != location {
+		t.Error("Expected ThumbnailSize to return same Location instance")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultLocation); ok {
+		if v.ThumbnailWidth != 150 {
+			t.Error("Expected ThumbnailWidth to be set correctly")
+		}
+		if v.ThumbnailHeight != 150 {
+			t.Error("Expected ThumbnailHeight to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultLocation")
+	}
+}
+
+func TestLocation_Markup(t *testing.T) {
+	location := inline.NewLocation(testID, 40.7128, -74.0060, testTitle)
+	keyboard := createTestKeyboard()
+
+	result := location.Markup(keyboard)
+	if result == nil {
+		t.Error("Expected Markup method to return Location")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultLocation); ok {
+		if v.ReplyMarkup == nil {
+			t.Error("Expected ReplyMarkup to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultLocation")
+	}
+}
+
+func TestLocation_InputMessageContent(t *testing.T) {
+	location := inline.NewLocation(testID, 40.7128, -74.0060, testTitle)
+	messageContent := createTestMessageContent()
+
+	result := location.InputMessageContent(messageContent)
+	if result == nil {
+		t.Error("Expected InputMessageContent method to return Location")
+	}
+
+	built := result.Build()
+	if v, ok := built.(gotgbot.InlineQueryResultLocation); ok {
+		if v.InputMessageContent == nil {
+			t.Error("Expected InputMessageContent to be set correctly")
+		}
+	} else {
+		t.Error("Expected result to be InlineQueryResultLocation")
+	}
+}
+
 func TestLocation_MethodChaining(t *testing.T) {
 	messageContent := createTestMessageContent()
 

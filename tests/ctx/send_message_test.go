@@ -12,6 +12,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
 	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -137,6 +138,31 @@ func TestContextSendMessage(t *testing.T) {
 	result = testCtx.SendMessage(text).APIURL(g.String("https://api.telegram.org"))
 	if result == nil {
 		t.Error("APIURL method should return SendMessage for chaining")
+	}
+
+	// Test AllowPaidBroadcast method
+	result = testCtx.SendMessage(text).AllowPaidBroadcast()
+	if result == nil {
+		t.Error("AllowPaidBroadcast method should return SendMessage for chaining")
+	}
+
+	// Test Effect method
+	result = testCtx.SendMessage(text).Effect(effects.Fire)
+	if result == nil {
+		t.Error("Effect method should return SendMessage for chaining")
+	}
+
+	// Test DirectMessagesTopic method
+	result = testCtx.SendMessage(text).DirectMessagesTopic(789)
+	if result == nil {
+		t.Error("DirectMessagesTopic method should return SendMessage for chaining")
+	}
+
+	// Test SuggestedPost method
+	suggestedParams := suggested.New()
+	result = testCtx.SendMessage(text).SuggestedPost(suggestedParams)
+	if result == nil {
+		t.Error("SuggestedPost method should return SendMessage for chaining")
 	}
 }
 
@@ -550,7 +576,10 @@ func TestSendMessage_DirectMessagesTopic(t *testing.T) {
 	for _, topicID := range topicIDs {
 		result := ctx.SendMessage(text).DirectMessagesTopic(topicID)
 		if result == nil {
-			t.Errorf("DirectMessagesTopic method should return SendMessage builder for chaining with topicID: %d", topicID)
+			t.Errorf(
+				"DirectMessagesTopic method should return SendMessage builder for chaining with topicID: %d",
+				topicID,
+			)
 		}
 
 		chainedResult := result.DirectMessagesTopic(topicID + 100)

@@ -8,6 +8,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type SendLocation struct {
@@ -41,6 +42,18 @@ func (sl *SendLocation) Silent() *SendLocation {
 // Protect enables content protection for the location message.
 func (sl *SendLocation) Protect() *SendLocation {
 	sl.opts.ProtectContent = true
+	return sl
+}
+
+// AllowPaidBroadcast allows the message to be sent in paid broadcast channels.
+func (sl *SendLocation) AllowPaidBroadcast() *SendLocation {
+	sl.opts.AllowPaidBroadcast = true
+	return sl
+}
+
+// Effect sets a message effect for the message.
+func (sl *SendLocation) Effect(effect effects.EffectType) *SendLocation {
+	sl.opts.MessageEffectId = effect.String()
 	return sl
 }
 

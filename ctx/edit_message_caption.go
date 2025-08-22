@@ -41,12 +41,6 @@ func (emc *EditMessageCaption) Business(id g.String) *EditMessageCaption {
 	return emc
 }
 
-// ParseMode sets the parse mode for the caption (HTML, Markdown, MarkdownV2).
-func (emc *EditMessageCaption) ParseMode(mode g.String) *EditMessageCaption {
-	emc.opts.ParseMode = mode.Std()
-	return emc
-}
-
 // HTML sets the parse mode to HTML.
 func (emc *EditMessageCaption) HTML() *EditMessageCaption {
 	emc.opts.ParseMode = "HTML"

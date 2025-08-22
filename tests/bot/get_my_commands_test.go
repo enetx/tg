@@ -90,9 +90,15 @@ func TestGetMyCommands_AllScopeMethods(t *testing.T) {
 		t.Error("Expected Timeout method to return request")
 	}
 
-	req = req.APIURL("https://api.telegram.org")
+	req = req.APIURL(g.String("https://api.telegram.org"))
 	if req == nil {
 		t.Error("Expected APIURL method to return request")
+	}
+
+	// Test APIURL with empty string for coverage
+	req2 := bot.GetMyCommands().APIURL(g.String(""))
+	if req2 == nil {
+		t.Error("Expected APIURL with empty string to return request")
 	}
 }
 

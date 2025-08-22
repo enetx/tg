@@ -99,8 +99,22 @@ func TestBotBuilderValidTokenFormat(t *testing.T) {
 			Build()
 
 		if result.IsErr() {
-			t.Errorf("Expected successful bot creation for token '%s', got error: %v",
-				token, result.Err())
+			t.Errorf("Expected valid token format '%s' to succeed, got error: %v", token, result.Err())
+		} else {
+			// Test that user was set correctly from token parsing
+			b := result.Ok()
+			if b.Raw().User.Id == 0 {
+				t.Errorf("Expected bot ID to be parsed from token '%s', got 0", token)
+			}
+			if !b.Raw().User.IsBot {
+				t.Error("Expected IsBot to be true")
+			}
+			if b.Raw().User.FirstName != "<unknown>" {
+				t.Errorf("Expected FirstName to be '<unknown>', got '%s'", b.Raw().User.FirstName)
+			}
+			if b.Raw().User.Username != "<unknown>" {
+				t.Errorf("Expected Username to be '<unknown>', got '%s'", b.Raw().User.Username)
+			}
 		}
 	}
 }

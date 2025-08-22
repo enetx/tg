@@ -105,9 +105,15 @@ func TestSetMyCommands_AllMethods(t *testing.T) {
 		t.Error("Expected Timeout method to return request")
 	}
 
-	req = req.APIURL("https://api.telegram.org")
+	req = req.APIURL(g.String("https://api.telegram.org"))
 	if req == nil {
 		t.Error("Expected APIURL method to return request")
+	}
+
+	// Test APIURL with empty string for coverage
+	req2 := bot.SetMyCommands().APIURL(g.String(""))
+	if req2 == nil {
+		t.Error("Expected APIURL with empty string to return request")
 	}
 }
 
@@ -120,13 +126,38 @@ func TestSetMyCommands_Send(t *testing.T) {
 		return
 	}
 
-	bot := result.Ok()
+	botInstance := result.Ok()
+
+	// Test Send with no commands - should return error
+	reqEmpty := botInstance.SetMyCommands()
+	resultEmpty := reqEmpty.Send()
+	if resultEmpty.IsOk() {
+		t.Error("Expected Send with no commands to fail, but it succeeded")
+	} else {
+		t.Logf("Send with no commands failed as expected: %v", resultEmpty.Err())
+	}
+
+	// Test Send with too many commands (>100) - should return error
+	tooManyCommands := make([]gotgbot.BotCommand, 101)
+	for i := 0; i < 101; i++ {
+		tooManyCommands[i] = gotgbot.BotCommand{
+			Command:     g.String("cmd" + g.Int(i).String().Std()).Std(),
+			Description: "Description",
+		}
+	}
+	reqTooMany := botInstance.SetMyCommands().Commands(g.SliceOf(tooManyCommands...))
+	resultTooMany := reqTooMany.Send()
+	if resultTooMany.IsOk() {
+		t.Error("Expected Send with too many commands to fail, but it succeeded")
+	} else {
+		t.Logf("Send with too many commands failed as expected: %v", resultTooMany.Err())
+	}
+
+	// Test Send with valid commands - expect it to fail with invalid token but increase coverage
 	commands := g.SliceOf(
 		gotgbot.BotCommand{Command: "help", Description: "Show help"},
 	)
-	req := bot.SetMyCommands().Commands(commands)
-
-	// Test Send method - expect it to fail with invalid token but increase coverage
+	req := botInstance.SetMyCommands().Commands(commands)
 	result2 := req.Send()
 	if result2.IsOk() {
 		t.Error("Expected Send to fail with invalid token, but it succeeded")
