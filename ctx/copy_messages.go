@@ -86,6 +86,12 @@ func (cm *CopyMessages) APIURL(url g.String) *CopyMessages {
 	return cm
 }
 
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (cm *CopyMessages) DirectMessagesTopic(topicID int64) *CopyMessages {
+	cm.opts.DirectMessagesTopicId = topicID
+	return cm
+}
+
 // Send copies the messages and returns the array of sent message IDs.
 func (cm *CopyMessages) Send() g.Result[g.Slice[gotgbot.MessageId]] {
 	if cm.messageIDs.Empty() {

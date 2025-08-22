@@ -11,6 +11,7 @@ import (
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -253,7 +254,7 @@ func TestSendPoll_ReplyTo(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	question := g.String("What's your favorite color?")
-	if ctx.SendPoll(question).ReplyTo(123) == nil {
+	if ctx.SendPoll(question).Reply(reply.New(123)) == nil {
 		t.Error("ReplyTo should return builder")
 	}
 }

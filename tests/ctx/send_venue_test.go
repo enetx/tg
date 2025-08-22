@@ -9,6 +9,7 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 )
 
 func TestContext_SendVenue(t *testing.T) {
@@ -141,7 +142,7 @@ func TestSendVenue_ReplyTo(t *testing.T) {
 	lat, lon := 40.7128, -74.0060
 	title := g.String("Test Venue")
 	address := g.String("123 Test St")
-	if ctx.SendVenue(lat, lon, title, address).ReplyTo(123) == nil {
+	if ctx.SendVenue(lat, lon, title, address).Reply(reply.New(123)) == nil {
 		t.Error("ReplyTo should return builder")
 	}
 }
@@ -165,6 +166,60 @@ func TestSendVenue_Thread(t *testing.T) {
 	address := g.String("123 Test St")
 	if ctx.SendVenue(lat, lon, title, address).Thread(456) == nil {
 		t.Error("Thread should return builder")
+	}
+}
+
+func TestSendVenue_DirectMessagesTopic(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	latitude := 40.7128
+	longitude := -74.0060
+	title := g.String("Test Venue")
+	address := g.String("123 Test St")
+
+	topicIDs := []int64{123, 456, 789, 0, -1}
+
+	for _, topicID := range topicIDs {
+		result := ctx.SendVenue(latitude, longitude, title, address).DirectMessagesTopic(topicID)
+		if result == nil {
+			t.Errorf("DirectMessagesTopic method should return SendVenue builder for chaining with topicID: %d", topicID)
+		}
+
+		chainedResult := result.DirectMessagesTopic(topicID + 100)
+		if chainedResult == nil {
+			t.Errorf("DirectMessagesTopic method should support chaining and override with topicID: %d", topicID)
+		}
+	}
+}
+
+func TestSendVenue_SuggestedPost(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	latitude := 40.7128
+	longitude := -74.0060
+	title := g.String("Test Venue")
+	address := g.String("123 Test St")
+
+	// Test with nil params
+	result := ctx.SendVenue(latitude, longitude, title, address).SuggestedPost(nil)
+	if result == nil {
+		t.Error("SuggestedPost method should return SendVenue builder for chaining with nil params")
+	}
+
+	// Test chaining
+	chainedResult := result.SuggestedPost(nil)
+	if chainedResult == nil {
+		t.Error("SuggestedPost method should support chaining")
 	}
 }
 

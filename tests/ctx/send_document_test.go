@@ -11,6 +11,7 @@ import (
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 )
 
 func TestContext_SendDocument(t *testing.T) {
@@ -157,7 +158,7 @@ func TestSendDocument_ReplyTo(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	filename := g.String("document.pdf")
-	if ctx.SendDocument(filename).ReplyTo(123) == nil {
+	if ctx.SendDocument(filename).Reply(reply.New(123)) == nil {
 		t.Error("ReplyTo should return builder")
 	}
 }
@@ -297,6 +298,54 @@ func TestSendDocument_APIURLWithNilRequestOpts(t *testing.T) {
 	result := ctx.SendDocument(filename).APIURL(g.String("https://api.example.com"))
 	if result == nil {
 		t.Error("APIURL should return builder")
+	}
+}
+
+func TestSendDocument_DirectMessagesTopic(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	filename := g.String("document.pdf")
+
+	topicIDs := []int64{123, 456, 789, 0, -1}
+
+	for _, topicID := range topicIDs {
+		result := ctx.SendDocument(filename).DirectMessagesTopic(topicID)
+		if result == nil {
+			t.Errorf("DirectMessagesTopic method should return SendDocument builder for chaining with topicID: %d", topicID)
+		}
+
+		chainedResult := result.DirectMessagesTopic(topicID + 100)
+		if chainedResult == nil {
+			t.Errorf("DirectMessagesTopic method should support chaining and override with topicID: %d", topicID)
+		}
+	}
+}
+
+func TestSendDocument_SuggestedPost(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	filename := g.String("document.pdf")
+
+	// Test with nil params
+	result := ctx.SendDocument(filename).SuggestedPost(nil)
+	if result == nil {
+		t.Error("SuggestedPost method should return SendDocument builder for chaining with nil params")
+	}
+
+	// Test chaining
+	chainedResult := result.SuggestedPost(nil)
+	if chainedResult == nil {
+		t.Error("SuggestedPost method should support chaining")
 	}
 }
 

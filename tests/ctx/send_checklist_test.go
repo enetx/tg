@@ -10,6 +10,7 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 )
 
 func TestContext_SendChecklist(t *testing.T) {
@@ -238,12 +239,12 @@ func TestSendChecklist_ReplyTo(t *testing.T) {
 	messageIDs := []int64{1, 123, 456, 999}
 
 	for _, messageID := range messageIDs {
-		result := ctx.SendChecklist(title, intro).ReplyTo(messageID)
+		result := ctx.SendChecklist(title, intro).Reply(reply.New(messageID))
 		if result == nil {
 			t.Errorf("ReplyTo method should return SendChecklist builder for chaining with messageID: %d", messageID)
 		}
 
-		chainedResult := result.ReplyTo(messageID + 100)
+		chainedResult := result.Reply(reply.New(messageID + 100))
 		if chainedResult == nil {
 			t.Errorf("ReplyTo method should support chaining and override with messageID: %d", messageID)
 		}

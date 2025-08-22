@@ -7,6 +7,8 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type SendDocument struct {
@@ -89,9 +91,9 @@ func (sd *SendDocument) Thumbnail(file g.String) *SendDocument {
 	return sd
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sd *SendDocument) ReplyTo(messageID int64) *SendDocument {
-	sd.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sd *SendDocument) Reply(params *reply.Parameters) *SendDocument {
+	sd.opts.ReplyParameters = params.Std()
 	return sd
 }
 
@@ -135,9 +137,23 @@ func (sd *SendDocument) DisableContentTypeDetection() *SendDocument {
 	return sd
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (sd *SendDocument) SuggestedPost(params *suggested.PostParameters) *SendDocument {
+	if params != nil {
+		sd.opts.SuggestedPostParameters = params.Std()
+	}
+	return sd
+}
+
 // To sets the target chat ID for the document message.
 func (sd *SendDocument) To(chatID int64) *SendDocument {
 	sd.chatID = g.Some(chatID)
+	return sd
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (sd *SendDocument) DirectMessagesTopic(topicID int64) *SendDocument {
+	sd.opts.DirectMessagesTopicId = topicID
 	return sd
 }
 

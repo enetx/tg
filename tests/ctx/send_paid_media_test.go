@@ -11,6 +11,7 @@ import (
 	"github.com/enetx/tg/file"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 )
 
 func TestContext_SendPaidMedia(t *testing.T) {
@@ -169,7 +170,7 @@ func TestSendPaidMedia_ReplyTo(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
 	starCount := int64(100)
-	if ctx.SendPaidMedia(starCount).ReplyTo(123) == nil {
+	if ctx.SendPaidMedia(starCount).Reply(reply.New(123)) == nil {
 		t.Error("ReplyTo should return builder")
 	}
 }
@@ -273,6 +274,54 @@ func TestSendPaidMedia_SendWithInvalidStarCount(t *testing.T) {
 		t.Error("Send should return error for invalid star count (10001)")
 	} else {
 		t.Logf("SendPaidMedia Send with invalid star count (10001) returned error as expected: %v", sendResult2.Err())
+	}
+}
+
+func TestSendPaidMedia_DirectMessagesTopic(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	starCount := int64(100)
+
+	topicIDs := []int64{123, 456, 789, 0, -1}
+
+	for _, topicID := range topicIDs {
+		result := ctx.SendPaidMedia(starCount).DirectMessagesTopic(topicID)
+		if result == nil {
+			t.Errorf("DirectMessagesTopic method should return SendPaidMedia builder for chaining with topicID: %d", topicID)
+		}
+
+		chainedResult := result.DirectMessagesTopic(topicID + 100)
+		if chainedResult == nil {
+			t.Errorf("DirectMessagesTopic method should support chaining and override with topicID: %d", topicID)
+		}
+	}
+}
+
+func TestSendPaidMedia_SuggestedPost(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	starCount := int64(100)
+
+	// Test with nil params
+	result := ctx.SendPaidMedia(starCount).SuggestedPost(nil)
+	if result == nil {
+		t.Error("SuggestedPost method should return SendPaidMedia builder for chaining with nil params")
+	}
+
+	// Test chaining
+	chainedResult := result.SuggestedPost(nil)
+	if chainedResult == nil {
+		t.Error("SuggestedPost method should support chaining")
 	}
 }
 

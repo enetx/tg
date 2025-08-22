@@ -8,6 +8,8 @@ import (
 	"github.com/enetx/g/ref"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type CopyMessage struct {
@@ -98,9 +100,9 @@ func (c *CopyMessage) AllowPaidBroadcast() *CopyMessage {
 	return c
 }
 
-// ReplyTo sets the message ID to reply to.
-func (c *CopyMessage) ReplyTo(messageID int64) *CopyMessage {
-	c.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (c *CopyMessage) Reply(params *reply.Parameters) *CopyMessage {
+	c.opts.ReplyParameters = params.Std()
 	return c
 }
 
@@ -126,9 +128,21 @@ func (c *CopyMessage) APIURL(url g.String) *CopyMessage {
 	return c
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (c *CopyMessage) SuggestedPost(params *suggested.PostParameters) *CopyMessage {
+	c.opts.SuggestedPostParameters = params.Std()
+	return c
+}
+
 // To sets the target chat ID for the copied message.
 func (c *CopyMessage) To(chatID int64) *CopyMessage {
 	c.toChatID = g.Some(chatID)
+	return c
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (c *CopyMessage) DirectMessagesTopic(topicID int64) *CopyMessage {
+	c.opts.DirectMessagesTopicId = topicID
 	return c
 }
 

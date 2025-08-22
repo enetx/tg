@@ -10,6 +10,7 @@ import (
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/file"
 	"github.com/enetx/tg/input"
+	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -134,7 +135,7 @@ func TestMediaGroup_SendWithAllOptions(t *testing.T) {
 		Effect(effects.Fire).
 		Business(g.String("biz_123")).
 		Thread(456).
-		ReplyTo(123).
+		Reply(reply.New(123)).
 		To(789).
 		Timeout(30 * time.Second).
 		APIURL(g.String("https://api.example.com")).
@@ -472,13 +473,13 @@ func TestMediaGroup_ReplyTo(t *testing.T) {
 
 	for _, messageID := range messageIDs {
 		result := ctx.MediaGroup()
-		replyToResult := result.ReplyTo(messageID)
+		replyToResult := result.Reply(reply.New(messageID))
 		if replyToResult == nil {
 			t.Errorf("ReplyTo method should return MediaGroup for chaining with messageID %d", messageID)
 		}
 
 		// Test that ReplyTo can be chained and overridden
-		chainedResult := replyToResult.ReplyTo(messageID + 1)
+		chainedResult := replyToResult.Reply(reply.New(messageID + 1))
 		if chainedResult == nil {
 			t.Errorf("ReplyTo method should support chaining and override with messageID %d", messageID+1)
 		}

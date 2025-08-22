@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/tg/suggested"
 )
 
 type ForwardMessage struct {
@@ -63,9 +64,21 @@ func (fm *ForwardMessage) APIURL(url g.String) *ForwardMessage {
 	return fm
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (fm *ForwardMessage) SuggestedPost(params *suggested.PostParameters) *ForwardMessage {
+	fm.opts.SuggestedPostParameters = params.Std()
+	return fm
+}
+
 // To sets the target chat ID for the forwarded message.
 func (fm *ForwardMessage) To(chatID int64) *ForwardMessage {
 	fm.toChatID = g.Some(chatID)
+	return fm
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (fm *ForwardMessage) DirectMessagesTopic(topicID int64) *ForwardMessage {
+	fm.opts.DirectMessagesTopicId = topicID
 	return fm
 }
 

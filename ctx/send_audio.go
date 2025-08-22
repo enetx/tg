@@ -7,6 +7,8 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type SendAudio struct {
@@ -89,9 +91,9 @@ func (sa *SendAudio) Thumbnail(file g.String) *SendAudio {
 	return sa
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sa *SendAudio) ReplyTo(messageID int64) *SendAudio {
-	sa.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sa *SendAudio) Reply(params *reply.Parameters) *SendAudio {
+	sa.opts.ReplyParameters = params.Std()
 	return sa
 }
 
@@ -147,9 +149,23 @@ func (sa *SendAudio) Title(title g.String) *SendAudio {
 	return sa
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (sa *SendAudio) SuggestedPost(params *suggested.PostParameters) *SendAudio {
+	if params != nil {
+		sa.opts.SuggestedPostParameters = params.Std()
+	}
+	return sa
+}
+
 // To sets the target chat ID for the audio message.
 func (sa *SendAudio) To(chatID int64) *SendAudio {
 	sa.chatID = g.Some(chatID)
+	return sa
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (sa *SendAudio) DirectMessagesTopic(topicID int64) *SendAudio {
+	sa.opts.DirectMessagesTopicId = topicID
 	return sa
 }
 

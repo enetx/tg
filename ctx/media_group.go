@@ -7,6 +7,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/input"
+	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -94,9 +95,9 @@ func (mg *MediaGroup) Effect(effect effects.EffectType) *MediaGroup {
 	return mg
 }
 
-// ReplyTo sets the message ID to reply to.
-func (mg *MediaGroup) ReplyTo(messageID int64) *MediaGroup {
-	mg.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (mg *MediaGroup) Reply(params *reply.Parameters) *MediaGroup {
+	mg.opts.ReplyParameters = params.Std()
 	return mg
 }
 
@@ -131,6 +132,12 @@ func (mg *MediaGroup) APIURL(url g.String) *MediaGroup {
 
 	mg.opts.RequestOpts.APIURL = url.Std()
 
+	return mg
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (mg *MediaGroup) DirectMessagesTopic(topicID int64) *MediaGroup {
+	mg.opts.DirectMessagesTopicId = topicID
 	return mg
 }
 

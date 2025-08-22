@@ -8,6 +8,7 @@ import (
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
+	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -61,9 +62,9 @@ func (r *Reply) Effect(effect effects.EffectType) *Reply {
 	return r
 }
 
-// ReplyTo sets a different message ID to reply to.
-func (r *Reply) ReplyTo(id int64) *Reply {
-	r.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: id}
+// Replay sets reply parameters using the reply builder.
+func (r *Reply) Reply(params *reply.Parameters) *Reply {
+	r.opts.ReplyParameters = params.Std()
 	return r
 }
 

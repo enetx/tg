@@ -6,6 +6,7 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/reply"
 )
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 	b.Command("audio", func(ctx *ctx.Context) error {
 		return ctx.SendAudio("audio.mp3").
 			Caption("some audio").
-			ReplyTo(ctx.EffectiveMessage.MessageId).
+			Reply(reply.New(ctx.EffectiveMessage.MessageId)).
 			Timeout(time.Second * 30).
 			Send().
 			Err()

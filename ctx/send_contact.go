@@ -6,6 +6,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type SendContact struct {
@@ -60,9 +62,9 @@ func (sc *SendContact) VCard(vcard g.String) *SendContact {
 	return sc
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sc *SendContact) ReplyTo(messageID int64) *SendContact {
-	sc.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sc *SendContact) Reply(params *reply.Parameters) *SendContact {
+	sc.opts.ReplyParameters = params.Std()
 	return sc
 }
 
@@ -100,9 +102,23 @@ func (sc *SendContact) Thread(id int64) *SendContact {
 	return sc
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (sc *SendContact) SuggestedPost(params *suggested.PostParameters) *SendContact {
+	if params != nil {
+		sc.opts.SuggestedPostParameters = params.Std()
+	}
+	return sc
+}
+
 // To sets the target chat ID for the contact message.
 func (sc *SendContact) To(chatID int64) *SendContact {
 	sc.chatID = g.Some(chatID)
+	return sc
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (sc *SendContact) DirectMessagesTopic(topicID int64) *SendContact {
+	sc.opts.DirectMessagesTopicId = topicID
 	return sc
 }
 

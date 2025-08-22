@@ -6,6 +6,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type SendSticker struct {
@@ -55,9 +57,9 @@ func (ss *SendSticker) Emoji(emoji g.String) *SendSticker {
 	return ss
 }
 
-// ReplyTo sets the message ID to reply to.
-func (ss *SendSticker) ReplyTo(messageID int64) *SendSticker {
-	ss.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (ss *SendSticker) Reply(params *reply.Parameters) *SendSticker {
+	ss.opts.ReplyParameters = params.Std()
 	return ss
 }
 
@@ -95,9 +97,23 @@ func (ss *SendSticker) Thread(id int64) *SendSticker {
 	return ss
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (ss *SendSticker) SuggestedPost(params *suggested.PostParameters) *SendSticker {
+	if params != nil {
+		ss.opts.SuggestedPostParameters = params.Std()
+	}
+	return ss
+}
+
 // To sets the target chat ID for the sticker message.
 func (ss *SendSticker) To(chatID int64) *SendSticker {
 	ss.chatID = g.Some(chatID)
+	return ss
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (ss *SendSticker) DirectMessagesTopic(topicID int64) *SendSticker {
+	ss.opts.DirectMessagesTopicId = topicID
 	return ss
 }
 

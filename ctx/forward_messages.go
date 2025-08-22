@@ -80,6 +80,12 @@ func (fms *ForwardMessages) APIURL(url g.String) *ForwardMessages {
 	return fms
 }
 
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (fms *ForwardMessages) DirectMessagesTopic(topicID int64) *ForwardMessages {
+	fms.opts.DirectMessagesTopicId = topicID
+	return fms
+}
+
 // Send forwards the messages and returns the array of sent message IDs.
 func (fms *ForwardMessages) Send() g.Result[g.Slice[gotgbot.MessageId]] {
 	if fms.messageIDs.Empty() {

@@ -1326,6 +1326,22 @@ func (ctx *Context) SetPassportDataErrors(userID int64) *SetPassportDataErrors {
 	}
 }
 
+// ApproveSuggestedPost approves a suggested post in a direct messages chat.
+func (ctx *Context) ApproveSuggestedPost() *ApproveSuggestedPost {
+	return &ApproveSuggestedPost{
+		ctx:  ctx,
+		opts: new(gotgbot.ApproveSuggestedPostOpts),
+	}
+}
+
+// DeclineSuggestedPost declines a suggested post in a direct messages chat.
+func (ctx *Context) DeclineSuggestedPost() *DeclineSuggestedPost {
+	return &DeclineSuggestedPost{
+		ctx:  ctx,
+		opts: new(gotgbot.DeclineSuggestedPostOpts),
+	}
+}
+
 func (ctx *Context) timers(
 	after g.Option[time.Duration],
 	deleteAfter g.Option[time.Duration],

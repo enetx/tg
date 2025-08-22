@@ -125,6 +125,34 @@ func TestRoles_ManageTopics(t *testing.T) {
 	}
 }
 
+func TestRoles_ManageDirectMessages(t *testing.T) {
+	result := roles.Roles(roles.ManageDirectMessages)
+	if !result.CanManageDirectMessages {
+		t.Error("Expected CanManageDirectMessages to be true")
+	}
+}
+
+func TestRoles_PostStories(t *testing.T) {
+	result := roles.Roles(roles.PostStories)
+	if !result.CanPostStories {
+		t.Error("Expected CanPostStories to be true")
+	}
+}
+
+func TestRoles_EditStories(t *testing.T) {
+	result := roles.Roles(roles.EditStories)
+	if !result.CanEditStories {
+		t.Error("Expected CanEditStories to be true")
+	}
+}
+
+func TestRoles_DeleteStories(t *testing.T) {
+	result := roles.Roles(roles.DeleteStories)
+	if !result.CanDeleteStories {
+		t.Error("Expected CanDeleteStories to be true")
+	}
+}
+
 // Test all roles combined
 func TestRoles_AllRoles(t *testing.T) {
 	result := roles.Roles(
@@ -138,7 +166,11 @@ func TestRoles_AllRoles(t *testing.T) {
 		roles.PostMessages,
 		roles.EditMessages,
 		roles.PinMessages,
+		roles.PostStories,
+		roles.EditStories,
+		roles.DeleteStories,
 		roles.ManageTopics,
+		roles.ManageDirectMessages,
 	)
 
 	if !result.CanManageChat {
@@ -171,7 +203,19 @@ func TestRoles_AllRoles(t *testing.T) {
 	if !result.CanPinMessages {
 		t.Error("Expected CanPinMessages to be true")
 	}
+	if !result.CanPostStories {
+		t.Error("Expected CanPostStories to be true")
+	}
+	if !result.CanEditStories {
+		t.Error("Expected CanEditStories to be true")
+	}
+	if !result.CanDeleteStories {
+		t.Error("Expected CanDeleteStories to be true")
+	}
 	if !result.CanManageTopics {
 		t.Error("Expected CanManageTopics to be true")
+	}
+	if !result.CanManageDirectMessages {
+		t.Error("Expected CanManageDirectMessages to be true")
 	}
 }

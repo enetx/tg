@@ -10,6 +10,7 @@ import (
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 )
 
 func TestContext_CopyMessage(t *testing.T) {
@@ -106,7 +107,7 @@ func TestContext_CopyMessage(t *testing.T) {
 	}
 
 	// Test ReplyTo method
-	result = testCtx.CopyMessage(fromChatID, messageID).ReplyTo(456)
+	result = testCtx.CopyMessage(fromChatID, messageID).Reply(reply.New(456))
 	if result == nil {
 		t.Error("ReplyTo method should return CopyMessage for chaining")
 	}
@@ -537,7 +538,7 @@ func TestCopyMessage_ReplyFeatures(t *testing.T) {
 	for _, replyID := range replyToIDs {
 		result := testCtx.CopyMessage(fromChatID, messageID).
 			To(toChatID).
-			ReplyTo(replyID)
+			Reply(reply.New(replyID))
 
 		if result == nil {
 			t.Errorf("ReplyTo message ID %d should work", replyID)
@@ -547,7 +548,7 @@ func TestCopyMessage_ReplyFeatures(t *testing.T) {
 	// Test reply with other features
 	replyResult := testCtx.CopyMessage(fromChatID, messageID).
 		To(toChatID).
-		ReplyTo(123).
+		Reply(reply.New(123)).
 		Caption(g.String("Reply with caption")).
 		HTML().
 		Silent()
@@ -640,7 +641,7 @@ func TestCopyMessage_MethodCoverage(t *testing.T) {
 		VideoStartAt(10 * time.Second).
 		ShowCaptionAbove().
 		AllowPaidBroadcast().
-		ReplyTo(999).
+		Reply(reply.New(999)).
 		After(1 * time.Second).
 		DeleteAfter(300 * time.Second).
 		Timeout(60 * time.Second).
@@ -656,7 +657,7 @@ func TestCopyMessage_MethodCoverage(t *testing.T) {
 		Timeout(45 * time.Second).
 		DeleteAfter(180 * time.Second).
 		After(2 * time.Second).
-		ReplyTo(888).
+		Reply(reply.New(888)).
 		AllowPaidBroadcast().
 		ShowCaptionAbove().
 		VideoStartAt(5 * time.Second).
@@ -777,7 +778,7 @@ func TestCopyMessage_Send(t *testing.T) {
 		VideoStartAt(10 * time.Second).
 		ShowCaptionAbove().
 		AllowPaidBroadcast().
-		ReplyTo(999).
+		Reply(reply.New(999)).
 		Timeout(45 * time.Second).
 		APIURL(g.String("https://api.example.com"))
 	resultComplete := builderComplete.Send()

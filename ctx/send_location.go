@@ -6,6 +6,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type SendLocation struct {
@@ -72,9 +74,9 @@ func (sl *SendLocation) HorizontalAccuracy(accuracy float64) *SendLocation {
 	return sl
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sl *SendLocation) ReplyTo(messageID int64) *SendLocation {
-	sl.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sl *SendLocation) Reply(params *reply.Parameters) *SendLocation {
+	sl.opts.ReplyParameters = params.Std()
 	return sl
 }
 
@@ -112,9 +114,23 @@ func (sl *SendLocation) Thread(id int64) *SendLocation {
 	return sl
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (sl *SendLocation) SuggestedPost(params *suggested.PostParameters) *SendLocation {
+	if params != nil {
+		sl.opts.SuggestedPostParameters = params.Std()
+	}
+	return sl
+}
+
 // To sets the target chat ID for the location message.
 func (sl *SendLocation) To(chatID int64) *SendLocation {
 	sl.chatID = g.Some(chatID)
+	return sl
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (sl *SendLocation) DirectMessagesTopic(topicID int64) *SendLocation {
+	sl.opts.DirectMessagesTopicId = topicID
 	return sl
 }
 

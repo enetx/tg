@@ -7,21 +7,22 @@ import "github.com/PaulSonOfLars/gotgbot/v2"
 type Right int
 
 const (
-	Anonymous        Right = iota // Administrator can be anonymous
-	ManageChat                    // Manage chat settings and info
-	DeleteMessages                // Delete messages from other users
-	ManageVideoChats              // Manage video chats
-	RestrictMembers               // Restrict, unrestrict, kick, and ban chat members
-	PromoteMembers                // Add new administrators with fewer rights than their own
-	ChangeInfo                    // Change chat title, photo, and other settings
-	InviteUsers                   // Invite new users to the chat
-	PostMessages                  // Post messages in channels
-	EditMessages                  // Edit messages of other users in channels
-	PinMessages                   // Pin messages
-	PostStories                   // Post stories in channels
-	EditStories                   // Edit stories of other users in channels
-	DeleteStories                 // Delete stories of other users in channels
-	ManageTopics                  // Manage topics in forum supergroups
+	Anonymous            Right = iota // Administrator can be anonymous
+	ManageChat                        // Manage chat settings and info
+	DeleteMessages                    // Delete messages from other users
+	ManageVideoChats                  // Manage video chats
+	RestrictMembers                   // Restrict, unrestrict, kick, and ban chat members
+	PromoteMembers                    // Add new administrators with fewer rights than their own
+	ChangeInfo                        // Change chat title, photo, and other settings
+	InviteUsers                       // Invite new users to the chat
+	PostMessages                      // Post messages in channels
+	EditMessages                      // Edit messages of other users in channels
+	PinMessages                       // Pin messages
+	PostStories                       // Post stories in channels
+	EditStories                       // Edit stories of other users in channels
+	DeleteStories                     // Delete stories of other users in channels
+	ManageTopics                      // Manage topics in forum supergroups
+	ManageDirectMessages              // Manage direct messages of the channel
 )
 
 // Rights creates a ChatAdministratorRights object with the specified administrator rights enabled.
@@ -59,6 +60,8 @@ func Rights(list ...Right) *gotgbot.ChatAdministratorRights {
 			rights.CanDeleteStories = true
 		case ManageTopics:
 			rights.CanManageTopics = true
+		case ManageDirectMessages:
+			rights.CanManageDirectMessages = true
 		}
 	}
 

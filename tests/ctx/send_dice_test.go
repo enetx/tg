@@ -9,6 +9,7 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -251,7 +252,7 @@ func TestSendDice_ReplyTo(t *testing.T) {
 	ctx := ctx.New(bot, rawCtx)
 	messageIDs := []int64{1, 123, 456, 999}
 	for _, messageID := range messageIDs {
-		result := ctx.SendDice().ReplyTo(messageID)
+		result := ctx.SendDice().Reply(reply.New(messageID))
 		if result == nil {
 			t.Errorf("ReplyTo method should return SendDice builder for chaining with messageID: %d", messageID)
 		}
@@ -289,6 +290,52 @@ func TestSendDice_Business(t *testing.T) {
 		if result == nil {
 			t.Errorf("Business method should return SendDice builder for chaining with businessID: %s", businessID)
 		}
+	}
+}
+
+func TestSendDice_DirectMessagesTopic(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	topicIDs := []int64{123, 456, 789, 0, -1}
+
+	for _, topicID := range topicIDs {
+		result := ctx.SendDice().DirectMessagesTopic(topicID)
+		if result == nil {
+			t.Errorf("DirectMessagesTopic method should return SendDice builder for chaining with topicID: %d", topicID)
+		}
+
+		chainedResult := result.DirectMessagesTopic(topicID + 100)
+		if chainedResult == nil {
+			t.Errorf("DirectMessagesTopic method should support chaining and override with topicID: %d", topicID)
+		}
+	}
+}
+
+func TestSendDice_SuggestedPost(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	// Test with nil params
+	result := ctx.SendDice().SuggestedPost(nil)
+	if result == nil {
+		t.Error("SuggestedPost method should return SendDice builder for chaining with nil params")
+	}
+
+	// Test chaining
+	chainedResult := result.SuggestedPost(nil)
+	if chainedResult == nil {
+		t.Error("SuggestedPost method should support chaining")
 	}
 }
 

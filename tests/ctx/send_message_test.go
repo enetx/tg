@@ -11,6 +11,7 @@ import (
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
+	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -61,7 +62,7 @@ func TestContextSendMessage(t *testing.T) {
 	}
 
 	// Test ReplyTo method
-	result = testCtx.SendMessage(text).ReplyTo(789)
+	result = testCtx.SendMessage(text).Reply(reply.New(789))
 	if result == nil {
 		t.Error("ReplyTo method should return SendMessage for chaining")
 	}
@@ -76,6 +77,18 @@ func TestContextSendMessage(t *testing.T) {
 	result = testCtx.SendMessage(text).Thread(456)
 	if result == nil {
 		t.Error("Thread method should return SendMessage for chaining")
+	}
+
+	// Test DirectMessagesTopic method
+	result = testCtx.SendMessage(text).DirectMessagesTopic(123)
+	if result == nil {
+		t.Error("DirectMessagesTopic method should return SendMessage for chaining")
+	}
+
+	// Test SuggestedPost method
+	result = testCtx.SendMessage(text).SuggestedPost(nil)
+	if result == nil {
+		t.Error("SuggestedPost method should return SendMessage for chaining")
 	}
 
 	// Test ForceReply method
@@ -143,9 +156,11 @@ func TestContextSendMessageChaining(t *testing.T) {
 		HTML().
 		Silent().
 		Effect(effects.Celebration).
-		ReplyTo(789).
+		Reply(reply.New(789)).
 		AllowPaidBroadcast().
 		Thread(456).
+		DirectMessagesTopic(123).
+		SuggestedPost(nil).
 		Business(g.String("biz_conn_123")).
 		Protect().
 		After(2 * time.Second).
@@ -210,7 +225,7 @@ func TestSendMessage_EdgeCases(t *testing.T) {
 	// Test with zero values
 	result = testCtx.SendMessage(g.String("test")).
 		To(0).
-		ReplyTo(0).
+		Reply(reply.New(0)).
 		Thread(0).
 		After(0 * time.Second).
 		DeleteAfter(0 * time.Second)
@@ -231,7 +246,7 @@ func TestSendMessage_EdgeCases(t *testing.T) {
 	// Test with maximum integer values
 	result = testCtx.SendMessage(g.String("max values")).
 		To(9223372036854775807).
-		ReplyTo(9223372036854775807).
+		Reply(reply.New(9223372036854775807)).
 		Thread(9223372036854775807)
 
 	if result == nil {
@@ -326,7 +341,7 @@ func TestSendMessage_Send(t *testing.T) {
 		HTML().
 		Silent().
 		Effect(effects.Heart).
-		ReplyTo(999).
+		Reply(reply.New(999)).
 		Markup(kb).
 		AllowPaidBroadcast().
 		Thread(123).
@@ -517,6 +532,54 @@ func TestSendMessage_ChatIDVariations(t *testing.T) {
 		if combined == nil {
 			t.Errorf("Method combination should work with chat ID: %d", chatID)
 		}
+	}
+}
+
+func TestSendMessage_DirectMessagesTopic(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	text := g.String("Hello World")
+
+	topicIDs := []int64{123, 456, 789, 0, -1}
+
+	for _, topicID := range topicIDs {
+		result := ctx.SendMessage(text).DirectMessagesTopic(topicID)
+		if result == nil {
+			t.Errorf("DirectMessagesTopic method should return SendMessage builder for chaining with topicID: %d", topicID)
+		}
+
+		chainedResult := result.DirectMessagesTopic(topicID + 100)
+		if chainedResult == nil {
+			t.Errorf("DirectMessagesTopic method should support chaining and override with topicID: %d", topicID)
+		}
+	}
+}
+
+func TestSendMessage_SuggestedPost(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	text := g.String("Hello World")
+
+	// Test with nil params
+	result := ctx.SendMessage(text).SuggestedPost(nil)
+	if result == nil {
+		t.Error("SuggestedPost method should return SendMessage builder for chaining with nil params")
+	}
+
+	// Test chaining
+	chainedResult := result.SuggestedPost(nil)
+	if chainedResult == nil {
+		t.Error("SuggestedPost method should support chaining")
 	}
 }
 

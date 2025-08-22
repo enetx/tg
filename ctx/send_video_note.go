@@ -6,6 +6,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type SendVideoNote struct {
@@ -76,9 +78,9 @@ func (svn *SendVideoNote) Thumbnail(file g.String) *SendVideoNote {
 	return svn
 }
 
-// ReplyTo sets the message ID to reply to.
-func (svn *SendVideoNote) ReplyTo(messageID int64) *SendVideoNote {
-	svn.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (svn *SendVideoNote) Reply(params *reply.Parameters) *SendVideoNote {
+	svn.opts.ReplyParameters = params.Std()
 	return svn
 }
 
@@ -116,9 +118,23 @@ func (svn *SendVideoNote) Thread(id int64) *SendVideoNote {
 	return svn
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (svn *SendVideoNote) SuggestedPost(params *suggested.PostParameters) *SendVideoNote {
+	if params != nil {
+		svn.opts.SuggestedPostParameters = params.Std()
+	}
+	return svn
+}
+
 // To sets the target chat ID for the video note message.
 func (svn *SendVideoNote) To(chatID int64) *SendVideoNote {
 	svn.chatID = g.Some(chatID)
+	return svn
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (svn *SendVideoNote) DirectMessagesTopic(topicID int64) *SendVideoNote {
+	svn.opts.DirectMessagesTopicId = topicID
 	return svn
 }
 

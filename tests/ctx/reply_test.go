@@ -11,6 +11,7 @@ import (
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
+	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -56,7 +57,7 @@ func TestContext_Reply(t *testing.T) {
 	}
 
 	// Test ReplyTo method
-	result = testCtx.Reply(text).ReplyTo(123)
+	result = testCtx.Reply(text).Reply(reply.New(123))
 	if result == nil {
 		t.Error("ReplyTo method should return Reply for chaining")
 	}
@@ -140,7 +141,7 @@ func TestContext_ReplyChaining(t *testing.T) {
 		Protect().
 		AllowPaidBroadcast().
 		Thread(123).
-		ReplyTo(456).
+		Reply(reply.New(456)).
 		Business(g.String("biz_conn_789")).
 		Effect(effects.Celebration).
 		After(2 * time.Second).
@@ -206,7 +207,7 @@ func TestReply_EdgeCases(t *testing.T) {
 
 	// Test with zero values
 	result = testCtx.Reply(g.String("test")).
-		ReplyTo(0).
+		Reply(reply.New(0)).
 		Thread(0).
 		After(0 * time.Second).
 		DeleteAfter(0 * time.Second)
@@ -251,7 +252,7 @@ func TestReply_Send(t *testing.T) {
 		Silent().
 		Protect().
 		Thread(456).
-		ReplyTo(123).
+		Reply(reply.New(123)).
 		Effect(effects.Fire).
 		Timeout(30 * time.Second).
 		APIURL(g.String("https://api.example.com")).

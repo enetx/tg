@@ -419,3 +419,53 @@ func (h *MessageHandlers) ChecklistTitleEquals(title g.String, fn Handler) *Mess
 		return msg.Checklist != nil && msg.Checklist.Title == title.Std()
 	}, fn)
 }
+
+// DirectMessagesTopic handles messages with direct messages topic information.
+func (h *MessageHandlers) DirectMessagesTopic(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.DirectMessagesTopic != nil }, fn)
+}
+
+// SuggestedPostInfo handles messages with suggested post information.
+func (h *MessageHandlers) SuggestedPostInfo(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.SuggestedPostInfo != nil }, fn)
+}
+
+// SuggestedPostApproved handles service messages about approved suggested posts.
+func (h *MessageHandlers) SuggestedPostApproved(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.SuggestedPostApproved != nil }, fn)
+}
+
+// SuggestedPostApprovalFailed handles service messages about failed suggested post approvals.
+func (h *MessageHandlers) SuggestedPostApprovalFailed(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.SuggestedPostApprovalFailed != nil }, fn)
+}
+
+// SuggestedPostDeclined handles service messages about declined suggested posts.
+func (h *MessageHandlers) SuggestedPostDeclined(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.SuggestedPostDeclined != nil }, fn)
+}
+
+// SuggestedPostPaid handles service messages about paid suggested posts.
+func (h *MessageHandlers) SuggestedPostPaid(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.SuggestedPostPaid != nil }, fn)
+}
+
+// SuggestedPostRefunded handles service messages about refunded suggested posts.
+func (h *MessageHandlers) SuggestedPostRefunded(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.SuggestedPostRefunded != nil }, fn)
+}
+
+// PaidPost handles messages that are paid posts.
+func (h *MessageHandlers) PaidPost(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.IsPaidPost }, fn)
+}
+
+// ChecklistTasksDone handles service messages about completed checklist tasks.
+func (h *MessageHandlers) ChecklistTasksDone(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.ChecklistTasksDone != nil }, fn)
+}
+
+// ChecklistTasksAdded handles service messages about added checklist tasks.
+func (h *MessageHandlers) ChecklistTasksAdded(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.ChecklistTasksAdded != nil }, fn)
+}

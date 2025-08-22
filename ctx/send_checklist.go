@@ -6,6 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 )
 
 // SendChecklist represents a request to send a checklist.
@@ -82,9 +83,9 @@ func (sc *SendChecklist) Markup(kb keyboard.Keyboard) *SendChecklist {
 	return sc
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sc *SendChecklist) ReplyTo(messageID int64) *SendChecklist {
-	sc.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sc *SendChecklist) Reply(params *reply.Parameters) *SendChecklist {
+	sc.opts.ReplyParameters = params.Std()
 	return sc
 }
 

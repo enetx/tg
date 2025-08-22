@@ -9,6 +9,7 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -128,7 +129,7 @@ func TestSendGame_Effect(t *testing.T) {
 func TestSendGame_ReplyTo(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
-	if ctx.SendGame(g.String("test_game")).ReplyTo(123) == nil {
+	if ctx.SendGame(g.String("test_game")).Reply(reply.New(123)) == nil {
 		t.Error("ReplyTo should return builder")
 	}
 }

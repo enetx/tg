@@ -7,6 +7,8 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type SendAnimation struct {
@@ -108,9 +110,9 @@ func (sa *SendAnimation) Thumbnail(file g.String) *SendAnimation {
 	return sa
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sa *SendAnimation) ReplyTo(messageID int64) *SendAnimation {
-	sa.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sa *SendAnimation) Reply(params *reply.Parameters) *SendAnimation {
+	sa.opts.ReplyParameters = params.Std()
 	return sa
 }
 
@@ -160,9 +162,23 @@ func (sa *SendAnimation) Spoiler() *SendAnimation {
 	return sa
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (sa *SendAnimation) SuggestedPost(params *suggested.PostParameters) *SendAnimation {
+	if params != nil {
+		sa.opts.SuggestedPostParameters = params.Std()
+	}
+	return sa
+}
+
 // To sets the target chat ID for the animation message.
 func (sa *SendAnimation) To(chatID int64) *SendAnimation {
 	sa.chatID = g.Some(chatID)
+	return sa
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (sa *SendAnimation) DirectMessagesTopic(topicID int64) *SendAnimation {
+	sa.opts.DirectMessagesTopicId = topicID
 	return sa
 }
 

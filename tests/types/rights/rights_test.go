@@ -146,6 +146,13 @@ func TestRights_ManageTopics(t *testing.T) {
 	}
 }
 
+func TestRights_ManageDirectMessages(t *testing.T) {
+	result := rights.Rights(rights.ManageDirectMessages)
+	if !result.CanManageDirectMessages {
+		t.Error("Expected CanManageDirectMessages to be true")
+	}
+}
+
 // Test all rights combined
 func TestRights_AllRights(t *testing.T) {
 	result := rights.Rights(
@@ -164,6 +171,7 @@ func TestRights_AllRights(t *testing.T) {
 		rights.EditStories,
 		rights.DeleteStories,
 		rights.ManageTopics,
+		rights.ManageDirectMessages,
 	)
 
 	if !result.IsAnonymous {
@@ -210,5 +218,8 @@ func TestRights_AllRights(t *testing.T) {
 	}
 	if !result.CanManageTopics {
 		t.Error("Expected CanManageTopics to be true")
+	}
+	if !result.CanManageDirectMessages {
+		t.Error("Expected CanManageDirectMessages to be true")
 	}
 }

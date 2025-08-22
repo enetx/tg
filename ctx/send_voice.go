@@ -7,6 +7,8 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type SendVoice struct {
@@ -80,9 +82,9 @@ func (sv *SendVoice) Duration(duration time.Duration) *SendVoice {
 	return sv
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sv *SendVoice) ReplyTo(messageID int64) *SendVoice {
-	sv.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sv *SendVoice) Reply(params *reply.Parameters) *SendVoice {
+	sv.opts.ReplyParameters = params.Std()
 	return sv
 }
 
@@ -120,9 +122,23 @@ func (sv *SendVoice) Thread(id int64) *SendVoice {
 	return sv
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (sv *SendVoice) SuggestedPost(params *suggested.PostParameters) *SendVoice {
+	if params != nil {
+		sv.opts.SuggestedPostParameters = params.Std()
+	}
+	return sv
+}
+
 // To sets the target chat ID for the voice message.
 func (sv *SendVoice) To(chatID int64) *SendVoice {
 	sv.chatID = g.Some(chatID)
+	return sv
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (sv *SendVoice) DirectMessagesTopic(topicID int64) *SendVoice {
+	sv.opts.DirectMessagesTopicId = topicID
 	return sv
 }
 

@@ -211,7 +211,7 @@ b.Command("photo", func(ctx *ctx.Context) error {
 b.Command("doc", func(ctx *ctx.Context) error {
     return ctx.SendDocument("document.pdf").
         Caption("Important document").
-        ReplyTo(ctx.EffectiveMessage.MessageId).
+        Reply(reply.New(ctx.EffectiveMessage.MessageId)).
         Send().Err()
 })
 
@@ -669,6 +669,6 @@ MIT License. See `LICENSE` file for details.
 
 [TelegramBotAPI]: https://core.telegram.org/bots/api
 
-[TelegramVersionBadge]: https://img.shields.io/static/v1?label=Supported%20Telegram%20Bot%20API&color=29a1d4&logo=telegram&message=v9.1
+[TelegramVersionBadge]: https://img.shields.io/static/v1?label=Supported%20Telegram%20Bot%20API&color=29a1d4&logo=telegram&message=v9.2
 
-[TelegramLastVersion]: https://core.telegram.org/bots/api#july-3-2025
+[TelegramLastVersion]: https://core.telegram.org/bots/api#august-15-2025

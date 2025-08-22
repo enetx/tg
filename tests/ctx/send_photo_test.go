@@ -13,6 +13,7 @@ import (
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 )
 
 func TestContext_SendPhoto(t *testing.T) {
@@ -139,7 +140,7 @@ func TestSendPhoto_AllMethods(t *testing.T) {
 	}
 
 	// Test ReplyTo method
-	result = testCtx.SendPhoto(filename).ReplyTo(999)
+	result = testCtx.SendPhoto(filename).Reply(reply.New(999))
 	if result == nil {
 		t.Error("ReplyTo method should return SendPhoto for chaining")
 	}
@@ -178,6 +179,18 @@ func TestSendPhoto_AllMethods(t *testing.T) {
 	result = testCtx.SendPhoto(filename).To(789)
 	if result == nil {
 		t.Error("To method should return SendPhoto for chaining")
+	}
+
+	// Test DirectMessagesTopic method
+	result = testCtx.SendPhoto(filename).DirectMessagesTopic(123)
+	if result == nil {
+		t.Error("DirectMessagesTopic method should return SendPhoto for chaining")
+	}
+
+	// Test SuggestedPost method
+	result = testCtx.SendPhoto(filename).SuggestedPost(nil)
+	if result == nil {
+		t.Error("SuggestedPost method should return SendPhoto for chaining")
 	}
 }
 
@@ -512,7 +525,7 @@ func TestSendPhoto_ReplyFeatures(t *testing.T) {
 	}
 
 	for _, replyID := range replyToIDs {
-		result := testCtx.SendPhoto(photo).ReplyTo(replyID)
+		result := testCtx.SendPhoto(photo).Reply(reply.New(replyID))
 		if result == nil {
 			t.Errorf("ReplyTo message ID %d should work", replyID)
 		}
@@ -588,7 +601,7 @@ func TestSendPhoto_MethodCoverage(t *testing.T) {
 		Silent().
 		Protect().
 		Markup(kb).
-		ReplyTo(999).
+		Reply(reply.New(999)).
 		Business(g.String("business_123")).
 		Thread(123).
 		ShowCaptionAboveMedia().
@@ -697,7 +710,7 @@ func TestSendPhoto_Send(t *testing.T) {
 		Silent().
 		Protect().
 		Markup(kb).
-		ReplyTo(999).
+		Reply(reply.New(999)).
 		Business(g.String("business_456")).
 		Thread(123).
 		ShowCaptionAboveMedia().
@@ -752,6 +765,54 @@ func TestSendPhoto_APIURLWithNilRequestOpts(t *testing.T) {
 	result := ctx.SendPhoto(filename).APIURL(g.String("https://api.example.com"))
 	if result == nil {
 		t.Error("APIURL should return builder")
+	}
+}
+
+func TestSendPhoto_DirectMessagesTopic(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	filename := g.String("photo.jpg")
+
+	topicIDs := []int64{123, 456, 789, 0, -1}
+
+	for _, topicID := range topicIDs {
+		result := ctx.SendPhoto(filename).DirectMessagesTopic(topicID)
+		if result == nil {
+			t.Errorf("DirectMessagesTopic method should return SendPhoto builder for chaining with topicID: %d", topicID)
+		}
+
+		chainedResult := result.DirectMessagesTopic(topicID + 100)
+		if chainedResult == nil {
+			t.Errorf("DirectMessagesTopic method should support chaining and override with topicID: %d", topicID)
+		}
+	}
+}
+
+func TestSendPhoto_SuggestedPost(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	filename := g.String("photo.jpg")
+
+	// Test with nil params
+	result := ctx.SendPhoto(filename).SuggestedPost(nil)
+	if result == nil {
+		t.Error("SuggestedPost method should return SendPhoto builder for chaining with nil params")
+	}
+
+	// Test chaining
+	chainedResult := result.SuggestedPost(nil)
+	if chainedResult == nil {
+		t.Error("SuggestedPost method should support chaining")
 	}
 }
 

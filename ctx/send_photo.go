@@ -7,6 +7,8 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type SendPhoto struct {
@@ -80,9 +82,9 @@ func (sp *SendPhoto) Markup(kb keyboard.Keyboard) *SendPhoto {
 	return sp
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sp *SendPhoto) ReplyTo(messageID int64) *SendPhoto {
-	sp.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sp *SendPhoto) Reply(params *reply.Parameters) *SendPhoto {
+	sp.opts.ReplyParameters = params.Std()
 	return sp
 }
 
@@ -126,9 +128,23 @@ func (sp *SendPhoto) ShowCaptionAboveMedia() *SendPhoto {
 	return sp
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (sp *SendPhoto) SuggestedPost(params *suggested.PostParameters) *SendPhoto {
+	if params != nil {
+		sp.opts.SuggestedPostParameters = params.Std()
+	}
+	return sp
+}
+
 // To sets the target chat ID for the photo message.
 func (sp *SendPhoto) To(chatID int64) *SendPhoto {
 	sp.chatID = g.Some(chatID)
+	return sp
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (sp *SendPhoto) DirectMessagesTopic(topicID int64) *SendPhoto {
+	sp.opts.DirectMessagesTopicId = topicID
 	return sp
 }
 

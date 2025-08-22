@@ -7,6 +7,8 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 // SendPaidMedia represents a request to send paid media content.
@@ -16,6 +18,14 @@ type SendPaidMedia struct {
 	chatID    g.Option[int64]
 	starCount int64
 	media     g.Slice[input.PaidMedia]
+}
+
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (spm *SendPaidMedia) SuggestedPost(params *suggested.PostParameters) *SendPaidMedia {
+	if params != nil {
+		spm.opts.SuggestedPostParameters = params.Std()
+	}
+	return spm
 }
 
 // To sets the target chat ID for sending paid media.
@@ -96,9 +106,9 @@ func (spm *SendPaidMedia) AllowPaidBroadcast() *SendPaidMedia {
 	return spm
 }
 
-// ReplyTo sets the message ID to reply to.
-func (spm *SendPaidMedia) ReplyTo(messageID int64) *SendPaidMedia {
-	spm.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (spm *SendPaidMedia) Reply(params *reply.Parameters) *SendPaidMedia {
+	spm.opts.ReplyParameters = params.Std()
 	return spm
 }
 
@@ -130,6 +140,12 @@ func (spm *SendPaidMedia) APIURL(url g.String) *SendPaidMedia {
 
 	spm.opts.RequestOpts.APIURL = url.Std()
 
+	return spm
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (spm *SendPaidMedia) DirectMessagesTopic(topicID int64) *SendPaidMedia {
+	spm.opts.DirectMessagesTopicId = topicID
 	return spm
 }
 

@@ -8,6 +8,8 @@ import (
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -68,9 +70,9 @@ func (sm *SendMessage) Effect(effect effects.EffectType) *SendMessage {
 	return sm
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sm *SendMessage) ReplyTo(messageID int64) *SendMessage {
-	sm.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sm *SendMessage) Reply(params *reply.Parameters) *SendMessage {
+	sm.opts.ReplyParameters = params.Std()
 	return sm
 }
 
@@ -116,6 +118,14 @@ func (sm *SendMessage) Business(id g.String) *SendMessage {
 	return sm
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (sm *SendMessage) SuggestedPost(params *suggested.PostParameters) *SendMessage {
+	if params != nil {
+		sm.opts.SuggestedPostParameters = params.Std()
+	}
+	return sm
+}
+
 // Protect enables content protection for the message.
 func (sm *SendMessage) Protect() *SendMessage {
 	sm.opts.ProtectContent = true
@@ -141,6 +151,12 @@ func (sm *SendMessage) APIURL(url g.String) *SendMessage {
 
 	sm.opts.RequestOpts.APIURL = url.Std()
 
+	return sm
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (sm *SendMessage) DirectMessagesTopic(topicID int64) *SendMessage {
+	sm.opts.DirectMessagesTopicId = topicID
 	return sm
 }
 

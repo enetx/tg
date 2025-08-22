@@ -6,6 +6,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -89,9 +91,9 @@ func (sd *SendDice) Effect(effect effects.EffectType) *SendDice {
 	return sd
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sd *SendDice) ReplyTo(id int64) *SendDice {
-	sd.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: id}
+// Reply sets reply parameters using the reply builder.
+func (sd *SendDice) Reply(params *reply.Parameters) *SendDice {
+	sd.opts.ReplyParameters = params.Std()
 	return sd
 }
 
@@ -110,6 +112,14 @@ func (sd *SendDice) Business(id g.String) *SendDice {
 // Protect enables content protection for the dice message.
 func (sd *SendDice) Protect() *SendDice {
 	sd.opts.ProtectContent = true
+	return sd
+}
+
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (sd *SendDice) SuggestedPost(params *suggested.PostParameters) *SendDice {
+	if params != nil {
+		sd.opts.SuggestedPostParameters = params.Std()
+	}
 	return sd
 }
 
@@ -138,6 +148,12 @@ func (sd *SendDice) APIURL(url g.String) *SendDice {
 
 	sd.opts.RequestOpts.APIURL = url.Std()
 
+	return sd
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (sd *SendDice) DirectMessagesTopic(topicID int64) *SendDice {
+	sd.opts.DirectMessagesTopicId = topicID
 	return sd
 }
 

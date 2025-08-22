@@ -6,6 +6,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type SendVenue struct {
@@ -74,9 +76,9 @@ func (sv *SendVenue) GooglePlaceType(placeType g.String) *SendVenue {
 	return sv
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sv *SendVenue) ReplyTo(messageID int64) *SendVenue {
-	sv.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sv *SendVenue) Reply(params *reply.Parameters) *SendVenue {
+	sv.opts.ReplyParameters = params.Std()
 	return sv
 }
 
@@ -114,9 +116,23 @@ func (sv *SendVenue) Thread(id int64) *SendVenue {
 	return sv
 }
 
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (sv *SendVenue) SuggestedPost(params *suggested.PostParameters) *SendVenue {
+	if params != nil {
+		sv.opts.SuggestedPostParameters = params.Std()
+	}
+	return sv
+}
+
 // To sets the target chat ID for the venue message.
 func (sv *SendVenue) To(chatID int64) *SendVenue {
 	sv.chatID = g.Some(chatID)
+	return sv
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (sv *SendVenue) DirectMessagesTopic(topicID int64) *SendVenue {
+	sv.opts.DirectMessagesTopicId = topicID
 	return sv
 }
 

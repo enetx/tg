@@ -9,6 +9,7 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -340,8 +341,62 @@ func TestSendInvoice_ReplyTo(t *testing.T) {
 	desc := g.String("Test Description")
 	payload := g.String("test_payload")
 	currency := g.String("USD")
-	if ctx.SendInvoice(title, desc, payload, currency).ReplyTo(123) == nil {
+	if ctx.SendInvoice(title, desc, payload, currency).Reply(reply.New(123)) == nil {
 		t.Error("ReplyTo should return builder")
+	}
+}
+
+func TestSendInvoice_DirectMessagesTopic(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	title := g.String("Test Product")
+	desc := g.String("Test Description")
+	payload := g.String("test_payload")
+	currency := g.String("USD")
+
+	topicIDs := []int64{123, 456, 789, 0, -1}
+
+	for _, topicID := range topicIDs {
+		result := ctx.SendInvoice(title, desc, payload, currency).DirectMessagesTopic(topicID)
+		if result == nil {
+			t.Errorf("DirectMessagesTopic method should return SendInvoice builder for chaining with topicID: %d", topicID)
+		}
+
+		chainedResult := result.DirectMessagesTopic(topicID + 100)
+		if chainedResult == nil {
+			t.Errorf("DirectMessagesTopic method should support chaining and override with topicID: %d", topicID)
+		}
+	}
+}
+
+func TestSendInvoice_SuggestedPost(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	title := g.String("Test Product")
+	desc := g.String("Test Description")
+	payload := g.String("test_payload")
+	currency := g.String("USD")
+
+	// Test with nil params
+	result := ctx.SendInvoice(title, desc, payload, currency).SuggestedPost(nil)
+	if result == nil {
+		t.Error("SuggestedPost method should return SendInvoice builder for chaining with nil params")
+	}
+
+	// Test chaining
+	chainedResult := result.SuggestedPost(nil)
+	if chainedResult == nil {
+		t.Error("SuggestedPost method should support chaining")
 	}
 }
 

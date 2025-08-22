@@ -8,6 +8,7 @@ import (
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -154,9 +155,9 @@ func (sp *SendPoll) Markup(kb keyboard.Keyboard) *SendPoll {
 	return sp
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sp *SendPoll) ReplyTo(messageID int64) *SendPoll {
-	sp.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sp *SendPoll) Reply(params *reply.Parameters) *SendPoll {
+	sp.opts.ReplyParameters = params.Std()
 	return sp
 }
 

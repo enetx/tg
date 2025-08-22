@@ -9,6 +9,8 @@ import (
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/internal/pkg/ffmpeg"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 )
 
 type SendVideo struct {
@@ -126,9 +128,9 @@ func (sv *SendVideo) Markup(kb keyboard.Keyboard) *SendVideo {
 	return sv
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sv *SendVideo) ReplyTo(messageID int64) *SendVideo {
-	sv.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sv *SendVideo) Reply(params *reply.Parameters) *SendVideo {
+	sv.opts.ReplyParameters = params.Std()
 	return sv
 }
 
@@ -169,6 +171,14 @@ func (sv *SendVideo) Thread(id int64) *SendVideo {
 // ShowCaptionAboveMedia displays the caption above the video instead of below.
 func (sv *SendVideo) ShowCaptionAboveMedia() *SendVideo {
 	sv.opts.ShowCaptionAboveMedia = true
+	return sv
+}
+
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (sv *SendVideo) SuggestedPost(params *suggested.PostParameters) *SendVideo {
+	if params != nil {
+		sv.opts.SuggestedPostParameters = params.Std()
+	}
 	return sv
 }
 
@@ -273,6 +283,12 @@ func (sv *SendVideo) GenerateThumbnail(seek ...g.String) *SendVideo {
 // To sets the target chat ID for the video message.
 func (sv *SendVideo) To(chatID int64) *SendVideo {
 	sv.chatID = g.Some(chatID)
+	return sv
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (sv *SendVideo) DirectMessagesTopic(topicID int64) *SendVideo {
+	sv.opts.DirectMessagesTopicId = topicID
 	return sv
 }
 

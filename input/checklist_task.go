@@ -3,6 +3,7 @@ package input
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/tg/entities"
 )
 
 // ChecklistTask represents an input checklist task builder.
@@ -11,18 +12,30 @@ type ChecklistTask struct {
 }
 
 // NewChecklistTask creates a new ChecklistTask builder.
-func NewChecklistTask(text g.String) *ChecklistTask {
+func NewChecklistTask(id int64, text g.String) *ChecklistTask {
 	return &ChecklistTask{
 		input: &gotgbot.InputChecklistTask{
+			Id:   id,
 			Text: text.Std(),
 		},
 	}
 }
 
-// Checked sets whether the task is completed.
-func (ct *ChecklistTask) Checked() *ChecklistTask {
-	// Note: Checked field may not exist in gotgbot.InputChecklistTask
-	// This is a placeholder for when the field becomes available
+// HTML sets parse mode to HTML.
+func (ct *ChecklistTask) HTML() *ChecklistTask {
+	ct.input.ParseMode = "HTML"
+	return ct
+}
+
+// Markdown sets parse mode to MarkdownV2.
+func (ct *ChecklistTask) Markdown() *ChecklistTask {
+	ct.input.ParseMode = "MarkdownV2"
+	return ct
+}
+
+// Entities sets the text entities for the task text.
+func (ct *ChecklistTask) Entities(e *entities.Entities) *ChecklistTask {
+	ct.input.TextEntities = e.Std()
 	return ct
 }
 

@@ -6,6 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -60,9 +61,9 @@ func (sg *SendGame) Effect(effect effects.EffectType) *SendGame {
 	return sg
 }
 
-// ReplyTo sets the message ID to reply to.
-func (sg *SendGame) ReplyTo(messageID int64) *SendGame {
-	sg.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (sg *SendGame) Reply(params *reply.Parameters) *SendGame {
+	sg.opts.ReplyParameters = params.Std()
 	return sg
 }
 

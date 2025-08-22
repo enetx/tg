@@ -6,6 +6,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
+	"github.com/enetx/tg/suggested"
 	"github.com/enetx/tg/types/effects"
 )
 
@@ -18,6 +20,14 @@ type SendInvoice struct {
 	prices   g.Slice[gotgbot.LabeledPrice]
 	chatID   g.Option[int64]
 	opts     *gotgbot.SendInvoiceOpts
+}
+
+// SuggestedPost sets suggested post parameters for direct messages chats.
+func (si *SendInvoice) SuggestedPost(params *suggested.PostParameters) *SendInvoice {
+	if params != nil {
+		si.opts.SuggestedPostParameters = params.Std()
+	}
+	return si
 }
 
 // To sets the target chat ID for the invoice.
@@ -144,9 +154,9 @@ func (si *SendInvoice) Effect(effect effects.EffectType) *SendInvoice {
 	return si
 }
 
-// ReplyTo sets the message ID to reply to.
-func (si *SendInvoice) ReplyTo(messageID int64) *SendInvoice {
-	si.opts.ReplyParameters = &gotgbot.ReplyParameters{MessageId: messageID}
+// Reply sets reply parameters using the reply builder.
+func (si *SendInvoice) Reply(params *reply.Parameters) *SendInvoice {
+	si.opts.ReplyParameters = params.Std()
 	return si
 }
 
@@ -178,6 +188,12 @@ func (si *SendInvoice) APIURL(url g.String) *SendInvoice {
 
 	si.opts.RequestOpts.APIURL = url.Std()
 
+	return si
+}
+
+// DirectMessagesTopic sets the direct messages topic ID for the message.
+func (si *SendInvoice) DirectMessagesTopic(topicID int64) *SendInvoice {
+	si.opts.DirectMessagesTopicId = topicID
 	return si
 }
 

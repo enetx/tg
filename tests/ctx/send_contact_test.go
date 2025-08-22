@@ -9,6 +9,7 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/reply"
 )
 
 func TestContext_SendContact(t *testing.T) {
@@ -198,12 +199,12 @@ func TestSendContact_ReplyTo(t *testing.T) {
 	messageIDs := []int64{1, 123, 456, 999}
 
 	for _, messageID := range messageIDs {
-		result := ctx.SendContact(phoneNumber, firstName).ReplyTo(messageID)
+		result := ctx.SendContact(phoneNumber, firstName).Reply(reply.New(messageID))
 		if result == nil {
 			t.Errorf("ReplyTo method should return SendContact builder for chaining with messageID: %d", messageID)
 		}
 
-		chainedResult := result.ReplyTo(messageID + 100)
+		chainedResult := result.Reply(reply.New(messageID + 100))
 		if chainedResult == nil {
 			t.Errorf("ReplyTo method should support chaining and override with messageID: %d", messageID)
 		}
@@ -263,6 +264,56 @@ func TestSendContact_Thread(t *testing.T) {
 		if chainedResult == nil {
 			t.Errorf("Thread method should support chaining and override with threadID: %d", threadID)
 		}
+	}
+}
+
+func TestSendContact_DirectMessagesTopic(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+
+	topicIDs := []int64{123, 456, 789, 0, -1}
+
+	for _, topicID := range topicIDs {
+		result := ctx.SendContact(phoneNumber, firstName).DirectMessagesTopic(topicID)
+		if result == nil {
+			t.Errorf("DirectMessagesTopic method should return SendContact builder for chaining with topicID: %d", topicID)
+		}
+
+		chainedResult := result.DirectMessagesTopic(topicID + 100)
+		if chainedResult == nil {
+			t.Errorf("DirectMessagesTopic method should support chaining and override with topicID: %d", topicID)
+		}
+	}
+}
+
+func TestSendContact_SuggestedPost(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+	phoneNumber := g.String("+1234567890")
+	firstName := g.String("John")
+
+	// Test with nil params
+	result := ctx.SendContact(phoneNumber, firstName).SuggestedPost(nil)
+	if result == nil {
+		t.Error("SuggestedPost method should return SendContact builder for chaining with nil params")
+	}
+
+	// Test chaining
+	chainedResult := result.SuggestedPost(nil)
+	if chainedResult == nil {
+		t.Error("SuggestedPost method should support chaining")
 	}
 }
 

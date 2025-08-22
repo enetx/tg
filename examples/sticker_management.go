@@ -4,6 +4,7 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/file"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 		userID := args[0].ToInt().Unwrap().Int64()
 		name := args[1]
 		title := args[2]
-		stickerFile := args[3]
+		stickerFile := file.Input(args[3]).Unwrap()
 		emoji := args[4]
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
@@ -44,7 +45,7 @@ func main() {
 
 		userID := args[0].ToInt().Unwrap().Int64()
 		setName := args[1]
-		stickerFile := args[2]
+		stickerFile := file.Input(args[2]).Unwrap()
 		emoji := args[3]
 
 		result := ctx.AddStickerToSet(userID, setName).
@@ -91,7 +92,7 @@ func main() {
 			return ctx.Reply("Usage: /deletesticker <sticker_file_id>").Send().Err()
 		}
 
-		stickerID := args[0]
+		stickerID := file.Input(args[0]).Unwrap()
 
 		result := ctx.DeleteStickerFromSet(stickerID).Send()
 		if result.IsErr() {
@@ -108,7 +109,7 @@ func main() {
 			return ctx.Reply("Usage: /setstickerposition <sticker_file_id> <position>").Send().Err()
 		}
 
-		stickerID := args[0]
+		stickerID := file.Input(args[0]).Unwrap()
 		position := args[1].ToInt().Unwrap().Int64()
 
 		result := ctx.SetStickerPositionInSet(stickerID, position).Send()
@@ -126,7 +127,7 @@ func main() {
 			return ctx.Reply("Usage: /setstickeremoji <sticker_file_id> <emoji1> [emoji2] ...").Send().Err()
 		}
 
-		stickerID := args[0]
+		stickerID := file.Input(args[0]).Unwrap()
 		var emojis g.Slice[g.String]
 
 		args.Iter().Skip(1).ForEach(func(emoji g.String) {
@@ -151,7 +152,7 @@ func main() {
 			return ctx.Reply("Usage: /setstickerkeywords <sticker_file_id> <keyword1> [keyword2] ...").Send().Err()
 		}
 
-		stickerID := args[0]
+		stickerID := file.Input(args[0]).Unwrap()
 		var keywords g.Slice[g.String]
 
 		args.Iter().Skip(1).ForEach(func(keyword g.String) {
@@ -178,7 +179,7 @@ func main() {
 				Err()
 		}
 
-		stickerID := args[0]
+		stickerID := file.Input(args[0]).Unwrap()
 		point := args[1]
 		xShift := args[2].ToFloat().Unwrap()
 		yShift := args[3].ToFloat().Unwrap()
@@ -286,7 +287,7 @@ func main() {
 		userID := args[0].ToInt().Unwrap().Int64()
 		name := args[1]
 		title := args[2]
-		tgsFile := args[3]
+		tgsFile := file.Input(args[3]).Unwrap()
 		emoji := args[4]
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
@@ -313,7 +314,7 @@ func main() {
 		userID := args[0].ToInt().Unwrap().Int64()
 		name := args[1]
 		title := args[2]
-		webmFile := args[3]
+		webmFile := file.Input(args[3]).Unwrap()
 		emoji := args[4]
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
@@ -342,7 +343,7 @@ func main() {
 		userID := args[0].ToInt().Unwrap().Int64()
 		name := args[1]
 		title := args[2]
-		stickerFile := args[3]
+		stickerFile := file.Input(args[3]).Unwrap()
 		emoji := args[4]
 		point := args[5]
 		xShift := args[6].ToFloat().Unwrap()
@@ -378,10 +379,10 @@ func main() {
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
 			StickerType("regular").
-			Sticker(args[3], "static", []g.String{args[4]}).
+			Sticker(file.Input(args[3]).Unwrap(), "static", []g.String{args[4]}).
 			Keywords([]g.String{"first", "custom", "happy"}).
 			Add().
-			Sticker(args[5], "static", []g.String{args[6]}).
+			Sticker(file.Input(args[5]).Unwrap(), "static", []g.String{args[6]}).
 			Keywords([]g.String{"second", "custom", "sad"}).
 			Add().
 			Send()
