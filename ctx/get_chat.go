@@ -20,6 +20,17 @@ func (gc *GetChat) ChatID(id int64) *GetChat {
 	return gc
 }
 
+// // OverrideParams overrides existing request parameters and adds any missing ones.
+// func (gc *GetChat) OverrideParams(params g.Map[g.String, g.String]) *GetChat {
+// 	if gc.opts.RequestOpts == nil {
+// 		gc.opts.RequestOpts = new(gotgbot.RequestOpts)
+// 	}
+//
+// 	gc.opts.RequestOpts.OverrideParams = *(*map[string]string)(unsafe.Pointer(&params))
+//
+// 	return gc
+// }
+
 // Timeout sets a custom timeout for this request.
 func (gc *GetChat) Timeout(duration time.Duration) *GetChat {
 	if gc.opts.RequestOpts == nil {
