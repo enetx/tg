@@ -93,3 +93,12 @@ func (a *Account) Message() *Message {
 		connID: a.connID,
 	}
 }
+
+// SetGiftSettings returns a builder for changing gift privacy settings.
+// Requires the can_change_gift_settings business bot right.
+func (a *Account) SetGiftSettings() *SetGiftSettings {
+	return &SetGiftSettings{
+		account: a,
+		opts:    new(gotgbot.SetBusinessAccountGiftSettingsOpts),
+	}
+}
