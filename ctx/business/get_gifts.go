@@ -7,56 +7,72 @@ import (
 	"github.com/enetx/g"
 )
 
-// GetGifts request builder for retrieving business account gifts.
+// GetGifts is a request builder for retrieving gifts from a business account.
+// Use fluent methods to configure options before calling Send().
 type GetGifts struct {
 	bot    Bot
 	connID g.String
 	opts   *gotgbot.GetBusinessAccountGiftsOpts
 }
 
-// ExcludeUnsaved excludes gifts not saved to profile page.
+// ExcludeUnsaved sets the request to exclude gifts that aren't saved to the account's profile page.
 func (ggs *GetGifts) ExcludeUnsaved() *GetGifts {
 	ggs.opts.ExcludeUnsaved = true
 	return ggs
 }
 
-// ExcludeSaved excludes gifts saved to profile page.
+// ExcludeSaved sets the request to exclude gifts that are saved to the account's profile page.
 func (ggs *GetGifts) ExcludeSaved() *GetGifts {
 	ggs.opts.ExcludeSaved = true
 	return ggs
 }
 
-// ExcludeUnlimited excludes unlimited gifts.
+// ExcludeUnlimited sets the request to exclude gifts that can be purchased an unlimited number of times.
 func (ggs *GetGifts) ExcludeUnlimited() *GetGifts {
 	ggs.opts.ExcludeUnlimited = true
 	return ggs
 }
 
-// ExcludeLimited excludes limited gifts.
-func (ggs *GetGifts) ExcludeLimited() *GetGifts {
-	ggs.opts.ExcludeLimited = true
+// ExcludeLimitedUpgradable sets the request to exclude gifts that are limited but can be upgraded to unique.
+func (ggs *GetGifts) ExcludeLimitedUpgradable() *GetGifts {
+	ggs.opts.ExcludeLimitedUpgradable = true
 	return ggs
 }
 
-// ExcludeUnique excludes unique gifts.
+// ExcludeLimitedNonUpgradable sets the request to exclude gifts that are limited and cannot be upgraded to unique.
+func (ggs *GetGifts) ExcludeLimitedNonUpgradable() *GetGifts {
+	ggs.opts.ExcludeLimitedNonUpgradable = true
+	return ggs
+}
+
+// ExcludeUnique sets the request to exclude unique gifts.
 func (ggs *GetGifts) ExcludeUnique() *GetGifts {
 	ggs.opts.ExcludeUnique = true
 	return ggs
 }
 
-// SortByPrice sorts gifts by price instead of send date.
+// ExcludeFromBlockchain sets the request to exclude gifts that were assigned from the TON blockchain
+// and cannot be resold or transferred in Telegram.
+func (ggs *GetGifts) ExcludeFromBlockchain() *GetGifts {
+	ggs.opts.ExcludeFromBlockchain = true
+	return ggs
+}
+
+// SortByPrice sets the request to sort results by gift price instead of send date.
+// Sorting is applied before pagination.
 func (ggs *GetGifts) SortByPrice() *GetGifts {
 	ggs.opts.SortByPrice = true
 	return ggs
 }
 
-// Offset sets pagination offset.
+// Offset sets the pagination offset for the first gift entry to return.
+// Use an empty string to get the first chunk of results.
 func (ggs *GetGifts) Offset(offset g.String) *GetGifts {
 	ggs.opts.Offset = offset.Std()
 	return ggs
 }
 
-// Limit sets maximum gifts to return (1-100, defaults to 100).
+// Limit sets the maximum number of gifts to be returned (1–100, defaults to 100).
 func (ggs *GetGifts) Limit(limit int64) *GetGifts {
 	ggs.opts.Limit = limit
 	return ggs
@@ -69,22 +85,21 @@ func (ggs *GetGifts) Timeout(duration time.Duration) *GetGifts {
 	}
 
 	ggs.opts.RequestOpts.Timeout = duration
-
 	return ggs
 }
 
-// APIURL sets a custom API URL for this request.
+// APIURL sets a custom Telegram Bot API URL for this request.
 func (ggs *GetGifts) APIURL(url g.String) *GetGifts {
 	if ggs.opts.RequestOpts == nil {
 		ggs.opts.RequestOpts = new(gotgbot.RequestOpts)
 	}
 
 	ggs.opts.RequestOpts.APIURL = url.Std()
-
 	return ggs
 }
 
-// Send executes the Gifts request.
+// Send executes the request to retrieve gifts from the business account.
+// Returns OwnedGifts wrapped in g.Result.
 func (ggs *GetGifts) Send() g.Result[*gotgbot.OwnedGifts] {
 	return g.ResultOf(ggs.bot.Raw().GetBusinessAccountGifts(
 		ggs.connID.Std(),

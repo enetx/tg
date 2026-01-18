@@ -6,6 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type ForwardMessage struct {
@@ -39,6 +40,12 @@ func (fm *ForwardMessage) Silent() *ForwardMessage {
 // Protect enables content protection for the forwarded message.
 func (fm *ForwardMessage) Protect() *ForwardMessage {
 	fm.opts.ProtectContent = true
+	return fm
+}
+
+// Effect sets a message effect for the forwarded message.
+func (fm *ForwardMessage) Effect(effect effects.EffectType) *ForwardMessage {
+	fm.opts.MessageEffectId = effect.String()
 	return fm
 }
 

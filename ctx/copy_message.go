@@ -10,6 +10,7 @@ import (
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
+	"github.com/enetx/tg/types/effects"
 )
 
 type CopyMessage struct {
@@ -103,6 +104,12 @@ func (c *CopyMessage) AllowPaidBroadcast() *CopyMessage {
 // Reply sets reply parameters using the reply builder.
 func (c *CopyMessage) Reply(params *reply.Parameters) *CopyMessage {
 	c.opts.ReplyParameters = params.Std()
+	return c
+}
+
+// Effect sets a message effect for the copied message.
+func (c *CopyMessage) Effect(effect effects.EffectType) *CopyMessage {
+	c.opts.MessageEffectId = effect.String()
 	return c
 }
 

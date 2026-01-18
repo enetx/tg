@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/ref"
 	"github.com/enetx/tg/inline"
 )
 
@@ -33,7 +34,7 @@ func (aiq *AnswerInlineQuery) Results(results ...inline.QueryResult) *AnswerInli
 
 // CacheFor sets the maximum amount of time the result may be cached on Telegram servers.
 func (aiq *AnswerInlineQuery) CacheFor(duration time.Duration) *AnswerInlineQuery {
-	aiq.opts.CacheTime = int64(duration.Seconds())
+	aiq.opts.CacheTime = ref.Of(int64(duration.Seconds()))
 	return aiq
 }
 

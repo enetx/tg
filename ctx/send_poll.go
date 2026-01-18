@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/ref"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
@@ -60,7 +61,7 @@ func (sp *SendPoll) Option(option input.PollOption) *SendPoll {
 
 // Anonymous makes the poll anonymous.
 func (sp *SendPoll) Anonymous() *SendPoll {
-	sp.opts.IsAnonymous = true
+	sp.opts.IsAnonymous = ref.Of(true)
 	return sp
 }
 

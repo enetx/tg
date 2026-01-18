@@ -104,23 +104,109 @@ func TestGetGifts_ExcludeUnlimited(t *testing.T) {
 	}
 }
 
-func TestGetGifts_ExcludeLimited(t *testing.T) {
+func TestGetGifts_ExcludeLimitedUpgradable(t *testing.T) {
 	bot := &mockBot{}
-	connectionID := g.String("business_conn_exclude_limited_123")
+	connectionID := g.String("business_conn_exclude_limited_upgradable_123")
 	account := business.NewAccount(bot, connectionID)
 	balance := account.Balance()
 
-	// Test ExcludeLimited method
 	result := balance.GetGifts()
-	excludeLimitedResult := result.ExcludeLimited()
-	if excludeLimitedResult == nil {
-		t.Error("ExcludeLimited method should return GetGifts builder for chaining")
+	upgradable := result.ExcludeLimitedUpgradable()
+	if upgradable == nil {
+		t.Error("ExcludeLimitedUpgradable should return GetGifts builder for chaining")
 	}
 
-	// Test that ExcludeLimited can be chained multiple times
-	chainedResult := excludeLimitedResult.ExcludeLimited()
-	if chainedResult == nil {
-		t.Error("ExcludeLimited method should support multiple chaining calls")
+	// Test chaining multiple times
+	chained := upgradable.ExcludeLimitedUpgradable()
+	if chained == nil {
+		t.Error("ExcludeLimitedUpgradable should support multiple chaining calls")
+	}
+
+	// Test with other methods
+	withOthers := balance.GetGifts().
+		ExcludeLimitedUpgradable().
+		ExcludeUnique().
+		SortByPrice()
+	if withOthers == nil {
+		t.Error("ExcludeLimitedUpgradable should work with other methods")
+	}
+}
+
+func TestGetGifts_ExcludeLimitedNonUpgradable(t *testing.T) {
+	bot := &mockBot{}
+	connectionID := g.String("business_conn_exclude_limited_nonupgradable_123")
+	account := business.NewAccount(bot, connectionID)
+	balance := account.Balance()
+
+	result := balance.GetGifts()
+	nonUpgradable := result.ExcludeLimitedNonUpgradable()
+	if nonUpgradable == nil {
+		t.Error("ExcludeLimitedNonUpgradable should return GetGifts builder for chaining")
+	}
+
+	// Test chaining multiple times
+	chained := nonUpgradable.ExcludeLimitedNonUpgradable()
+	if chained == nil {
+		t.Error("ExcludeLimitedNonUpgradable should support multiple chaining calls")
+	}
+
+	// Test with other methods
+	withOthers := balance.GetGifts().
+		ExcludeLimitedNonUpgradable().
+		ExcludeUnsaved().
+		Limit(20)
+	if withOthers == nil {
+		t.Error("ExcludeLimitedNonUpgradable should work with other methods")
+	}
+}
+
+func TestGetGifts_ExcludeFromBlockchain(t *testing.T) {
+	bot := &mockBot{}
+	connectionID := g.String("business_conn_exclude_blockchain_123")
+	account := business.NewAccount(bot, connectionID)
+	balance := account.Balance()
+
+	result := balance.GetGifts()
+	blockchain := result.ExcludeFromBlockchain()
+	if blockchain == nil {
+		t.Error("ExcludeFromBlockchain should return GetGifts builder for chaining")
+	}
+
+	// Test chaining multiple times
+	chained := blockchain.ExcludeFromBlockchain()
+	if chained == nil {
+		t.Error("ExcludeFromBlockchain should support multiple chaining calls")
+	}
+
+	// Test with other methods
+	withOthers := balance.GetGifts().
+		ExcludeFromBlockchain().
+		SortByPrice().
+		Offset(g.String("page_1"))
+	if withOthers == nil {
+		t.Error("ExcludeFromBlockchain should work with other methods")
+	}
+}
+
+func TestGetGifts_Limit(t *testing.T) {
+	bot := &mockBot{}
+	connectionID := g.String("business_conn_limit_123")
+	account := business.NewAccount(bot, connectionID)
+	balance := account.Balance()
+
+	limits := []int64{0, 1, 10, 50, 100, 200}
+	for _, l := range limits {
+		result := balance.GetGifts()
+		limitResult := result.Limit(l)
+		if limitResult == nil {
+			t.Errorf("Limit method should return GetGifts builder for limit %d", l)
+		}
+
+		// Test chaining with Offset
+		chained := limitResult.Offset(g.String("page_test"))
+		if chained == nil {
+			t.Errorf("Limit method should support chaining with Offset for limit %d", l)
+		}
 	}
 }
 

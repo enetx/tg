@@ -148,6 +148,15 @@ func (ctx *Context) StopMessageLiveLocation() *StopMessageLiveLocation {
 	}
 }
 
+// GetUserGifts creates a new GetUserGifts request to get information about a user gifts.
+func (ctx *Context) GetUserGifts(userID int64) *GetUserGifts {
+	return &GetUserGifts{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.GetUserGiftsOpts),
+	}
+}
+
 // GetUserChatBoosts creates a new GetUserChatBoosts request.
 func (ctx *Context) GetUserChatBoosts(userID int64) *GetUserChatBoosts {
 	return &GetUserChatBoosts{
@@ -388,6 +397,16 @@ func (ctx *Context) SendContact(phoneNumber, firstName g.String) *SendContact {
 	}
 }
 
+// SendMessageDraft creates a new SendMessageDraft request to send a message draft.
+func (ctx *Context) SendMessageDraft(draftID int64, text g.String) *SendMessageDraft {
+	return &SendMessageDraft{
+		ctx:     ctx,
+		draftID: draftID,
+		text:    text,
+		opts:    new(gotgbot.SendMessageDraftOpts),
+	}
+}
+
 // ForwardMessage creates a new ForwardMessage request to forward a message.
 func (ctx *Context) ForwardMessage(fromChatID, messageID int64) *ForwardMessage {
 	return &ForwardMessage{
@@ -617,6 +636,17 @@ func (ctx *Context) EditStory(businessConnectionID g.String, storyID int64, cont
 		storyID:              storyID,
 		opts:                 new(gotgbot.EditStoryOpts),
 		content:              content,
+	}
+}
+
+// RepostStory creates a new RepostStory request to repost a story from another business account.
+func (ctx *Context) RepostStory(businessConnectionID g.String, fromChatID, fromStoryID int64) *RepostStory {
+	return &RepostStory{
+		ctx:                  ctx,
+		businessConnectionID: businessConnectionID,
+		fromChatID:           fromChatID,
+		fromStoryID:          fromStoryID,
+		opts:                 new(gotgbot.RepostStoryOpts),
 	}
 }
 
@@ -913,6 +943,14 @@ func (ctx *Context) GetChatAdministrators() *GetChatAdministrators {
 	return &GetChatAdministrators{
 		ctx:  ctx,
 		opts: new(gotgbot.GetChatAdministratorsOpts),
+	}
+}
+
+// GetChatGifts creates a new GetChatGifts request to get information about a chat gifts.
+func (ctx *Context) GetChatGifts() *GetChatGifts {
+	return &GetChatGifts{
+		ctx:  ctx,
+		opts: new(gotgbot.GetChatGiftsOpts),
 	}
 }
 
