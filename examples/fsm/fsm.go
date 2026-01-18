@@ -117,9 +117,7 @@ func main() {
 	// Command handler for /start, which initializes or resets a user's workflow.
 	b.Command("start", func(ctx *ctx.Context) error {
 		// Get or create an FSM instance for the user.
-		entry := fsmStore.Entry(ctx.EffectiveUser.Id)
-		entry.OrSetBy(func() *fsm.SyncFSM { return fsmachine.Clone().Sync() })
-		fsm := entry.Get().Some()
+		fsm := fsmStore.Entry(ctx.EffectiveUser.Id).OrInsertWith(fsmachine.Clone().Sync)
 
 		// Manually reset the FSM to the initial state. This allows a user
 		// to restart the flow cleanly even if they were halfway through.

@@ -244,74 +244,74 @@ Create complex multi-step conversations:
 import (
 	"github.com/enetx/fsm"
 	"github.com/enetx/g"
+	"github.com/enetx/tg/bot"
+	"github.com/enetx/tg/ctx"
 )
 
 // Define states
 const (
-    StateGetEmail = "get_email"
-    StateGetName  = "get_name"
-    StateSummary  = "summary"
+	StateGetEmail = "get_email"
+	StateGetName  = "get_name"
+	StateSummary  = "summary"
 )
 
 // Store FSM instances per user
 var fsmStore = g.NewMapSafe[int64, *fsm.SyncFSM]()
 
 func main() {
-    b := bot.New(token).Build().Unwrap()
+	b := bot.New(token).Build().Unwrap()
 
-    // Create FSM template
-    template := fsm.New(StateGetEmail).
-        Transition(StateGetEmail, "next", StateGetName).
-        Transition(StateGetName, "next", StateSummary)
+	// Create FSM template
+	template := fsm.New(StateGetEmail).
+		Transition(StateGetEmail, "next", StateGetName).
+		Transition(StateGetName, "next", StateSummary)
 
-    // Define state handlers
-    template.OnEnter(StateGetEmail, func(fctx *fsm.Context) error {
-        tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
-        return tgctx.Reply("Enter your email:").Send().Err()
-    })
+	// Define state handlers
+	template.OnEnter(StateGetEmail, func(fctx *fsm.Context) error {
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
+		return tgctx.Reply("Enter your email:").Send().Err()
+	})
 
-    template.OnEnter(StateGetName, func(fctx *fsm.Context) error {
-        email := fctx.Input.(string)
-        fctx.Data.Set("email", email)
+	template.OnEnter(StateGetName, func(fctx *fsm.Context) error {
+		email := fctx.Input.(string)
+		fctx.Data.Set("email", email)
 
-        tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
-        return tgctx.Reply("Enter your name:").Send().Err()
-    })
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
+		return tgctx.Reply("Enter your name:").Send().Err()
+	})
 
-    template.OnEnter(StateSummary, func(fctx *fsm.Context) error {
-        name := fctx.Input.(string)
-        email := fctx.Data.Get("email").UnwrapOr("<no email>")
+	template.OnEnter(StateSummary, func(fctx *fsm.Context) error {
+		name := fctx.Input.(string)
+		email := fctx.Data.Get("email").UnwrapOr("<no email>")
 
-        tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
-        defer fsmStore.Delete(tgctx.EffectiveUser.Id)
+		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
+		defer fsmStore.Delete(tgctx.EffectiveUser.Id)
 
-        return tgctx.Reply(g.Format("Got name: {} and email: {}", name, email)).Send().Err()
-    })
+		return tgctx.Reply(g.Format("Got name: {} and email: {}", name, email)).Send().Err()
+	})
 
-    // Start FSM
-    b.Command("register", func(ctx *ctx.Context) error {
-        entry := fsmStore.Entry(ctx.EffectiveUser.Id)
-        entry.OrSetBy(func() *fsm.SyncFSM { return template.Clone().Sync() })
-        fsm := entry.Get().Some()
+	// Start FSM
+	b.Command("register", func(ctx *ctx.Context) error {
+		fsm := fsmStore.Entry(ctx.EffectiveUser.Id).OrInsertWith(template.Clone().Sync)
 
-        fsm.SetState(StateGetEmail)
-        fsm.Context().Meta.Set("tgctx", ctx)
-        return fsm.CallEnter(StateGetEmail)
-    })
+		fsm.SetState(StateGetEmail)
+		fsm.Context().Meta.Set("tgctx", ctx)
+		return fsm.CallEnter(StateGetEmail)
+	})
 
-    // Handle FSM input
-    b.On.Message.Text(func(ctx *ctx.Context) error {
-        opt := fsmStore.Get(ctx.EffectiveUser.Id)
-        if opt.IsNone() {
-            return nil // No active FSM
-        }
+	// Handle FSM input
+	b.On.Message.Text(func(ctx *ctx.Context) error {
+		opt := fsmStore.Get(ctx.EffectiveUser.Id)
+		if opt.IsNone() {
+			return nil // No active FSM
+		}
 
-        fsm := opt.Some()
-        fsm.Context().Meta.Set("tgctx", ctx)
-        return fsm.Trigger("next", ctx.EffectiveMessage.Text)
-    })
+		fsm := opt.Some()
+		fsm.Context().Meta.Set("tgctx", ctx)
+		return fsm.Trigger("next", ctx.EffectiveMessage.Text)
+	})
 
-    b.Polling().Start()
+	b.Polling().Start()
 }
 ```
 

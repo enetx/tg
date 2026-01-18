@@ -147,10 +147,8 @@ func main() {
 	// Command handler for /start, which initializes or resets a user's workflow.
 	b.Command("start", func(ctx *ctx.Context) error {
 		// Get or create an FSM instance for the user.
-		entry := fsmStore.Entry(ctx.EffectiveUser.Id)
 		// If the user is new, clone the master template for them.
-		entry.OrSetBy(func() *fsm.SyncFSM { return fsmachine.Clone().Sync() })
-		fsm := entry.Get().Some()
+		fsm := fsmStore.Entry(ctx.EffectiveUser.Id).OrInsertWith(fsmachine.Clone().Sync)
 
 		// Store the current Telegram context in the FSM's temporary Meta store.
 		// This makes it accessible within all callbacks for sending API replies.

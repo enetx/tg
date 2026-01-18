@@ -49,9 +49,7 @@ func main() {
 	// Команда /start
 	b.Command("start", func(ctx *ctx.Context) error {
 		// Retrieve or initialize FSM instance for the current user
-		entry := fsmStore.Entry(ctx.EffectiveUser.Id)
-		entry.OrSetBy(func() *fsm.SyncFSM { return fsmachine.Clone().Sync() })
-		state := entry.Get().Some()
+		state := fsmStore.Entry(ctx.EffectiveUser.Id).OrInsertWith(fsmachine.Clone().Sync)
 
 		// Extract payload from /start {payload}
 		payload := ctx.Args().Last().UnwrapOrDefault().Trim()
