@@ -65,7 +65,7 @@ func (dm *DeleteMessages) APIURL(url g.String) *DeleteMessages {
 
 // Send deletes the messages and returns the result.
 func (dm *DeleteMessages) Send() g.Result[bool] {
-	if dm.messageIDs.Empty() {
+	if dm.messageIDs.IsEmpty() {
 		return g.Err[bool](g.Errorf("no message IDs specified for deletion"))
 	}
 

@@ -68,7 +68,7 @@ func (w *SetWebhook) Register() g.Result[bool] {
 		defer w.cert.Close()
 	}
 
-	if w.domain.Empty() || w.path.Empty() {
+	if w.domain.IsEmpty() || w.path.IsEmpty() {
 		return g.Err[bool](g.Errorf("Webhook domain and path must be set"))
 	}
 

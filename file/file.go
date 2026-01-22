@@ -23,7 +23,7 @@ type InputFile struct {
 //
 // Returns a File containing the processed file data or an error if processing fails.
 func Input(filename g.String) g.Result[InputFile] {
-	if filename.Empty() {
+	if filename.IsEmpty() {
 		return g.Err[InputFile](errors.New("filename is empty"))
 	}
 

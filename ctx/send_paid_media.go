@@ -151,7 +151,7 @@ func (spm *SendPaidMedia) DirectMessagesTopic(topicID int64) *SendPaidMedia {
 
 // Send sends the paid media and returns the message.
 func (spm *SendPaidMedia) Send() g.Result[*gotgbot.Message] {
-	if spm.media.Empty() {
+	if spm.media.IsEmpty() {
 		return g.Err[*gotgbot.Message](g.Errorf("no paid media specified"))
 	}
 

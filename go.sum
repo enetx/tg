@@ -4,8 +4,8 @@ github.com/andybalholm/brotli v1.2.0 h1:ukwgCxwYrmACq68yiUqwIWnGY0cTPox/M94sVwTo
 github.com/andybalholm/brotli v1.2.0/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
 github.com/enetx/fsm v0.0.0-20260118083001-68ac12bd52cb h1:o1seCcKBgQtXGjCZe40pwm78dJjEgKRhLoOKMC0ycEQ=
 github.com/enetx/fsm v0.0.0-20260118083001-68ac12bd52cb/go.mod h1:n0yCR3jsymoBBbtaQG+LeZFM6q6RiIMEYY3Vo4SoWag=
-github.com/enetx/g v1.0.200 h1:/BmPSiyR4qGsfMgi4z8bIP2AkyaBA4Sk2jJdfQzH83U=
-github.com/enetx/g v1.0.200/go.mod h1:6/HQeRy+tIJVGY+oRPQVJ/vOSruAi0aldFggurT6jBY=
+github.com/enetx/g v1.0.202 h1:E32/PWp542wHh7c5VYPGohK0Nu6CpiRm34vr0P1F6dU=
+github.com/enetx/g v1.0.202/go.mod h1:6/HQeRy+tIJVGY+oRPQVJ/vOSruAi0aldFggurT6jBY=
 github.com/enetx/iter v0.0.0-20250912135656-f1583323588f h1:GUW+4AWfECIEJ9oAxgEAVGCpaozMCjRiUYnuR6Q0bCQ=
 github.com/enetx/iter v0.0.0-20250912135656-f1583323588f/go.mod h1:oMZN8hGLUpi7QBlMEUqailocNy0NFAO/7Lu+Nwh9HMM=
 github.com/klauspost/compress v1.18.3 h1:9PJRvfbmTabkOX8moIpXPbMMbYN60bWImDDU7L+/6zw=

@@ -21,7 +21,7 @@ func (b *InlineKeyboard) Row() *InlineKeyboard {
 
 // addToLastRow adds a button to the last row, creating a new row if needed.
 func (b *InlineKeyboard) addToLastRow(btn gotgbot.InlineKeyboardButton) *InlineKeyboard {
-	if b.rows.Empty() {
+	if b.rows.IsEmpty() {
 		b.rows.Push([]gotgbot.InlineKeyboardButton{btn})
 	} else {
 		b.rows[b.rows.Len()-1].Push(btn)
@@ -206,7 +206,7 @@ func (b *InlineKeyboard) Edit(handler func(btn *Button)) *InlineKeyboard {
 			}
 		}
 
-		if nrow.NotEmpty() {
+		if !nrow.IsEmpty() {
 			rows.Push(nrow)
 		}
 	}

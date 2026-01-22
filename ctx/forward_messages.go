@@ -88,7 +88,7 @@ func (fms *ForwardMessages) DirectMessagesTopic(topicID int64) *ForwardMessages 
 
 // Send forwards the messages and returns the array of sent message IDs.
 func (fms *ForwardMessages) Send() g.Result[g.Slice[gotgbot.MessageId]] {
-	if fms.messageIDs.Empty() {
+	if fms.messageIDs.IsEmpty() {
 		return g.Err[g.Slice[gotgbot.MessageId]](g.Errorf("no message IDs specified for forwarding"))
 	}
 

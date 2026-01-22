@@ -94,7 +94,7 @@ func (cm *CopyMessages) DirectMessagesTopic(topicID int64) *CopyMessages {
 
 // Send copies the messages and returns the array of sent message IDs.
 func (cm *CopyMessages) Send() g.Result[g.Slice[gotgbot.MessageId]] {
-	if cm.messageIDs.Empty() {
+	if cm.messageIDs.IsEmpty() {
 		return g.Err[g.Slice[gotgbot.MessageId]](g.Errorf("no message IDs specified for copying"))
 	}
 
