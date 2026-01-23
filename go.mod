@@ -4,8 +4,8 @@ go 1.24.0
 
 require (
 	github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.33.0.20260117125230-298164115cfd
-	github.com/enetx/fsm v0.0.0-20260118083001-68ac12bd52cb
-	github.com/enetx/g v1.0.202
+	github.com/enetx/fsm v0.0.0-20260123195547-58bda68c5191
+	github.com/enetx/g v1.0.203
 )
 
 require (

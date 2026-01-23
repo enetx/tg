@@ -2,10 +2,10 @@ github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.33.0.20260117125230-298164115cfd h
 github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.33.0.20260117125230-298164115cfd/go.mod h1:BSzsfjlE0wakLw2/U1FtO8rdVt+Z+4VyoGo/YcGD9QQ=
 github.com/andybalholm/brotli v1.2.0 h1:ukwgCxwYrmACq68yiUqwIWnGY0cTPox/M94sVwToPjQ=
 github.com/andybalholm/brotli v1.2.0/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
-github.com/enetx/fsm v0.0.0-20260118083001-68ac12bd52cb h1:o1seCcKBgQtXGjCZe40pwm78dJjEgKRhLoOKMC0ycEQ=
-github.com/enetx/fsm v0.0.0-20260118083001-68ac12bd52cb/go.mod h1:n0yCR3jsymoBBbtaQG+LeZFM6q6RiIMEYY3Vo4SoWag=
-github.com/enetx/g v1.0.202 h1:E32/PWp542wHh7c5VYPGohK0Nu6CpiRm34vr0P1F6dU=
-github.com/enetx/g v1.0.202/go.mod h1:6/HQeRy+tIJVGY+oRPQVJ/vOSruAi0aldFggurT6jBY=
+github.com/enetx/fsm v0.0.0-20260123195547-58bda68c5191 h1:GXHFvUOSvrC1Yz/5dRoLM+DHMApGW84qOUanqCtR33k=
+github.com/enetx/fsm v0.0.0-20260123195547-58bda68c5191/go.mod h1:cOvliHeutKfTci3mvzUKE8hM9BBAYIRZTQExY+oI0SU=
+github.com/enetx/g v1.0.203 h1:oUsJ7VXCASBJFN+NHd7x7P7QFcORAarFISMt01sXWmw=
+github.com/enetx/g v1.0.203/go.mod h1:6/HQeRy+tIJVGY+oRPQVJ/vOSruAi0aldFggurT6jBY=
 github.com/enetx/iter v0.0.0-20250912135656-f1583323588f h1:GUW+4AWfECIEJ9oAxgEAVGCpaozMCjRiUYnuR6Q0bCQ=
 github.com/enetx/iter v0.0.0-20250912135656-f1583323588f/go.mod h1:oMZN8hGLUpi7QBlMEUqailocNy0NFAO/7Lu+Nwh9HMM=
 github.com/klauspost/compress v1.18.3 h1:9PJRvfbmTabkOX8moIpXPbMMbYN60bWImDDU7L+/6zw=
