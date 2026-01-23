@@ -97,7 +97,9 @@ func (sp *SendPhoto) Markup(kb keyboard.Keyboard) *SendPhoto {
 
 // Reply sets reply parameters using the reply builder.
 func (sp *SendPhoto) Reply(params *reply.Parameters) *SendPhoto {
-	sp.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sp.opts.ReplyParameters = params.Std()
+	}
 	return sp
 }
 

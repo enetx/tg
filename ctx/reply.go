@@ -64,7 +64,9 @@ func (r *Reply) Effect(effect effects.EffectType) *Reply {
 
 // Replay sets reply parameters using the reply builder.
 func (r *Reply) Reply(params *reply.Parameters) *Reply {
-	r.opts.ReplyParameters = params.Std()
+	if params != nil {
+		r.opts.ReplyParameters = params.Std()
+	}
 	return r
 }
 

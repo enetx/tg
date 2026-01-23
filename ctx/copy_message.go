@@ -103,7 +103,9 @@ func (c *CopyMessage) AllowPaidBroadcast() *CopyMessage {
 
 // Reply sets reply parameters using the reply builder.
 func (c *CopyMessage) Reply(params *reply.Parameters) *CopyMessage {
-	c.opts.ReplyParameters = params.Std()
+	if params != nil {
+		c.opts.ReplyParameters = params.Std()
+	}
 	return c
 }
 
@@ -137,7 +139,9 @@ func (c *CopyMessage) APIURL(url g.String) *CopyMessage {
 
 // SuggestedPost sets suggested post parameters for direct messages chats.
 func (c *CopyMessage) SuggestedPost(params *suggested.PostParameters) *CopyMessage {
-	c.opts.SuggestedPostParameters = params.Std()
+	if params != nil {
+		c.opts.SuggestedPostParameters = params.Std()
+	}
 	return c
 }
 

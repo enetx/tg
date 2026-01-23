@@ -91,7 +91,9 @@ func (sv *SendVenue) GooglePlaceType(placeType g.String) *SendVenue {
 
 // Reply sets reply parameters using the reply builder.
 func (sv *SendVenue) Reply(params *reply.Parameters) *SendVenue {
-	sv.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sv.opts.ReplyParameters = params.Std()
+	}
 	return sv
 }
 

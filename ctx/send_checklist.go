@@ -85,7 +85,9 @@ func (sc *SendChecklist) Markup(kb keyboard.Keyboard) *SendChecklist {
 
 // Reply sets reply parameters using the reply builder.
 func (sc *SendChecklist) Reply(params *reply.Parameters) *SendChecklist {
-	sc.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sc.opts.ReplyParameters = params.Std()
+	}
 	return sc
 }
 

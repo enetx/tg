@@ -106,7 +106,9 @@ func (sd *SendDocument) Thumbnail(file g.String) *SendDocument {
 
 // Reply sets reply parameters using the reply builder.
 func (sd *SendDocument) Reply(params *reply.Parameters) *SendDocument {
-	sd.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sd.opts.ReplyParameters = params.Std()
+	}
 	return sd
 }
 

@@ -106,7 +106,9 @@ func (sa *SendAudio) Thumbnail(file g.String) *SendAudio {
 
 // Reply sets reply parameters using the reply builder.
 func (sa *SendAudio) Reply(params *reply.Parameters) *SendAudio {
-	sa.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sa.opts.ReplyParameters = params.Std()
+	}
 	return sa
 }
 

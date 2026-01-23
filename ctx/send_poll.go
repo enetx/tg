@@ -158,7 +158,9 @@ func (sp *SendPoll) Markup(kb keyboard.Keyboard) *SendPoll {
 
 // Reply sets reply parameters using the reply builder.
 func (sp *SendPoll) Reply(params *reply.Parameters) *SendPoll {
-	sp.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sp.opts.ReplyParameters = params.Std()
+	}
 	return sp
 }
 

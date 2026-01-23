@@ -93,7 +93,9 @@ func (sd *SendDice) Effect(effect effects.EffectType) *SendDice {
 
 // Reply sets reply parameters using the reply builder.
 func (sd *SendDice) Reply(params *reply.Parameters) *SendDice {
-	sd.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sd.opts.ReplyParameters = params.Std()
+	}
 	return sd
 }
 

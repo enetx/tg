@@ -77,7 +77,9 @@ func (sc *SendContact) VCard(vcard g.String) *SendContact {
 
 // Reply sets reply parameters using the reply builder.
 func (sc *SendContact) Reply(params *reply.Parameters) *SendContact {
-	sc.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sc.opts.ReplyParameters = params.Std()
+	}
 	return sc
 }
 

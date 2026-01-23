@@ -156,7 +156,9 @@ func (si *SendInvoice) Effect(effect effects.EffectType) *SendInvoice {
 
 // Reply sets reply parameters using the reply builder.
 func (si *SendInvoice) Reply(params *reply.Parameters) *SendInvoice {
-	si.opts.ReplyParameters = params.Std()
+	if params != nil {
+		si.opts.ReplyParameters = params.Std()
+	}
 	return si
 }
 

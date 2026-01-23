@@ -72,7 +72,9 @@ func (ss *SendSticker) Emoji(emoji g.String) *SendSticker {
 
 // Reply sets reply parameters using the reply builder.
 func (ss *SendSticker) Reply(params *reply.Parameters) *SendSticker {
-	ss.opts.ReplyParameters = params.Std()
+	if params != nil {
+		ss.opts.ReplyParameters = params.Std()
+	}
 	return ss
 }
 

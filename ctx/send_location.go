@@ -89,7 +89,9 @@ func (sl *SendLocation) HorizontalAccuracy(accuracy float64) *SendLocation {
 
 // Reply sets reply parameters using the reply builder.
 func (sl *SendLocation) Reply(params *reply.Parameters) *SendLocation {
-	sl.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sl.opts.ReplyParameters = params.Std()
+	}
 	return sl
 }
 

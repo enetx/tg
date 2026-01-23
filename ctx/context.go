@@ -664,7 +664,7 @@ func (ctx *Context) DeleteStory(businessConnectionID g.String, storyID int64) *D
 func (ctx *Context) IsAdmin() g.Result[bool] {
 	member, err := ctx.Bot.Raw().GetChatMember(ctx.EffectiveChat.Id, ctx.EffectiveUser.Id, nil)
 	if err != nil {
-		return g.Err[bool](nil)
+		return g.Err[bool](err)
 	}
 
 	return g.Ok(member.GetStatus() == "administrator" || member.GetStatus() == "creator")

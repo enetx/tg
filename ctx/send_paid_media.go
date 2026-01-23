@@ -108,7 +108,9 @@ func (spm *SendPaidMedia) AllowPaidBroadcast() *SendPaidMedia {
 
 // Reply sets reply parameters using the reply builder.
 func (spm *SendPaidMedia) Reply(params *reply.Parameters) *SendPaidMedia {
-	spm.opts.ReplyParameters = params.Std()
+	if params != nil {
+		spm.opts.ReplyParameters = params.Std()
+	}
 	return spm
 }
 

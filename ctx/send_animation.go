@@ -125,7 +125,9 @@ func (sa *SendAnimation) Thumbnail(file g.String) *SendAnimation {
 
 // Reply sets reply parameters using the reply builder.
 func (sa *SendAnimation) Reply(params *reply.Parameters) *SendAnimation {
-	sa.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sa.opts.ReplyParameters = params.Std()
+	}
 	return sa
 }
 

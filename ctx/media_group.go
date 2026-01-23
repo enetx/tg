@@ -34,7 +34,10 @@ func (mg *MediaGroup) DeleteAfter(duration time.Duration) *MediaGroup {
 
 // Photo adds a photo to the media group with optional caption.
 func (mg *MediaGroup) Photo(photo input.Media) *MediaGroup {
-	mg.media.Push(photo)
+	if _, ok := photo.(*input.MediaPhoto); ok {
+		mg.media.Push(photo)
+	}
+
 	return mg
 }
 
@@ -97,7 +100,9 @@ func (mg *MediaGroup) Effect(effect effects.EffectType) *MediaGroup {
 
 // Reply sets reply parameters using the reply builder.
 func (mg *MediaGroup) Reply(params *reply.Parameters) *MediaGroup {
-	mg.opts.ReplyParameters = params.Std()
+	if params != nil {
+		mg.opts.ReplyParameters = params.Std()
+	}
 	return mg
 }
 
@@ -150,5 +155,29 @@ func (mg *MediaGroup) Send() g.Result[g.Slice[gotgbot.Message]] {
 	chatID := mg.chatID.UnwrapOr(mg.ctx.EffectiveChat.Id)
 	media := g.TransformSlice(mg.media, input.Media.Build)
 
-	return g.ResultOf[g.Slice[gotgbot.Message]](mg.ctx.Bot.Raw().SendMediaGroup(chatID, media, mg.opts))
+	send := func() g.Result[g.Slice[gotgbot.Message]] {
+		return g.ResultOf[g.Slice[gotgbot.Message]](mg.ctx.Bot.Raw().SendMediaGroup(chatID, media, mg.opts))
+	}
+
+	if mg.after.IsSome() {
+		go func() {
+			<-time.After(mg.after.Some())
+			msgs := send()
+			if msgs.IsOk() && mg.deleteAfter.IsSome() {
+				ids := g.TransformSlice(msgs.Ok(), func(m gotgbot.Message) int64 { return m.MessageId })
+				mg.ctx.DeleteMessages().ChatID(chatID).MessageIDs(ids).After(mg.deleteAfter.Some()).Send()
+			}
+		}()
+
+		return g.Ok[g.Slice[gotgbot.Message]](nil)
+	}
+
+	msgs := send()
+
+	if msgs.IsOk() && mg.deleteAfter.IsSome() {
+		ids := g.TransformSlice(msgs.Ok(), func(m gotgbot.Message) int64 { return m.MessageId })
+		mg.ctx.DeleteMessages().ChatID(chatID).MessageIDs(ids).After(mg.deleteAfter.Some()).Send()
+	}
+
+	return msgs
 }

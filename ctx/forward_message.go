@@ -73,7 +73,9 @@ func (fm *ForwardMessage) APIURL(url g.String) *ForwardMessage {
 
 // SuggestedPost sets suggested post parameters for direct messages chats.
 func (fm *ForwardMessage) SuggestedPost(params *suggested.PostParameters) *ForwardMessage {
-	fm.opts.SuggestedPostParameters = params.Std()
+	if params != nil {
+		fm.opts.SuggestedPostParameters = params.Std()
+	}
 	return fm
 }
 

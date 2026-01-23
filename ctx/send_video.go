@@ -143,7 +143,9 @@ func (sv *SendVideo) Markup(kb keyboard.Keyboard) *SendVideo {
 
 // Reply sets reply parameters using the reply builder.
 func (sv *SendVideo) Reply(params *reply.Parameters) *SendVideo {
-	sv.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sv.opts.ReplyParameters = params.Std()
+	}
 	return sv
 }
 

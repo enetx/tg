@@ -72,7 +72,9 @@ func (sm *SendMessage) Effect(effect effects.EffectType) *SendMessage {
 
 // Reply sets reply parameters using the reply builder.
 func (sm *SendMessage) Reply(params *reply.Parameters) *SendMessage {
-	sm.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sm.opts.ReplyParameters = params.Std()
+	}
 	return sm
 }
 

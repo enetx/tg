@@ -93,7 +93,9 @@ func (svn *SendVideoNote) Thumbnail(file g.String) *SendVideoNote {
 
 // Reply sets reply parameters using the reply builder.
 func (svn *SendVideoNote) Reply(params *reply.Parameters) *SendVideoNote {
-	svn.opts.ReplyParameters = params.Std()
+	if params != nil {
+		svn.opts.ReplyParameters = params.Std()
+	}
 	return svn
 }
 

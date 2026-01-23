@@ -63,7 +63,9 @@ func (sg *SendGame) Effect(effect effects.EffectType) *SendGame {
 
 // Reply sets reply parameters using the reply builder.
 func (sg *SendGame) Reply(params *reply.Parameters) *SendGame {
-	sg.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sg.opts.ReplyParameters = params.Std()
+	}
 	return sg
 }
 

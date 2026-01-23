@@ -97,7 +97,9 @@ func (sv *SendVoice) Duration(duration time.Duration) *SendVoice {
 
 // Reply sets reply parameters using the reply builder.
 func (sv *SendVoice) Reply(params *reply.Parameters) *SendVoice {
-	sv.opts.ReplyParameters = params.Std()
+	if params != nil {
+		sv.opts.ReplyParameters = params.Std()
+	}
 	return sv
 }
 

@@ -98,7 +98,10 @@ func TestMediaGroup_Send(t *testing.T) {
 
 func TestMediaGroup_SendWithMedia(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// Add media to the group
 	photoInputFile := file.Input(g.String("https://example.com/photo1.jpg"))
@@ -117,7 +120,10 @@ func TestMediaGroup_SendWithMedia(t *testing.T) {
 
 func TestMediaGroup_SendWithAllOptions(t *testing.T) {
 	bot := &mockBot{}
-	ctx := ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
 
 	// Add media to the group
 	photoInputFile := file.Input(g.String("https://example.com/photo1.jpg"))
@@ -146,8 +152,6 @@ func TestMediaGroup_SendWithAllOptions(t *testing.T) {
 		t.Logf("MediaGroup Send with all options failed as expected: %v", sendResult.Err())
 	}
 }
-
-// Tests for methods with 0% coverage
 
 func TestMediaGroup_After(t *testing.T) {
 	bot := &mockBot{}
