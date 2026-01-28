@@ -31,13 +31,13 @@ func (ats *AddStickerToSet) Format(format g.String) *AddStickerToSet {
 
 // EmojiList sets the emoji list for the sticker.
 func (ats *AddStickerToSet) EmojiList(emojis g.Slice[g.String]) *AddStickerToSet {
-	ats.sticker.EmojiList = emojis.ToStringSlice()
+	ats.sticker.EmojiList = g.TransformSlice(emojis, g.String.Std)
 	return ats
 }
 
 // Keywords sets keywords for the sticker.
 func (ats *AddStickerToSet) Keywords(keywords g.Slice[g.String]) *AddStickerToSet {
-	ats.sticker.Keywords = keywords.ToStringSlice()
+	ats.sticker.Keywords = g.TransformSlice(keywords, g.String.Std)
 	return ats
 }
 

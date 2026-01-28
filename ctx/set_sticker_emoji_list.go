@@ -46,6 +46,6 @@ func (ssel *SetStickerEmojiList) APIURL(url g.String) *SetStickerEmojiList {
 // Send sets the sticker emoji list.
 func (ssel *SetStickerEmojiList) Send() g.Result[bool] {
 	return g.ResultOf(ssel.ctx.Bot.Raw().
-		SetStickerEmojiList(ssel.sticker, ssel.emojiList.ToStringSlice(), ssel.opts),
+		SetStickerEmojiList(ssel.sticker, g.TransformSlice(ssel.emojiList, g.String.Std), ssel.opts),
 	)
 }

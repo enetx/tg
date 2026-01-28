@@ -45,6 +45,6 @@ func (ssk *SetStickerKeywords) APIURL(url g.String) *SetStickerKeywords {
 
 // Send sets the sticker keywords.
 func (ssk *SetStickerKeywords) Send() g.Result[bool] {
-	ssk.opts.Keywords = ssk.keywords.ToStringSlice()
+	ssk.opts.Keywords = g.TransformSlice(ssk.keywords, g.String.Std)
 	return g.ResultOf(ssk.ctx.Bot.Raw().SetStickerKeywords(ssk.sticker, ssk.opts))
 }

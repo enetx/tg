@@ -240,7 +240,7 @@ func (sv *SendVideo) ApplyMetadata() *SendVideo {
 
 	info := meta.Ok()
 
-	sv.duration = info.Duration.ToFloat().UnwrapOrDefault()
+	sv.duration = info.Duration.TryFloat().UnwrapOrDefault()
 	sv.Width(info.Width)
 	sv.Height(info.Height)
 

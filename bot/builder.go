@@ -102,7 +102,7 @@ func (b *BotBuilder) Build() g.Result[*Bot] {
 			return g.Err[*Bot](fmt.Errorf("invalid token format: expected '123456:ABCDEF', got '%s'", b.token))
 		}
 
-		id := split[0].ToInt()
+		id := split[0].TryInt()
 		if id.IsErr() {
 			return g.Err[*Bot](fmt.Errorf("failed to parse bot ID from token: %w", id.Err()))
 		}

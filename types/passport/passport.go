@@ -187,7 +187,7 @@ func (pe *PassportError) Build() gotgbot.PassportElementError {
 	case FilesError:
 		return &gotgbot.PassportElementErrorFiles{
 			Type:       pe.elementType.String(),
-			FileHashes: pe.fileHashes.UnwrapOrDefault().ToStringSlice(),
+			FileHashes: g.TransformSlice(pe.fileHashes.UnwrapOrDefault(), g.String.Std),
 			Message:    pe.message.Std(),
 		}
 	case TranslationFileError:
@@ -199,7 +199,7 @@ func (pe *PassportError) Build() gotgbot.PassportElementError {
 	case TranslationFilesError:
 		return &gotgbot.PassportElementErrorTranslationFiles{
 			Type:       pe.elementType.String(),
-			FileHashes: pe.fileHashes.UnwrapOrDefault().ToStringSlice(),
+			FileHashes: g.TransformSlice(pe.fileHashes.UnwrapOrDefault(), g.String.Std),
 			Message:    pe.message.Std(),
 		}
 	case UnspecifiedError:

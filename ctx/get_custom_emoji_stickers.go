@@ -38,6 +38,6 @@ func (gces *GetCustomEmojiStickers) APIURL(url g.String) *GetCustomEmojiStickers
 
 // Send retrieves the custom emoji stickers.
 func (gces *GetCustomEmojiStickers) Send() g.Result[g.Slice[gotgbot.Sticker]] {
-	stickers, err := gces.ctx.Bot.Raw().GetCustomEmojiStickers(gces.customEmojiIDs.ToStringSlice(), gces.opts)
+	stickers, err := gces.ctx.Bot.Raw().GetCustomEmojiStickers(g.TransformSlice(gces.customEmojiIDs, g.String.Std), gces.opts)
 	return g.ResultOf[g.Slice[gotgbot.Sticker]](stickers, err)
 }

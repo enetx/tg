@@ -17,7 +17,7 @@ func Sticker(media file.InputFile, format g.String, emojiList g.Slice[g.String])
 		input: &gotgbot.InputSticker{
 			Sticker:   media.Doc,
 			Format:    format.Std(),
-			EmojiList: emojiList.ToStringSlice(),
+			EmojiList: g.TransformSlice(emojiList, g.String.Std),
 		},
 	}
 }
@@ -30,7 +30,7 @@ func (s *InputSticker) MaskPosition(maskPosition *gotgbot.MaskPosition) *InputSt
 
 // Keywords sets keywords for the sticker.
 func (s *InputSticker) Keywords(keywords g.Slice[g.String]) *InputSticker {
-	s.input.Keywords = keywords.ToStringSlice()
+	s.input.Keywords = g.TransformSlice(keywords, g.String.Std)
 	return s
 }
 
