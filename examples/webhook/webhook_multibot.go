@@ -64,7 +64,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// /bot/<token>
-	g.String(r.URL.Path).Split("/").Exclude(g.String.Empty).Collect().Unpack(&path, &token)
+	g.String(r.URL.Path).Split("/").Exclude(g.String.IsEmpty).Collect().Unpack(&path, &token)
 
 	if path.Ne("bot") {
 		http.NotFound(w, r)
@@ -108,7 +108,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 // 	)
 //
 // 	// /bot/<token>
-// 	String(ctx.Path()).Split("/").Exclude(String.Empty).Collect().Unpack(&path, &token)
+// 	String(ctx.Path()).Split("/").Exclude(String.IsEmpty).Collect().Unpack(&path, &token)
 //
 // 	if path.Ne("bot") {
 // 		ctx.SetStatusCode(fasthttp.StatusNotFound)

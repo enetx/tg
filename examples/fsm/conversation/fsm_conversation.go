@@ -57,7 +57,7 @@ func main() {
 		// when it called `fsm.Trigger("next", userText)`.
 		gender := fctx.Input.(string)
 		// Store the gender in the FSM's persistent Data store for later use in the summary.
-		fctx.Data.Set("gender", gender)
+		fctx.Data.Insert("gender", gender)
 
 		// Retrieve the tgctx to send the next prompt.
 		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
@@ -75,7 +75,7 @@ func main() {
 
 		// Check the type of input to determine if a photo was sent.
 		if photo, ok := photoInput.([]gotgbot.PhotoSize); ok {
-			fctx.Data.Set("photo", photo)
+			fctx.Data.Insert("photo", photo)
 			tgctx.Reply("✅ Photo received").Send()
 		} else if skipped, ok := photoInput.(string); ok && skipped == "skipped" {
 			// Acknowledge that the photo step was skipped.
@@ -95,10 +95,10 @@ func main() {
 		// Retrieve the final input (location data or "skipped" string) from the context.
 		locationInput := fctx.Input
 		if loc, ok := locationInput.(*gotgbot.Location); ok {
-			fctx.Data.Set("location", loc)
+			fctx.Data.Insert("location", loc)
 			tgctx.Reply("✅ Location received").Send()
 		} else if skipped, ok := locationInput.(string); ok && skipped == "skipped" {
-			fctx.Data.Set("location", "skipped")
+			fctx.Data.Insert("location", "skipped")
 			tgctx.Reply("⏭ Location skipped").Send()
 		}
 
@@ -112,7 +112,7 @@ func main() {
 
 		// Use `defer` to ensure the FSM instance is removed from the store after this function completes.
 		// This frees memory and allows the user to run /start again.
-		defer fsmStore.Delete(tgctx.EffectiveUser.Id)
+		defer fsmStore.Remove(tgctx.EffectiveUser.Id)
 
 		// Retrieve all collected data from the FSM's persistent storage.
 		data := fctx.Data
@@ -152,7 +152,7 @@ func main() {
 
 		// Store the current Telegram context in the FSM's temporary Meta store.
 		// This makes it accessible within all callbacks for sending API replies.
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Manually trigger the entry callback for the first state to begin the flow.
 		return fsm.CallEnter(StateGender)
@@ -166,7 +166,7 @@ func main() {
 		}
 
 		fsm := fsmOpt.Some()
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Trigger the FSM's "next" event, passing the string "skipped" as the input.
 		// The appropriate OnEnter/OnExit callback will handle this special value.
@@ -175,7 +175,7 @@ func main() {
 
 	// Command handler for /cancel to prematurely end the workflow and clean up.
 	b.Command("cancel", func(ctx *ctx.Context) error {
-		fsmStore.Delete(ctx.EffectiveUser.Id)
+		fsmStore.Remove(ctx.EffectiveUser.Id)
 		return ctx.Reply("Bye! I hope we can talk again some day.").Send().Err()
 	})
 
@@ -187,7 +187,7 @@ func main() {
 		}
 
 		fsm := fsmOpt.Some()
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Trigger the "next" event, passing the message text directly as the FSM input.
 		return fsm.Trigger("next", ctx.EffectiveMessage.Text)
@@ -201,7 +201,7 @@ func main() {
 		}
 
 		fsm := fsmOpt.Some()
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Trigger the "next" event, passing the photo data slice as the FSM input.
 		return fsm.Trigger("next", ctx.EffectiveMessage.Photo)
@@ -215,7 +215,7 @@ func main() {
 		}
 
 		fsm := fsmOpt.Some()
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Trigger the "next" event, passing the location object as the FSM input.
 		return fsm.Trigger("next", ctx.EffectiveMessage.Location)

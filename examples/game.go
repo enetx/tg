@@ -17,8 +17,8 @@ func main() {
 			return ctx.Reply("Usage: /setscore <user_id> <score>").Send().Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
-		score := args[1].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
+		score := args[1].TryInt().Unwrap().Int64()
 
 		result := ctx.SetGameScore(userID, score).Send()
 		if result.IsErr() {
@@ -35,8 +35,8 @@ func main() {
 			return ctx.Reply("Usage: /forcescore <user_id> <score>").Send().Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
-		score := args[1].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
+		score := args[1].TryInt().Unwrap().Int64()
 
 		ctx.SetGameScore(userID, score).Force().Send()
 
@@ -50,9 +50,9 @@ func main() {
 			return ctx.Reply("Usage: /setscoreformsg <message_id> <user_id> <score>").Send().Err()
 		}
 
-		messageID := args[0].ToInt().Unwrap().Int64()
-		userID := args[1].ToInt().Unwrap().Int64()
-		score := args[2].ToInt().Unwrap().Int64()
+		messageID := args[0].TryInt().Unwrap().Int64()
+		userID := args[1].TryInt().Unwrap().Int64()
+		score := args[2].TryInt().Unwrap().Int64()
 
 		ctx.SetGameScore(userID, score).MessageID(messageID).Send()
 
@@ -66,7 +66,7 @@ func main() {
 			return ctx.Reply("Usage: /gethighscores <user_id>").Send().Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
 
 		result := ctx.GetGameHighScores(userID).Send()
 		if result.IsErr() {
@@ -74,7 +74,7 @@ func main() {
 		}
 
 		scores := result.Ok()
-		if scores.Empty() {
+		if scores.IsEmpty() {
 			return ctx.Reply("No high scores found for user " + args[0]).Send().Err()
 		}
 
@@ -93,8 +93,8 @@ func main() {
 			return ctx.Reply("Usage: /getscoresformsg <message_id> <user_id>").Send().Err()
 		}
 
-		messageID := args[0].ToInt().Unwrap().Int64()
-		userID := args[1].ToInt().Unwrap().Int64()
+		messageID := args[0].TryInt().Unwrap().Int64()
+		userID := args[1].TryInt().Unwrap().Int64()
 
 		result := ctx.GetGameHighScores(userID).
 			MessageID(messageID).
@@ -121,8 +121,8 @@ func main() {
 		}
 
 		inlineMessageID := args[0]
-		userID := args[1].ToInt().Unwrap().Int64()
-		score := args[2].ToInt().Unwrap().Int64()
+		userID := args[1].TryInt().Unwrap().Int64()
+		score := args[2].TryInt().Unwrap().Int64()
 
 		result := ctx.SetGameScore(userID, score).
 			InlineMessageID(inlineMessageID).
@@ -144,7 +144,7 @@ func main() {
 		}
 
 		businessConnectionID := args[0]
-		userID := args[1].ToInt().Unwrap().Int64()
+		userID := args[1].TryInt().Unwrap().Int64()
 
 		// First verify the user
 		verifyResult := ctx.VerifyUser(userID).Send()

@@ -19,7 +19,7 @@ func main() {
 			return ctx.Reply("Usage: /verifyuser <user_id>").Send().Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
 
 		result := ctx.VerifyUser(userID).Send()
 		if result.IsErr() {
@@ -40,7 +40,7 @@ func main() {
 			return ctx.Reply("Usage: /verifychat <chat_id>").Send().Err()
 		}
 
-		chatID := args[0].ToInt().Unwrap().Int64()
+		chatID := args[0].TryInt().Unwrap().Int64()
 
 		result := ctx.VerifyChat(chatID).Send()
 		if result.IsErr() {
@@ -60,7 +60,7 @@ func main() {
 			return ctx.Reply("Usage: /removeuserverify <user_id>").Send().Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
 
 		result := ctx.RemoveUserVerification(userID).Send()
 		if result.IsErr() {
@@ -81,7 +81,7 @@ func main() {
 			return ctx.Reply("Usage: /removechatverify <chat_id>").Send().Err()
 		}
 
-		chatID := args[0].ToInt().Unwrap().Int64()
+		chatID := args[0].TryInt().Unwrap().Int64()
 
 		result := ctx.RemoveChatVerification(chatID).Send()
 		if result.IsErr() {

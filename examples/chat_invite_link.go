@@ -84,7 +84,7 @@ func main() {
 			return ctx.Reply("Usage: /decline_request <user_id>").Send().Err()
 		}
 
-		userID := ctx.Args()[0].ToInt().UnwrapOrDefault().Int64()
+		userID := ctx.Args()[0].TryInt().UnwrapOrDefault().Int64()
 		if userID == 0 {
 			return ctx.Reply("Invalid user ID").Send().Err()
 		}

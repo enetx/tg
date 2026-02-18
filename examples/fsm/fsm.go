@@ -55,7 +55,7 @@ func main() {
 		name := fctx.Input
 
 		// Store the name in the FSM's persistent Data map for use in the summary.
-		fctx.Data.Set("name", name)
+		fctx.Data.Insert("name", name)
 
 		// Retrieve the latest Telegram context to send a reply.
 		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
@@ -70,7 +70,7 @@ func main() {
 	// OnEnter StateLanguage: This state is only reached if the user answered "Yes".
 	fsmachine.OnEnter(StateLanguage, func(fctx *fsm.Context) error {
 		// Store the "Yes" answer, which came from the previous trigger's input.
-		fctx.Data.Set("like", fctx.Input)
+		fctx.Data.Insert("like", fctx.Input)
 
 		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
@@ -82,7 +82,7 @@ func main() {
 	fsmachine.OnEnter(StateSummary, func(fctx *fsm.Context) error {
 		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 		// Use defer to ensure the FSM instance is removed after the interaction is complete.
-		defer fsmStore.Delete(tgctx.EffectiveUser.Id)
+		defer fsmStore.Remove(tgctx.EffectiveUser.Id)
 
 		// Retrieve all collected data from persistent storage.
 		name := fctx.Data.Get("name").UnwrapOr("<no name>")
@@ -125,7 +125,7 @@ func main() {
 
 		// Store the current Telegram context in the FSM's Meta store,
 		// making it accessible within the first OnEnter callback.
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Manually trigger the entry callback for the initial state to begin the flow.
 		return fsm.CallEnter(StateName)
@@ -133,7 +133,7 @@ func main() {
 
 	// Command handler for /cancel to prematurely end the workflow and clean up.
 	b.Command("cancel", func(ctx *ctx.Context) error {
-		fsmStore.Delete(ctx.EffectiveUser.Id)
+		fsmStore.Remove(ctx.EffectiveUser.Id)
 		return ctx.Reply("Cancelled.").RemoveKeyboard().Send().Err()
 	})
 
@@ -149,7 +149,7 @@ func main() {
 		input := ctx.EffectiveMessage.Text
 
 		// Update the Telegram context to ensure the next callback can reply.
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Trigger a transition with the user's text as input. The FSM will use its
 		// GuardFuncs to determine the correct next state.

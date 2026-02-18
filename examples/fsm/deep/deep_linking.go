@@ -55,7 +55,7 @@ func main() {
 		payload := ctx.Args().Last().UnwrapOrDefault().Trim()
 
 		// Store the current Telegram context in FSM.Meta to access inside handlers
-		state.Context().Meta.Set("tgctx", ctx)
+		state.Context().Meta.Insert("tgctx", ctx)
 
 		// Try to trigger a transition with the payload as the event
 		if err := state.Trigger(fsm.Event(payload), payload); err != nil {
@@ -113,7 +113,7 @@ func handleDeep4(fctx *fsm.Context) error {
 	tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 
 	// Clear FSM for the user (optional, since this is a final state)
-	defer fsmStore.Delete(tgctx.EffectiveUser.Id)
+	defer fsmStore.Remove(tgctx.EffectiveUser.Id)
 
 	return tgctx.SendMessage(g.Format("Congratulations! This is as deep as it gets \n\nThe payload was: {}", fctx.Input)).
 		Send().

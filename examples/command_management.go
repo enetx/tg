@@ -86,7 +86,7 @@ func main() {
 			return ctx.Reply("Usage: /setchatcommands <chat_id>").Send().Err()
 		}
 
-		chatID := args[0].ToInt().Unwrap().Int64()
+		chatID := args[0].TryInt().Unwrap().Int64()
 
 		result := b.SetMyCommands().
 			AddCommand("welcome", "Set welcome message").
@@ -109,8 +109,8 @@ func main() {
 			return ctx.Reply("Usage: /setusercommands <chat_id> <user_id>").Send().Err()
 		}
 
-		chatID := args[0].ToInt().Unwrap().Int64()
-		userID := args[1].ToInt().Unwrap().Int64()
+		chatID := args[0].TryInt().Unwrap().Int64()
+		userID := args[1].TryInt().Unwrap().Int64()
 
 		result := b.SetMyCommands().
 			AddCommand("vip", "VIP user features").
@@ -360,7 +360,7 @@ func main() {
 			return ctx.Reply("Usage: /setchatmenu <chat_id>").Send().Err()
 		}
 
-		chatID := args[0].ToInt().Unwrap().Int64()
+		chatID := args[0].TryInt().Unwrap().Int64()
 
 		result := ctx.SetChatMenuButton().
 			ChatID(chatID).

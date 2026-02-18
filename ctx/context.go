@@ -1346,6 +1346,15 @@ func (ctx *Context) GetUserProfilePhotos(userID int64) *GetUserProfilePhotos {
 	}
 }
 
+// GetUserProfileAudios creates a new GetUserProfileAudios request to get a user's profile audios.
+func (ctx *Context) GetUserProfileAudios(userID int64) *GetUserProfileAudios {
+	return &GetUserProfileAudios{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.GetUserProfileAudiosOpts),
+	}
+}
+
 // ExportChatInviteLink exports a basic chat invite link.
 func (ctx *Context) ExportChatInviteLink() *ExportChatInviteLink {
 	return &ExportChatInviteLink{

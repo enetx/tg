@@ -62,7 +62,7 @@ func main() {
 		chatArg := args[0]
 
 		// Try to parse as int64 first, if fails use as username
-		if chatID := chatArg.ToInt().UnwrapOrDefault().Int64(); chatID != 0 {
+		if chatID := chatArg.TryInt().UnwrapOrDefault().Int64(); chatID != 0 {
 			result := ctx.GetChat().ChatID(chatID).Send()
 
 			if result.IsErr() {

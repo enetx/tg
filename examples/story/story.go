@@ -48,7 +48,7 @@ func main() {
 			return ctx.Reply("Usage: /deletestory <story_id>").Send().Err()
 		}
 
-		storyID := args[0].ToInt().Unwrap().Int64()
+		storyID := args[0].TryInt().Unwrap().Int64()
 		return ctx.DeleteStory("your_business_connection_id", storyID).Send().Err()
 	})
 

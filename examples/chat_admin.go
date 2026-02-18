@@ -104,7 +104,7 @@ func main() {
 			return ctx.Reply("Usage: /setadmintitle <user_id> <custom_title>").Send().Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
 		title := args.Iter().Skip(1).Collect().Join(" ")
 
 		return ctx.SetChatAdministratorCustomTitle(userID, title).Send().Err()
@@ -159,7 +159,7 @@ func main() {
 		unpin := ctx.UnpinChatMessage().Business(businessConnID)
 
 		if args.Len() > 1 {
-			messageID := args[1].ToInt().Unwrap().Int64()
+			messageID := args[1].TryInt().Unwrap().Int64()
 			unpin = unpin.MessageID(messageID)
 		}
 
@@ -209,7 +209,7 @@ func main() {
 			return ctx.Reply("Usage: /adminsinother <chat_id>").Send().Err()
 		}
 
-		chatID := args[0].ToInt().Unwrap().Int64()
+		chatID := args[0].TryInt().Unwrap().Int64()
 
 		admins := ctx.GetChatAdministrators().ChatID(chatID).Send()
 		if admins.IsErr() {

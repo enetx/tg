@@ -257,6 +257,16 @@ func (h *MessageHandlers) Checklist(fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.Checklist != nil }, fn)
 }
 
+// ChatOwnerLeft handles service messages indicating the chat owner has left.
+func (h *MessageHandlers) ChatOwnerLeft(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.ChatOwnerLeft != nil }, fn)
+}
+
+// ChatOwnerChanged handles service messages indicating a chat ownership transfer.
+func (h *MessageHandlers) ChatOwnerChanged(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.ChatOwnerChanged != nil }, fn)
+}
+
 // FromUser handles messages from a specific user ID.
 func (h *MessageHandlers) FromUser(id int64, fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.From != nil && msg.From.Id == id }, fn)

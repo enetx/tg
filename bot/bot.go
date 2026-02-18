@@ -11,6 +11,7 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/core"
 	"github.com/enetx/tg/handlers"
+	"github.com/enetx/tg/input"
 )
 
 // Bot represents a Telegram bot instance with all necessary components for handling updates,
@@ -237,5 +238,22 @@ func (b *Bot) GetMe() *GetMe {
 	return &GetMe{
 		bot:  b,
 		opts: new(gotgbot.GetMeOpts),
+	}
+}
+
+// SetMyProfilePhoto creates a new SetMyProfilePhoto request to set the bot's profile photo.
+func (b *Bot) SetMyProfilePhoto(photo input.ProfilePhoto) *SetMyProfilePhoto {
+	return &SetMyProfilePhoto{
+		bot:   b,
+		photo: photo.Build(),
+		opts:  new(gotgbot.SetMyProfilePhotoOpts),
+	}
+}
+
+// RemoveMyProfilePhoto creates a new RemoveMyProfilePhoto request to remove the bot's profile photo.
+func (b *Bot) RemoveMyProfilePhoto() *RemoveMyProfilePhoto {
+	return &RemoveMyProfilePhoto{
+		bot:  b,
+		opts: new(gotgbot.RemoveMyProfilePhotoOpts),
 	}
 }

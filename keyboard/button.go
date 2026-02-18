@@ -100,6 +100,12 @@ func (b *Button) SwitchInlineQueryCurrentChat(query g.String) *Button {
 	return b
 }
 
+// Style sets the visual style of the button (e.g., ButtonStyleDanger, ButtonStyleSuccess, ButtonStylePrimary).
+func (b *Button) Style(style ButtonStyle) *Button {
+	b.raw.Style = style.String()
+	return b
+}
+
 // Delete marks the button for deletion from the keyboard.
 func (b *Button) Delete() {
 	b.deleted = true

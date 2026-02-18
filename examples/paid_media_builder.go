@@ -19,7 +19,7 @@ func main() {
 			return ctx.Reply("Usage: /paidvideobuilder <star_count> <video_path>").Send().Err()
 		}
 
-		stars := args[0].ToInt().Unwrap().Int64()
+		stars := args[0].TryInt().Unwrap().Int64()
 		if stars < 1 || stars > 10000 {
 			return ctx.Reply("Star count must be between 1-10000").Send().Err()
 		}
@@ -46,7 +46,7 @@ func main() {
 			return ctx.Reply("Usage: /paidmixedbuilder <star_count> <photo1> <video1> <photo2>").Send().Err()
 		}
 
-		stars := args[0].ToInt().Unwrap().Int64()
+		stars := args[0].TryInt().Unwrap().Int64()
 		if stars < 1 || stars > 10000 {
 			return ctx.Reply("Star count must be between 1-10000").Send().Err()
 		}

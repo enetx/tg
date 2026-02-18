@@ -29,7 +29,7 @@ func main() {
 			return ctx.Reply("Usage: /edittopic <thread_id> <new_name>").Send().Err()
 		}
 
-		threadID := args[0].ToInt().Unwrap().Int64()
+		threadID := args[0].TryInt().Unwrap().Int64()
 		newName := args[1]
 
 		return ctx.EditForumTopic(threadID).
@@ -44,7 +44,7 @@ func main() {
 			return ctx.Reply("Usage: /closetopic <thread_id>").Send().Err()
 		}
 
-		threadID := args[0].ToInt().Unwrap().Int64()
+		threadID := args[0].TryInt().Unwrap().Int64()
 
 		return ctx.CloseForumTopic(threadID).Send().Err()
 	})
@@ -56,7 +56,7 @@ func main() {
 			return ctx.Reply("Usage: /reopentopic <thread_id>").Send().Err()
 		}
 
-		threadID := args[0].ToInt().Unwrap().Int64()
+		threadID := args[0].TryInt().Unwrap().Int64()
 
 		return ctx.ReopenForumTopic(threadID).Send().Err()
 	})
@@ -68,7 +68,7 @@ func main() {
 			return ctx.Reply("Usage: /deletetopic <thread_id>").Send().Err()
 		}
 
-		threadID := args[0].ToInt().Unwrap().Int64()
+		threadID := args[0].TryInt().Unwrap().Int64()
 
 		return ctx.DeleteForumTopic(threadID).Send().Err()
 	})

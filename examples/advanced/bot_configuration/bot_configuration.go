@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/enetx/g"
 	"github.com/enetx/tg/bot"
@@ -133,12 +134,13 @@ func handleGetCommands(ctx *ctx.Context) error {
 			HTML().Send().Err()
 	}
 
-	text := "📋 <b>Current Bot Commands:</b>\n\n"
+	var text strings.Builder
+	text.WriteString("📋 <b>Current Bot Commands:</b>\n\n")
 	for _, cmd := range commands {
-		text += "• /" + cmd.Command + " - " + cmd.Description + "\n"
+		text.WriteString("• /" + cmd.Command + " - " + cmd.Description + "\n")
 	}
 
-	return ctx.Reply(g.String(text)).HTML().Send().Err()
+	return ctx.Reply(g.String(text.String())).HTML().Send().Err()
 }
 
 func handleDeleteCommands(ctx *ctx.Context) error {

@@ -104,7 +104,7 @@ func main() {
 		}
 
 		businessConnectionID := args[0]
-		messageID := args[1].ToInt().Unwrap().Int64()
+		messageID := args[1].TryInt().Unwrap().Int64()
 
 		result := ctx.EditMessageChecklist(businessConnectionID).
 			MessageID(messageID).

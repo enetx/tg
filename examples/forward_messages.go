@@ -16,12 +16,12 @@ func main() {
 			return ctx.Reply("Usage: /forwardmessages <from_chat_id> <message_id1> <message_id2> ...").Send().Err()
 		}
 
-		fromChatID := args[0].ToInt().Unwrap().Int64()
+		fromChatID := args[0].TryInt().Unwrap().Int64()
 
 		var messageIDs g.Slice[int64]
 
 		args.Iter().Skip(1).ForEach(func(arg g.String) {
-			messageIDs.Push(arg.ToInt().Unwrap().Int64())
+			messageIDs.Push(arg.TryInt().Unwrap().Int64())
 		})
 
 		result := ctx.ForwardMessages().

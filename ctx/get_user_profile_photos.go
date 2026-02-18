@@ -12,7 +12,6 @@ type GetUserProfilePhotos struct {
 	ctx    *Context
 	userID int64
 	opts   *gotgbot.GetUserProfilePhotosOpts
-	err    error
 }
 
 // Offset sets the sequential number of the first photo to be returned.

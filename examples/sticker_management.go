@@ -18,7 +18,7 @@ func main() {
 			return ctx.Reply("Usage: /createstickerSet <user_id> <name> <title> <sticker_file> <emoji>").Send().Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
 		name := args[1]
 		title := args[2]
 		stickerFile := file.Input(args[3]).Unwrap()
@@ -43,7 +43,7 @@ func main() {
 			return ctx.Reply("Usage: /addsticker <user_id> <set_name> <sticker_file> <emoji>").Send().Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
 		setName := args[1]
 		stickerFile := file.Input(args[2]).Unwrap()
 		emoji := args[3]
@@ -110,7 +110,7 @@ func main() {
 		}
 
 		stickerID := file.Input(args[0]).Unwrap()
-		position := args[1].ToInt().Unwrap().Int64()
+		position := args[1].TryInt().Unwrap().Int64()
 
 		result := ctx.SetStickerPositionInSet(stickerID, position).Send()
 		if result.IsErr() {
@@ -181,9 +181,9 @@ func main() {
 
 		stickerID := file.Input(args[0]).Unwrap()
 		point := args[1]
-		xShift := args[2].ToFloat().Unwrap()
-		yShift := args[3].ToFloat().Unwrap()
-		scale := args[4].ToFloat().Unwrap()
+		xShift := args[2].TryFloat().Unwrap()
+		yShift := args[3].TryFloat().Unwrap()
+		scale := args[4].TryFloat().Unwrap()
 
 		result := ctx.SetStickerMaskPosition(stickerID).
 			MaskPosition(point, xShift.Std(), yShift.Std(), scale.Std()).
@@ -204,7 +204,7 @@ func main() {
 		}
 
 		setName := args[0]
-		userID := args[1].ToInt().Unwrap().Int64()
+		userID := args[1].TryInt().Unwrap().Int64()
 		thumbFile := args[2]
 
 		result := ctx.SetStickerSetThumbnail(setName, userID).
@@ -226,7 +226,7 @@ func main() {
 			return ctx.Reply("Usage: /uploadstickerfile <user_id> <sticker_file> <format>").Send().Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
 		stickerFile := args[1]
 		format := args[2]
 
@@ -284,7 +284,7 @@ func main() {
 			return ctx.Reply("Usage: /createaniset <user_id> <name> <title> <tgs_file> <emoji>").Send().Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
 		name := args[1]
 		title := args[2]
 		tgsFile := file.Input(args[3]).Unwrap()
@@ -311,7 +311,7 @@ func main() {
 			return ctx.Reply("Usage: /createvideoset <user_id> <name> <title> <webm_file> <emoji>").Send().Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
 		name := args[1]
 		title := args[2]
 		webmFile := file.Input(args[3]).Unwrap()
@@ -340,15 +340,15 @@ func main() {
 				Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
 		name := args[1]
 		title := args[2]
 		stickerFile := file.Input(args[3]).Unwrap()
 		emoji := args[4]
 		point := args[5]
-		xShift := args[6].ToFloat().Unwrap()
-		yShift := args[7].ToFloat().Unwrap()
-		scale := args[8].ToFloat().Unwrap()
+		xShift := args[6].TryFloat().Unwrap()
+		yShift := args[7].TryFloat().Unwrap()
+		scale := args[8].TryFloat().Unwrap()
 
 		result := ctx.CreateNewStickerSet(userID, name, title).
 			StickerType("mask").
@@ -373,7 +373,7 @@ func main() {
 				Err()
 		}
 
-		userID := args[0].ToInt().Unwrap().Int64()
+		userID := args[0].TryInt().Unwrap().Int64()
 		name := args[1]
 		title := args[2]
 

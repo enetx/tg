@@ -46,7 +46,7 @@ func main() {
 		// The user's email is retrieved from the input of the previous `Trigger` call.
 		email := fctx.Input.(string)
 		// The email is stored in the FSM's persistent Data map for use in the final summary.
-		fctx.Data.Set("email", email)
+		fctx.Data.Insert("email", email)
 
 		// Retrieve the latest tgctx to send the next prompt.
 		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
@@ -67,7 +67,7 @@ func main() {
 
 		// Use defer to ensure the FSM instance is removed from the store after this function completes,
 		// freeing memory and allowing the user to /start again.
-		defer fsmStore.Delete(tgctx.EffectiveUser.Id)
+		defer fsmStore.Remove(tgctx.EffectiveUser.Id)
 
 		// Compose and send the final summary message to the user.
 		return tgctx.Reply(g.Format("Got name: {} and email: {}", name, email)).Send().Err()
@@ -84,7 +84,7 @@ func main() {
 
 		// Store the current Telegram context in the FSM's Meta store,
 		// making it accessible within the first OnEnter callback.
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Manually trigger the entry callback for the initial state to begin the flow.
 		return fsm.CallEnter(StateGetEmail)
@@ -102,7 +102,7 @@ func main() {
 		fsm := opt.Some()
 
 		// Update the Telegram context to ensure the next callback can reply.
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Trigger the "next" event, passing the user's message text as input.
 		// The FSM will move to the subsequent state as defined in the template.

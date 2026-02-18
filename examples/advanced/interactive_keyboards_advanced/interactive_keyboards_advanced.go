@@ -444,7 +444,7 @@ func handleRestaurantMenu(ctx *ctx.Context) error {
 
 	// Add current filter info
 	filterText := g.String("All Categories")
-	if !session.FilterCategory.Empty() && session.FilterCategory.Ne("all") {
+	if !session.FilterCategory.IsEmpty() && session.FilterCategory.Ne("all") {
 		filterText = session.FilterCategory.Title()
 	}
 
@@ -488,7 +488,7 @@ func handleRestaurantMenu(ctx *ctx.Context) error {
 		"<b>Sort:</b> " + getSortDisplayName(session.SortOrder) + "\n" +
 		"<b>Available Items:</b> " + filteredItems.Len().String() + "\n\n"
 
-	if filteredItems.Empty() {
+	if filteredItems.IsEmpty() {
 		menuText += "<i>No items match current filter.</i>\n\n"
 	} else {
 		menuText += "<b>Menu Items:</b>\n"
@@ -500,7 +500,12 @@ func handleRestaurantMenu(ctx *ctx.Context) error {
 					status = "❌ Unavailable"
 				}
 
-				menuText += g.Format("• <b>{}</b> - {} ({})\n", item.Title, (item.Price.Float() / 100).RoundDecimal(2), status)
+				menuText += g.Format(
+					"• <b>{}</b> - {} ({})\n",
+					item.Title,
+					(item.Price.Float() / 100).RoundDecimal(2),
+					status,
+				)
 			})
 		menuText += "\n"
 	}
@@ -575,7 +580,7 @@ func handleViewCart(ctx *ctx.Context) error {
 	userID := ctx.EffectiveUser.Id
 	session := getUserSession(userID)
 
-	if session.SelectedItems.Empty() {
+	if session.SelectedItems.IsEmpty() {
 		// Show empty cart view
 		kb := keyboard.Inline().
 			Row().
@@ -602,9 +607,9 @@ func handleViewCart(ctx *ctx.Context) error {
 	total := g.Int(0)
 
 	// Build cart text using functional approach
-	itemCounts.ForEach(func(itemID g.String, count g.Int) {
+	itemCounts.ForEach(func(itemID any, count g.Int) {
 		menuItems.Iter().
-			Filter(func(item MenuItem) bool { return item.ID == itemID }).
+			Filter(func(item MenuItem) bool { return item.ID == itemID.(g.String) }).
 			Take(1).
 			ForEach(func(item MenuItem) {
 				itemTotal := item.Price * count
@@ -626,12 +631,12 @@ func handleViewCart(ctx *ctx.Context) error {
 		Text("🔙 Back to Menu", "restaurant_menu")
 
 	// Add remove buttons for each item type
-	if itemCounts.Collect().NotEmpty() {
+	if !itemCounts.Collect().IsEmpty() {
 		cartText += "<b>Remove Items:</b>\n"
 		for itemID := range itemCounts {
 			for _, item := range menuItems {
-				if item.ID == itemID {
-					kb.Row().Text("➖ "+item.Title, "remove_"+itemID)
+				if item.ID == itemID.(g.String) {
+					kb.Row().Text("➖ "+item.Title, "remove_"+itemID.(g.String))
 					break
 				}
 			}
@@ -660,7 +665,7 @@ func handlePageNavigation(ctx *ctx.Context) error {
 
 	// Parse page number from callback data
 	if data.StartsWith("page_") {
-		if page := data.StripPrefix("page_").ToInt(); page.IsOk() {
+		if page := data.StripPrefix("page_").TryInt(); page.IsOk() {
 			session.CurrentPage = page.Ok()
 		}
 	}
@@ -1011,8 +1016,8 @@ func handleQuizAnswer(ctx *ctx.Context) error {
 		return ctx.AnswerCallbackQuery("❌ Invalid answer format").Alert().Send().Err()
 	}
 
-	questionIndex := parts[0].ToInt().Unwrap()
-	answerIndex := parts[1].ToInt().Unwrap()
+	questionIndex := parts[0].TryInt().Unwrap()
+	answerIndex := parts[1].TryInt().Unwrap()
 
 	// Store the answer
 	for session.SelectedItems.Len().Lte(questionIndex) {
@@ -1069,7 +1074,7 @@ func handleQuizResults(ctx *ctx.Context) error {
 	correctAnswers := 0
 	for i := g.Int(0); i < session.SelectedItems.Len() && i < questions.Len(); i++ {
 		if userAnswer := session.SelectedItems.Get(i); userAnswer.IsSome() {
-			if answerIndex := userAnswer.Some().ToInt(); answerIndex.IsOk() {
+			if answerIndex := userAnswer.Some().TryInt(); answerIndex.IsOk() {
 				if answerIndex.Ok() == questions[i].Correct {
 					correctAnswers++
 				}
@@ -1100,7 +1105,7 @@ func handleQuizResults(ctx *ctx.Context) error {
 	for i, question := range questions {
 		userAnswerIndex := g.Int(-1)
 		if i < session.SelectedItems.Len().Std() {
-			userAnswerIndex = session.SelectedItems[i].ToInt().Ok()
+			userAnswerIndex = session.SelectedItems[i].TryInt().Ok()
 		}
 
 		correctIcon := "❌"
@@ -1163,7 +1168,7 @@ func getUserSession(userID int64) *UserSession {
 		ViewMode:       "list",
 	}
 
-	userSessions.Set(userID, session)
+	userSessions.Insert(userID, session)
 	return session
 }
 
@@ -1171,7 +1176,7 @@ func getFilteredItems(session *UserSession) g.Slice[MenuItem] {
 	filtered := menuItems.Iter().
 		Filter(func(item MenuItem) bool {
 			return session.FilterCategory.Eq("all") ||
-				session.FilterCategory.Empty() ||
+				session.FilterCategory.IsEmpty() ||
 				item.Category.Eq(session.FilterCategory)
 		}).
 		Collect()

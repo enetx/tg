@@ -19,7 +19,7 @@ func main() {
 			return ctx.Reply("Usage: /paidphoto <star_count> <photo_path>").Send().Err()
 		}
 
-		stars := args[0].ToInt().Unwrap().Int64()
+		stars := args[0].TryInt().Unwrap().Int64()
 		photo := file.Input(args[1]).Unwrap()
 
 		defer photo.File.Close()
@@ -43,7 +43,7 @@ func main() {
 			return ctx.Reply("Usage: /paidvideo <star_count> <video_path>").Send().Err()
 		}
 
-		stars := args[0].ToInt().Unwrap().Int64()
+		stars := args[0].TryInt().Unwrap().Int64()
 		video := file.Input(args[1]).Unwrap()
 
 		defer video.File.Close()
@@ -67,7 +67,7 @@ func main() {
 			return ctx.Reply("Usage: /paidalbum <star_count> <photo1> <photo2> <video1>").Send().Err()
 		}
 
-		stars := args[0].ToInt().Unwrap().Int64()
+		stars := args[0].TryInt().Unwrap().Int64()
 
 		photo1 := file.Input(args[1]).Unwrap()
 		defer photo1.File.Close()
@@ -99,7 +99,7 @@ func main() {
 			return ctx.Reply("Usage: /paidprotected <star_count> <photo_path>").Send().Err()
 		}
 
-		stars := args[0].ToInt().Unwrap().Int64()
+		stars := args[0].TryInt().Unwrap().Int64()
 
 		photo := file.Input(args[1]).Unwrap()
 		defer photo.File.Close()

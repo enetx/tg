@@ -37,7 +37,7 @@ func main() {
 	b.On.Callback.Prefix("buy:", func(ctx *ctx.Context) error {
 		data := g.String(ctx.Callback.Data)
 
-		id := data.StripPrefix("buy:").ToInt().UnwrapOrDefault()
+		id := data.StripPrefix("buy:").TryInt().UnwrapOrDefault()
 
 		message := g.String("Product not found")
 

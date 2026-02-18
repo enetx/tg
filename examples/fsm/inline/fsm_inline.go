@@ -57,7 +57,7 @@ func main() {
 		// The selected color was passed as 'Input' from the color callback handler.
 		color := fctx.Input.(g.String)
 		// Store the color in the FSM's persistent Data map for later use.
-		fctx.Data.Set("color", color)
+		fctx.Data.Insert("color", color)
 
 		// Acknowledge the user's selection by sending a new message.
 		tgctx.Reply("✅ Color selected: " + color).Send()
@@ -77,7 +77,7 @@ func main() {
 		tgctx := fctx.Meta.Get("tgctx").Some().(*ctx.Context)
 		// Use defer to ensure the FSM instance is removed from the store after this function completes,
 		// freeing memory and allowing the user to /start again.
-		defer fsmStore.Delete(tgctx.EffectiveUser.Id)
+		defer fsmStore.Remove(tgctx.EffectiveUser.Id)
 
 		// Retrieve all collected data: color from the Data map, and animal from the current Input.
 		color := fctx.Data.Get("color").UnwrapOr("unknown")
@@ -96,7 +96,7 @@ func main() {
 		fsm := fsmStore.Entry(ctx.EffectiveUser.Id).OrInsertWith(template.Clone().Sync)
 
 		// Store the current Telegram context in the FSM's temporary Meta store.
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Manually trigger the entry callback for the initial state to begin the flow.
 		return fsm.CallEnter(StateColor)
@@ -104,7 +104,7 @@ func main() {
 
 	// Command handler for /cancel to prematurely end the workflow.
 	b.Command("cancel", func(ctx *ctx.Context) error {
-		fsmStore.Delete(ctx.EffectiveUser.Id)
+		fsmStore.Remove(ctx.EffectiveUser.Id)
 		return ctx.Reply("Cancelled.").RemoveKeyboard().Send().Err()
 	})
 
@@ -117,7 +117,7 @@ func main() {
 		}
 
 		fsm := fsmOpt.Some()
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Extract the color value from the callback data (e.g., "color:red" -> "red")
 		// and use it as the input for the FSM transition.
@@ -136,7 +136,7 @@ func main() {
 		}
 
 		fsm := fsmOpt.Some()
-		fsm.Context().Meta.Set("tgctx", ctx)
+		fsm.Context().Meta.Insert("tgctx", ctx)
 
 		// Extract the animal value from the callback data and use it as the FSM's input.
 		input := g.String(ctx.Callback.Data).StripPrefix("animal:")

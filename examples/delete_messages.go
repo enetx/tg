@@ -21,7 +21,7 @@ func main() {
 		var messageIDs g.Slice[int64]
 
 		args.Iter().ForEach(func(arg g.String) {
-			messageIDs.Push(arg.ToInt().Unwrap().Int64())
+			messageIDs.Push(arg.TryInt().Unwrap().Int64())
 		})
 
 		return ctx.DeleteMessages().MessageIDs(messageIDs).Send().Err()
@@ -34,7 +34,7 @@ func main() {
 			return ctx.Reply("Usage: /deleterecent <count>").Send().Err()
 		}
 
-		count := args[0].ToInt().UnwrapOr(100).Std()
+		count := args[0].TryInt().UnwrapOr(100).Std()
 
 		// Build list of recent message IDs (this is a simplified example)
 		currentMsgID := ctx.EffectiveMessage.MessageId
@@ -54,12 +54,12 @@ func main() {
 			return ctx.Reply("Usage: /deletescheduled <seconds> <message_id1> <message_id2> ...").Send().Err()
 		}
 
-		seconds := args[0].ToInt().Unwrap()
+		seconds := args[0].TryInt().Unwrap()
 
 		var messageIDs g.Slice[int64]
 
 		args.Iter().Skip(1).ForEach(func(arg g.String) {
-			messageIDs.Push(arg.ToInt().Unwrap().Int64())
+			messageIDs.Push(arg.TryInt().Unwrap().Int64())
 		})
 
 		ctx.DeleteMessages().

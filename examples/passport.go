@@ -147,7 +147,7 @@ Use /passport_demo to test all error types.`).Send().Err()
 			}
 
 			// Send passport validation errors
-			if errors.NotEmpty() {
+			if !errors.IsEmpty() {
 				if result := ctx.SetPassportDataErrors(userID).Errors(errors...).Send(); result.IsOk() {
 					return ctx.Reply("Passport validation failed. Please correct the errors.").Send().Err()
 				}
