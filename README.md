@@ -7,6 +7,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/enetx/tg/badge.svg?branch=main&service=github)](https://coveralls.io/github/enetx/tg?branch=main)
 [![Go](https://github.com/enetx/tg/actions/workflows/go.yml/badge.svg)](https://github.com/enetx/tg/actions/workflows/go.yml)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/enetx/tg)
+[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 [![Telegram Bot API Version][TelegramVersionBadge]][TelegramLastVersion]
 
 Modern and elegant wrapper around [gotgbot](https://github.com/PaulSonOfLars/gotgbot) with convenient API and functional programming style support.
