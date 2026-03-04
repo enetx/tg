@@ -327,7 +327,7 @@ b.Command("buy", func(ctx *ctx.Context) error {
         return nil
     }
 
-    return ctx.Invoice("Premium Access", "Get premium features", "premium_123", "XTR").
+    return ctx.SendInvoice("Premium Access", "Get premium features", "premium_123", "XTR").
         Price("Premium Plan", 100).  // 100 stars
         Protect().                   // Content protection
         Send().Err()
@@ -586,7 +586,7 @@ Show typing indicators and other actions:
 ```go
 b.On.Message.Text(func(ctx *ctx.Context) error {
     // Show typing indicator
-    ctx.ChatAction().Typing().Send()
+    ctx.SendChatAction().Typing().Send()
 
     // Process message...
     time.Sleep(2 * time.Second)
