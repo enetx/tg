@@ -190,7 +190,7 @@ b.Command("keyboard", func(ctx *ctx.Context) error {
         Location("📍 Send Location").
         WebApp("🌐 Web App", "https://webapp.com").
         Row().
-        Poll("📊 Create Poll", "regular")
+        Poll("📊 Create Poll")
 
     return ctx.Reply("Use the keyboard below:").Markup(markup).Send().Err()
 })
@@ -336,7 +336,7 @@ b.Command("buy", func(ctx *ctx.Context) error {
 // Handle pre-checkout (validation)
 b.On.PreCheckout.Any(func(ctx *ctx.Context) error {
     // Validate payment here if needed
-    return ctx.PreCheckout().Ok().Send().Err()
+    return ctx.AnswerPreCheckoutQuery().Ok().Send().Err()
 })
 
 // Handle successful payment
@@ -389,7 +389,7 @@ adminMiddleware := func(ctx *ctx.Context) error {
 	}
 
 	if !admin.Ok() {
-		return ctx.Answer("Access restricted to admins only!").Alert().Send().Err()
+		return ctx.AnswerCallbackQuery("Access restricted to admins only!").Alert().Send().Err()
 	}
 
     return nil // Continue
@@ -416,14 +416,14 @@ func main() {
     b := bot.New(token).Build().Unwrap()
 
     // Register webhook
-    err := b.Webhook().
+    result := b.Webhook().
         Domain("https://yourdomain.com").
         Path("/webhook").
         SecretToken("your-secret").
         AllowedUpdates(updates.Message, updates.CallbackQuery).
         Register()
-    if err != nil {
-        panic(err)
+    if result.IsErr() {
+        panic(result.Err())
     }
 
     // Setup HTTP server
@@ -464,7 +464,7 @@ b.On.Message.Business(func(ctx *ctx.Context) error {
 })
 
 // Handle deleted business messages
-b.On.DeletedBusinessMessages.Any(func(ctx *ctx.Context) error {
+b.On.BusinessMessagesDeleted.Any(func(ctx *ctx.Context) error {
     deleted := ctx.Update.DeletedBusinessMessages
     // Process message deletions
     return nil
@@ -486,7 +486,7 @@ b.Command("business_setup", func(ctx *ctx.Context) error {
     // Check star balance
     balance := ctx.Business(connectionId).Balance().GetStarBalance().Send()
     if balance.IsOk() {
-        return ctx.Reply("Stars balance: " + g.String(balance.Ok().Amount)).Send().Err()
+        return ctx.Reply(g.Format("Stars balance: {}", balance.Ok().Amount)).Send().Err()
     }
 
     return ctx.Reply("Business account configured").Send().Err()
