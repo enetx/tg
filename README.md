@@ -235,6 +235,58 @@ b.Command("audio", func(ctx *ctx.Context) error {
         Duration(180 * time.Second).
         Send().Err()
 })
+
+// Live photo: a short video plus a static cover photo (Bot API 10.0)
+b.Command("live", func(ctx *ctx.Context) error {
+    return ctx.SendLivePhoto("live.mp4", "cover.jpg").
+        Caption("A moment caught in motion").
+        Send().Err()
+})
+```
+
+## Polls and Quizzes
+
+Send regular polls and quizzes with rich options and media:
+
+```go
+// Regular poll with the extended options (Bot API 9.5+)
+b.Command("survey", func(ctx *ctx.Context) error {
+    return ctx.SendPoll("How do you commute?").
+        Description("Pick the option you use most").
+        Option(input.Choice("Car")).
+        Option(input.Choice("Bike")).
+        Option(input.Choice("Public transport")).
+        MultipleAnswers().
+        AllowRevoting().
+        ShuffleOptions().
+        AllowAddingOptions().
+        HideResultsUntilClosed().
+        MembersOnly().
+        Send().Err()
+})
+
+// Quiz with several correct answers and an explanation
+b.Command("quiz", func(ctx *ctx.Context) error {
+    return ctx.SendPoll("Which of these are prime?").
+        Option(input.Choice("2")).
+        Option(input.Choice("3")).
+        Option(input.Choice("4")).
+        Option(input.Choice("5")).
+        Quiz(0, 1, 3). // 2, 3 and 5 are correct
+        Explanation("4 is the only composite number here").
+        ExplanationHTML().
+        Send().Err()
+})
+
+// Media attached to individual poll options (Bot API 9.6)
+b.Command("mediapoll", func(ctx *ctx.Context) error {
+    return ctx.SendPoll("Where should we meet?").
+        Option(input.Choice("Office").
+            Media(input.VenueMedia(40.7128, -74.0060, "HQ", "New York, NY"))).
+        Option(input.Choice("Park").
+            Media(input.LocationMedia(40.7829, -73.9654))).
+        Send().Err()
+})
 ```
 
 ## Finite State Machine (FSM)
@@ -493,12 +545,54 @@ b.Command("business_setup", func(ctx *ctx.Context) error {
 })
 ```
 
+## Managed Bots
+
+Manage other bots (when enabled in the @BotFather Mini App) — fetch or revoke their tokens, configure access, and react to lifecycle updates (Bot API 9.6 / 10.0):
+
+```go
+// Handle managed-bot lifecycle updates (creation / token / owner update)
+b.On.ManagedBot.Any(func(ctx *ctx.Context) error {
+    mb := ctx.Update.ManagedBot
+    return ctx.SendMessage(g.Format("Managed bot {} owned by user {}", mb.Bot.Id, mb.User.Id)).
+        To(mb.User.Id).
+        Send().Err()
+})
+
+// Fetch a managed bot's token
+b.Command("token", func(ctx *ctx.Context) error {
+    token := ctx.GetManagedBotToken(ctx.EffectiveUser.Id).Send()
+    if token.IsErr() {
+        return token.Err()
+    }
+
+    return ctx.Reply(g.Format("Token: {}", token.Ok())).Send().Err()
+})
+
+// Restrict access to selected users, then read the settings back
+b.Command("access", func(ctx *ctx.Context) error {
+    userID := ctx.EffectiveUser.Id
+
+    ctx.SetManagedBotAccessSettings(userID, true).
+        AddedUserIDs(111, 222).
+        Send()
+
+    settings := ctx.GetManagedBotAccessSettings(userID).Send()
+    if settings.IsErr() {
+        return settings.Err()
+    }
+
+    return ctx.Reply(g.Format("Access restricted: {}", settings.Ok().IsAccessRestricted)).Send().Err()
+})
+```
+
 ## Text Entities and Formatting
 
 Format text messages with various entities:
 
 ```go
 import (
+    "time"
+
     "github.com/enetx/g"
     "github.com/enetx/tg/entities"
 )
@@ -570,6 +664,19 @@ This is expandable quote`)
     e := entities.New(text).
         Blockquote("This is a blockquote").
         ExpandableBlockquote("This is expandable quote")
+
+    return ctx.Reply(text).
+        Entities(e).
+        Send().Err()
+})
+
+// Date-time entity: render a Unix timestamp as a live, localized date/time
+b.Command("when", func(ctx *ctx.Context) error {
+    text := g.String("The event starts soon")
+    startsAt := time.Now().Add(time.Hour).Unix()
+
+    e := entities.New(text).
+        DateTime("soon", startsAt, "wDT") // weekday, date and time
 
     return ctx.Reply(text).
         Entities(e).
