@@ -45,6 +45,26 @@ func TestParameters_ChecklistTask(t *testing.T) {
 	}
 }
 
+func TestParameters_PollOption(t *testing.T) {
+	messageID := int64(123)
+	optionID := g.String("opt-1")
+
+	params := reply.New(messageID).PollOption(optionID)
+
+	if params == nil {
+		t.Error("PollOption should return non-nil Parameters for chaining")
+	}
+
+	result := params.Std()
+	if result.PollOptionId != optionID.Std() {
+		t.Errorf("Expected PollOptionId %s, got %s", optionID.Std(), result.PollOptionId)
+	}
+
+	if result.MessageId != messageID {
+		t.Errorf("Expected MessageId %d, got %d", messageID, result.MessageId)
+	}
+}
+
 func TestParameters_ChecklistTaskChaining(t *testing.T) {
 	messageID := int64(789)
 	taskID := int64(999)

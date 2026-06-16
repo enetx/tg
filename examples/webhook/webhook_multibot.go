@@ -49,7 +49,7 @@ func register(token, domain g.String) {
 		return ctx.SendMessage("Hi from bot: " + token.Hash().MD5()).Send().Err()
 	})
 
-	bots.Set(token, b)
+	bots.Insert(token, b)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {

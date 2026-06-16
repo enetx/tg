@@ -74,5 +74,32 @@ func main() {
 		return ctx.Reply("Mixed paid media sent with builder pattern!").Send().Err()
 	})
 
+	// Example with a paid live photo (a short video plus a static cover photo)
+	b.Command("paidlivebuilder", func(ctx *ctx.Context) error {
+		args := ctx.Args()
+		if args.Len() < 3 {
+			return ctx.Reply("Usage: /paidlivebuilder <star_count> <live_video> <cover_photo>").Send().Err()
+		}
+
+		stars := args[0].TryInt().Unwrap().Int64()
+		if stars < 1 || stars > 10000 {
+			return ctx.Reply("Star count must be between 1-10000").Send().Err()
+		}
+
+		live := file.Input(args[1]).Unwrap()
+		defer live.File.Close()
+
+		result := ctx.SendPaidMedia(stars).
+			LivePhoto(input.PaidLivePhoto(live, args[2])).
+			Caption("Premium live photo via builder pattern!").
+			Send()
+
+		if result.IsErr() {
+			return result.Err()
+		}
+
+		return ctx.Reply("Paid live photo sent with builder pattern!").Send().Err()
+	})
+
 	b.Polling().AllowedUpdates().Start()
 }

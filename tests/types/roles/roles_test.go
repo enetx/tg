@@ -71,7 +71,7 @@ func TestRoles_ManageVideoChats(t *testing.T) {
 
 func TestRoles_RestrictMembers(t *testing.T) {
 	result := roles.Roles(roles.RestrictMembers)
-	if !result.CanRestrictMembers {
+	if result.CanRestrictMembers == nil || !*result.CanRestrictMembers {
 		t.Error("Expected CanRestrictMembers to be true")
 	}
 }
@@ -132,6 +132,13 @@ func TestRoles_ManageDirectMessages(t *testing.T) {
 	}
 }
 
+func TestRoles_ManageTags(t *testing.T) {
+	result := roles.Roles(roles.ManageTags)
+	if !result.CanManageTags {
+		t.Error("Expected CanManageTags to be true")
+	}
+}
+
 func TestRoles_PostStories(t *testing.T) {
 	result := roles.Roles(roles.PostStories)
 	if !result.CanPostStories {
@@ -171,6 +178,7 @@ func TestRoles_AllRoles(t *testing.T) {
 		roles.DeleteStories,
 		roles.ManageTopics,
 		roles.ManageDirectMessages,
+		roles.ManageTags,
 	)
 
 	if !result.CanManageChat {
@@ -182,7 +190,7 @@ func TestRoles_AllRoles(t *testing.T) {
 	if !result.CanManageVideoChats {
 		t.Error("Expected CanManageVideoChats to be true")
 	}
-	if !result.CanRestrictMembers {
+	if result.CanRestrictMembers == nil || !*result.CanRestrictMembers {
 		t.Error("Expected CanRestrictMembers to be true")
 	}
 	if !result.CanPromoteMembers {
@@ -217,5 +225,8 @@ func TestRoles_AllRoles(t *testing.T) {
 	}
 	if !result.CanManageDirectMessages {
 		t.Error("Expected CanManageDirectMessages to be true")
+	}
+	if !result.CanManageTags {
+		t.Error("Expected CanManageTags to be true")
 	}
 }

@@ -20,6 +20,7 @@ type Handlers struct {
 	PaidMedia               *PaidMediaHandlers
 	BusinessConnection      *BusinessConnection
 	BusinessMessagesDeleted *BusinessMessagesDeleted
+	ManagedBot              *ManagedBot
 }
 
 // NewHandlers creates a new instance of Handlers with all handler types initialized.
@@ -41,6 +42,7 @@ func NewHandlers(bot core.BotAPI) *Handlers {
 		PaidMedia:               &PaidMediaHandlers{bot},
 		BusinessConnection:      &BusinessConnection{bot},
 		BusinessMessagesDeleted: &BusinessMessagesDeleted{bot},
+		ManagedBot:              &ManagedBot{bot},
 	}
 }
 
@@ -61,6 +63,7 @@ func (h *Handlers) Any(fn Handler) core.BotAPI {
 	h.PaidMedia.Any(fn)
 	h.BusinessConnection.Any(fn)
 	h.BusinessMessagesDeleted.Any(fn)
+	h.ManagedBot.Any(fn)
 
 	return h.bot
 }

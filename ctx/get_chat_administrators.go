@@ -20,6 +20,12 @@ func (gca *GetChatAdministrators) ChatID(id int64) *GetChatAdministrators {
 	return gca
 }
 
+// ReturnBots includes bots that are administrators in the returned list.
+func (gca *GetChatAdministrators) ReturnBots() *GetChatAdministrators {
+	gca.opts.ReturnBots = true
+	return gca
+}
+
 // Timeout sets a custom timeout for this request.
 func (gca *GetChatAdministrators) Timeout(duration time.Duration) *GetChatAdministrators {
 	if gca.opts.RequestOpts == nil {
@@ -47,5 +53,5 @@ func (gca *GetChatAdministrators) Send() g.Result[g.Slice[gotgbot.ChatMember]] {
 	chatID := gca.chatID.UnwrapOr(gca.ctx.EffectiveChat.Id)
 	members, err := gca.ctx.Bot.Raw().GetChatAdministrators(chatID, gca.opts)
 
-	return g.ResultOf(g.Slice[gotgbot.ChatMember](members), err)
+	return g.ResultOf[g.Slice[gotgbot.ChatMember]](members, err)
 }

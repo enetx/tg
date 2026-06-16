@@ -75,3 +75,8 @@ func (ma *MediaAudio) Title(title g.String) *MediaAudio {
 func (ma *MediaAudio) Build() gotgbot.InputMedia {
 	return *ma.input
 }
+
+// BuildPollMedia creates the gotgbot.InputPollMedia for use as poll question or explanation media.
+func (ma *MediaAudio) BuildPollMedia() gotgbot.InputPollMedia {
+	return *ma.input
+}

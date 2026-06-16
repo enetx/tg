@@ -95,7 +95,7 @@ func TestContext_CopyMessage(t *testing.T) {
 	}
 
 	// Test ShowCaptionAbove method
-	result = testCtx.CopyMessage(fromChatID, messageID).ShowCaptionAbove()
+	result = testCtx.CopyMessage(fromChatID, messageID).ShowCaptionAboveMedia()
 	if result == nil {
 		t.Error("ShowCaptionAbove method should return CopyMessage for chaining")
 	}
@@ -268,7 +268,7 @@ func TestCopyMessage_CaptionFeatures(t *testing.T) {
 	aboveResult := testCtx.CopyMessage(fromChatID, messageID).
 		To(toChatID).
 		Caption(g.String("Caption above media")).
-		ShowCaptionAbove()
+		ShowCaptionAboveMedia()
 
 	if aboveResult == nil {
 		t.Error("Caption above media should work")
@@ -428,7 +428,7 @@ func TestCopyMessage_VideoFeatures(t *testing.T) {
 	videoResult := testCtx.CopyMessage(fromChatID, messageID).
 		To(toChatID).
 		Caption(g.String("Video starting at 30 seconds")).
-		ShowCaptionAbove().
+		ShowCaptionAboveMedia().
 		VideoStartAt(30 * time.Second)
 
 	if videoResult == nil {
@@ -639,7 +639,7 @@ func TestCopyMessage_MethodCoverage(t *testing.T) {
 		Markup(kb).
 		Thread(123).
 		VideoStartAt(10 * time.Second).
-		ShowCaptionAbove().
+		ShowCaptionAboveMedia().
 		AllowPaidBroadcast().
 		Reply(reply.New(999)).
 		After(1 * time.Second).
@@ -659,7 +659,7 @@ func TestCopyMessage_MethodCoverage(t *testing.T) {
 		After(2 * time.Second).
 		Reply(reply.New(888)).
 		AllowPaidBroadcast().
-		ShowCaptionAbove().
+		ShowCaptionAboveMedia().
 		VideoStartAt(5 * time.Second).
 		Thread(456).
 		Markup(kb).
@@ -776,7 +776,7 @@ func TestCopyMessage_Send(t *testing.T) {
 		Markup(kb).
 		Thread(123).
 		VideoStartAt(10 * time.Second).
-		ShowCaptionAbove().
+		ShowCaptionAboveMedia().
 		AllowPaidBroadcast().
 		Reply(reply.New(999)).
 		Timeout(45 * time.Second).

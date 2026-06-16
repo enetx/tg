@@ -127,6 +127,23 @@ func TestSendPaidMedia_Video(t *testing.T) {
 	}
 }
 
+func TestSendPaidMedia_LivePhoto(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
+	starCount := int64(100)
+	liveResult := file.Input(g.String("https://example.com/live.mp4"))
+	if liveResult.IsErr() {
+		t.Skip("Unable to create live photo input for testing")
+	}
+	livePhoto := input.PaidLivePhoto(liveResult.Unwrap(), g.String("https://example.com/cover.jpg"))
+	if ctx.SendPaidMedia(starCount).LivePhoto(livePhoto) == nil {
+		t.Error("LivePhoto should return builder")
+	}
+}
+
 func TestSendPaidMedia_Business(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(
@@ -163,15 +180,37 @@ func TestSendPaidMedia_Markdown(t *testing.T) {
 	}
 }
 
-func TestSendPaidMedia_ShowCaptionAbove(t *testing.T) {
+func TestSendPaidMedia_ShowCaptionAboveMedia(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(
 		bot,
 		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
 	)
 	starCount := int64(100)
-	if ctx.SendPaidMedia(starCount).ShowCaptionAbove() == nil {
-		t.Error("ShowCaptionAbove should return builder")
+	if ctx.SendPaidMedia(starCount).ShowCaptionAboveMedia() == nil {
+		t.Error("ShowCaptionAboveMedia should return builder")
+	}
+}
+
+func TestSendPaidMedia_After(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
+	if ctx.SendPaidMedia(100).After(time.Minute) == nil {
+		t.Error("After should return builder")
+	}
+}
+
+func TestSendPaidMedia_DeleteAfter(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
+	if ctx.SendPaidMedia(100).DeleteAfter(time.Hour) == nil {
+		t.Error("DeleteAfter should return builder")
 	}
 }
 

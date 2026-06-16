@@ -103,6 +103,24 @@ func TestPermissions_Single(t *testing.T) {
 			},
 		},
 		{
+			name:       "ReactToMessages",
+			permission: permissions.ReactToMessages,
+			checkFunc: func(t *testing.T, result any) {
+				if result == nil {
+					t.Error("Expected non-nil result")
+				}
+			},
+		},
+		{
+			name:       "EditTag",
+			permission: permissions.EditTag,
+			checkFunc: func(t *testing.T, result any) {
+				if result == nil {
+					t.Error("Expected non-nil result")
+				}
+			},
+		},
+		{
 			name:       "ChangeInfo",
 			permission: permissions.ChangeInfo,
 			checkFunc: func(t *testing.T, result any) {
@@ -189,6 +207,8 @@ func TestPermissions_AllPermissions(t *testing.T) {
 		permissions.SendPolls,
 		permissions.SendOtherMessages,
 		permissions.AddWebPagePreviews,
+		permissions.ReactToMessages,
+		permissions.EditTag,
 		permissions.ChangeInfo,
 		permissions.InviteUsers,
 		permissions.PinMessages,
@@ -212,7 +232,39 @@ func TestPermission_Constants(t *testing.T) {
 	if permissions.SendAudios != 1 {
 		t.Errorf("Expected SendAudios to be 1, got %d", int(permissions.SendAudios))
 	}
-	if permissions.ManageTopics != 13 {
-		t.Errorf("Expected ManageTopics to be 13, got %d", int(permissions.ManageTopics))
+	if permissions.AddWebPagePreviews != 9 {
+		t.Errorf("Expected AddWebPagePreviews to be 9, got %d", int(permissions.AddWebPagePreviews))
+	}
+	if permissions.ReactToMessages != 10 {
+		t.Errorf("Expected ReactToMessages to be 10, got %d", int(permissions.ReactToMessages))
+	}
+	if permissions.EditTag != 11 {
+		t.Errorf("Expected EditTag to be 11, got %d", int(permissions.EditTag))
+	}
+	if permissions.ManageTopics != 15 {
+		t.Errorf("Expected ManageTopics to be 15, got %d", int(permissions.ManageTopics))
+	}
+}
+
+func TestPermissions_NewBotAPI95Fields(t *testing.T) {
+	// ReactToMessages and EditTag (Bot API 9.5) are *bool in upstream — verify the
+	// generated ChatPermissions encodes them as true when the corresponding flag is set.
+	cp := permissions.Permissions(permissions.ReactToMessages, permissions.EditTag)
+	if cp == nil {
+		t.Fatal("Expected non-nil ChatPermissions")
+	}
+
+	if cp.CanReactToMessages == nil || !*cp.CanReactToMessages {
+		t.Error("Expected CanReactToMessages to be set to true")
+	}
+
+	if cp.CanEditTag == nil || !*cp.CanEditTag {
+		t.Error("Expected CanEditTag to be set to true")
+	}
+
+	// ManageTopics is also now *bool — sanity check this still works after the upstream type change.
+	cp2 := permissions.Permissions(permissions.ManageTopics)
+	if cp2.CanManageTopics == nil || !*cp2.CanManageTopics {
+		t.Error("Expected CanManageTopics to be set to true")
 	}
 }

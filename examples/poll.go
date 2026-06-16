@@ -33,7 +33,8 @@ func main() {
 				keyboard.Inline().
 					URL("🌐 Learn more", "https://example.com").
 					Row().
-					Text("👍 Vote again", "vote_again"))
+					Text("👍 Vote again", "vote_again"),
+			)
 	}
 
 	b.Command("start", func(ctx *ctx.Context) error { return quiz(ctx).Send().Err() })

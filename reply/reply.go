@@ -68,6 +68,12 @@ func (p *Parameters) ChecklistTask(taskID int64) *Parameters {
 	return p
 }
 
+// PollOption sets the identifier of the specific poll option to reply to.
+func (p *Parameters) PollOption(optionID g.String) *Parameters {
+	p.params.PollOptionId = optionID.Std()
+	return p
+}
+
 // Build returns the ReplyParameters for use with the Telegram API.
 func (p *Parameters) Build() *gotgbot.ReplyParameters {
 	return p.params

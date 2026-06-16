@@ -100,3 +100,13 @@ func (mv *MediaVideo) Spoiler() *MediaVideo {
 func (mv *MediaVideo) Build() gotgbot.InputMedia {
 	return *mv.input
 }
+
+// BuildPollMedia creates the gotgbot.InputPollMedia for use as poll question or explanation media.
+func (mv *MediaVideo) BuildPollMedia() gotgbot.InputPollMedia {
+	return *mv.input
+}
+
+// BuildPollOptionMedia creates the gotgbot.InputPollOptionMedia for use as poll option media.
+func (mv *MediaVideo) BuildPollOptionMedia() gotgbot.InputPollOptionMedia {
+	return *mv.input
+}

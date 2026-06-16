@@ -11,7 +11,7 @@ type PollChoice struct {
 	input *gotgbot.InputPollOption
 }
 
-// Choice creates a new PollOption builder.
+// Choice creates a new PollChoice builder.
 func Choice(text g.String) *PollChoice {
 	return &PollChoice{
 		input: &gotgbot.InputPollOption{
@@ -38,7 +38,14 @@ func (po *PollChoice) TextEntities(e entities.Entities) *PollChoice {
 	return po
 }
 
-// Build creates the  gotgbot.InputPollOption.
+// Media adds media to the poll option (photo, video, animation, live photo, location,
+// venue, or sticker).
+func (po *PollChoice) Media(media PollOptionMedia) *PollChoice {
+	po.input.Media = media.BuildPollOptionMedia()
+	return po
+}
+
+// Build creates the gotgbot.InputPollOption.
 func (po *PollChoice) Build() gotgbot.InputPollOption {
 	return *po.input
 }

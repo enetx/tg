@@ -134,6 +134,28 @@ func TestSendInvoice_Thread(t *testing.T) {
 	}
 }
 
+func TestSendInvoice_After(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
+	if ctx.SendInvoice(g.String("T"), g.String("D"), g.String("p"), g.String("USD")).After(time.Minute) == nil {
+		t.Error("After should return builder")
+	}
+}
+
+func TestSendInvoice_DeleteAfter(t *testing.T) {
+	bot := &mockBot{}
+	ctx := ctx.New(
+		bot,
+		&ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}},
+	)
+	if ctx.SendInvoice(g.String("T"), g.String("D"), g.String("p"), g.String("USD")).DeleteAfter(time.Hour) == nil {
+		t.Error("DeleteAfter should return builder")
+	}
+}
+
 func TestSendInvoice_MaxTip(t *testing.T) {
 	bot := &mockBot{}
 	ctx := ctx.New(

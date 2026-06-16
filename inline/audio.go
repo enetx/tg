@@ -38,6 +38,7 @@ func (a *Audio) HTML() *Audio {
 	return a
 }
 
+// Markdown sets parse mode to MarkdownV2 for the caption.
 func (a *Audio) Markdown() *Audio {
 	a.inline.ParseMode = "MarkdownV2"
 	return a

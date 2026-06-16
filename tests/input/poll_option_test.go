@@ -83,6 +83,23 @@ func TestChoice_TextEntities(t *testing.T) {
 	}
 }
 
+func TestChoice_Media(t *testing.T) {
+	optionText := g.String("Option A")
+	choice := input.Choice(optionText)
+	result := choice.Media(input.LocationMedia(40.0, -74.0))
+	if result != choice {
+		t.Error("Expected Media to return same PollChoice instance")
+	}
+
+	built := result.Build()
+	if built.Media == nil {
+		t.Error("Expected Media to be set on the poll option")
+	}
+	if _, ok := built.Media.(gotgbot.InputMediaLocation); !ok {
+		t.Error("Expected option media to be InputMediaLocation")
+	}
+}
+
 func TestChoice_Build(t *testing.T) {
 	optionText := g.String("Option A")
 	choice := input.Choice(optionText)

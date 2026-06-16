@@ -8,6 +8,26 @@ var (
 	_ Media = (*MediaAnimation)(nil)
 	_ Media = (*MediaAudio)(nil)
 	_ Media = (*MediaDocument)(nil)
+	_ Media = (*MediaLivePhoto)(nil)
+
+	// PollMedia checks (poll question / quiz explanation)
+	_ PollMedia = (*MediaPhoto)(nil)
+	_ PollMedia = (*MediaVideo)(nil)
+	_ PollMedia = (*MediaAnimation)(nil)
+	_ PollMedia = (*MediaAudio)(nil)
+	_ PollMedia = (*MediaDocument)(nil)
+	_ PollMedia = (*MediaLivePhoto)(nil)
+	_ PollMedia = (*MediaLocation)(nil)
+	_ PollMedia = (*MediaVenue)(nil)
+
+	// PollOptionMedia checks
+	_ PollOptionMedia = (*MediaPhoto)(nil)
+	_ PollOptionMedia = (*MediaVideo)(nil)
+	_ PollOptionMedia = (*MediaAnimation)(nil)
+	_ PollOptionMedia = (*MediaLivePhoto)(nil)
+	_ PollOptionMedia = (*MediaLocation)(nil)
+	_ PollOptionMedia = (*MediaVenue)(nil)
+	_ PollOptionMedia = (*MediaSticker)(nil)
 
 	// MessageContent checks
 	_ MessageContent = (*MessageText)(nil)
@@ -19,6 +39,7 @@ var (
 	// PaidMedia checks
 	_ PaidMedia = (*PaidMediaPhoto)(nil)
 	_ PaidMedia = (*PaidMediaVideo)(nil)
+	_ PaidMedia = (*PaidMediaLivePhoto)(nil)
 
 	// ProfilePhoto checks
 	_ ProfilePhoto = (*ProfilePhotoStatic)(nil)

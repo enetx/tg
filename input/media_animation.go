@@ -83,3 +83,13 @@ func (ma *MediaAnimation) Spoiler() *MediaAnimation {
 func (ma *MediaAnimation) Build() gotgbot.InputMedia {
 	return *ma.input
 }
+
+// BuildPollMedia creates the gotgbot.InputPollMedia for use as poll question or explanation media.
+func (ma *MediaAnimation) BuildPollMedia() gotgbot.InputPollMedia {
+	return *ma.input
+}
+
+// BuildPollOptionMedia creates the gotgbot.InputPollOptionMedia for use as poll option media.
+func (ma *MediaAnimation) BuildPollOptionMedia() gotgbot.InputPollOptionMedia {
+	return *ma.input
+}

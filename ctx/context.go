@@ -398,12 +398,154 @@ func (ctx *Context) SendContact(phoneNumber, firstName g.String) *SendContact {
 }
 
 // SendMessageDraft creates a new SendMessageDraft request to send a message draft.
-func (ctx *Context) SendMessageDraft(draftID int64, text g.String) *SendMessageDraft {
+// The draft is ephemeral and acts as a temporary 30-second preview — once the output
+// is finalized, you must call SendMessage with the complete message to persist it.
+func (ctx *Context) SendMessageDraft(draftID int64) *SendMessageDraft {
 	return &SendMessageDraft{
 		ctx:     ctx,
 		draftID: draftID,
-		text:    text,
 		opts:    new(gotgbot.SendMessageDraftOpts),
+	}
+}
+
+// SetChatMemberTag creates a new SetChatMemberTag request to set a tag for a regular
+// member in a group or supergroup. The bot must be an administrator with the
+// can_manage_tags right.
+func (ctx *Context) SetChatMemberTag(userID int64) *SetChatMemberTag {
+	return &SetChatMemberTag{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.SetChatMemberTagOpts),
+	}
+}
+
+// DeleteMessageReaction creates a new DeleteMessageReaction request to remove a reaction
+// from a message in a group or supergroup. The bot must have the can_delete_messages
+// administrator right.
+func (ctx *Context) DeleteMessageReaction(messageID int64) *DeleteMessageReaction {
+	return &DeleteMessageReaction{
+		ctx:       ctx,
+		messageID: messageID,
+		opts:      new(gotgbot.DeleteMessageReactionOpts),
+	}
+}
+
+// DeleteAllMessageReactions creates a new DeleteAllMessageReactions request to remove
+// up to 10000 recent reactions in a group or supergroup added by a given user or chat.
+// The bot must have the can_delete_messages administrator right.
+func (ctx *Context) DeleteAllMessageReactions() *DeleteAllMessageReactions {
+	return &DeleteAllMessageReactions{
+		ctx:  ctx,
+		opts: new(gotgbot.DeleteAllMessageReactionsOpts),
+	}
+}
+
+// AnswerGuestQuery creates a new AnswerGuestQuery request to reply to a received guest message.
+func (ctx *Context) AnswerGuestQuery(guestQueryID g.String, result inline.QueryResult) *AnswerGuestQuery {
+	return &AnswerGuestQuery{
+		ctx:          ctx,
+		guestQueryID: guestQueryID,
+		result:       result,
+		opts:         new(gotgbot.AnswerGuestQueryOpts),
+	}
+}
+
+// GetUserPersonalChatMessages creates a new GetUserPersonalChatMessages request to fetch
+// the last messages from the personal chat (i.e., the chat currently added to their profile)
+// of a given user. The limit parameter must be in the 1-20 range.
+func (ctx *Context) GetUserPersonalChatMessages(userID, limit int64) *GetUserPersonalChatMessages {
+	return &GetUserPersonalChatMessages{
+		ctx:    ctx,
+		userID: userID,
+		limit:  limit,
+		opts:   new(gotgbot.GetUserPersonalChatMessagesOpts),
+	}
+}
+
+// SendLivePhoto creates a new SendLivePhoto request to send a live photo.
+// livePhotoFilename is the short video (up to 10 seconds, 10 MB) and photoFilename is
+// the static cover photo. Sending live photos by a URL is currently unsupported.
+func (ctx *Context) SendLivePhoto(livePhotoFilename, photoFilename g.String) *SendLivePhoto {
+	slp := &SendLivePhoto{
+		ctx:  ctx,
+		opts: new(gotgbot.SendLivePhotoOpts),
+	}
+
+	livePhotoResult := file.Input(livePhotoFilename)
+	if livePhotoResult.IsErr() {
+		slp.err = livePhotoResult.Err()
+		return slp
+	}
+
+	slp.livePhoto = livePhotoResult.Ok().Doc
+	slp.livePhotoFD = livePhotoResult.Ok().File
+
+	photoResult := file.Input(photoFilename)
+	if photoResult.IsErr() {
+		if slp.livePhotoFD != nil {
+			slp.livePhotoFD.Close()
+		}
+
+		slp.err = photoResult.Err()
+
+		return slp
+	}
+
+	slp.photo = photoResult.Ok().Doc
+	slp.photoFD = photoResult.Ok().File
+
+	return slp
+}
+
+// GetManagedBotToken creates a new GetManagedBotToken request to get the token of a managed bot.
+func (ctx *Context) GetManagedBotToken(userID int64) *GetManagedBotToken {
+	return &GetManagedBotToken{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.GetManagedBotTokenOpts),
+	}
+}
+
+// ReplaceManagedBotToken creates a new ReplaceManagedBotToken request to revoke the current
+// token of a managed bot and generate a new one.
+func (ctx *Context) ReplaceManagedBotToken(userID int64) *ReplaceManagedBotToken {
+	return &ReplaceManagedBotToken{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.ReplaceManagedBotTokenOpts),
+	}
+}
+
+// GetManagedBotAccessSettings creates a new GetManagedBotAccessSettings request to get the
+// access settings of a managed bot.
+func (ctx *Context) GetManagedBotAccessSettings(userID int64) *GetManagedBotAccessSettings {
+	return &GetManagedBotAccessSettings{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.GetManagedBotAccessSettingsOpts),
+	}
+}
+
+// SetManagedBotAccessSettings creates a new SetManagedBotAccessSettings request to change the
+// access settings of a managed bot. Pass isAccessRestricted=true to allow only selected users
+// to access the bot (the owner can always access it).
+func (ctx *Context) SetManagedBotAccessSettings(userID int64, isAccessRestricted bool) *SetManagedBotAccessSettings {
+	return &SetManagedBotAccessSettings{
+		ctx:                ctx,
+		userID:             userID,
+		isAccessRestricted: isAccessRestricted,
+		opts:               new(gotgbot.SetManagedBotAccessSettingsOpts),
+	}
+}
+
+// SavePreparedKeyboardButton creates a new SavePreparedKeyboardButton request to store a
+// keyboard button that can be used by a user within a Mini App. The button must be of the
+// type request_users, request_chat, or request_managed_bot.
+func (ctx *Context) SavePreparedKeyboardButton(userID int64) *SavePreparedKeyboardButton {
+	return &SavePreparedKeyboardButton{
+		ctx:    ctx,
+		userID: userID,
+		opts:   new(gotgbot.SavePreparedKeyboardButtonOpts),
 	}
 }
 

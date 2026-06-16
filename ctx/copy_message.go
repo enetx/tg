@@ -89,8 +89,8 @@ func (c *CopyMessage) VideoStartAt(offset time.Duration) *CopyMessage {
 	return c
 }
 
-// ShowCaptionAbove displays the caption above the media instead of below.
-func (c *CopyMessage) ShowCaptionAbove() *CopyMessage {
+// ShowCaptionAboveMedia displays the caption above the media instead of below.
+func (c *CopyMessage) ShowCaptionAboveMedia() *CopyMessage {
 	c.opts.ShowCaptionAboveMedia = true
 	return c
 }

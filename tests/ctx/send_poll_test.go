@@ -9,6 +9,7 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/entities"
+	"github.com/enetx/tg/file"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
@@ -256,5 +257,112 @@ func TestSendPoll_ReplyTo(t *testing.T) {
 	question := g.String("What's your favorite color?")
 	if ctx.SendPoll(question).Reply(reply.New(123)) == nil {
 		t.Error("ReplyTo should return builder")
+	}
+}
+
+func newPollCtx() *ctx.Context {
+	bot := &mockBot{}
+	return ctx.New(bot, &ext.Context{EffectiveChat: &gotgbot.Chat{Id: 456, Type: "private"}, Update: &gotgbot.Update{UpdateId: 1}})
+}
+
+func TestSendPoll_QuizMultipleCorrect(t *testing.T) {
+	question := g.String("Select all primes")
+	if newPollCtx().SendPoll(question).Quiz(0, 2, 4) == nil {
+		t.Error("Quiz with multiple correct options should return builder")
+	}
+}
+
+func TestSendPoll_Media(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).Media(input.LocationMedia(40.0, -74.0)) == nil {
+		t.Error("Media should return builder")
+	}
+}
+
+func TestSendPoll_ExplanationMedia(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).ExplanationMedia(input.VenueMedia(40.0, -74.0, g.String("T"), g.String("A"))) == nil {
+		t.Error("ExplanationMedia should return builder")
+	}
+}
+
+func TestSendPoll_Description(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).Description(g.String("desc")) == nil {
+		t.Error("Description should return builder")
+	}
+}
+
+func TestSendPoll_DescriptionHTML(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).DescriptionHTML() == nil {
+		t.Error("DescriptionHTML should return builder")
+	}
+}
+
+func TestSendPoll_DescriptionMarkdown(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).DescriptionMarkdown() == nil {
+		t.Error("DescriptionMarkdown should return builder")
+	}
+}
+
+func TestSendPoll_DescriptionEntities(t *testing.T) {
+	ent := entities.New(g.String("Bold text")).Bold(g.String("Bold"))
+	if newPollCtx().SendPoll(g.String("Q")).DescriptionEntities(ent) == nil {
+		t.Error("DescriptionEntities should return builder")
+	}
+}
+
+func TestSendPoll_AllowRevoting(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).AllowRevoting() == nil {
+		t.Error("AllowRevoting should return builder")
+	}
+}
+
+func TestSendPoll_QuestionHTML(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).QuestionHTML() == nil {
+		t.Error("QuestionHTML should return builder")
+	}
+}
+
+func TestSendPoll_QuestionMarkdown(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).QuestionMarkdown() == nil {
+		t.Error("QuestionMarkdown should return builder")
+	}
+}
+
+func TestSendPoll_ShuffleOptions(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).ShuffleOptions() == nil {
+		t.Error("ShuffleOptions should return builder")
+	}
+}
+
+func TestSendPoll_AllowAddingOptions(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).AllowAddingOptions() == nil {
+		t.Error("AllowAddingOptions should return builder")
+	}
+}
+
+func TestSendPoll_HideResultsUntilClosed(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).HideResultsUntilClosed() == nil {
+		t.Error("HideResultsUntilClosed should return builder")
+	}
+}
+
+func TestSendPoll_MembersOnly(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).MembersOnly() == nil {
+		t.Error("MembersOnly should return builder")
+	}
+}
+
+func TestSendPoll_CountryCodes(t *testing.T) {
+	if newPollCtx().SendPoll(g.String("Q")).CountryCodes(g.String("US"), g.String("GB")) == nil {
+		t.Error("CountryCodes should return builder")
+	}
+}
+
+func TestSendPoll_OptionMediaChaining(t *testing.T) {
+	question := g.String("Pick a place")
+	result := newPollCtx().SendPoll(question).
+		Option(input.Choice("Home").Media(input.StickerMedia(file.Input(g.String("CAACAgID")).Ok()))).
+		Option(input.Choice("Work").Media(input.LocationMedia(1.0, 2.0)))
+	if result == nil {
+		t.Error("Option with media should chain correctly")
 	}
 }

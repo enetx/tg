@@ -13,6 +13,7 @@ import (
 	"github.com/enetx/tg/types/effects"
 )
 
+// SendPoll represents a request to send a poll.
 type SendPoll struct {
 	ctx         *Context
 	question    g.String
@@ -23,9 +24,52 @@ type SendPoll struct {
 	opts        *gotgbot.SendPollOpts
 }
 
+// QuestionHTML sets the question parse mode to HTML.
+func (sp *SendPoll) QuestionHTML() *SendPoll {
+	sp.opts.QuestionParseMode = "HTML"
+	return sp
+}
+
+// QuestionMarkdown sets the question parse mode to MarkdownV2.
+func (sp *SendPoll) QuestionMarkdown() *SendPoll {
+	sp.opts.QuestionParseMode = "MarkdownV2"
+	return sp
+}
+
 // QuestionEntities sets custom entities for the poll question.
 func (sp *SendPoll) QuestionEntities(e *entities.Entities) *SendPoll {
 	sp.opts.QuestionEntities = e.Std()
+	return sp
+}
+
+// Media adds media to the poll question (photo, video, animation, audio, document,
+// live photo, location, or venue).
+func (sp *SendPoll) Media(media input.PollMedia) *SendPoll {
+	sp.opts.Media = media.BuildPollMedia()
+	return sp
+}
+
+// Description sets the poll description, 0-200 characters.
+func (sp *SendPoll) Description(text g.String) *SendPoll {
+	sp.opts.Description = text.Std()
+	return sp
+}
+
+// DescriptionHTML sets the description parse mode to HTML.
+func (sp *SendPoll) DescriptionHTML() *SendPoll {
+	sp.opts.DescriptionParseMode = "HTML"
+	return sp
+}
+
+// DescriptionMarkdown sets the description parse mode to MarkdownV2.
+func (sp *SendPoll) DescriptionMarkdown() *SendPoll {
+	sp.opts.DescriptionParseMode = "MarkdownV2"
+	return sp
+}
+
+// DescriptionEntities sets custom entities for the poll description.
+func (sp *SendPoll) DescriptionEntities(e *entities.Entities) *SendPoll {
+	sp.opts.DescriptionEntities = e.Std()
 	return sp
 }
 
@@ -95,16 +139,54 @@ func (sp *SendPoll) MultipleAnswers() *SendPoll {
 	return sp
 }
 
+// AllowRevoting allows users to change their vote after it has been cast.
+func (sp *SendPoll) AllowRevoting() *SendPoll {
+	sp.opts.AllowsRevoting = ref.Of(true)
+	return sp
+}
+
+// ShuffleOptions shuffles the order of the options each time the poll is displayed.
+func (sp *SendPoll) ShuffleOptions() *SendPoll {
+	sp.opts.ShuffleOptions = true
+	return sp
+}
+
+// AllowAddingOptions allows users to add their own options to the poll.
+func (sp *SendPoll) AllowAddingOptions() *SendPoll {
+	sp.opts.AllowAddingOptions = true
+	return sp
+}
+
+// HideResultsUntilClosed hides the poll results until the poll is closed.
+func (sp *SendPoll) HideResultsUntilClosed() *SendPoll {
+	sp.opts.HideResultsUntilCloses = true
+	return sp
+}
+
+// MembersOnly restricts voting to the members of the chat where the poll is sent.
+func (sp *SendPoll) MembersOnly() *SendPoll {
+	sp.opts.MembersOnly = true
+	return sp
+}
+
+// CountryCodes sets the list of two-letter ISO 3166-1 alpha-2 country codes whose
+// residents are allowed to vote in the poll.
+func (sp *SendPoll) CountryCodes(codes ...g.String) *SendPoll {
+	sp.opts.CountryCodes = g.TransformSlice(codes, g.String.Std)
+	return sp
+}
+
 // Protect enables content protection for the poll.
 func (sp *SendPoll) Protect() *SendPoll {
 	sp.opts.ProtectContent = true
 	return sp
 }
 
-// Quiz converts the poll to a quiz with the specified correct option index.
-func (sp *SendPoll) Quiz(correct int) *SendPoll {
+// Quiz converts the poll to a quiz with the specified correct option indexes.
+// Pass one or more 0-based identifiers of the correct answer options (monotonically increasing).
+func (sp *SendPoll) Quiz(correct ...int) *SendPoll {
 	sp.opts.Type = "quiz"
-	sp.opts.CorrectOptionId = int64(correct)
+	sp.opts.CorrectOptionIds = g.TransformSlice(correct, func(c int) int64 { return int64(c) })
 	return sp
 }
 
@@ -123,6 +205,13 @@ func (sp *SendPoll) ExplanationHTML() *SendPoll {
 // ExplanationMarkdown sets the explanation parse mode to MarkdownV2.
 func (sp *SendPoll) ExplanationMarkdown() *SendPoll {
 	sp.opts.ExplanationParseMode = "MarkdownV2"
+	return sp
+}
+
+// ExplanationMedia adds media to the quiz explanation (photo, video, animation, audio,
+// document, live photo, location, or venue).
+func (sp *SendPoll) ExplanationMedia(media input.PollMedia) *SendPoll {
+	sp.opts.ExplanationMedia = media.BuildPollMedia()
 	return sp
 }
 

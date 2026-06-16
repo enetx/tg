@@ -31,3 +31,14 @@ type StoryContent interface {
 type PollOption interface {
 	Build() gotgbot.InputPollOption
 }
+
+// PollMedia represents an interface for media that can be attached to a poll
+// question or quiz explanation.
+type PollMedia interface {
+	BuildPollMedia() gotgbot.InputPollMedia
+}
+
+// PollOptionMedia represents an interface for media that can be attached to a poll option.
+type PollOptionMedia interface {
+	BuildPollOptionMedia() gotgbot.InputPollOptionMedia
+}

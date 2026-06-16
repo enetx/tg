@@ -12,14 +12,16 @@ import (
 )
 
 type SendInvoice struct {
-	ctx      *Context
-	title    g.String
-	desc     g.String
-	payload  g.String
-	currency g.String
-	prices   g.Slice[gotgbot.LabeledPrice]
-	chatID   g.Option[int64]
-	opts     *gotgbot.SendInvoiceOpts
+	ctx         *Context
+	title       g.String
+	desc        g.String
+	payload     g.String
+	currency    g.String
+	prices      g.Slice[gotgbot.LabeledPrice]
+	chatID      g.Option[int64]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
+	opts        *gotgbot.SendInvoiceOpts
 }
 
 // SuggestedPost sets suggested post parameters for direct messages chats.
@@ -33,6 +35,18 @@ func (si *SendInvoice) SuggestedPost(params *suggested.PostParameters) *SendInvo
 // To sets the target chat ID for the invoice.
 func (si *SendInvoice) To(chatID int64) *SendInvoice {
 	si.chatID = g.Some(chatID)
+	return si
+}
+
+// After schedules the invoice to be sent after the specified duration.
+func (si *SendInvoice) After(duration time.Duration) *SendInvoice {
+	si.after = g.Some(duration)
+	return si
+}
+
+// DeleteAfter schedules the invoice message to be deleted after the specified duration.
+func (si *SendInvoice) DeleteAfter(duration time.Duration) *SendInvoice {
+	si.deleteAfter = g.Some(duration)
 	return si
 }
 
@@ -201,13 +215,15 @@ func (si *SendInvoice) DirectMessagesTopic(topicID int64) *SendInvoice {
 
 // Send sends the invoice to Telegram and returns the result.
 func (si *SendInvoice) Send() g.Result[*gotgbot.Message] {
-	return g.ResultOf(si.ctx.Bot.Raw().SendInvoice(
-		si.chatID.UnwrapOr(si.ctx.EffectiveChat.Id),
-		si.title.Std(),
-		si.desc.Std(),
-		si.payload.Std(),
-		si.currency.Std(),
-		si.prices,
-		si.opts,
-	))
+	return si.ctx.timers(si.after, si.deleteAfter, func() g.Result[*gotgbot.Message] {
+		return g.ResultOf(si.ctx.Bot.Raw().SendInvoice(
+			si.chatID.UnwrapOr(si.ctx.EffectiveChat.Id),
+			si.title.Std(),
+			si.desc.Std(),
+			si.payload.Std(),
+			si.currency.Std(),
+			si.prices,
+			si.opts,
+		))
+	})
 }

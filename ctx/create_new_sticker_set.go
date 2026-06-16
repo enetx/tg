@@ -106,5 +106,5 @@ func (cns *CreateNewStickerSet) Send() g.Result[bool] {
 	}
 
 	return g.ResultOf(cns.ctx.Bot.Raw().
-		CreateNewStickerSet(cns.userID, cns.name.Std(), cns.title.Std(), cns.stickers, cns.opts))
+		CreateNewStickerSet(cns.userID, cns.name.Std(), cns.title.Std(), gotgbot.InputStickers(cns.stickers), cns.opts))
 }

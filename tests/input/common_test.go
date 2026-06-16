@@ -52,6 +52,14 @@ func assertPollOption(po input.PollOption) bool {
 	return built.Text != ""
 }
 
+func assertPollMedia(m input.PollMedia) bool {
+	return m != nil && m.BuildPollMedia() != nil
+}
+
+func assertPollOptionMedia(m input.PollOptionMedia) bool {
+	return m != nil && m.BuildPollOptionMedia() != nil
+}
+
 func createTestEntities() entities.Entities {
 	return *entities.New(g.String("Test text with bold")).Bold("bold")
 }

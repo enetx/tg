@@ -148,6 +148,29 @@ func TestGetChatAdministrators_APIURL(t *testing.T) {
 	}
 }
 
+func TestGetChatAdministrators_ReturnBots(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: -1001234567890, Type: "supergroup"},
+		Update:        &gotgbot.Update{UpdateId: 1},
+	}
+
+	ctx := ctx.New(bot, rawCtx)
+
+	result := ctx.GetChatAdministrators().ReturnBots()
+	if result == nil {
+		t.Error("ReturnBots method should return GetChatAdministrators for chaining")
+	}
+
+	sendResult := ctx.GetChatAdministrators().
+		ChatID(-1001234567890).
+		ReturnBots().
+		Send()
+	if sendResult.IsErr() {
+		t.Logf("GetChatAdministrators with ReturnBots Send failed as expected: %v", sendResult.Err())
+	}
+}
+
 func TestGetChatAdministrators_Send(t *testing.T) {
 	bot := &mockBot{}
 	rawCtx := &ext.Context{

@@ -13,11 +13,13 @@ import (
 
 // SendPaidMedia represents a request to send paid media content.
 type SendPaidMedia struct {
-	ctx       *Context
-	opts      *gotgbot.SendPaidMediaOpts
-	chatID    g.Option[int64]
-	starCount int64
-	media     g.Slice[input.PaidMedia]
+	ctx         *Context
+	opts        *gotgbot.SendPaidMediaOpts
+	chatID      g.Option[int64]
+	starCount   int64
+	media       g.Slice[input.PaidMedia]
+	after       g.Option[time.Duration]
+	deleteAfter g.Option[time.Duration]
 }
 
 // SuggestedPost sets suggested post parameters for direct messages chats.
@@ -31,6 +33,18 @@ func (spm *SendPaidMedia) SuggestedPost(params *suggested.PostParameters) *SendP
 // To sets the target chat ID for sending paid media.
 func (spm *SendPaidMedia) To(chatID int64) *SendPaidMedia {
 	spm.chatID = g.Some(chatID)
+	return spm
+}
+
+// After schedules the paid media to be sent after the specified duration.
+func (spm *SendPaidMedia) After(duration time.Duration) *SendPaidMedia {
+	spm.after = g.Some(duration)
+	return spm
+}
+
+// DeleteAfter schedules the paid media message to be deleted after the specified duration.
+func (spm *SendPaidMedia) DeleteAfter(duration time.Duration) *SendPaidMedia {
+	spm.deleteAfter = g.Some(duration)
 	return spm
 }
 
@@ -52,9 +66,18 @@ func (spm *SendPaidMedia) Video(video input.PaidMedia) *SendPaidMedia {
 	return spm
 }
 
+// LivePhoto adds a paid live photo to the media list.
+func (spm *SendPaidMedia) LivePhoto(livePhoto input.PaidMedia) *SendPaidMedia {
+	if _, ok := livePhoto.(*input.PaidMediaLivePhoto); ok {
+		spm.media.Push(livePhoto)
+	}
+
+	return spm
+}
+
 // Business sets the business connection ID for the paid media.
-func (spm *SendPaidMedia) Business(businessConnectionID g.String) *SendPaidMedia {
-	spm.opts.BusinessConnectionId = businessConnectionID.Std()
+func (spm *SendPaidMedia) Business(id g.String) *SendPaidMedia {
+	spm.opts.BusinessConnectionId = id.Std()
 	return spm
 }
 
@@ -76,14 +99,14 @@ func (spm *SendPaidMedia) HTML() *SendPaidMedia {
 	return spm
 }
 
-// Markdown sets the caption parse mode to Markdown.
+// Markdown sets the caption parse mode to MarkdownV2.
 func (spm *SendPaidMedia) Markdown() *SendPaidMedia {
 	spm.opts.ParseMode = "MarkdownV2"
 	return spm
 }
 
-// ShowCaptionAbove shows the caption above the media.
-func (spm *SendPaidMedia) ShowCaptionAbove() *SendPaidMedia {
+// ShowCaptionAboveMedia shows the caption above the media.
+func (spm *SendPaidMedia) ShowCaptionAboveMedia() *SendPaidMedia {
 	spm.opts.ShowCaptionAboveMedia = true
 	return spm
 }
@@ -165,8 +188,10 @@ func (spm *SendPaidMedia) Send() g.Result[*gotgbot.Message] {
 		return g.Err[*gotgbot.Message](g.Errorf("star count must be between 1-10000, got {}", spm.starCount))
 	}
 
-	chatID := spm.chatID.UnwrapOr(spm.ctx.EffectiveChat.Id)
-	media := g.TransformSlice(spm.media, input.PaidMedia.Build)
+	return spm.ctx.timers(spm.after, spm.deleteAfter, func() g.Result[*gotgbot.Message] {
+		chatID := spm.chatID.UnwrapOr(spm.ctx.EffectiveChat.Id)
+		media := g.TransformSlice(spm.media, input.PaidMedia.Build)
 
-	return g.ResultOf(spm.ctx.Bot.Raw().SendPaidMedia(chatID, spm.starCount, media, spm.opts))
+		return g.ResultOf(spm.ctx.Bot.Raw().SendPaidMedia(chatID, spm.starCount, gotgbot.InputPaidMedias(media), spm.opts))
+	})
 }

@@ -670,6 +670,6 @@ MIT License. See `LICENSE` file for details.
 
 [TelegramBotAPI]: https://core.telegram.org/bots/api
 
-[TelegramVersionBadge]: https://img.shields.io/static/v1?label=Supported%20Telegram%20Bot%20API&color=29a1d4&logo=telegram&message=v9.4
+[TelegramVersionBadge]: https://img.shields.io/static/v1?label=Supported%20Telegram%20Bot%20API&color=29a1d4&logo=telegram&message=v10.0
 
-[TelegramLastVersion]: https://core.telegram.org/bots/api#february-9-2026
+[TelegramLastVersion]: https://core.telegram.org/bots/api#may-8-2026

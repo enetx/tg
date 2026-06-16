@@ -25,12 +25,13 @@ func TestContext_SendMessageDraft_Builder(t *testing.T) {
 	draftID := int64(12345)
 	text := g.String("Draft message text")
 
-	builder := c.SendMessageDraft(draftID, text)
+	builder := c.SendMessageDraft(draftID)
 	if builder == nil {
 		t.Fatal("Expected SendMessageDraft builder to be created")
 	}
 
 	builder = builder.
+		Text(text).
 		To(123456789).
 		Thread(999).
 		HTML().
@@ -59,7 +60,8 @@ func TestContext_SendMessageDraft_Markdown(t *testing.T) {
 
 	c := ctx.New(bot, rawCtx)
 
-	builder := c.SendMessageDraft(1, g.String("**bold** text")).
+	builder := c.SendMessageDraft(1).
+		Text(g.String("**bold** text")).
 		Markdown()
 
 	if builder == nil {
@@ -80,10 +82,32 @@ func TestContext_SendMessageDraft_Entities(t *testing.T) {
 	c := ctx.New(bot, rawCtx)
 
 	ent := entities.New(g.String("text with bold")).Bold(g.String("bold"))
-	builder := c.SendMessageDraft(1, g.String("text with bold")).
+	builder := c.SendMessageDraft(1).
+		Text(g.String("text with bold")).
 		Entities(ent)
 
 	if builder == nil {
 		t.Error("Entities() should return the builder for chaining")
+	}
+}
+
+func TestContext_SendMessageDraft_Placeholder(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat: &gotgbot.Chat{Id: 1, Type: "private"},
+		Update:        &gotgbot.Update{UpdateId: 4},
+	}
+
+	c := ctx.New(bot, rawCtx)
+
+	// Empty Text() is the "Thinking..." placeholder per Bot API 9.5.
+	builder := c.SendMessageDraft(99).Text(g.String(""))
+	if builder == nil {
+		t.Error("Empty Text() should still return a valid builder")
+	}
+
+	res := builder.Send()
+	if res.IsErr() {
+		t.Logf("Placeholder send failed as expected with mock bot: %v", res.Err())
 	}
 }

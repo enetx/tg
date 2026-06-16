@@ -61,3 +61,13 @@ func (mp *MediaPhoto) Spoiler() *MediaPhoto {
 func (mp *MediaPhoto) Build() gotgbot.InputMedia {
 	return *mp.input
 }
+
+// BuildPollMedia creates the gotgbot.InputPollMedia for use as poll question or explanation media.
+func (mp *MediaPhoto) BuildPollMedia() gotgbot.InputPollMedia {
+	return *mp.input
+}
+
+// BuildPollOptionMedia creates the gotgbot.InputPollOptionMedia for use as poll option media.
+func (mp *MediaPhoto) BuildPollOptionMedia() gotgbot.InputPollOptionMedia {
+	return *mp.input
+}

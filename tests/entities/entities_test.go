@@ -242,6 +242,45 @@ func TestEntitiesExpandableBlockquote(t *testing.T) {
 	}
 }
 
+func TestEntitiesDateTime(t *testing.T) {
+	text := g.String("Meeting at 22:45 tomorrow")
+	unix := int64(1647531900)
+
+	// Without a format — defaults to the Telegram client's default rendering.
+	res := New(text).DateTime("22:45 tomorrow", unix).Std()
+	if len(res) != 1 {
+		t.Fatalf("Expected 1 entity, got %d", len(res))
+	}
+
+	if res[0].Type != "date_time" {
+		t.Errorf("Expected entity type 'date_time', got '%s'", res[0].Type)
+	}
+
+	if res[0].UnixTime != unix {
+		t.Errorf("Expected UnixTime %d, got %d", unix, res[0].UnixTime)
+	}
+
+	if res[0].DateTimeFormat != "" {
+		t.Errorf("Expected empty DateTimeFormat by default, got '%s'", res[0].DateTimeFormat)
+	}
+
+	// With an explicit format.
+	resWithFormat := New(text).DateTime("22:45 tomorrow", unix, "wDT").Std()
+	if len(resWithFormat) != 1 {
+		t.Fatalf("Expected 1 entity with format, got %d", len(resWithFormat))
+	}
+
+	if resWithFormat[0].DateTimeFormat != "wDT" {
+		t.Errorf("Expected DateTimeFormat 'wDT', got '%s'", resWithFormat[0].DateTimeFormat)
+	}
+
+	// Missing substring should produce no entity (consistent with Bold/Italic).
+	missing := New(text).DateTime("does not occur", unix).Std()
+	if len(missing) != 0 {
+		t.Errorf("Expected 0 entities for missing substring, got %d", len(missing))
+	}
+}
+
 func TestEntitiesAdd(t *testing.T) {
 	text := g.String("Hello world")
 

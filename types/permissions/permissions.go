@@ -1,7 +1,10 @@
 // Package permissions defines Telegram chat permission types and utilities.
 package permissions
 
-import "github.com/PaulSonOfLars/gotgbot/v2"
+import (
+	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/enetx/g/ref"
+)
 
 // Permission enumerates all supported Telegram chat permission types.
 type Permission int
@@ -17,6 +20,8 @@ const (
 	SendPolls                            // Send polls
 	SendOtherMessages                    // Send other messages (stickers, animations)
 	AddWebPagePreviews                   // Add web page previews
+	ReactToMessages                      // React to messages
+	EditTag                              // Edit own member tag
 	ChangeInfo                           // Change chat info
 	InviteUsers                          // Invite users to chat
 	PinMessages                          // Pin messages
@@ -48,6 +53,10 @@ func Permissions(perms ...Permission) *gotgbot.ChatPermissions {
 			cp.CanSendOtherMessages = true
 		case AddWebPagePreviews:
 			cp.CanAddWebPagePreviews = true
+		case ReactToMessages:
+			cp.CanReactToMessages = ref.Of(true)
+		case EditTag:
+			cp.CanEditTag = ref.Of(true)
 		case ChangeInfo:
 			cp.CanChangeInfo = true
 		case InviteUsers:
@@ -55,7 +64,7 @@ func Permissions(perms ...Permission) *gotgbot.ChatPermissions {
 		case PinMessages:
 			cp.CanPinMessages = true
 		case ManageTopics:
-			cp.CanManageTopics = true
+			cp.CanManageTopics = ref.Of(true)
 		}
 	}
 

@@ -156,7 +156,7 @@ func (mg *MediaGroup) Send() g.Result[g.Slice[gotgbot.Message]] {
 	media := g.TransformSlice(mg.media, input.Media.Build)
 
 	send := func() g.Result[g.Slice[gotgbot.Message]] {
-		return g.ResultOf[g.Slice[gotgbot.Message]](mg.ctx.Bot.Raw().SendMediaGroup(chatID, media, mg.opts))
+		return g.ResultOf[g.Slice[gotgbot.Message]](mg.ctx.Bot.Raw().SendMediaGroup(chatID, gotgbot.InputMedias(media), mg.opts))
 	}
 
 	if mg.after.IsSome() {

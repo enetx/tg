@@ -77,6 +77,9 @@ func TestNewHandlers(t *testing.T) {
 	if h.BusinessMessagesDeleted == nil {
 		t.Error("BusinessMessagesDeleted handlers should be initialized")
 	}
+	if h.ManagedBot == nil {
+		t.Error("ManagedBot handlers should be initialized")
+	}
 }
 
 func TestHandlers_Any(t *testing.T) {

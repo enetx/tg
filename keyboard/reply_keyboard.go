@@ -82,6 +82,16 @@ func (rb *ReplyKeyboard) Users(text g.String) *ReplyKeyboard {
 	})
 }
 
+// ManagedBot adds a button that asks the user to create and share a bot that will be
+// managed by the current bot. Available for bots that enabled management of other bots
+// in the @BotFather Mini App. Available in private chats only.
+func (rb *ReplyKeyboard) ManagedBot(text g.String) *ReplyKeyboard {
+	return rb.addToLastRow(gotgbot.KeyboardButton{
+		Text:              text.Std(),
+		RequestManagedBot: new(gotgbot.KeyboardButtonRequestManagedBot),
+	})
+}
+
 // Markup returns the final ReplyKeyboardMarkup structure.
 func (rb *ReplyKeyboard) Markup() gotgbot.ReplyMarkup {
 	keyboard := *(*([][]gotgbot.KeyboardButton))(unsafe.Pointer(&rb.rows))

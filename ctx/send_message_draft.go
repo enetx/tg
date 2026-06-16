@@ -14,8 +14,13 @@ type SendMessageDraft struct {
 	ctx     *Context
 	chatID  g.Option[int64]
 	draftID int64
-	text    g.String
 	opts    *gotgbot.SendMessageDraftOpts
+}
+
+// Text sets the text of the draft message; pass empty text to show a "Thinking..." placeholder.
+func (smd *SendMessageDraft) Text(text g.String) *SendMessageDraft {
+	smd.opts.Text = text.Std()
+	return smd
 }
 
 // To sets the target chat ID for the message draft.
@@ -76,7 +81,6 @@ func (smd *SendMessageDraft) Send() g.Result[bool] {
 	return g.ResultOf(smd.ctx.Bot.Raw().SendMessageDraft(
 		chatID,
 		smd.draftID,
-		smd.text.Std(),
 		smd.opts,
 	))
 }

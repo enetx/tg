@@ -123,6 +123,26 @@ func (e *Entities) ExpandableBlockquote(sub g.String) *Entities {
 	})
 }
 
+// DateTime marks the first occurrence of sub as a formatted date and time.
+// unixTime is the timestamp associated with the entity and format optionally specifies
+// the date-time formatting (e.g. "t", "r", "wDT"); leave format empty for the default.
+func (e *Entities) DateTime(sub g.String, unixTime int64, format ...g.String) *Entities {
+	return e.match(sub, func(offset, length int64) {
+		entity := gotgbot.MessageEntity{
+			Type:     "date_time",
+			Offset:   offset,
+			Length:   length,
+			UnixTime: unixTime,
+		}
+
+		if len(format) > 0 {
+			entity.DateTimeFormat = format[0].Std()
+		}
+
+		e.entities.Push(entity)
+	})
+}
+
 // match finds the first occurrence of sub in text and applies fn with offset and length.
 func (e *Entities) match(sub g.String, fn func(offset, length int64)) *Entities {
 	offset := e.text.Index(sub)

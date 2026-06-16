@@ -21,7 +21,7 @@ func Document(media file.InputFile) *MediaDocument {
 	}
 }
 
-// Thumbnail sets the thumbnail for the document using an File.
+// Thumbnail sets the thumbnail for the document using an InputFile.
 func (md *MediaDocument) Thumbnail(thumbnail file.InputFile) *MediaDocument {
 	md.input.Thumbnail = thumbnail.Doc.(gotgbot.InputFile)
 	return md
@@ -59,5 +59,10 @@ func (md *MediaDocument) DisableContentTypeDetection() *MediaDocument {
 
 // Build creates the gotgbot.InputMediaDocument.
 func (md *MediaDocument) Build() gotgbot.InputMedia {
+	return *md.input
+}
+
+// BuildPollMedia creates the gotgbot.InputPollMedia for use as poll question or explanation media.
+func (md *MediaDocument) BuildPollMedia() gotgbot.InputPollMedia {
 	return *md.input
 }

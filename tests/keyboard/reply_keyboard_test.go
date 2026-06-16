@@ -154,6 +154,28 @@ func TestReplyKeyboard_Users(t *testing.T) {
 	}
 }
 
+// Test Reply keyboard ManagedBot button (Bot API 9.6).
+func TestReplyKeyboard_ManagedBot(t *testing.T) {
+	keyboard := Reply().
+		Row().
+		ManagedBot("Create Managed Bot")
+
+	rawMarkup := keyboard.Markup()
+	markup, ok := rawMarkup.(gotgbot.ReplyKeyboardMarkup)
+	if !ok {
+		t.Fatal("Expected ReplyKeyboardMarkup")
+	}
+
+	button := markup.Keyboard[0][0]
+	if button.Text != "Create Managed Bot" {
+		t.Errorf("Expected button text 'Create Managed Bot', got '%s'", button.Text)
+	}
+
+	if button.RequestManagedBot == nil {
+		t.Error("Expected RequestManagedBot to be set")
+	}
+}
+
 // Test Reply keyboard multiple rows
 func TestReplyKeyboard_MultipleRows(t *testing.T) {
 	keyboard := Reply().
