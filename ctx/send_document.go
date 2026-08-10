@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
@@ -16,8 +17,8 @@ type SendDocument struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendDocumentOpts
-	file        *g.File
-	thumb       *g.File
+	file        *fs.File
+	thumb       *fs.File
 	chatID      g.Option[int64]
 	after       g.Option[time.Duration]
 	deleteAfter g.Option[time.Duration]
@@ -50,13 +51,13 @@ func (sd *SendDocument) Caption(caption g.String) *SendDocument {
 
 // HTML sets the caption parse mode to HTML.
 func (sd *SendDocument) HTML() *SendDocument {
-	sd.opts.ParseMode = "HTML"
+	sd.opts.ParseMode = gotgbot.ParseModeHTML
 	return sd
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
 func (sd *SendDocument) Markdown() *SendDocument {
-	sd.opts.ParseMode = "MarkdownV2"
+	sd.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return sd
 }
 
@@ -92,7 +93,7 @@ func (sd *SendDocument) Markup(kb keyboard.Keyboard) *SendDocument {
 
 // Thumbnail sets a custom thumbnail for the document.
 func (sd *SendDocument) Thumbnail(file g.String) *SendDocument {
-	sd.thumb = g.NewFile(file)
+	sd.thumb = fs.NewFile(file)
 
 	reader := sd.thumb.Open()
 	if reader.IsErr() {
@@ -169,6 +170,20 @@ func (sd *SendDocument) To(chatID int64) *SendDocument {
 // DirectMessagesTopic sets the direct messages topic ID for the message.
 func (sd *SendDocument) DirectMessagesTopic(topicID int64) *SendDocument {
 	sd.opts.DirectMessagesTopicId = topicID
+	return sd
+}
+
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (sd *SendDocument) ReceiverUser(id int64) *SendDocument {
+	sd.opts.ReceiverUserId = id
+	return sd
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (sd *SendDocument) CallbackQuery(id g.String) *SendDocument {
+	sd.opts.CallbackQueryId = id.Std()
 	return sd
 }
 

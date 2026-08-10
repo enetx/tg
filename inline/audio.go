@@ -34,13 +34,13 @@ func (a *Audio) Caption(caption g.String) *Audio {
 
 // HTML sets parse mode to HTML for the caption.
 func (a *Audio) HTML() *Audio {
-	a.inline.ParseMode = "HTML"
+	a.inline.ParseMode = gotgbot.ParseModeHTML
 	return a
 }
 
 // Markdown sets parse mode to MarkdownV2 for the caption.
 func (a *Audio) Markdown() *Audio {
-	a.inline.ParseMode = "MarkdownV2"
+	a.inline.ParseMode = gotgbot.ParseModeMarkdownV2
 	return a
 }
 

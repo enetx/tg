@@ -24,6 +24,18 @@ func (smc *SetMyCommands) AddCommand(command, description g.String) *SetMyComman
 	return smc
 }
 
+// AddEphemeralCommand adds a command whose answer is an ephemeral message,
+// visible only to the sender of the command and to the bot.
+func (smc *SetMyCommands) AddEphemeralCommand(command, description g.String) *SetMyCommands {
+	smc.commands.Push(gotgbot.BotCommand{
+		Command:     command.Std(),
+		Description: description.Std(),
+		IsEphemeral: true,
+	})
+
+	return smc
+}
+
 // Commands sets the entire command list at once.
 func (smc *SetMyCommands) Commands(commands g.Slice[gotgbot.BotCommand]) *SetMyCommands {
 	smc.commands = commands

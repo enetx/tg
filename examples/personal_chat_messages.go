@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
@@ -9,7 +10,7 @@ import (
 // Personal chat messages (Bot API 10.0): fetch the last messages (1-20) from the chat
 // a user currently has pinned to their profile.
 func main() {
-	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// /personal — show how many recent profile-chat messages the caller has.

@@ -6,6 +6,7 @@ package main
 import (
 	"github.com/enetx/g"
 	"github.com/enetx/g/cmp"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
@@ -114,7 +115,7 @@ func main() {
 	// 	log.Fatal("BOT_TOKEN environment variable is required")
 	// }
 
-	token := g.NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../../../.env").Read().Ok().Trim().Split("=")).Last().Some()
 
 	// Create bot instance
 	botInstance = bot.New(token).Build().Unwrap()
@@ -601,15 +602,19 @@ func handleViewCart(ctx *ctx.Context) error {
 	}
 
 	// Count items
-	itemCounts := session.SelectedItems.Iter().Counter()
+	itemCounts := session.SelectedItems.
+		Iter().
+		CounterBy(func(id g.String) g.String { return id }).
+		Collect().
+		MapOrd[g.String, g.Int]()
 
 	cartText := g.String("🛒 <b>Shopping Cart</b>\n\n")
 	total := g.Int(0)
 
 	// Build cart text using functional approach
-	itemCounts.ForEach(func(itemID any, count g.Int) {
+	itemCounts.Iter().ForEach(func(itemID g.String, count g.Int) {
 		menuItems.Iter().
-			Filter(func(item MenuItem) bool { return item.ID == itemID.(g.String) }).
+			Filter(func(item MenuItem) bool { return item.ID == itemID }).
 			Take(1).
 			ForEach(func(item MenuItem) {
 				itemTotal := item.Price * count
@@ -631,16 +636,14 @@ func handleViewCart(ctx *ctx.Context) error {
 		Text("🔙 Back to Menu", "restaurant_menu")
 
 	// Add remove buttons for each item type
-	if !itemCounts.Collect().IsEmpty() {
+	if !itemCounts.IsEmpty() {
 		cartText += "<b>Remove Items:</b>\n"
-		for itemID := range itemCounts {
-			for _, item := range menuItems {
-				if item.ID == itemID.(g.String) {
-					kb.Row().Text("➖ "+item.Title, "remove_"+itemID.(g.String))
-					break
-				}
-			}
-		}
+		itemCounts.Keys().Iter().ForEach(func(itemID g.String) {
+			menuItems.Iter().
+				Filter(func(item MenuItem) bool { return item.ID == itemID }).
+				Take(1).
+				ForEach(func(item MenuItem) { kb.Row().Text("➖ "+item.Title, "remove_"+itemID) })
+		})
 	}
 
 	cartText += "\n<i>Manage your cart or proceed to checkout.</i>"
@@ -1010,7 +1013,7 @@ func handleQuizAnswer(ctx *ctx.Context) error {
 	session := getUserSession(userID)
 
 	// Parse answer from callback data: answer_questionIndex_answerIndex
-	parts := g.String(ctx.Update.CallbackQuery.Data).StripPrefix("answer_").Split("_").Collect()
+	parts := g.Slice[g.String](g.String(ctx.Update.CallbackQuery.Data).StripPrefix("answer_").Split("_"))
 
 	if parts.Len().Ne(2) {
 		return ctx.AnswerCallbackQuery("❌ Invalid answer format").Alert().Send().Err()
@@ -1179,7 +1182,8 @@ func getFilteredItems(session *UserSession) g.Slice[MenuItem] {
 				session.FilterCategory.IsEmpty() ||
 				item.Category.Eq(session.FilterCategory)
 		}).
-		Collect()
+		Collect().
+		Slice()
 
 	result := filtered.Clone()
 	switch session.SortOrder.Std() {
@@ -1260,7 +1264,8 @@ func handleRemoveFromCart(ctx *ctx.Context) error {
 			}
 			return false
 		}).
-		Collect()
+		Collect().
+		Slice()
 
 	// Update the cart view
 	return handleViewCart(ctx)

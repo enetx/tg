@@ -1,6 +1,8 @@
 // Package chat defines the chat-related types used by Telegram.
 package chatmember
 
+import "github.com/PaulSonOfLars/gotgbot/v2"
+
 // ChatMemberStatus enumerates all possible member statuses in a chat.
 //
 // See: https://core.telegram.org/bots/api#chatmember
@@ -19,17 +21,17 @@ const (
 func (s ChatMemberStatus) String() string {
 	switch s {
 	case Creator:
-		return "creator"
+		return gotgbot.ChatMemberStatusCreator
 	case Administrator:
-		return "administrator"
+		return gotgbot.ChatMemberStatusAdministrator
 	case Member:
-		return "member"
+		return gotgbot.ChatMemberStatusMember
 	case Restricted:
-		return "restricted"
+		return gotgbot.ChatMemberStatusRestricted
 	case Left:
-		return "left"
+		return gotgbot.ChatMemberStatusLeft
 	case Kicked:
-		return "kicked"
+		return gotgbot.ChatMemberStatusKicked
 	default:
 		return "unknown"
 	}

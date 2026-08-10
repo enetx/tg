@@ -44,6 +44,12 @@ func TestSetMyCommands_AllMethods(t *testing.T) {
 		t.Error("Expected AddCommand method to return request")
 	}
 
+	// Test AddEphemeralCommand method
+	req = req.AddEphemeralCommand("secret", "Answer visible only to you")
+	if req == nil {
+		t.Error("Expected AddEphemeralCommand method to return request")
+	}
+
 	// Test Commands method
 	commands := g.SliceOf(
 		gotgbot.BotCommand{Command: "help", Description: "Show help"},
@@ -145,7 +151,7 @@ func TestSetMyCommands_Send(t *testing.T) {
 			Description: "Description",
 		}
 	}
-	reqTooMany := botInstance.SetMyCommands().Commands(g.SliceOf(tooManyCommands...))
+	reqTooMany := botInstance.SetMyCommands().Commands(g.Slice[gotgbot.BotCommand](tooManyCommands))
 	resultTooMany := reqTooMany.Send()
 	if resultTooMany.IsOk() {
 		t.Error("Expected Send with too many commands to fail, but it succeeded")

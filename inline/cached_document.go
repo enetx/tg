@@ -38,13 +38,13 @@ func (c *CachedDocument) Caption(caption g.String) *CachedDocument {
 
 // HTML sets parse mode to HTML for the caption.
 func (c *CachedDocument) HTML() *CachedDocument {
-	c.inline.ParseMode = "HTML"
+	c.inline.ParseMode = gotgbot.ParseModeHTML
 	return c
 }
 
 // Markdown sets parse mode to MarkdownV2 for the caption.
 func (c *CachedDocument) Markdown() *CachedDocument {
-	c.inline.ParseMode = "MarkdownV2"
+	c.inline.ParseMode = gotgbot.ParseModeMarkdownV2
 	return c
 }
 

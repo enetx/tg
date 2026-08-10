@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
@@ -9,7 +10,7 @@ import (
 // Live photos (Bot API 10.0): a short video (up to 10 seconds, 10 MB) paired with a
 // static cover photo. Sending live photos by URL is not supported — upload local files.
 func main() {
-	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// /live — send a live photo (the short video plus its cover photo).

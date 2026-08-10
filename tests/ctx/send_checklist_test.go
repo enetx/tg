@@ -9,6 +9,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/enetx/g"
 	"github.com/enetx/tg/ctx"
+	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 )
@@ -349,5 +350,29 @@ func TestSendChecklist_TimersIntegration(t *testing.T) {
 	// This will fail with mock bot, but covers the timer integration path
 	if sendResult.IsErr() {
 		t.Logf("SendChecklist Send with timers failed as expected: %v", sendResult.Err())
+	}
+}
+
+func TestSendChecklist_TitleFormatting(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat:    &gotgbot.Chat{Id: 456, Type: "private"},
+		EffectiveMessage: &gotgbot.Message{MessageId: 789},
+		Update:           &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+	builder := testCtx.SendChecklist(g.String("business_conn_123"), g.String("Title"))
+
+	if builder.TitleHTML() != builder {
+		t.Error("TitleHTML should return the same SendChecklist instance for chaining")
+	}
+
+	if builder.TitleMarkdown() != builder {
+		t.Error("TitleMarkdown should return the same SendChecklist instance for chaining")
+	}
+
+	if builder.TitleEntities(entities.New("Bold title").Bold("Bold")) != builder {
+		t.Error("TitleEntities should return the same SendChecklist instance for chaining")
 	}
 }

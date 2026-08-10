@@ -25,13 +25,13 @@ func (gps *GiftPremiumSubscription) Text(text g.String) *GiftPremiumSubscription
 
 // HTML sets the text parse mode to HTML.
 func (gps *GiftPremiumSubscription) HTML() *GiftPremiumSubscription {
-	gps.opts.TextParseMode = "HTML"
+	gps.opts.TextParseMode = gotgbot.ParseModeHTML
 	return gps
 }
 
 // Markdown sets the text parse mode to MarkdownV2.
 func (gps *GiftPremiumSubscription) Markdown() *GiftPremiumSubscription {
-	gps.opts.TextParseMode = "MarkdownV2"
+	gps.opts.TextParseMode = gotgbot.ParseModeMarkdownV2
 	return gps
 }
 

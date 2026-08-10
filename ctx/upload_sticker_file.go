@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 )
 
 // UploadStickerFile represents a request to upload a sticker file.
@@ -14,13 +15,13 @@ type UploadStickerFile struct {
 	sticker gotgbot.InputFile
 	format  g.String
 	opts    *gotgbot.UploadStickerFileOpts
-	file    *g.File
+	file    *fs.File
 	err     error
 }
 
 // File sets the sticker file to upload.
 func (usf *UploadStickerFile) File(filename g.String) *UploadStickerFile {
-	usf.file = g.NewFile(filename)
+	usf.file = fs.NewFile(filename)
 
 	reader := usf.file.Open()
 	if reader.IsErr() {

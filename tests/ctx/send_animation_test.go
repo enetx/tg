@@ -615,3 +615,22 @@ func TestSendAnimation_SendWithExistingError(t *testing.T) {
 		t.Error("Send should return error for invalid file")
 	}
 }
+
+func TestSendAnimation_Ephemeral(t *testing.T) {
+	testCtx := ephemeralContext(&mockBot{})
+
+	builder := testCtx.SendAnimation(g.String("https://example.com/animation.gif"))
+
+	if builder.ReceiverUser(123) != builder {
+		t.Error("ReceiverUser should return the same SendAnimation instance for chaining")
+	}
+
+	if builder.CallbackQuery(g.String("callback_123")) != builder {
+		t.Error("CallbackQuery should return the same SendAnimation instance for chaining")
+	}
+
+	result := builder.Send()
+	if !result.IsErr() && !result.IsOk() {
+		t.Error("Send with ephemeral options should return a result")
+	}
+}

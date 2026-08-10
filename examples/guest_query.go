@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/inline"
@@ -12,7 +13,7 @@ import (
 // Guest messages (Bot API 10.0): a guest bot summoned into a chat receives a message
 // carrying a guest_query_id; reply to it with answerGuestQuery.
 func main() {
-	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	b.On.Message.Any(func(ctx *ctx.Context) error {

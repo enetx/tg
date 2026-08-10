@@ -6,10 +6,11 @@ import (
 	"github.com/enetx/tg/keyboard"
 
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 )
 
 func main() {
-	token := g.NewFile("../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Create the initial inline keyboard with two rows:

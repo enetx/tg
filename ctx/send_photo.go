@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
@@ -16,7 +17,7 @@ type SendPhoto struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendPhotoOpts
-	file        *g.File
+	file        *fs.File
 	chatID      g.Option[int64]
 	after       g.Option[time.Duration]
 	deleteAfter g.Option[time.Duration]
@@ -55,13 +56,13 @@ func (sp *SendPhoto) Caption(caption g.String) *SendPhoto {
 
 // HTML sets the caption parse mode to HTML.
 func (sp *SendPhoto) HTML() *SendPhoto {
-	sp.opts.ParseMode = "HTML"
+	sp.opts.ParseMode = gotgbot.ParseModeHTML
 	return sp
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
 func (sp *SendPhoto) Markdown() *SendPhoto {
-	sp.opts.ParseMode = "MarkdownV2"
+	sp.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return sp
 }
 
@@ -160,6 +161,20 @@ func (sp *SendPhoto) To(chatID int64) *SendPhoto {
 // DirectMessagesTopic sets the direct messages topic ID for the message.
 func (sp *SendPhoto) DirectMessagesTopic(topicID int64) *SendPhoto {
 	sp.opts.DirectMessagesTopicId = topicID
+	return sp
+}
+
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (sp *SendPhoto) ReceiverUser(id int64) *SendPhoto {
+	sp.opts.ReceiverUserId = id
+	return sp
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (sp *SendPhoto) CallbackQuery(id g.String) *SendPhoto {
+	sp.opts.CallbackQueryId = id.Std()
 	return sp
 }
 

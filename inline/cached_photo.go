@@ -43,13 +43,13 @@ func (c *CachedPhoto) Caption(caption g.String) *CachedPhoto {
 
 // HTML sets parse mode to HTML for the caption.
 func (c *CachedPhoto) HTML() *CachedPhoto {
-	c.inline.ParseMode = "HTML"
+	c.inline.ParseMode = gotgbot.ParseModeHTML
 	return c
 }
 
 // Markdown sets parse mode to MarkdownV2 for the caption.
 func (c *CachedPhoto) Markdown() *CachedPhoto {
-	c.inline.ParseMode = "MarkdownV2"
+	c.inline.ParseMode = gotgbot.ParseModeMarkdownV2
 	return c
 }
 

@@ -5,9 +5,11 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/ref"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
+	"github.com/enetx/tg/rich"
 )
 
 type EditMessageText struct {
@@ -26,13 +28,13 @@ func (emt *EditMessageText) Entities(e *entities.Entities) *EditMessageText {
 
 // HTML sets the text parse mode to HTML.
 func (emt *EditMessageText) HTML() *EditMessageText {
-	emt.opts.ParseMode = "HTML"
+	emt.opts.ParseMode = gotgbot.ParseModeHTML
 	return emt
 }
 
 // Markdown sets the text parse mode to MarkdownV2.
 func (emt *EditMessageText) Markdown() *EditMessageText {
-	emt.opts.ParseMode = "MarkdownV2"
+	emt.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return emt
 }
 
@@ -91,6 +93,15 @@ func (emt *EditMessageText) Markup(kb keyboard.Keyboard) *EditMessageText {
 	return emt
 }
 
+// RichMessage sets the rich formatted content of the edited message.
+func (emt *EditMessageText) RichMessage(message *rich.Message) *EditMessageText {
+	if message != nil {
+		emt.opts.RichMessage = ref.Of(message.Std())
+	}
+
+	return emt
+}
+
 // Preview sets link preview options for the edited text.
 func (emt *EditMessageText) Preview(p *preview.Preview) *EditMessageText {
 	emt.opts.LinkPreviewOptions = p.Std()
@@ -101,7 +112,8 @@ func (emt *EditMessageText) Preview(p *preview.Preview) *EditMessageText {
 func (emt *EditMessageText) Send() g.Result[*gotgbot.Message] {
 	emt.opts.ChatId = emt.chatID.UnwrapOr(emt.ctx.EffectiveChat.Id)
 	emt.opts.MessageId = emt.messageID.UnwrapOr(emt.ctx.EffectiveMessage.MessageId)
-	msg, _, err := emt.ctx.Bot.Raw().EditMessageText(emt.text.Std(), emt.opts)
+	emt.opts.Text = emt.text.Std()
+	msg, _, err := emt.ctx.Bot.Raw().EditMessageText(emt.opts)
 
 	return g.ResultOf(msg, err)
 }

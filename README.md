@@ -22,8 +22,10 @@ Modern and elegant wrapper around [gotgbot](https://github.com/PaulSonOfLars/got
 - 🎯 **Type-safe** event handlers for all Telegram update types
 - 🔧 **Flexible bot configuration** through Builder pattern
 - 📝 **Rich functionality** for messages, media, keyboards and payments
+- 📰 **Rich messages** built from blocks: headings, lists, tables, collages, math and more
+- 👁️ **Ephemeral messages** visible to a single group member
 - 🎮 **Built-in FSM support** (finite state machines) for complex dialogues
-- 💰 **Telegram Payments and Stars** support with refunds
+- 💰 **Telegram Payments and Stars** support with refunds and subscriptions
 - 🎲 **Full support** for all Telegram content types and features
 - 🔧 **Middleware system** for request filtering and processing
 - 📂 **Advanced file handling** with metadata and thumbnails
@@ -103,6 +105,22 @@ b.On.Message.Contact(func(ctx *ctx.Context) error {
 b.On.Message.Location(func(ctx *ctx.Context) error {
     location := ctx.EffectiveMessage.Location
     return ctx.Reply("Location received").Send().Err()
+})
+
+// Rich formatted messages
+b.On.Message.RichMessage(func(ctx *ctx.Context) error {
+    blocks := ctx.EffectiveMessage.RichMessage.Blocks
+    return ctx.Reply(g.Format("Rich message with {} blocks", len(blocks))).Send().Err()
+})
+
+// Messages received through Telegram's guest bot feature
+b.On.Message.GuestMessage(func(ctx *ctx.Context) error {
+    return ctx.Reply("Guest message received").Send().Err()
+})
+
+// Community service messages
+b.On.Message.CommunityChatAdded(func(ctx *ctx.Context) error {
+    return ctx.Reply("A chat joined the community").Send().Err()
 })
 ```
 
@@ -285,6 +303,8 @@ b.Command("mediapoll", func(ctx *ctx.Context) error {
             Media(input.VenueMedia(40.7128, -74.0060, "HQ", "New York, NY"))).
         Option(input.Choice("Park").
             Media(input.LocationMedia(40.7829, -73.9654))).
+        Option(input.Choice("Somewhere online").
+            Media(input.LinkMedia("https://meet.example.com/room"))).
         Send().Err()
 })
 ```
@@ -418,6 +438,22 @@ b.Command("refund", func(ctx *ctx.Context) error {
     }
 
     return ctx.Reply("Refund processed successfully.").Send().Err()
+})
+
+// Track changes to a user's payment subscription
+b.On.Subscription.Canceled(func(ctx *ctx.Context) error {
+    sub := ctx.Update.Subscription
+    g.Println("User {} canceled subscription {}", sub.User.Id, sub.InvoicePayload)
+
+    return nil
+})
+
+b.On.Subscription.Active(func(ctx *ctx.Context) error {
+    return nil // subscription re-enabled by the user
+})
+
+b.On.Subscription.Failed(func(ctx *ctx.Context) error {
+    return nil // recurring payment failed
 })
 ```
 
@@ -684,6 +720,191 @@ b.Command("when", func(ctx *ctx.Context) error {
 })
 ```
 
+## Rich Messages
+
+Rich messages are article-like posts assembled from blocks. Blocks come from the
+`rich` package, inline formatting from the `richtext` package:
+
+```go
+import (
+    "github.com/enetx/g"
+    "github.com/enetx/tg/file"
+    "github.com/enetx/tg/input"
+    "github.com/enetx/tg/rich"
+    "github.com/enetx/tg/richtext"
+)
+
+b.Command("article", func(ctx *ctx.Context) error {
+    photo := input.Photo(file.Input("https://picsum.photos/800/400").Ok())
+
+    message := rich.New().
+        Block(rich.Heading(richtext.New("Rich messages")).Size(1)).
+        Block(rich.Paragraph(richtext.Join(
+            richtext.New("Built from "),
+            richtext.New("blocks").Bold(),
+            richtext.New(" and "),
+            richtext.New("inline nodes").Italic(),
+        ))).
+        Block(rich.Divider()).
+        Block(rich.List(
+            rich.ListItem(rich.Paragraph(richtext.New("Checked item"))).Checked(),
+            rich.ListItem(rich.Paragraph(richtext.New("Pending item"))).Checkbox(),
+        )).
+        Block(rich.Pre(richtext.New(`fmt.Println("hello")`)).Language("go")).
+        Block(rich.Math("E = mc^2")).
+        Block(rich.Table().
+            Bordered().
+            Striped().
+            Row(rich.Cell(richtext.New("Block")).Header(), rich.Cell(richtext.New("Purpose")).Header()).
+            Row(rich.Cell(richtext.New("heading")), rich.Cell(richtext.New("section title"))).
+            Caption(richtext.New("Supported blocks"))).
+        Block(rich.Photo(photo).
+            Caption(rich.NewCaption(richtext.New("A random photo")).Credit(richtext.New("picsum.photos")))).
+        Block(rich.Details(richtext.New("Show more")).
+            Block(rich.Paragraph(richtext.New("Collapsed by default.")))).
+        Block(rich.Footer(richtext.New("Sent with enetx/tg")))
+
+    return ctx.SendRichMessage(message).Send().Err()
+})
+```
+
+Every block builder is available: `Paragraph`, `Heading`, `Pre`, `Footer`, `Divider`, `Math`,
+`Anchor`, `List`/`ListItem`, `Quotation`, `PullQuotation`, `Collage`, `Slideshow`, `Table`/`Cell`,
+`Details`, `Map`, `Animation`, `Audio`, `Photo`, `Video`, `VoiceNote` and `Thinking`.
+
+Inline nodes wrap each other by chaining — `richtext.New("text").Bold().URL("https://example.com")` —
+and cover the full node set: styles (`Bold`, `Italic`, `Underline`, `Strikethrough`, `Spoiler`,
+`Subscript`, `Superscript`, `Marked`, `Code`), links (`URL`, `Email`, `Phone`, `BankCard`,
+`AnchorLink`, `Reference`, `ReferenceLink`), mentions (`Mention`, `TextMention`, `Hashtag`,
+`Cashtag`, `BotCommand`) and `DateTime`. Standalone leaves are built with `richtext.Emoji`,
+`richtext.Math` and `richtext.Anchor`.
+
+Content can also be described with markup instead of blocks:
+
+```go
+b.Command("html", func(ctx *ctx.Context) error {
+    message := rich.New().
+        HTML(`<h1>Rich messages</h1><p>Described with <b>HTML</b>.</p>`).
+        SkipEntityDetection()
+
+    return ctx.SendRichMessage(message).Send().Err()
+})
+```
+
+Rich messages can be streamed as drafts while being generated, and used to edit an
+existing message:
+
+```go
+b.Command("stream", func(ctx *ctx.Context) error {
+    draftID := int64(1)
+
+    partial := rich.New().Block(rich.Paragraph(richtext.New("Writing the article")))
+    if err := ctx.SendRichMessageDraft(draftID, partial).Send().Err(); err != nil {
+        return err
+    }
+
+    final := rich.New().Block(rich.Paragraph(richtext.New("Article is ready!").Bold()))
+
+    return ctx.SendRichMessage(final).Send().Err()
+})
+
+// Replace the content of an existing message with rich content
+b.Command("upgrade", func(ctx *ctx.Context) error {
+    message := rich.New().Block(rich.Paragraph(richtext.New("Now formatted").Bold()))
+
+    return ctx.EditMessageText("fallback text").RichMessage(message).Send().Err()
+})
+```
+
+## Ephemeral Messages
+
+Ephemeral messages are sent to a group but visible only to one member and the bot.
+Set the receiver with `ReceiverUser`, and pass the triggering callback query id when
+the message answers a button press:
+
+```go
+b.Command("secret", func(ctx *ctx.Context) error {
+    kb := keyboard.Inline().Text("Update", "eph_update").Row().Text("Dismiss", "eph_delete")
+
+    return ctx.SendMessage("Only you can see this.").
+        ReceiverUser(ctx.EffectiveUser.Id).
+        Markup(kb).
+        Send().Err()
+})
+```
+
+`ReceiverUser` and `CallbackQuery` are available on every send builder — `SendMessage`,
+`SendPhoto`, `SendVideo`, `SendAudio`, `SendDocument`, `SendAnimation`, `SendVoice`,
+`SendVideoNote`, `SendSticker`, `SendContact`, `SendLocation`, `SendVenue`,
+`SendLivePhoto` and `Reply`.
+
+Editing and deleting reuse the receiver and ephemeral message id of the effective
+message, so a callback coming from the message itself needs no extra identifiers:
+
+```go
+b.On.Callback.Equal("eph_update", func(ctx *ctx.Context) error {
+    if err := ctx.AnswerCallbackQuery("Updated").Send().Err(); err != nil {
+        return err
+    }
+
+    return ctx.EditEphemeralMessageText("Still only you.").Send().Err()
+})
+
+b.On.Callback.Equal("eph_delete", func(ctx *ctx.Context) error {
+    return ctx.DeleteEphemeralMessage().Send().Err()
+})
+
+// Identifiers can always be set explicitly
+b.Command("patch", func(ctx *ctx.Context) error {
+    return ctx.EditEphemeralMessageCaption("New caption").
+        ChatID(-1001234567890).
+        ReceiverUser(123456789).
+        MessageID(555).
+        Send().Err()
+})
+```
+
+`EditEphemeralMessageMedia` and `EditEphemeralMessageReplyMarkup` work the same way.
+
+Commands can be marked as ephemeral so their answer is visible only to the sender,
+and replies can target an ephemeral message directly:
+
+```go
+b.SetMyCommands().
+    AddCommand("start", "Start the bot").
+    AddEphemeralCommand("secret", "Answer visible only to you").
+    Send()
+
+// Reply to an ephemeral message; the regular message id is not required
+ctx.SendMessage("Answering privately").
+    ReceiverUser(userID).
+    Reply(reply.NewEphemeral(ephemeralMessageID)).
+    Send()
+```
+
+## Chat Join Request Queries
+
+Process join requests through a query, optionally showing a Mini App to the user
+before deciding the outcome:
+
+```go
+b.On.ChatJoinRequest.Any(func(ctx *ctx.Context) error {
+    // Ask the user to complete a Mini App first
+    return ctx.SendChatJoinRequestWebApp("https://example.com/verify").Send().Err()
+})
+
+// Resolve the query once the outcome is known
+b.Command("approve", func(ctx *ctx.Context) error {
+    return ctx.AnswerChatJoinRequestQuery().
+        QueryID("query_id_from_update").
+        Approve(). // or .Decline() / .Queue() to leave it to other admins
+        Send().Err()
+})
+```
+
+The query id defaults to the one carried by the effective update, so inside a
+`ChatJoinRequest` handler `QueryID` can be omitted.
+
 ## Advanced Features
 
 ### Chat Actions
@@ -777,6 +998,6 @@ MIT License. See `LICENSE` file for details.
 
 [TelegramBotAPI]: https://core.telegram.org/bots/api
 
-[TelegramVersionBadge]: https://img.shields.io/static/v1?label=Supported%20Telegram%20Bot%20API&color=29a1d4&logo=telegram&message=v10.0
+[TelegramVersionBadge]: https://img.shields.io/static/v1?label=Supported%20Telegram%20Bot%20API&color=29a1d4&logo=telegram&message=v10.2
 
-[TelegramLastVersion]: https://core.telegram.org/bots/api#may-8-2026
+[TelegramLastVersion]: https://core.telegram.org/bots/api#july-14-2026

@@ -3,6 +3,8 @@
 // See: https://core.telegram.org/bots/api#chat
 package chat
 
+import "github.com/PaulSonOfLars/gotgbot/v2"
+
 // ChatType enumerates all supported Telegram chat types.
 type ChatType int
 
@@ -18,13 +20,13 @@ const (
 func (c ChatType) String() string {
 	switch c {
 	case Private:
-		return "private"
+		return gotgbot.ChatTypePrivate
 	case Group:
-		return "group"
+		return gotgbot.ChatTypeGroup
 	case Supergroup:
-		return "supergroup"
+		return gotgbot.ChatTypeSupergroup
 	case Channel:
-		return "channel"
+		return gotgbot.ChatTypeChannel
 	case Sender:
 		return "sender"
 	default:

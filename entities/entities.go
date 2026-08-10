@@ -22,49 +22,49 @@ func New[T ~string](text T) *Entities {
 // Bold marks the first occurrence of sub as bold.
 func (e *Entities) Bold(sub g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
-		e.entities.Push(gotgbot.MessageEntity{Type: "bold", Offset: offset, Length: length})
+		e.entities.Push(gotgbot.MessageEntity{Type: gotgbot.MessageEntityTypeBold, Offset: offset, Length: length})
 	})
 }
 
 // Italic marks the first occurrence of sub as italic.
 func (e *Entities) Italic(sub g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
-		e.entities.Push(gotgbot.MessageEntity{Type: "italic", Offset: offset, Length: length})
+		e.entities.Push(gotgbot.MessageEntity{Type: gotgbot.MessageEntityTypeItalic, Offset: offset, Length: length})
 	})
 }
 
 // Underline marks the first occurrence of sub as underlined.
 func (e *Entities) Underline(sub g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
-		e.entities.Push(gotgbot.MessageEntity{Type: "underline", Offset: offset, Length: length})
+		e.entities.Push(gotgbot.MessageEntity{Type: gotgbot.MessageEntityTypeUnderline, Offset: offset, Length: length})
 	})
 }
 
 // Strikethrough marks the first occurrence of sub as strikethrough.
 func (e *Entities) Strikethrough(sub g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
-		e.entities.Push(gotgbot.MessageEntity{Type: "strikethrough", Offset: offset, Length: length})
+		e.entities.Push(gotgbot.MessageEntity{Type: gotgbot.MessageEntityTypeStrikethrough, Offset: offset, Length: length})
 	})
 }
 
 // Spoiler marks the first occurrence of sub as spoiler.
 func (e *Entities) Spoiler(sub g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
-		e.entities.Push(gotgbot.MessageEntity{Type: "spoiler", Offset: offset, Length: length})
+		e.entities.Push(gotgbot.MessageEntity{Type: gotgbot.MessageEntityTypeSpoiler, Offset: offset, Length: length})
 	})
 }
 
 // Code marks the first occurrence of sub as inline code.
 func (e *Entities) Code(sub g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
-		e.entities.Push(gotgbot.MessageEntity{Type: "code", Offset: offset, Length: length})
+		e.entities.Push(gotgbot.MessageEntity{Type: gotgbot.MessageEntityTypeCode, Offset: offset, Length: length})
 	})
 }
 
 // Pre marks the first occurrence of sub as preformatted code.
 func (e *Entities) Pre(sub g.String, language ...g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
-		entity := gotgbot.MessageEntity{Type: "pre", Offset: offset, Length: length}
+		entity := gotgbot.MessageEntity{Type: gotgbot.MessageEntityTypePre, Offset: offset, Length: length}
 		if len(language) > 0 {
 			entity.Language = language[0].Std()
 		}
@@ -77,7 +77,7 @@ func (e *Entities) Pre(sub g.String, language ...g.String) *Entities {
 func (e *Entities) URL(sub, url g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
 		e.entities.Push(gotgbot.MessageEntity{
-			Type:   "text_link",
+			Type:   gotgbot.MessageEntityTypeTextLink,
 			Offset: offset,
 			Length: length,
 			Url:    url.Std(),
@@ -89,7 +89,7 @@ func (e *Entities) URL(sub, url g.String) *Entities {
 func (e *Entities) Mention(sub g.String, userID int64) *Entities {
 	return e.match(sub, func(offset, length int64) {
 		e.entities.Push(gotgbot.MessageEntity{
-			Type:   "text_mention",
+			Type:   gotgbot.MessageEntityTypeTextMention,
 			Offset: offset,
 			Length: length,
 			User:   &gotgbot.User{Id: userID},
@@ -101,7 +101,7 @@ func (e *Entities) Mention(sub g.String, userID int64) *Entities {
 func (e *Entities) CustomEmoji(sub, emojiID g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
 		e.entities.Push(gotgbot.MessageEntity{
-			Type:          "custom_emoji",
+			Type:          gotgbot.MessageEntityTypeCustomEmoji,
 			Offset:        offset,
 			Length:        length,
 			CustomEmojiId: emojiID.Std(),
@@ -112,14 +112,14 @@ func (e *Entities) CustomEmoji(sub, emojiID g.String) *Entities {
 // Blockquote marks the first occurrence of sub as a blockquote.
 func (e *Entities) Blockquote(sub g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
-		e.entities.Push(gotgbot.MessageEntity{Type: "blockquote", Offset: offset, Length: length})
+		e.entities.Push(gotgbot.MessageEntity{Type: gotgbot.MessageEntityTypeBlockquote, Offset: offset, Length: length})
 	})
 }
 
 // ExpandableBlockquote marks the first occurrence of sub as an expandable blockquote.
 func (e *Entities) ExpandableBlockquote(sub g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
-		e.entities.Push(gotgbot.MessageEntity{Type: "expandable_blockquote", Offset: offset, Length: length})
+		e.entities.Push(gotgbot.MessageEntity{Type: gotgbot.MessageEntityTypeExpandableBlockquote, Offset: offset, Length: length})
 	})
 }
 
@@ -129,7 +129,7 @@ func (e *Entities) ExpandableBlockquote(sub g.String) *Entities {
 func (e *Entities) DateTime(sub g.String, unixTime int64, format ...g.String) *Entities {
 	return e.match(sub, func(offset, length int64) {
 		entity := gotgbot.MessageEntity{
-			Type:     "date_time",
+			Type:     gotgbot.MessageEntityTypeDateTime,
 			Offset:   offset,
 			Length:   length,
 			UnixTime: unixTime,

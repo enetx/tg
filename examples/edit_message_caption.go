@@ -2,13 +2,14 @@ package main
 
 import (
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
 )
 
 func main() {
-	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Command to send a photo with caption that can be edited later
@@ -222,7 +223,7 @@ To test business connection caption editing:
 		}
 
 		businessID := args[0]
-		caption := args.Iter().Skip(1).Collect().Join(" ")
+		caption := args.Iter().Skip(1).Collect().Slice().Join(" ")
 
 		if ctx.EffectiveMessage.ReplyToMessage == nil {
 			return ctx.Reply("Please reply to a business message").Send().Err()

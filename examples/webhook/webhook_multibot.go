@@ -64,7 +64,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// /bot/<token>
-	g.String(r.URL.Path).Split("/").Exclude(g.String.IsEmpty).Collect().Unpack(&path, &token)
+	g.Slice[g.String](g.String(r.URL.Path).Split("/")).Iter().Exclude(g.String.IsEmpty).Collect().Slice().Unpack(&path, &token)
 
 	if path.Ne("bot") {
 		http.NotFound(w, r)

@@ -343,3 +343,22 @@ func TestSendVideoNote_TimersIntegration(t *testing.T) {
 		t.Logf("SendVideoNote Send with timers failed as expected: %v", sendResult.Err())
 	}
 }
+
+func TestSendVideoNote_Ephemeral(t *testing.T) {
+	testCtx := ephemeralContext(&mockBot{})
+
+	builder := testCtx.SendVideoNote(g.String("https://example.com/note.mp4"))
+
+	if builder.ReceiverUser(123) != builder {
+		t.Error("ReceiverUser should return the same SendVideoNote instance for chaining")
+	}
+
+	if builder.CallbackQuery(g.String("callback_123")) != builder {
+		t.Error("CallbackQuery should return the same SendVideoNote instance for chaining")
+	}
+
+	result := builder.Send()
+	if !result.IsErr() && !result.IsOk() {
+		t.Error("Send with ephemeral options should return a result")
+	}
+}

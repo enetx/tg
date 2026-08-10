@@ -23,13 +23,13 @@ func Text(messageText g.String) *MessageText {
 
 // HTML sets parse mode to HTML.
 func (mt *MessageText) HTML() *MessageText {
-	mt.input.ParseMode = "HTML"
+	mt.input.ParseMode = gotgbot.ParseModeHTML
 	return mt
 }
 
 // Markdown sets parse mode to MarkdownV2.
 func (mt *MessageText) Markdown() *MessageText {
-	mt.input.ParseMode = "MarkdownV2"
+	mt.input.ParseMode = gotgbot.ParseModeMarkdownV2
 	return mt
 }
 

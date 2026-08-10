@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/file"
@@ -29,7 +30,7 @@ All builders follow the same pattern as inline/ builders:
 */
 
 func main() {
-	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Example: Creating Input Builders - demonstrates all builder types

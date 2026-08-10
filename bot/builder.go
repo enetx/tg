@@ -97,8 +97,8 @@ func (b *BotBuilder) Build() g.Result[*Bot] {
 
 		raw.User = *result.Ok()
 	} else {
-		split := b.token.Split(":").Collect()
-		if split.Len().Ne(2) {
+		split := b.token.Split(":")
+		if len(split) != 2 {
 			return g.Err[*Bot](fmt.Errorf("invalid token format: expected '123456:ABCDEF', got '%s'", b.token))
 		}
 

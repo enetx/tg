@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
@@ -16,7 +17,7 @@ type SendVoice struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendVoiceOpts
-	file        *g.File
+	file        *fs.File
 	chatID      g.Option[int64]
 	after       g.Option[time.Duration]
 	deleteAfter g.Option[time.Duration]
@@ -49,13 +50,13 @@ func (sv *SendVoice) Caption(caption g.String) *SendVoice {
 
 // HTML sets the caption parse mode to HTML.
 func (sv *SendVoice) HTML() *SendVoice {
-	sv.opts.ParseMode = "HTML"
+	sv.opts.ParseMode = gotgbot.ParseModeHTML
 	return sv
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
 func (sv *SendVoice) Markdown() *SendVoice {
-	sv.opts.ParseMode = "MarkdownV2"
+	sv.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return sv
 }
 
@@ -154,6 +155,20 @@ func (sv *SendVoice) To(chatID int64) *SendVoice {
 // DirectMessagesTopic sets the direct messages topic ID for the message.
 func (sv *SendVoice) DirectMessagesTopic(topicID int64) *SendVoice {
 	sv.opts.DirectMessagesTopicId = topicID
+	return sv
+}
+
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (sv *SendVoice) ReceiverUser(id int64) *SendVoice {
+	sv.opts.ReceiverUserId = id
+	return sv
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (sv *SendVoice) CallbackQuery(id g.String) *SendVoice {
+	sv.opts.CallbackQueryId = id.Std()
 	return sv
 }
 

@@ -6,6 +6,7 @@ package main
 import (
 	"github.com/enetx/fsm"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
@@ -30,7 +31,7 @@ var (
 
 func main() {
 	// Read the bot token from a .env file
-	token := g.NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../../../.env").Read().Ok().Trim().Split("=")).Last().Some()
 
 	// Create the bot instance
 	b := bot.New(token).Build().Unwrap()

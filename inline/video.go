@@ -36,13 +36,13 @@ func (v *Video) Caption(caption g.String) *Video {
 
 // HTML sets parse mode to HTML for the caption.
 func (v *Video) HTML() *Video {
-	v.inline.ParseMode = "HTML"
+	v.inline.ParseMode = gotgbot.ParseModeHTML
 	return v
 }
 
 // Markdown sets parse mode to MarkdownV2 for the caption.
 func (v *Video) Markdown() *Video {
-	v.inline.ParseMode = "MarkdownV2"
+	v.inline.ParseMode = gotgbot.ParseModeMarkdownV2
 	return v
 }
 

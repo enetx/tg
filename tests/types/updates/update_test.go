@@ -21,17 +21,23 @@ func TestUpdateType_String(t *testing.T) {
 		{"CallbackQuery", updates.CallbackQuery, "callback_query"},
 		{"ShippingQuery", updates.ShippingQuery, "shipping_query"},
 		{"PreCheckoutQuery", updates.PreCheckoutQuery, "pre_checkout_query"},
+		{"PurchasedPaidMedia", updates.PurchasedPaidMedia, "purchased_paid_media"},
 		{"Poll", updates.Poll, "poll"},
 		{"PollAnswer", updates.PollAnswer, "poll_answer"},
 		{"MyChatMember", updates.MyChatMember, "my_chat_member"},
 		{"ChatMember", updates.ChatMember, "chat_member"},
 		{"ChatJoinRequest", updates.ChatJoinRequest, "chat_join_request"},
+		{"ChatBoost", updates.ChatBoost, "chat_boost"},
+		{"RemovedChatBoost", updates.RemovedChatBoost, "removed_chat_boost"},
 		{"MessageReaction", updates.MessageReaction, "message_reaction"},
 		{"MessageReactionCount", updates.MessageReactionCount, "message_reaction_count"},
 		{"BusinessConnection", updates.BusinessConnection, "business_connection"},
 		{"BusinessMessage", updates.BusinessMessage, "business_message"},
 		{"EditedBusinessMessage", updates.EditedBusinessMessage, "edited_business_message"},
 		{"DeletedBusinessMessages", updates.DeletedBusinessMessages, "deleted_business_messages"},
+		{"GuestMessage", updates.GuestMessage, "guest_message"},
+		{"ManagedBot", updates.ManagedBot, "managed_bot"},
+		{"Subscription", updates.Subscription, "subscription"},
 		{"Unknown", updates.UpdateType(999), "unknown"},
 	}
 
@@ -43,4 +49,25 @@ func TestUpdateType_String(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestAll(t *testing.T) {
+	if updates.All.Len() != 26 {
+		t.Errorf("Expected All to list 26 update types, got %d", updates.All.Len())
+	}
+
+	seen := make(map[string]bool, updates.All.Len())
+
+	updates.All.Iter().ForEach(func(u updates.UpdateType) {
+		name := u.String()
+		if name == "unknown" {
+			t.Error("Expected every update type in All to have a known name")
+		}
+
+		if seen[name] {
+			t.Errorf("Expected update type %s to appear only once in All", name)
+		}
+
+		seen[name] = true
+	})
 }

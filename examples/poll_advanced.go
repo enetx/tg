@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/file"
@@ -12,7 +13,7 @@ import (
 // hidden results, revoting, user-added options, country restrictions, media in the
 // question and in individual options, plus multi-answer quizzes.
 func main() {
-	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// /survey — a regular poll using the new 9.5/9.6 options.

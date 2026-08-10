@@ -6,6 +6,8 @@
 // See: https://core.telegram.org/bots/api#sendchataction
 package chataction
 
+import "github.com/PaulSonOfLars/gotgbot/v2"
+
 // ChatAction enumerates all supported Telegram chat actions.
 type ChatAction int
 
@@ -27,27 +29,27 @@ const (
 func (c ChatAction) String() string {
 	switch c {
 	case Typing:
-		return "typing"
+		return gotgbot.ChatActionTyping
 	case UploadPhoto:
-		return "upload_photo"
+		return gotgbot.ChatActionUploadPhoto
 	case RecordVideo:
-		return "record_video"
+		return gotgbot.ChatActionRecordVideo
 	case UploadVideo:
-		return "upload_video"
+		return gotgbot.ChatActionUploadVideo
 	case RecordVoice:
-		return "record_voice"
+		return gotgbot.ChatActionRecordVoice
 	case UploadVoice:
-		return "upload_voice"
+		return gotgbot.ChatActionUploadVoice
 	case UploadDocument:
-		return "upload_document"
+		return gotgbot.ChatActionUploadDocument
 	case ChooseSticker:
-		return "choose_sticker"
+		return gotgbot.ChatActionChooseSticker
 	case FindLocation:
-		return "find_location"
+		return gotgbot.ChatActionFindLocation
 	case RecordVideoNote:
-		return "record_video_note"
+		return gotgbot.ChatActionRecordVideoNote
 	case UploadVideoNote:
-		return "upload_video_note"
+		return gotgbot.ChatActionUploadVideoNote
 	default:
 		return "unknown"
 	}

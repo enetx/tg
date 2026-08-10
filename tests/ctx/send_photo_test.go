@@ -860,3 +860,22 @@ func TestSendPhoto_SendWithExistingError(t *testing.T) {
 		t.Error("Send should return error for invalid file")
 	}
 }
+
+func TestSendPhoto_Ephemeral(t *testing.T) {
+	testCtx := ephemeralContext(&mockBot{})
+
+	builder := testCtx.SendPhoto(g.String("https://example.com/photo.jpg"))
+
+	if builder.ReceiverUser(123) != builder {
+		t.Error("ReceiverUser should return the same SendPhoto instance for chaining")
+	}
+
+	if builder.CallbackQuery(g.String("callback_123")) != builder {
+		t.Error("CallbackQuery should return the same SendPhoto instance for chaining")
+	}
+
+	result := builder.Send()
+	if !result.IsErr() && !result.IsOk() {
+		t.Error("Send with ephemeral options should return a result")
+	}
+}

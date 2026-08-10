@@ -23,13 +23,13 @@ func NewChecklistTask(id int64, text g.String) *ChecklistTask {
 
 // HTML sets parse mode to HTML.
 func (ct *ChecklistTask) HTML() *ChecklistTask {
-	ct.input.ParseMode = "HTML"
+	ct.input.ParseMode = gotgbot.ParseModeHTML
 	return ct
 }
 
 // Markdown sets parse mode to MarkdownV2.
 func (ct *ChecklistTask) Markdown() *ChecklistTask {
-	ct.input.ParseMode = "MarkdownV2"
+	ct.input.ParseMode = gotgbot.ParseModeMarkdownV2
 	return ct
 }
 

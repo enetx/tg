@@ -137,6 +137,20 @@ func (sc *SendContact) DirectMessagesTopic(topicID int64) *SendContact {
 	return sc
 }
 
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (sc *SendContact) ReceiverUser(id int64) *SendContact {
+	sc.opts.ReceiverUserId = id
+	return sc
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (sc *SendContact) CallbackQuery(id g.String) *SendContact {
+	sc.opts.CallbackQueryId = id.Std()
+	return sc
+}
+
 // Send sends the contact message to Telegram and returns the result.
 func (sc *SendContact) Send() g.Result[*gotgbot.Message] {
 	return sc.ctx.timers(sc.after, sc.deleteAfter, func() g.Result[*gotgbot.Message] {

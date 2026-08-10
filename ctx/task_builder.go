@@ -19,14 +19,14 @@ type TaskBuilder[T any] struct {
 // HTML sets the task's text to be parsed as HTML.
 // Ignored if Entities are set.
 func (tb *TaskBuilder[T]) HTML() *TaskBuilder[T] {
-	tb.parsmode = g.Some("HTML")
+	tb.parsmode = g.Some(gotgbot.ParseModeHTML)
 	return tb
 }
 
 // Markdown sets the task's text to be parsed as MarkdownV2.
 // Ignored if Entities are set.
 func (tb *TaskBuilder[T]) Markdown() *TaskBuilder[T] {
-	tb.parsmode = g.Some("MarkdownV2")
+	tb.parsmode = g.Some(gotgbot.ParseModeMarkdownV2)
 	return tb
 }
 

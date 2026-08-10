@@ -642,3 +642,22 @@ func TestSendMessage_MethodOverrides(t *testing.T) {
 		t.Error("Method overriding should work")
 	}
 }
+
+func TestSendMessage_Ephemeral(t *testing.T) {
+	testCtx := ephemeralContext(&mockBot{})
+
+	builder := testCtx.SendMessage(g.String("Hello"))
+
+	if builder.ReceiverUser(123) != builder {
+		t.Error("ReceiverUser should return the same SendMessage instance for chaining")
+	}
+
+	if builder.CallbackQuery(g.String("callback_123")) != builder {
+		t.Error("CallbackQuery should return the same SendMessage instance for chaining")
+	}
+
+	result := builder.Send()
+	if !result.IsErr() && !result.IsOk() {
+		t.Error("Send with ephemeral options should return a result")
+	}
+}

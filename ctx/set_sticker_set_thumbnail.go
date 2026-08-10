@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 )
 
 // SetStickerSetThumbnail represents a request to set sticker set thumbnail.
@@ -14,13 +15,13 @@ type SetStickerSetThumbnail struct {
 	userID int64
 	format g.String
 	opts   *gotgbot.SetStickerSetThumbnailOpts
-	thumb  *g.File
+	thumb  *fs.File
 	err    error
 }
 
 // Thumbnail sets the thumbnail file for the sticker set.
 func (ssst *SetStickerSetThumbnail) Thumbnail(filename g.String) *SetStickerSetThumbnail {
-	ssst.thumb = g.NewFile(filename)
+	ssst.thumb = fs.NewFile(filename)
 
 	reader := ssst.thumb.Open()
 	if reader.IsErr() {

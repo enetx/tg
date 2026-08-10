@@ -20,6 +20,16 @@ func New(messageID int64) *Parameters {
 	}
 }
 
+// NewEphemeral creates a new Parameters builder replying to an ephemeral message.
+// The regular message ID is optional when replying to an ephemeral message.
+func NewEphemeral(ephemeralMessageID int64) *Parameters {
+	return &Parameters{
+		params: &gotgbot.ReplyParameters{
+			EphemeralMessageId: ephemeralMessageID,
+		},
+	}
+}
+
 // ChatID sets the chat ID if replying to a message from a different chat.
 func (p *Parameters) ChatID(chatID int64) *Parameters {
 	p.params.ChatId = chatID
@@ -40,13 +50,13 @@ func (p *Parameters) Quote(quote g.String) *Parameters {
 
 // QuoteHTML sets the quote parse mode to HTML.
 func (p *Parameters) QuoteHTML() *Parameters {
-	p.params.QuoteParseMode = "HTML"
+	p.params.QuoteParseMode = gotgbot.ParseModeHTML
 	return p
 }
 
 // QuoteMarkdown sets the quote parse mode to MarkdownV2.
 func (p *Parameters) QuoteMarkdown() *Parameters {
-	p.params.QuoteParseMode = "MarkdownV2"
+	p.params.QuoteParseMode = gotgbot.ParseModeMarkdownV2
 	return p
 }
 
@@ -71,6 +81,12 @@ func (p *Parameters) ChecklistTask(taskID int64) *Parameters {
 // PollOption sets the identifier of the specific poll option to reply to.
 func (p *Parameters) PollOption(optionID g.String) *Parameters {
 	p.params.PollOptionId = optionID.Std()
+	return p
+}
+
+// EphemeralMessage sets the identifier of the ephemeral message to reply to.
+func (p *Parameters) EphemeralMessage(messageID int64) *Parameters {
+	p.params.EphemeralMessageId = messageID
 	return p
 }
 

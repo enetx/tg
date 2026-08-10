@@ -93,3 +93,48 @@ func TestChecklist_MultipleBuilds(t *testing.T) {
 		t.Error("Expected multiple builds to return consistent task count")
 	}
 }
+
+func TestChecklist_TitleFormatting(t *testing.T) {
+	checklist := input.NewChecklist(testTitle, g.NewSlice[gotgbot.InputChecklistTask]())
+
+	if checklist.TitleHTML() != checklist {
+		t.Error("Expected TitleHTML to return same Checklist instance")
+	}
+
+	if checklist.Build().ParseMode != gotgbot.ParseModeHTML {
+		t.Error("Expected TitleHTML to set the HTML parse mode")
+	}
+
+	if checklist.TitleMarkdown() != checklist {
+		t.Error("Expected TitleMarkdown to return same Checklist instance")
+	}
+
+	if checklist.Build().ParseMode != gotgbot.ParseModeMarkdownV2 {
+		t.Error("Expected TitleMarkdown to set the MarkdownV2 parse mode")
+	}
+
+	if checklist.TitleEntities(createTestEntities()) != checklist {
+		t.Error("Expected TitleEntities to return same Checklist instance")
+	}
+
+	if len(checklist.Build().TitleEntities) == 0 {
+		t.Error("Expected TitleEntities to be set correctly")
+	}
+}
+
+func TestChecklist_OthersCan(t *testing.T) {
+	checklist := input.NewChecklist(testTitle, g.NewSlice[gotgbot.InputChecklistTask]())
+
+	if checklist.OthersCanAddTasks() != checklist {
+		t.Error("Expected OthersCanAddTasks to return same Checklist instance")
+	}
+
+	if checklist.OthersCanMarkTasksAsDone() != checklist {
+		t.Error("Expected OthersCanMarkTasksAsDone to return same Checklist instance")
+	}
+
+	built := checklist.Build()
+	if !built.OthersCanAddTasks || !built.OthersCanMarkTasksAsDone {
+		t.Error("Expected both permission flags to be set correctly")
+	}
+}

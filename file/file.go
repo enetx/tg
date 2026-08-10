@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/constants"
 )
 
@@ -12,7 +13,7 @@ import (
 // It holds both the gotgbot input file representation and the original file handle.
 type InputFile struct {
 	Doc  gotgbot.InputFileOrString
-	File *g.File
+	File *fs.File
 }
 
 // Input handles the common logic for file processing across all media types.
@@ -33,7 +34,7 @@ func Input(filename g.String) g.Result[InputFile] {
 	case filename.StartsWith(constants.FileIDPrefix):
 		return g.Ok(InputFile{Doc: gotgbot.InputFileByID(filename.StripPrefix(constants.FileIDPrefix).Std())})
 	default:
-		file := g.NewFile(filename).Open()
+		file := fs.NewFile(filename).Open()
 		if file.IsErr() {
 			return g.Err[InputFile](file.Err())
 		}

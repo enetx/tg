@@ -42,6 +42,7 @@ func TestEntityType_String(t *testing.T) {
 
 		// Special
 		{"CustomEmoji", entity.CustomEmoji, "custom_emoji"},
+		{"DateTime", entity.DateTime, "date_time"},
 
 		// Unknown
 		{"Unknown", entity.EntityType(999), "unknown"},
@@ -71,6 +72,9 @@ func TestEntityType_Constants(t *testing.T) {
 	if entity.CustomEmoji != 18 {
 		t.Errorf("Expected CustomEmoji to be 18, got %d", int(entity.CustomEmoji))
 	}
+	if entity.DateTime != 19 {
+		t.Errorf("Expected DateTime to be 19, got %d", int(entity.DateTime))
+	}
 }
 
 func TestEntityType_Coverage(t *testing.T) {
@@ -82,7 +86,7 @@ func TestEntityType_Coverage(t *testing.T) {
 		entity.Blockquote, entity.ExpandableBlockquote,
 		entity.Code, entity.Pre,
 		entity.TextLink, entity.TextMention,
-		entity.CustomEmoji,
+		entity.CustomEmoji, entity.DateTime,
 	}
 
 	for _, entityType := range allTypes {

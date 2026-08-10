@@ -27,13 +27,13 @@ func (es *EditStory) Caption(caption g.String) *EditStory {
 
 // HTML sets the story caption parse mode to HTML.
 func (es *EditStory) HTML() *EditStory {
-	es.opts.ParseMode = "HTML"
+	es.opts.ParseMode = gotgbot.ParseModeHTML
 	return es
 }
 
 // Markdown sets the story caption parse mode to MarkdownV2.
 func (es *EditStory) Markdown() *EditStory {
-	es.opts.ParseMode = "MarkdownV2"
+	es.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return es
 }
 

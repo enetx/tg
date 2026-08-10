@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/types/permissions"
@@ -11,7 +12,7 @@ import (
 // Member tags (Bot API 9.5): admins can attach a short tag to regular members,
 // grant the "manage tags" admin right, and allow members to edit their own tag.
 func main() {
-	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// /tag <text> — reply to a user to set their member tag (0-16 chars, no emoji).

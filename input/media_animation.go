@@ -37,13 +37,13 @@ func (ma *MediaAnimation) Caption(caption g.String) *MediaAnimation {
 
 // HTML sets parse mode to HTML for the caption.
 func (ma *MediaAnimation) HTML() *MediaAnimation {
-	ma.input.ParseMode = "HTML"
+	ma.input.ParseMode = gotgbot.ParseModeHTML
 	return ma
 }
 
 // Markdown sets parse mode to MarkdownV2 for the caption.
 func (ma *MediaAnimation) Markdown() *MediaAnimation {
-	ma.input.ParseMode = "MarkdownV2"
+	ma.input.ParseMode = gotgbot.ParseModeMarkdownV2
 	return ma
 }
 

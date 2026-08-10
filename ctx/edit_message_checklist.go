@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 )
 
@@ -51,6 +52,27 @@ func (emc *EditMessageChecklist) ChatID(chatID int64) *EditMessageChecklist {
 // Title sets the checklist title.
 func (emc *EditMessageChecklist) Title(title g.String) *EditMessageChecklist {
 	emc.checklist.Title = title.Std()
+	return emc
+}
+
+// TitleHTML sets the checklist title parse mode to HTML.
+// Ignored if TitleEntities are set.
+func (emc *EditMessageChecklist) TitleHTML() *EditMessageChecklist {
+	emc.checklist.ParseMode = gotgbot.ParseModeHTML
+	return emc
+}
+
+// TitleMarkdown sets the checklist title parse mode to MarkdownV2.
+// Ignored if TitleEntities are set.
+func (emc *EditMessageChecklist) TitleMarkdown() *EditMessageChecklist {
+	emc.checklist.ParseMode = gotgbot.ParseModeMarkdownV2
+	return emc
+}
+
+// TitleEntities sets custom entities for the checklist title.
+// Overrides any title parse mode if set.
+func (emc *EditMessageChecklist) TitleEntities(e *entities.Entities) *EditMessageChecklist {
+	emc.checklist.TitleEntities = e.Std()
 	return emc
 }
 

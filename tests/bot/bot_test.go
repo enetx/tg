@@ -385,3 +385,74 @@ func TestBot_ConcurrentAccess(t *testing.T) {
 		<-done
 	}
 }
+
+func TestBot_Webhook(t *testing.T) {
+	token := g.String("123456:ABCDEF-test-token-here")
+	result := bot.New(token).DisableTokenCheck().Build()
+
+	if result.IsErr() {
+		t.Errorf("Failed to create bot: %v", result.Err())
+		return
+	}
+
+	bot := result.Ok()
+	webhook := bot.Webhook()
+
+	if webhook == nil {
+		t.Error("Expected webhook to be non-nil")
+	}
+}
+
+func TestBot_HandleWebhook(t *testing.T) {
+	token := g.String("123456:ABCDEF-test-token-here")
+	result := bot.New(token).DisableTokenCheck().Build()
+
+	if result.IsErr() {
+		t.Errorf("Failed to create bot: %v", result.Err())
+		return
+	}
+
+	bot := result.Ok()
+
+	// Test with valid JSON
+	validJSON := []byte(
+		`{"update_id": 123, "message": {"message_id": 1, "date": 1234567890, "text": "test", "chat": {"id": 1, "type": "private"}}}`,
+	)
+	err := bot.HandleWebhook(validJSON)
+	// Should not panic and should handle the update
+	if err != nil {
+		// Error is expected since we don't have a real dispatcher setup, but it shouldn't panic
+		t.Logf("Expected error in test environment: %v", err)
+	}
+
+	// Test with invalid JSON
+	invalidJSON := []byte(`{invalid json}`)
+	err = bot.HandleWebhook(invalidJSON)
+
+	if err == nil {
+		t.Error("Expected error for invalid JSON")
+	}
+}
+
+func TestBot_Command(t *testing.T) {
+	token := g.String("123456:ABCDEF-test-token-here")
+	result := bot.New(token).DisableTokenCheck().Build()
+
+	if result.IsErr() {
+		t.Errorf("Failed to create bot: %v", result.Err())
+		return
+	}
+
+	bot := result.Ok()
+
+	// Test Command method
+	handler := func(ctx *ctx.Context) error {
+		return nil
+	}
+
+	cmd := bot.Command(g.String("start"), handler)
+
+	if cmd == nil {
+		t.Error("Expected Command to return a command handler")
+	}
+}

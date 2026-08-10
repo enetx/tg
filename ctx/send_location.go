@@ -149,6 +149,20 @@ func (sl *SendLocation) DirectMessagesTopic(topicID int64) *SendLocation {
 	return sl
 }
 
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (sl *SendLocation) ReceiverUser(id int64) *SendLocation {
+	sl.opts.ReceiverUserId = id
+	return sl
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (sl *SendLocation) CallbackQuery(id g.String) *SendLocation {
+	sl.opts.CallbackQueryId = id.Std()
+	return sl
+}
+
 // Send sends the location message to Telegram and returns the result.
 func (sl *SendLocation) Send() g.Result[*gotgbot.Message] {
 	return sl.ctx.timers(sl.after, sl.deleteAfter, func() g.Result[*gotgbot.Message] {

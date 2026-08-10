@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 )
 
 // SetChatPhoto represents a request to set the chat photo.
@@ -12,7 +13,7 @@ type SetChatPhoto struct {
 	ctx    *Context
 	opts   *gotgbot.SetChatPhotoOpts
 	doc    gotgbot.InputFile
-	file   *g.File
+	file   *fs.File
 	chatID g.Option[int64]
 	err    error
 }

@@ -550,3 +550,22 @@ func TestSendAudio_To(t *testing.T) {
 		t.Error("Effect method should return SendAudio for chaining")
 	}
 }
+
+func TestSendAudio_Ephemeral(t *testing.T) {
+	testCtx := ephemeralContext(&mockBot{})
+
+	builder := testCtx.SendAudio(g.String("https://example.com/audio.mp3"))
+
+	if builder.ReceiverUser(123) != builder {
+		t.Error("ReceiverUser should return the same SendAudio instance for chaining")
+	}
+
+	if builder.CallbackQuery(g.String("callback_123")) != builder {
+		t.Error("CallbackQuery should return the same SendAudio instance for chaining")
+	}
+
+	result := builder.Send()
+	if !result.IsErr() && !result.IsOk() {
+		t.Error("Send with ephemeral options should return a result")
+	}
+}

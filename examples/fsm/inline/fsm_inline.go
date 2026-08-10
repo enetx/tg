@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/enetx/fsm"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/keyboard"
@@ -21,7 +22,7 @@ var fsmStore = g.NewMapSafe[int64, *fsm.SyncFSM]()
 
 func main() {
 	// Load the Telegram bot token from a local .env file.
-	token := g.NewFile("../../../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../../../.env").Read().Ok().Trim().Split("=")).Last().Some()
 
 	// Initialize the Telegram bot and its helper components.
 	b := bot.New(token).Build().Unwrap()

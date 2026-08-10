@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
@@ -10,7 +11,7 @@ import (
 // reply is being generated. The draft is ephemeral (~30s); send the final message with
 // SendMessage to persist it. Pass empty text to show a "Thinking..." placeholder.
 func main() {
-	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// /draft — show a thinking placeholder, then a partial draft, then the final message.

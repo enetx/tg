@@ -1,6 +1,9 @@
 package updates
 
-import "github.com/enetx/g"
+import (
+	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/enetx/g"
+)
 
 // UpdateType enumerates all supported Telegram update types.
 //
@@ -17,62 +20,80 @@ const (
 	CallbackQuery                             // Button callback with callback_data
 	ShippingQuery                             // Shipping address query for payments
 	PreCheckoutQuery                          // Pre-checkout query before confirming a payment
+	PurchasedPaidMedia                        // Paid media purchased by a user
 	Poll                                      // Poll creation
 	PollAnswer                                // User’s answer to a non-anonymous poll
 	MyChatMember                              // Bot's status updated in a chat
 	ChatMember                                // Chat member's status updated
 	ChatJoinRequest                           // Incoming join request to a chat
+	ChatBoost                                 // Chat boost added or changed
+	RemovedChatBoost                          // Chat boost removed
 	MessageReaction                           // New or removed reaction to a message
 	MessageReactionCount                      // Updated reaction count on a message
 	BusinessConnection                        // Bot connected/disconnected from business account
 	BusinessMessage                           // New message from connected business account
 	EditedBusinessMessage                     // Edited message from connected business account
 	DeletedBusinessMessages                   // Messages deleted from connected business account
+	GuestMessage                              // Message from a guest bot user
+	ManagedBot                                // Managed bot state updated
+	Subscription                              // Bot subscription of a user created or changed
 )
 
 // String returns the raw string name for UpdateType, as used in Telegram Bot API updates.
 func (u UpdateType) String() string {
 	switch u {
 	case Message:
-		return "message"
+		return gotgbot.UpdateTypeMessage
 	case EditedMessage:
-		return "edited_message"
+		return gotgbot.UpdateTypeEditedMessage
 	case ChannelPost:
-		return "channel_post"
+		return gotgbot.UpdateTypeChannelPost
 	case EditedChannelPost:
-		return "edited_channel_post"
+		return gotgbot.UpdateTypeEditedChannelPost
 	case InlineQuery:
-		return "inline_query"
+		return gotgbot.UpdateTypeInlineQuery
 	case ChosenInlineResult:
-		return "chosen_inline_result"
+		return gotgbot.UpdateTypeChosenInlineResult
 	case CallbackQuery:
-		return "callback_query"
+		return gotgbot.UpdateTypeCallbackQuery
 	case ShippingQuery:
-		return "shipping_query"
+		return gotgbot.UpdateTypeShippingQuery
 	case PreCheckoutQuery:
-		return "pre_checkout_query"
+		return gotgbot.UpdateTypePreCheckoutQuery
+	case PurchasedPaidMedia:
+		return gotgbot.UpdateTypePurchasedPaidMedia
 	case Poll:
-		return "poll"
+		return gotgbot.UpdateTypePoll
 	case PollAnswer:
-		return "poll_answer"
+		return gotgbot.UpdateTypePollAnswer
 	case MyChatMember:
-		return "my_chat_member"
+		return gotgbot.UpdateTypeMyChatMember
 	case ChatMember:
-		return "chat_member"
+		return gotgbot.UpdateTypeChatMember
 	case ChatJoinRequest:
-		return "chat_join_request"
+		return gotgbot.UpdateTypeChatJoinRequest
+	case ChatBoost:
+		return gotgbot.UpdateTypeChatBoost
+	case RemovedChatBoost:
+		return gotgbot.UpdateTypeRemovedChatBoost
 	case MessageReaction:
-		return "message_reaction"
+		return gotgbot.UpdateTypeMessageReaction
 	case MessageReactionCount:
-		return "message_reaction_count"
+		return gotgbot.UpdateTypeMessageReactionCount
 	case BusinessConnection:
-		return "business_connection"
+		return gotgbot.UpdateTypeBusinessConnection
 	case BusinessMessage:
-		return "business_message"
+		return gotgbot.UpdateTypeBusinessMessage
 	case EditedBusinessMessage:
-		return "edited_business_message"
+		return gotgbot.UpdateTypeEditedBusinessMessage
 	case DeletedBusinessMessages:
-		return "deleted_business_messages"
+		return gotgbot.UpdateTypeDeletedBusinessMessages
+	case GuestMessage:
+		return gotgbot.UpdateTypeGuestMessage
+	case ManagedBot:
+		return gotgbot.UpdateTypeManagedBot
+	case Subscription:
+		return gotgbot.UpdateTypeSubscription
 	default:
 		return "unknown"
 	}
@@ -88,15 +109,21 @@ var All = g.Slice[UpdateType]{
 	CallbackQuery,
 	ShippingQuery,
 	PreCheckoutQuery,
+	PurchasedPaidMedia,
 	Poll,
 	PollAnswer,
 	MyChatMember,
 	ChatMember,
 	ChatJoinRequest,
+	ChatBoost,
+	RemovedChatBoost,
 	MessageReaction,
 	MessageReactionCount,
 	BusinessConnection,
 	BusinessMessage,
 	EditedBusinessMessage,
 	DeletedBusinessMessages,
+	GuestMessage,
+	ManagedBot,
+	Subscription,
 }

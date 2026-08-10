@@ -105,7 +105,7 @@ func main() {
 		}
 
 		userID := args[0].TryInt().Unwrap().Int64()
-		title := args.Iter().Skip(1).Collect().Join(" ")
+		title := args.Iter().Skip(1).Collect().Slice().Join(" ")
 
 		return ctx.SetChatAdministratorCustomTitle(userID, title).Send().Err()
 	})

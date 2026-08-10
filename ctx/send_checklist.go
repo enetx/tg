@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 )
@@ -47,6 +48,27 @@ func (sc *SendChecklist) After(duration time.Duration) *SendChecklist {
 // DeleteAfter schedules the checklist message to be deleted after the specified duration.
 func (sc *SendChecklist) DeleteAfter(duration time.Duration) *SendChecklist {
 	sc.deleteAfter = g.Some(duration)
+	return sc
+}
+
+// TitleHTML sets the checklist title parse mode to HTML.
+// Ignored if TitleEntities are set.
+func (sc *SendChecklist) TitleHTML() *SendChecklist {
+	sc.checklist.ParseMode = gotgbot.ParseModeHTML
+	return sc
+}
+
+// TitleMarkdown sets the checklist title parse mode to MarkdownV2.
+// Ignored if TitleEntities are set.
+func (sc *SendChecklist) TitleMarkdown() *SendChecklist {
+	sc.checklist.ParseMode = gotgbot.ParseModeMarkdownV2
+	return sc
+}
+
+// TitleEntities sets custom entities for the checklist title.
+// Overrides any title parse mode if set.
+func (sc *SendChecklist) TitleEntities(e *entities.Entities) *SendChecklist {
+	sc.checklist.TitleEntities = e.Std()
 	return sc
 }
 

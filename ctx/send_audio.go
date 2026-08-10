@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
@@ -16,8 +17,8 @@ type SendAudio struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendAudioOpts
-	file        *g.File
-	thumb       *g.File
+	file        *fs.File
+	thumb       *fs.File
 	chatID      g.Option[int64]
 	after       g.Option[time.Duration]
 	deleteAfter g.Option[time.Duration]
@@ -50,13 +51,13 @@ func (sa *SendAudio) Caption(caption g.String) *SendAudio {
 
 // HTML sets the caption parse mode to HTML.
 func (sa *SendAudio) HTML() *SendAudio {
-	sa.opts.ParseMode = "HTML"
+	sa.opts.ParseMode = gotgbot.ParseModeHTML
 	return sa
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
 func (sa *SendAudio) Markdown() *SendAudio {
-	sa.opts.ParseMode = "MarkdownV2"
+	sa.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return sa
 }
 
@@ -92,7 +93,7 @@ func (sa *SendAudio) Markup(kb keyboard.Keyboard) *SendAudio {
 
 // Thumbnail sets a custom thumbnail for the audio.
 func (sa *SendAudio) Thumbnail(file g.String) *SendAudio {
-	sa.thumb = g.NewFile(file)
+	sa.thumb = fs.NewFile(file)
 
 	reader := sa.thumb.Open()
 	if reader.IsErr() {
@@ -181,6 +182,20 @@ func (sa *SendAudio) To(chatID int64) *SendAudio {
 // DirectMessagesTopic sets the direct messages topic ID for the message.
 func (sa *SendAudio) DirectMessagesTopic(topicID int64) *SendAudio {
 	sa.opts.DirectMessagesTopicId = topicID
+	return sa
+}
+
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (sa *SendAudio) ReceiverUser(id int64) *SendAudio {
+	sa.opts.ReceiverUserId = id
+	return sa
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (sa *SendAudio) CallbackQuery(id g.String) *SendAudio {
+	sa.opts.CallbackQueryId = id.Std()
 	return sa
 }
 

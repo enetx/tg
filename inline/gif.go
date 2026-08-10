@@ -59,13 +59,13 @@ func (gf *Gif) Caption(caption g.String) *Gif {
 
 // HTML sets parse mode to HTML for the caption.
 func (gf *Gif) HTML() *Gif {
-	gf.inline.ParseMode = "HTML"
+	gf.inline.ParseMode = gotgbot.ParseModeHTML
 	return gf
 }
 
 // Markdown sets parse mode to MarkdownV2 for the caption.
 func (gf *Gif) Markdown() *Gif {
-	gf.inline.ParseMode = "MarkdownV2"
+	gf.inline.ParseMode = gotgbot.ParseModeMarkdownV2
 	return gf
 }
 

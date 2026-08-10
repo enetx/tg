@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
@@ -15,7 +16,7 @@ type SendSticker struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendStickerOpts
-	file        *g.File
+	file        *fs.File
 	chatID      g.Option[int64]
 	after       g.Option[time.Duration]
 	deleteAfter g.Option[time.Duration]
@@ -129,6 +130,20 @@ func (ss *SendSticker) To(chatID int64) *SendSticker {
 // DirectMessagesTopic sets the direct messages topic ID for the message.
 func (ss *SendSticker) DirectMessagesTopic(topicID int64) *SendSticker {
 	ss.opts.DirectMessagesTopicId = topicID
+	return ss
+}
+
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (ss *SendSticker) ReceiverUser(id int64) *SendSticker {
+	ss.opts.ReceiverUserId = id
+	return ss
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (ss *SendSticker) CallbackQuery(id g.String) *SendSticker {
+	ss.opts.CallbackQueryId = id.Std()
 	return ss
 }
 

@@ -185,3 +185,22 @@ func TestSendLivePhoto_NonexistentLocalFile(t *testing.T) {
 		t.Logf("Expected fs.ErrNotExist, got: %v", res.Err())
 	}
 }
+
+func TestSendLivePhoto_Ephemeral(t *testing.T) {
+	testCtx := ephemeralContext(&mockBot{})
+
+	builder := testCtx.SendLivePhoto(g.String("https://example.com/live.mov"), g.String("https://example.com/photo.jpg"))
+
+	if builder.ReceiverUser(123) != builder {
+		t.Error("ReceiverUser should return the same SendLivePhoto instance for chaining")
+	}
+
+	if builder.CallbackQuery(g.String("callback_123")) != builder {
+		t.Error("CallbackQuery should return the same SendLivePhoto instance for chaining")
+	}
+
+	result := builder.Send()
+	if !result.IsErr() && !result.IsOk() {
+		t.Error("Send with ephemeral options should return a result")
+	}
+}

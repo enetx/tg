@@ -311,3 +311,22 @@ func TestSendSticker_SendWithAllOptions(t *testing.T) {
 		t.Logf("SendSticker Send with all options failed as expected: %v", sendResult.Err())
 	}
 }
+
+func TestSendSticker_Ephemeral(t *testing.T) {
+	testCtx := ephemeralContext(&mockBot{})
+
+	builder := testCtx.SendSticker(g.String("https://example.com/sticker.webp"))
+
+	if builder.ReceiverUser(123) != builder {
+		t.Error("ReceiverUser should return the same SendSticker instance for chaining")
+	}
+
+	if builder.CallbackQuery(g.String("callback_123")) != builder {
+		t.Error("CallbackQuery should return the same SendSticker instance for chaining")
+	}
+
+	result := builder.Send()
+	if !result.IsErr() && !result.IsOk() {
+		t.Error("Send with ephemeral options should return a result")
+	}
+}

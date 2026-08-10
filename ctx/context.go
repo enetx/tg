@@ -11,6 +11,7 @@ import (
 	"github.com/enetx/tg/inline"
 	"github.com/enetx/tg/input"
 	"github.com/enetx/tg/keyboard"
+	"github.com/enetx/tg/rich"
 )
 
 // Context represents a Telegram Bot API context with convenient methods for sending messages and media.
@@ -408,6 +409,25 @@ func (ctx *Context) SendMessageDraft(draftID int64) *SendMessageDraft {
 	}
 }
 
+// SendRichMessage creates a new SendRichMessage request to send a rich formatted message.
+func (ctx *Context) SendRichMessage(message *rich.Message) *SendRichMessage {
+	return &SendRichMessage{
+		ctx:     ctx,
+		message: message,
+		opts:    new(gotgbot.SendRichMessageOpts),
+	}
+}
+
+// SendRichMessageDraft creates a new SendRichMessageDraft request to send a rich message draft.
+func (ctx *Context) SendRichMessageDraft(draftID int64, message *rich.Message) *SendRichMessageDraft {
+	return &SendRichMessageDraft{
+		ctx:     ctx,
+		draftID: draftID,
+		message: message,
+		opts:    new(gotgbot.SendRichMessageDraftOpts),
+	}
+}
+
 // SetChatMemberTag creates a new SetChatMemberTag request to set a tag for a regular
 // member in a group or supergroup. The bot must be an administrator with the
 // can_manage_tags right.
@@ -601,6 +621,44 @@ func (ctx *Context) EditMessageText(text g.String) *EditMessageText {
 		ctx:  ctx,
 		text: text,
 		opts: new(gotgbot.EditMessageTextOpts),
+	}
+}
+
+// EditEphemeralMessageText creates a new EditEphemeralMessageText request to edit
+// the text of an ephemeral message.
+func (ctx *Context) EditEphemeralMessageText(text g.String) *EditEphemeralMessageText {
+	return &EditEphemeralMessageText{
+		ctx:  ctx,
+		text: text,
+		opts: new(gotgbot.EditEphemeralMessageTextOpts),
+	}
+}
+
+// EditEphemeralMessageCaption creates a new EditEphemeralMessageCaption request to edit
+// the caption of an ephemeral message.
+func (ctx *Context) EditEphemeralMessageCaption(caption g.String) *EditEphemeralMessageCaption {
+	return &EditEphemeralMessageCaption{
+		ctx:  ctx,
+		opts: &gotgbot.EditEphemeralMessageCaptionOpts{Caption: caption.Std()},
+	}
+}
+
+// EditEphemeralMessageMedia creates a new EditEphemeralMessageMedia request to edit
+// the media of an ephemeral message.
+func (ctx *Context) EditEphemeralMessageMedia(media input.Media) *EditEphemeralMessageMedia {
+	return &EditEphemeralMessageMedia{
+		ctx:   ctx,
+		media: media,
+		opts:  new(gotgbot.EditEphemeralMessageMediaOpts),
+	}
+}
+
+// EditEphemeralMessageReplyMarkup creates a new EditEphemeralMessageReplyMarkup request
+// to edit the reply markup of an ephemeral message.
+func (ctx *Context) EditEphemeralMessageReplyMarkup() *EditEphemeralMessageReplyMarkup {
+	return &EditEphemeralMessageReplyMarkup{
+		ctx:  ctx,
+		opts: new(gotgbot.EditEphemeralMessageReplyMarkupOpts),
 	}
 }
 
@@ -809,12 +867,12 @@ func (ctx *Context) IsAdmin() g.Result[bool] {
 		return g.Err[bool](err)
 	}
 
-	return g.Ok(member.GetStatus() == "administrator" || member.GetStatus() == "creator")
+	return g.Ok(member.GetStatus() == gotgbot.ChatMemberStatusAdministrator || member.GetStatus() == gotgbot.ChatMemberStatusCreator)
 }
 
 // Args returns command arguments from the message text, excluding the command itself.
 func (ctx *Context) Args() g.Slice[g.String] {
-	return g.String(ctx.EffectiveMessage.Text).Fields().Skip(1).Collect()
+	return g.Slice[g.String](g.String(ctx.EffectiveMessage.Text).Fields()).Iter().Skip(1).Collect().Slice()
 }
 
 // MediaGroup creates a new MediaGroup request to send multiple media as an album.
@@ -839,6 +897,14 @@ func (ctx *Context) DeleteMessage() *DeleteMessage {
 	return &DeleteMessage{
 		ctx:  ctx,
 		opts: new(gotgbot.DeleteMessageOpts),
+	}
+}
+
+// DeleteEphemeralMessage creates a new DeleteEphemeralMessage request to delete an ephemeral message.
+func (ctx *Context) DeleteEphemeralMessage() *DeleteEphemeralMessage {
+	return &DeleteEphemeralMessage{
+		ctx:  ctx,
+		opts: new(gotgbot.DeleteEphemeralMessageOpts),
 	}
 }
 
@@ -1407,6 +1473,25 @@ func (ctx *Context) ApproveChatJoinRequest(userID int64) *ApproveChatJoinRequest
 	}
 }
 
+// AnswerChatJoinRequestQuery creates a new AnswerChatJoinRequestQuery request
+// to process a received chat join request query.
+func (ctx *Context) AnswerChatJoinRequestQuery() *AnswerChatJoinRequestQuery {
+	return &AnswerChatJoinRequestQuery{
+		ctx:  ctx,
+		opts: new(gotgbot.AnswerChatJoinRequestQueryOpts),
+	}
+}
+
+// SendChatJoinRequestWebApp creates a new SendChatJoinRequestWebApp request to show
+// a Mini App to the user before deciding the outcome of a chat join request query.
+func (ctx *Context) SendChatJoinRequestWebApp(webAppURL g.String) *SendChatJoinRequestWebApp {
+	return &SendChatJoinRequestWebApp{
+		ctx:       ctx,
+		webAppURL: webAppURL,
+		opts:      new(gotgbot.SendChatJoinRequestWebAppOpts),
+	}
+}
+
 // DeclineChatJoinRequest declines a chat join request.
 func (ctx *Context) DeclineChatJoinRequest(userID int64) *DeclineChatJoinRequest {
 	return &DeclineChatJoinRequest{
@@ -1529,6 +1614,36 @@ func (ctx *Context) DeclineSuggestedPost() *DeclineSuggestedPost {
 		ctx:  ctx,
 		opts: new(gotgbot.DeclineSuggestedPostOpts),
 	}
+}
+
+// chatJoinRequestQueryID returns the identifier of the join request query of the
+// effective update, or an empty string when the update carries no join request.
+func (ctx *Context) chatJoinRequestQueryID() g.String {
+	if ctx.Update == nil || ctx.Update.ChatJoinRequest == nil {
+		return ""
+	}
+
+	return g.String(ctx.Update.ChatJoinRequest.QueryId)
+}
+
+// ephemeralReceiverID returns the identifier of the user the effective ephemeral
+// message was sent to, or zero when the effective message is not ephemeral.
+func (ctx *Context) ephemeralReceiverID() int64 {
+	if ctx.EffectiveMessage == nil || ctx.EffectiveMessage.ReceiverUser == nil {
+		return 0
+	}
+
+	return ctx.EffectiveMessage.ReceiverUser.Id
+}
+
+// ephemeralMessageID returns the identifier of the effective ephemeral message,
+// or zero when the effective message is not ephemeral.
+func (ctx *Context) ephemeralMessageID() int64 {
+	if ctx.EffectiveMessage == nil {
+		return 0
+	}
+
+	return ctx.EffectiveMessage.EphemeralMessageId
 }
 
 func (ctx *Context) timers(

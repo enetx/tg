@@ -40,13 +40,13 @@ func (r *Reply) DeleteAfter(duration time.Duration) *Reply {
 
 // HTML sets the reply parse mode to HTML.
 func (r *Reply) HTML() *Reply {
-	r.opts.ParseMode = "HTML"
+	r.opts.ParseMode = gotgbot.ParseModeHTML
 	return r
 }
 
 // Markdown sets the reply parse mode to MarkdownV2.
 func (r *Reply) Markdown() *Reply {
-	r.opts.ParseMode = "MarkdownV2"
+	r.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return r
 }
 
@@ -137,6 +137,20 @@ func (r *Reply) APIURL(url g.String) *Reply {
 
 	r.opts.RequestOpts.APIURL = url.Std()
 
+	return r
+}
+
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (r *Reply) ReceiverUser(id int64) *Reply {
+	r.opts.ReceiverUserId = id
+	return r
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (r *Reply) CallbackQuery(id g.String) *Reply {
+	r.opts.CallbackQueryId = id.Std()
 	return r
 }
 

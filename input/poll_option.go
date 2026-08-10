@@ -22,13 +22,13 @@ func Choice(text g.String) *PollChoice {
 
 // HTML sets parse mode to HTML for the option text.
 func (po *PollChoice) HTML() *PollChoice {
-	po.input.TextParseMode = "HTML"
+	po.input.TextParseMode = gotgbot.ParseModeHTML
 	return po
 }
 
 // Markdown sets parse mode to MarkdownV2 for the option text.
 func (po *PollChoice) Markdown() *PollChoice {
-	po.input.TextParseMode = "MarkdownV2"
+	po.input.TextParseMode = gotgbot.ParseModeMarkdownV2
 	return po
 }
 

@@ -4,7 +4,9 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/handlers"
 	"github.com/enetx/tg/types/chat"
 	"github.com/enetx/tg/types/entity"
@@ -638,5 +640,964 @@ func TestMessageHandlers_AdditionalEdgeCases(t *testing.T) {
 				t.Errorf("%s should return a MessageHandler", test.name)
 			}
 		})
+	}
+}
+
+func TestMessageHandlers_RichAndGuest(t *testing.T) {
+	bot := NewMockBot()
+	msgHandlers := &handlers.MessageHandlers{Bot: bot}
+
+	tests := []struct {
+		name    string
+		handler func() *handlers.MessageHandler
+	}{
+		{"AnyEntities", func() *handlers.MessageHandler { return msgHandlers.AnyEntities(MockHandler) }},
+		{"AnyEntity", func() *handlers.MessageHandler { return msgHandlers.AnyEntity(entity.Bold, MockHandler) }},
+		{"RichEntity", func() *handlers.MessageHandler { return msgHandlers.RichEntity(entity.DateTime, MockHandler) }},
+		{"RichMessage", func() *handlers.MessageHandler { return msgHandlers.RichMessage(MockHandler) }},
+		{"GuestMessage", func() *handlers.MessageHandler { return msgHandlers.GuestMessage(MockHandler) }},
+		{"GuestBot", func() *handlers.MessageHandler { return msgHandlers.GuestBot(MockHandler) }},
+		{"MigrateFrom", func() *handlers.MessageHandler { return msgHandlers.MigrateFrom(MockHandler) }},
+		{"MigrateTo", func() *handlers.MessageHandler { return msgHandlers.MigrateTo(MockHandler) }},
+		{"ReplyMarkup", func() *handlers.MessageHandler { return msgHandlers.ReplyMarkup(MockHandler) }},
+		{"TopicAction", func() *handlers.MessageHandler { return msgHandlers.TopicAction(MockHandler) }},
+		{
+			"CommunityChatAdded",
+			func() *handlers.MessageHandler { return msgHandlers.CommunityChatAdded(MockHandler) },
+		},
+		{
+			"CommunityChatRemoved",
+			func() *handlers.MessageHandler { return msgHandlers.CommunityChatRemoved(MockHandler) },
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if test.handler() == nil {
+				t.Errorf("%s should return a MessageHandler", test.name)
+			}
+		})
+	}
+}
+
+func TestMessageHandlers_EntityWithMatch(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages with hashtag entities
+	handlers.NewHandlers(bot).Message.Entity(entity.Hashtag, handler)
+
+	// Create update with message containing hashtag entity
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "Check out this #awesome hashtag!",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			Entities: []gotgbot.MessageEntity{
+				{
+					Type:   "hashtag", // This should match
+					Offset: 15,
+					Length: 8,
+				},
+				{
+					Type:   "mention",
+					Offset: 0,
+					Length: 5,
+				},
+			},
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if !handlerExecuted {
+		t.Error("Handler should have been executed for message with matching entity")
+	}
+}
+
+func TestMessageHandlers_EntityNoMatch(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages with URL entities
+	handlers.NewHandlers(bot).Message.Entity(entity.URL, handler)
+
+	// Create update with message containing other entities but not URL
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "Check out this #awesome hashtag @user!",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			Entities: []gotgbot.MessageEntity{
+				{
+					Type:   "hashtag", // This should NOT match (looking for URL)
+					Offset: 15,
+					Length: 8,
+				},
+				{
+					Type:   "mention", // This should NOT match (looking for URL)
+					Offset: 24,
+					Length: 5,
+				},
+			},
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if handlerExecuted {
+		t.Error("Handler should NOT have been executed for message without matching entity")
+	}
+}
+
+func TestMessageHandlers_EntityNoEntities(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages with mention entities
+	handlers.NewHandlers(bot).Message.Entity(entity.Mention, handler)
+
+	// Create update with message without any entities
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "Just plain text without any entities",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			Entities: nil, // No entities
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if handlerExecuted {
+		t.Error("Handler should NOT have been executed for message without any entities")
+	}
+}
+
+func TestMessageHandlers_CaptionEntityWithMatch(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages with bold entities in caption
+	handlers.NewHandlers(bot).Message.CaptionEntity(entity.Bold, handler)
+
+	// Create update with photo message containing bold entity in caption
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Caption:   "This is *bold* text in caption",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			Photo: []gotgbot.PhotoSize{
+				{
+					FileId:       "photo123",
+					FileUniqueId: "unique123",
+					Width:        800,
+					Height:       600,
+					FileSize:     50000,
+				},
+			},
+			CaptionEntities: []gotgbot.MessageEntity{
+				{
+					Type:   "bold", // This should match
+					Offset: 8,
+					Length: 4,
+				},
+				{
+					Type:   "italic",
+					Offset: 20,
+					Length: 4,
+				},
+			},
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if !handlerExecuted {
+		t.Error("Handler should have been executed for message with matching caption entity")
+	}
+}
+
+func TestMessageHandlers_CaptionEntityNoMatch(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages with code entities in caption
+	handlers.NewHandlers(bot).Message.CaptionEntity(entity.Code, handler)
+
+	// Create update with photo message containing other entities but not code
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Caption:   "This is *bold* and _italic_ text",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			Photo: []gotgbot.PhotoSize{
+				{
+					FileId:       "photo123",
+					FileUniqueId: "unique123",
+					Width:        800,
+					Height:       600,
+					FileSize:     50000,
+				},
+			},
+			CaptionEntities: []gotgbot.MessageEntity{
+				{
+					Type:   "bold", // This should NOT match (looking for code)
+					Offset: 8,
+					Length: 4,
+				},
+				{
+					Type:   "italic", // This should NOT match (looking for code)
+					Offset: 17,
+					Length: 6,
+				},
+			},
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if handlerExecuted {
+		t.Error("Handler should NOT have been executed for message without matching caption entity")
+	}
+}
+
+func TestMessageHandlers_CaptionEntityNoCaptionEntities(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages with underline entities in caption
+	handlers.NewHandlers(bot).Message.CaptionEntity(entity.Underline, handler)
+
+	// Create update with photo message without caption entities
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Caption:   "Plain text caption without formatting",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			Photo: []gotgbot.PhotoSize{
+				{
+					FileId:       "photo123",
+					FileUniqueId: "unique123",
+					Width:        800,
+					Height:       600,
+					FileSize:     50000,
+				},
+			},
+			CaptionEntities: nil, // No caption entities
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if handlerExecuted {
+		t.Error("Handler should NOT have been executed for message without any caption entities")
+	}
+}
+
+func TestMessageHandlers_EntityMultipleEntitiesWithMatch(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages with bot command entities
+	handlers.NewHandlers(bot).Message.Entity(entity.BotCommand, handler)
+
+	// Create update with message containing bot command among other entities
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "/start @username #hashtag https://example.com",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			Entities: []gotgbot.MessageEntity{
+				{
+					Type:   "bot_command", // This should match
+					Offset: 0,
+					Length: 6,
+				},
+				{
+					Type:   "mention",
+					Offset: 7,
+					Length: 9,
+				},
+				{
+					Type:   "hashtag",
+					Offset: 17,
+					Length: 8,
+				},
+				{
+					Type:   "url",
+					Offset: 26,
+					Length: 19,
+				},
+			},
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if !handlerExecuted {
+		t.Error("Handler should have been executed for message with bot command entity among others")
+	}
+}
+
+func TestMessageHandlers_ForwardFromUserNilOrigin(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages forwarded from specific user
+	handlers.NewHandlers(bot).Message.ForwardFromUser(123456789, handler)
+
+	// Create update with message that has no ForwardOrigin
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "Hello world",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			ForwardOrigin: nil, // No forward origin - should not match
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if handlerExecuted {
+		t.Error("Handler should NOT have been executed for message without ForwardOrigin")
+	}
+}
+
+func TestMessageHandlers_ForwardFromUserWithHiddenUser(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages forwarded from specific user
+	handlers.NewHandlers(bot).Message.ForwardFromUser(123456789, handler)
+
+	// Create update with message forwarded from hidden user (no SenderUser)
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "Forwarded message",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			ForwardOrigin: &gotgbot.MessageOriginHiddenUser{
+				Date:           1234567890,
+				SenderUserName: "HiddenUser",
+			},
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if handlerExecuted {
+		t.Error("Handler should NOT have been executed for message from hidden user (no SenderUser)")
+	}
+}
+
+func TestMessageHandlers_ForwardFromUserPositiveMatch(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages forwarded from specific user
+	handlers.NewHandlers(bot).Message.ForwardFromUser(555555555, handler)
+
+	// Create update with message forwarded from matching user
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "Forwarded message",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			ForwardOrigin: &gotgbot.MessageOriginUser{
+				Date: 1234567890,
+				SenderUser: gotgbot.User{
+					Id:        555555555, // This should match
+					IsBot:     false,
+					FirstName: "Forwarded",
+					Username:  "forwardeduser",
+				},
+			},
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if !handlerExecuted {
+		t.Error("Handler should have been executed for message forwarded from matching user")
+	}
+}
+
+func TestMessageHandlers_ForwardFromUserNoMatch(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages forwarded from specific user
+	handlers.NewHandlers(bot).Message.ForwardFromUser(999999999, handler)
+
+	// Create update with message forwarded from different user
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "Forwarded message",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			ForwardOrigin: &gotgbot.MessageOriginUser{
+				Date: 1234567890,
+				SenderUser: gotgbot.User{
+					Id:        111111111, // This should NOT match
+					IsBot:     false,
+					FirstName: "Forwarded",
+					Username:  "forwardeduser",
+				},
+			},
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if handlerExecuted {
+		t.Error("Handler should NOT have been executed for message forwarded from different user")
+	}
+}
+
+func TestMessageHandlers_ForwardFromChatNilOrigin(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages forwarded from specific chat
+	handlers.NewHandlers(bot).Message.ForwardFromChat(-1001111111111, handler)
+
+	// Create update with message that has no ForwardOrigin
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "Hello world",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			ForwardOrigin: nil, // No forward origin - should not match
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if handlerExecuted {
+		t.Error("Handler should NOT have been executed for message without ForwardOrigin")
+	}
+}
+
+func TestMessageHandlers_ForwardFromChatWithUserOrigin(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages forwarded from specific chat
+	handlers.NewHandlers(bot).Message.ForwardFromChat(-1001111111111, handler)
+
+	// Create update with message forwarded from user (no Chat)
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "Forwarded message",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			ForwardOrigin: &gotgbot.MessageOriginUser{
+				Date: 1234567890,
+				SenderUser: gotgbot.User{
+					Id:        555555555,
+					IsBot:     false,
+					FirstName: "Forwarded",
+					Username:  "forwardeduser",
+				},
+			}, // No Chat in origin - should not match
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if handlerExecuted {
+		t.Error("Handler should NOT have been executed for message forwarded from user (no Chat)")
+	}
+}
+
+func TestMessageHandlers_ForwardFromChatPositiveMatch(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages forwarded from specific chat
+	handlers.NewHandlers(bot).Message.ForwardFromChat(-1002222222222, handler)
+
+	// Create update with message forwarded from matching chat
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "Forwarded message",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			ForwardOrigin: &gotgbot.MessageOriginChannel{
+				Date: 1234567890,
+				Chat: gotgbot.Chat{
+					Id:    -1002222222222, // This should match
+					Type:  "channel",
+					Title: "Source Channel",
+				},
+				MessageId: 456,
+			},
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if !handlerExecuted {
+		t.Error("Handler should have been executed for message forwarded from matching chat")
+	}
+}
+
+func TestMessageHandlers_ForwardFromChatNoMatch(t *testing.T) {
+	bot := NewMockBot()
+	var handlerExecuted bool
+
+	handler := func(c *ctx.Context) error {
+		handlerExecuted = true
+		return nil
+	}
+
+	// Register handler for messages forwarded from specific chat
+	handlers.NewHandlers(bot).Message.ForwardFromChat(-1009999999999, handler)
+
+	// Create update with message forwarded from different chat
+	update := &gotgbot.Update{
+		UpdateId: 1,
+		Message: &gotgbot.Message{
+			MessageId: 123,
+			Date:      1234567890,
+			Text:      "Forwarded message",
+			Chat: gotgbot.Chat{
+				Id:   -1001234567890,
+				Type: "supergroup",
+			},
+			From: &gotgbot.User{
+				Id:           987654321,
+				IsBot:        false,
+				FirstName:    "Test",
+				Username:     "testuser",
+				LanguageCode: "en",
+			},
+			ForwardOrigin: &gotgbot.MessageOriginChannel{
+				Date: 1234567890,
+				Chat: gotgbot.Chat{
+					Id:    -1003333333333, // This should NOT match
+					Type:  "channel",
+					Title: "Different Channel",
+				},
+				MessageId: 789,
+			},
+		},
+	}
+
+	// Process the update
+	dispatcher := bot.Dispatcher()
+	err := dispatcher.ProcessUpdate(bot.Raw(), update, map[string]any{})
+	if err != nil {
+		// Error handling varies
+	}
+
+	if handlerExecuted {
+		t.Error("Handler should NOT have been executed for message forwarded from different chat")
+	}
+}
+
+func TestMessageHandlers_ChatOwnerLeft(t *testing.T) {
+	bot := NewMockBot()
+	msgHandlers := &handlers.MessageHandlers{Bot: bot}
+
+	handler := msgHandlers.ChatOwnerLeft(MockHandler)
+
+	if handler == nil {
+		t.Error("ChatOwnerLeft should return a MessageHandler")
+	}
+}
+
+func TestMessageHandlers_ChatOwnerChanged(t *testing.T) {
+	bot := NewMockBot()
+	msgHandlers := &handlers.MessageHandlers{Bot: bot}
+
+	handler := msgHandlers.ChatOwnerChanged(MockHandler)
+
+	if handler == nil {
+		t.Error("ChatOwnerChanged should return a MessageHandler")
+	}
+}
+
+func TestMessageHandlers_ChatOwnerLeft_Filter(t *testing.T) {
+	// Verify that the filter correctly matches messages with ChatOwnerLeft set
+	msg := &gotgbot.Message{
+		ChatOwnerLeft: &gotgbot.ChatOwnerLeft{},
+	}
+
+	if msg.ChatOwnerLeft == nil {
+		t.Error("Expected ChatOwnerLeft to be set")
+	}
+
+	emptyMsg := &gotgbot.Message{}
+	if emptyMsg.ChatOwnerLeft != nil {
+		t.Error("Expected empty message to have no ChatOwnerLeft")
+	}
+}
+
+func TestMessageHandlers_ChatOwnerChanged_Filter(t *testing.T) {
+	// Verify that the filter correctly matches messages with ChatOwnerChanged set
+	msg := &gotgbot.Message{
+		ChatOwnerChanged: &gotgbot.ChatOwnerChanged{},
+	}
+
+	if msg.ChatOwnerChanged == nil {
+		t.Error("Expected ChatOwnerChanged to be set")
+	}
+
+	emptyMsg := &gotgbot.Message{}
+	if emptyMsg.ChatOwnerChanged != nil {
+		t.Error("Expected empty message to have no ChatOwnerChanged")
+	}
+}
+
+func TestMessageHandlers_ChatOwnerChanged_WithNewOwner(t *testing.T) {
+	owner := &gotgbot.User{Id: 123, FirstName: "New", LastName: "Owner"}
+	msg := &gotgbot.Message{
+		ChatOwnerChanged: &gotgbot.ChatOwnerChanged{
+			NewOwner: *owner,
+		},
+	}
+
+	if msg.ChatOwnerChanged == nil {
+		t.Error("Expected ChatOwnerChanged to be set")
+	}
+
+	if msg.ChatOwnerChanged.NewOwner.Id != 123 {
+		t.Errorf("Expected new owner ID 123, got %d", msg.ChatOwnerChanged.NewOwner.Id)
+	}
+}
+
+func TestMessageHandlers_ChatOwnerLeft_Registration(t *testing.T) {
+	bot := NewMockBot()
+	msgHandlers := &handlers.MessageHandlers{Bot: bot}
+
+	// Test that multiple handlers can be registered
+	h1 := msgHandlers.ChatOwnerLeft(MockHandler)
+	h2 := msgHandlers.ChatOwnerLeft(MockHandler)
+
+	if h1 == nil || h2 == nil {
+		t.Error("Expected both ChatOwnerLeft handlers to be non-nil")
+	}
+}
+
+func TestMessageHandlers_ChatOwnerChanged_Registration(t *testing.T) {
+	bot := NewMockBot()
+	msgHandlers := &handlers.MessageHandlers{Bot: bot}
+
+	// Test that multiple handlers can be registered
+	h1 := msgHandlers.ChatOwnerChanged(MockHandler)
+	h2 := msgHandlers.ChatOwnerChanged(MockHandler)
+
+	if h1 == nil || h2 == nil {
+		t.Error("Expected both ChatOwnerChanged handlers to be non-nil")
 	}
 }

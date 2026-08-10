@@ -27,13 +27,13 @@ func (ps *PostStory) Caption(caption g.String) *PostStory {
 
 // HTML sets the story caption parse mode to HTML.
 func (ps *PostStory) HTML() *PostStory {
-	ps.opts.ParseMode = "HTML"
+	ps.opts.ParseMode = gotgbot.ParseModeHTML
 	return ps
 }
 
 // Markdown sets the story caption parse mode to MarkdownV2.
 func (ps *PostStory) Markdown() *PostStory {
-	ps.opts.ParseMode = "MarkdownV2"
+	ps.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return ps
 }
 

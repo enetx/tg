@@ -479,3 +479,73 @@ func (h *MessageHandlers) ChecklistTasksDone(fn Handler) *MessageHandler {
 func (h *MessageHandlers) ChecklistTasksAdded(fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.ChecklistTasksAdded != nil }, fn)
 }
+
+// AnyEntities handles messages that contain entities anywhere, including gifts and polls.
+func (h *MessageHandlers) AnyEntities(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return len(msg.GetEntities()) > 0 }, fn)
+}
+
+// AnyEntity handles messages that contain the specified entity type anywhere,
+// including gifts, polls and rich message content.
+func (h *MessageHandlers) AnyEntity(entType entity.EntityType, fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool {
+		return gotgbot.HasEntityType(msg.GetEntities(), entType.String()) ||
+			gotgbot.HasRichType(msg.RichMessage, entType.String())
+	}, fn)
+}
+
+// RichEntity handles messages that contain the specified entity type in rich message content.
+func (h *MessageHandlers) RichEntity(entType entity.EntityType, fn Handler) *MessageHandler {
+	return h.handleMessage(
+		func(msg *gotgbot.Message) bool { return gotgbot.HasRichType(msg.RichMessage, entType.String()) }, fn)
+}
+
+// RichMessage handles messages that contain rich formatted content.
+func (h *MessageHandlers) RichMessage(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.RichMessage != nil }, fn)
+}
+
+// GuestMessage handles messages sent to the bot through the Telegram guest bot feature.
+func (h *MessageHandlers) GuestMessage(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.GuestQueryId != "" }, fn)
+}
+
+// GuestBot handles messages sent by other guest bots.
+func (h *MessageHandlers) GuestBot(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool {
+		return (msg.GuestBotCallerChat != nil || msg.GuestBotCallerUser != nil) && msg.GuestQueryId == ""
+	}, fn)
+}
+
+// MigrateFrom handles service messages about a chat migrated from a group.
+func (h *MessageHandlers) MigrateFrom(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.MigrateFromChatId != 0 }, fn)
+}
+
+// MigrateTo handles service messages about a chat migrated to a supergroup.
+func (h *MessageHandlers) MigrateTo(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.MigrateToChatId != 0 }, fn)
+}
+
+// ReplyMarkup handles messages that carry a reply markup keyboard.
+func (h *MessageHandlers) ReplyMarkup(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.ReplyMarkup != nil }, fn)
+}
+
+// TopicAction handles any forum topic service message.
+func (h *MessageHandlers) TopicAction(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool {
+		return msg.ForumTopicCreated != nil || msg.ForumTopicEdited != nil ||
+			msg.ForumTopicClosed != nil || msg.ForumTopicReopened != nil
+	}, fn)
+}
+
+// CommunityChatAdded handles service messages about a chat added to a community.
+func (h *MessageHandlers) CommunityChatAdded(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.CommunityChatAdded != nil }, fn)
+}
+
+// CommunityChatRemoved handles service messages about a chat removed from a community.
+func (h *MessageHandlers) CommunityChatRemoved(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.CommunityChatRemoved != nil }, fn)
+}

@@ -1,13 +1,15 @@
 package main
 
 import (
+	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 )
 
 func main() {
-	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// Command to get current chat info
@@ -88,9 +90,9 @@ func main() {
 
 		// Check different chat types and permissions
 		switch chat.Type {
-		case "private":
+		case gotgbot.ChatTypePrivate:
 			return ctx.Reply("This is a private chat - no admin concept").Send().Err()
-		case "group", "supergroup":
+		case gotgbot.ChatTypeGroup, gotgbot.ChatTypeSupergroup:
 			permissions := chat.Permissions
 			if permissions != nil {
 				return ctx.Reply(g.Format(`
@@ -113,7 +115,7 @@ func main() {
 					permissions.CanChangeInfo,
 				)).HTML().Send().Err()
 			}
-		case "channel":
+		case gotgbot.ChatTypeChannel:
 			return ctx.Reply("This is a channel").Send().Err()
 		}
 

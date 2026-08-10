@@ -43,13 +43,13 @@ func (emc *EditMessageCaption) Business(id g.String) *EditMessageCaption {
 
 // HTML sets the parse mode to HTML.
 func (emc *EditMessageCaption) HTML() *EditMessageCaption {
-	emc.opts.ParseMode = "HTML"
+	emc.opts.ParseMode = gotgbot.ParseModeHTML
 	return emc
 }
 
 // Markdown sets the parse mode to MarkdownV2.
 func (emc *EditMessageCaption) Markdown() *EditMessageCaption {
-	emc.opts.ParseMode = "MarkdownV2"
+	emc.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return emc
 }
 

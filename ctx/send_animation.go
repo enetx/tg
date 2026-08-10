@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
@@ -16,8 +17,8 @@ type SendAnimation struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendAnimationOpts
-	file        *g.File
-	thumb       *g.File
+	file        *fs.File
+	thumb       *fs.File
 	chatID      g.Option[int64]
 	after       g.Option[time.Duration]
 	deleteAfter g.Option[time.Duration]
@@ -50,13 +51,13 @@ func (sa *SendAnimation) Caption(caption g.String) *SendAnimation {
 
 // HTML sets the caption parse mode to HTML.
 func (sa *SendAnimation) HTML() *SendAnimation {
-	sa.opts.ParseMode = "HTML"
+	sa.opts.ParseMode = gotgbot.ParseModeHTML
 	return sa
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
 func (sa *SendAnimation) Markdown() *SendAnimation {
-	sa.opts.ParseMode = "MarkdownV2"
+	sa.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return sa
 }
 
@@ -110,7 +111,7 @@ func (sa *SendAnimation) Height(height int64) *SendAnimation {
 
 // Thumbnail sets a custom thumbnail for the animation.
 func (sa *SendAnimation) Thumbnail(file g.String) *SendAnimation {
-	sa.thumb = g.NewFile(file)
+	sa.thumb = fs.NewFile(file)
 
 	reader := sa.thumb.Open()
 	if reader.IsErr() {
@@ -194,6 +195,20 @@ func (sa *SendAnimation) To(chatID int64) *SendAnimation {
 // DirectMessagesTopic sets the direct messages topic ID for the message.
 func (sa *SendAnimation) DirectMessagesTopic(topicID int64) *SendAnimation {
 	sa.opts.DirectMessagesTopicId = topicID
+	return sa
+}
+
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (sa *SendAnimation) ReceiverUser(id int64) *SendAnimation {
+	sa.opts.ReceiverUserId = id
+	return sa
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (sa *SendAnimation) CallbackQuery(id g.String) *SendAnimation {
+	sa.opts.CallbackQueryId = id.Std()
 	return sa
 }
 

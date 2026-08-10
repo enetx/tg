@@ -1,5 +1,7 @@
 package keyboard
 
+import "github.com/PaulSonOfLars/gotgbot/v2"
+
 // ButtonStyle represents the visual style of an inline keyboard button.
 //
 // See: https://core.telegram.org/bots/api#inlinekeyboardbutton
@@ -20,11 +22,11 @@ const (
 func (s ButtonStyle) String() string {
 	switch s {
 	case ButtonStyleDanger:
-		return "danger"
+		return gotgbot.KeyboardButtonStyleDanger
 	case ButtonStyleSuccess:
-		return "success"
+		return gotgbot.KeyboardButtonStyleSuccess
 	case ButtonStylePrimary:
-		return "primary"
+		return gotgbot.KeyboardButtonStylePrimary
 	default:
 		return ""
 	}

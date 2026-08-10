@@ -28,6 +28,7 @@ var (
 	_ PollOptionMedia = (*MediaLocation)(nil)
 	_ PollOptionMedia = (*MediaVenue)(nil)
 	_ PollOptionMedia = (*MediaSticker)(nil)
+	_ PollOptionMedia = (*MediaLink)(nil)
 
 	// MessageContent checks
 	_ MessageContent = (*MessageText)(nil)

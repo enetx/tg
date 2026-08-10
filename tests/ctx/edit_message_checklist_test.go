@@ -381,3 +381,27 @@ func TestEditMessageChecklist_APIURL_NilRequestOpts(t *testing.T) {
 		t.Error("APIURL should return builder when RequestOpts is nil")
 	}
 }
+
+func TestEditMessageChecklist_TitleFormatting(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat:    &gotgbot.Chat{Id: 456, Type: "private"},
+		EffectiveMessage: &gotgbot.Message{MessageId: 789},
+		Update:           &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+	builder := testCtx.EditMessageChecklist(g.String("business_conn_123"))
+
+	if builder.TitleHTML() != builder {
+		t.Error("TitleHTML should return the same EditMessageChecklist instance for chaining")
+	}
+
+	if builder.TitleMarkdown() != builder {
+		t.Error("TitleMarkdown should return the same EditMessageChecklist instance for chaining")
+	}
+
+	if builder.TitleEntities(entities.New("Bold title").Bold("Bold")) != builder {
+		t.Error("TitleEntities should return the same EditMessageChecklist instance for chaining")
+	}
+}

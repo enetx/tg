@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/types/updates"
@@ -11,7 +12,7 @@ import (
 // (enabled in the @BotFather Mini App) can fetch/replace their tokens, configure
 // their access settings, and react to managed-bot lifecycle updates.
 func main() {
-	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// React to any managed-bot lifecycle update (creation / token update / owner update).

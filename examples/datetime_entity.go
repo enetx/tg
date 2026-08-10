@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/bot"
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/entities"
@@ -13,7 +14,7 @@ import (
 // localized, auto-updating date/time. An optional format string (e.g. "t", "r", "wDT")
 // controls how it is displayed.
 func main() {
-	token := g.NewFile("../.env").Read().Ok().Trim().Split("=").Collect().Last().Some()
+	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
 	// /when — show a message where the word "soon" renders as a live date/time one hour from now.

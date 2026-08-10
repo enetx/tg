@@ -192,7 +192,7 @@ func TestDeleteMessages_EdgeCases(t *testing.T) {
 	}
 
 	tooManyResult := ctx.DeleteMessages().
-		MessageIDs(g.SliceOf(tooManyIDs...)).
+		MessageIDs(g.Slice[int64](tooManyIDs)).
 		Send()
 
 	if !tooManyResult.IsErr() {
@@ -275,7 +275,7 @@ func TestDeleteMessages_CompleteWorkflow(t *testing.T) {
 	}
 
 	hundredResult := ctx.DeleteMessages().
-		MessageIDs(g.SliceOf(exactlyHundredIDs...)).
+		MessageIDs(g.Slice[int64](exactlyHundredIDs)).
 		Send()
 
 	if hundredResult.IsErr() {

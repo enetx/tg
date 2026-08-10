@@ -37,13 +37,13 @@ func (ma *MediaAudio) Caption(caption g.String) *MediaAudio {
 
 // HTML sets parse mode to HTML for the caption.
 func (ma *MediaAudio) HTML() *MediaAudio {
-	ma.input.ParseMode = "HTML"
+	ma.input.ParseMode = gotgbot.ParseModeHTML
 	return ma
 }
 
 // Markdown sets parse mode to MarkdownV2 for the caption.
 func (ma *MediaAudio) Markdown() *MediaAudio {
-	ma.input.ParseMode = "MarkdownV2"
+	ma.input.ParseMode = gotgbot.ParseModeMarkdownV2
 	return ma
 }
 

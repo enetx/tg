@@ -1,6 +1,8 @@
 // Package entity defines the entry (message-entity) types used by Telegram.
 package entity
 
+import "github.com/PaulSonOfLars/gotgbot/v2"
+
 // EntityType enumerates all supported Telegram message-entity types.
 //
 // See: https://core.telegram.org/bots/api#messageentity
@@ -37,49 +39,52 @@ const (
 
 	// Special
 	CustomEmoji // inline custom emoji stickers
+	DateTime    // date and time values rendered in the user's locale
 )
 
 // String returns the canonical string representation used by Telegram Bot API.
 func (e EntityType) String() string {
 	switch e {
 	case Mention:
-		return "mention"
+		return gotgbot.MessageEntityTypeMention
 	case Hashtag:
-		return "hashtag"
+		return gotgbot.MessageEntityTypeHashtag
 	case Cashtag:
-		return "cashtag"
+		return gotgbot.MessageEntityTypeCashtag
 	case BotCommand:
-		return "bot_command"
+		return gotgbot.MessageEntityTypeBotCommand
 	case URL:
-		return "url"
+		return gotgbot.MessageEntityTypeUrl
 	case Email:
-		return "email"
+		return gotgbot.MessageEntityTypeEmail
 	case PhoneNumber:
-		return "phone_number"
+		return gotgbot.MessageEntityTypePhoneNumber
 	case Bold:
-		return "bold"
+		return gotgbot.MessageEntityTypeBold
 	case Italic:
-		return "italic"
+		return gotgbot.MessageEntityTypeItalic
 	case Underline:
-		return "underline"
+		return gotgbot.MessageEntityTypeUnderline
 	case Strikethrough:
-		return "strikethrough"
+		return gotgbot.MessageEntityTypeStrikethrough
 	case Spoiler:
-		return "spoiler"
+		return gotgbot.MessageEntityTypeSpoiler
 	case Blockquote:
-		return "blockquote"
+		return gotgbot.MessageEntityTypeBlockquote
 	case ExpandableBlockquote:
-		return "expandable_blockquote"
+		return gotgbot.MessageEntityTypeExpandableBlockquote
 	case Code:
-		return "code"
+		return gotgbot.MessageEntityTypeCode
 	case Pre:
-		return "pre"
+		return gotgbot.MessageEntityTypePre
 	case TextLink:
-		return "text_link"
+		return gotgbot.MessageEntityTypeTextLink
 	case TextMention:
-		return "text_mention"
+		return gotgbot.MessageEntityTypeTextMention
 	case CustomEmoji:
-		return "custom_emoji"
+		return gotgbot.MessageEntityTypeCustomEmoji
+	case DateTime:
+		return gotgbot.MessageEntityTypeDateTime
 	default:
 		return "unknown"
 	}

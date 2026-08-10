@@ -43,13 +43,13 @@ func (sg *SendGift) Text(text g.String) *SendGift {
 
 // HTML sets the gift text parse mode to HTML.
 func (sg *SendGift) HTML() *SendGift {
-	sg.opts.TextParseMode = "HTML"
+	sg.opts.TextParseMode = gotgbot.ParseModeHTML
 	return sg
 }
 
 // Markdown sets the gift text parse mode to MarkdownV2.
 func (sg *SendGift) Markdown() *SendGift {
-	sg.opts.TextParseMode = "MarkdownV2"
+	sg.opts.TextParseMode = gotgbot.ParseModeMarkdownV2
 	return sg
 }
 

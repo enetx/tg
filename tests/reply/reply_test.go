@@ -232,3 +232,40 @@ func TestParameters_AllMethods(t *testing.T) {
 // 		t.Error("QuoteEntities should return Parameters for chaining even with nil")
 // 	}
 // }
+
+func TestParameters_EphemeralMessage(t *testing.T) {
+	messageID := int64(123)
+	ephemeralID := int64(555)
+
+	params := reply.New(messageID).EphemeralMessage(ephemeralID)
+	if params == nil {
+		t.Error("EphemeralMessage should return non-nil Parameters for chaining")
+	}
+
+	result := params.Std()
+	if result.EphemeralMessageId != ephemeralID {
+		t.Errorf("Expected EphemeralMessageId %d, got %d", ephemeralID, result.EphemeralMessageId)
+	}
+
+	if result.MessageId != messageID {
+		t.Errorf("Expected MessageId %d, got %d", messageID, result.MessageId)
+	}
+}
+
+func TestNewEphemeral(t *testing.T) {
+	ephemeralID := int64(555)
+
+	params := reply.NewEphemeral(ephemeralID)
+	if params == nil {
+		t.Error("NewEphemeral should return non-nil Parameters")
+	}
+
+	result := params.Std()
+	if result.EphemeralMessageId != ephemeralID {
+		t.Errorf("Expected EphemeralMessageId %d, got %d", ephemeralID, result.EphemeralMessageId)
+	}
+
+	if result.MessageId != 0 {
+		t.Errorf("Expected MessageId to stay unset, got %d", result.MessageId)
+	}
+}

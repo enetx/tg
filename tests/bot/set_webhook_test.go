@@ -8,54 +8,6 @@ import (
 	"github.com/enetx/tg/types/updates"
 )
 
-func TestBot_Webhook(t *testing.T) {
-	token := g.String("123456:ABCDEF-test-token-here")
-	result := bot.New(token).DisableTokenCheck().Build()
-
-	if result.IsErr() {
-		t.Errorf("Failed to create bot: %v", result.Err())
-		return
-	}
-
-	bot := result.Ok()
-	webhook := bot.Webhook()
-
-	if webhook == nil {
-		t.Error("Expected webhook to be non-nil")
-	}
-}
-
-func TestBot_HandleWebhook(t *testing.T) {
-	token := g.String("123456:ABCDEF-test-token-here")
-	result := bot.New(token).DisableTokenCheck().Build()
-
-	if result.IsErr() {
-		t.Errorf("Failed to create bot: %v", result.Err())
-		return
-	}
-
-	bot := result.Ok()
-
-	// Test with valid JSON
-	validJSON := []byte(
-		`{"update_id": 123, "message": {"message_id": 1, "date": 1234567890, "text": "test", "chat": {"id": 1, "type": "private"}}}`,
-	)
-	err := bot.HandleWebhook(validJSON)
-	// Should not panic and should handle the update
-	if err != nil {
-		// Error is expected since we don't have a real dispatcher setup, but it shouldn't panic
-		t.Logf("Expected error in test environment: %v", err)
-	}
-
-	// Test with invalid JSON
-	invalidJSON := []byte(`{invalid json}`)
-	err = bot.HandleWebhook(invalidJSON)
-
-	if err == nil {
-		t.Error("Expected error for invalid JSON")
-	}
-}
-
 func TestWebhook_SecretToken(t *testing.T) {
 	token := g.String("123456:ABCDEF-test-token-here")
 	result := bot.New(token).DisableTokenCheck().Build()

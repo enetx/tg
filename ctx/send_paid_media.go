@@ -95,13 +95,13 @@ func (spm *SendPaidMedia) Caption(caption g.String) *SendPaidMedia {
 
 // HTML sets the caption parse mode to HTML.
 func (spm *SendPaidMedia) HTML() *SendPaidMedia {
-	spm.opts.ParseMode = "HTML"
+	spm.opts.ParseMode = gotgbot.ParseModeHTML
 	return spm
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
 func (spm *SendPaidMedia) Markdown() *SendPaidMedia {
-	spm.opts.ParseMode = "MarkdownV2"
+	spm.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return spm
 }
 

@@ -220,5 +220,5 @@ func (pe *PassportError) Build() gotgbot.PassportElementError {
 
 // Errors creates a slice of gotgbot.PassportElementError from multiple PassportError builders.
 func Errors(errors ...*PassportError) g.Slice[gotgbot.PassportElementError] {
-	return g.TransformSlice(g.SliceOf(errors...), (*PassportError).Build)
+	return g.TransformSlice(g.Slice[*PassportError](errors), (*PassportError).Build)
 }

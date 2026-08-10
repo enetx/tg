@@ -33,13 +33,13 @@ func (mlp *MediaLivePhoto) Caption(caption g.String) *MediaLivePhoto {
 
 // HTML sets parse mode to HTML for the caption.
 func (mlp *MediaLivePhoto) HTML() *MediaLivePhoto {
-	mlp.input.ParseMode = "HTML"
+	mlp.input.ParseMode = gotgbot.ParseModeHTML
 	return mlp
 }
 
 // Markdown sets parse mode to MarkdownV2 for the caption.
 func (mlp *MediaLivePhoto) Markdown() *MediaLivePhoto {
-	mlp.input.ParseMode = "MarkdownV2"
+	mlp.input.ParseMode = gotgbot.ParseModeMarkdownV2
 	return mlp
 }
 

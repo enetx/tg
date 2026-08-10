@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/suggested"
@@ -15,8 +16,8 @@ type SendVideoNote struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendVideoNoteOpts
-	file        *g.File
-	thumb       *g.File
+	file        *fs.File
+	thumb       *fs.File
 	chatID      g.Option[int64]
 	after       g.Option[time.Duration]
 	deleteAfter g.Option[time.Duration]
@@ -79,7 +80,7 @@ func (svn *SendVideoNote) Length(length int64) *SendVideoNote {
 
 // Thumbnail sets a custom thumbnail for the video note.
 func (svn *SendVideoNote) Thumbnail(file g.String) *SendVideoNote {
-	svn.thumb = g.NewFile(file)
+	svn.thumb = fs.NewFile(file)
 
 	reader := svn.thumb.Open()
 	if reader.IsErr() {
@@ -150,6 +151,20 @@ func (svn *SendVideoNote) To(chatID int64) *SendVideoNote {
 // DirectMessagesTopic sets the direct messages topic ID for the message.
 func (svn *SendVideoNote) DirectMessagesTopic(topicID int64) *SendVideoNote {
 	svn.opts.DirectMessagesTopicId = topicID
+	return svn
+}
+
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (svn *SendVideoNote) ReceiverUser(id int64) *SendVideoNote {
+	svn.opts.ReceiverUserId = id
+	return svn
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (svn *SendVideoNote) CallbackQuery(id g.String) *SendVideoNote {
+	svn.opts.CallbackQueryId = id.Std()
 	return svn
 }
 

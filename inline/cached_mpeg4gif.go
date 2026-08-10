@@ -37,13 +37,13 @@ func (c *CachedMpeg4Gif) Caption(caption g.String) *CachedMpeg4Gif {
 
 // HTML sets parse mode to HTML for the caption.
 func (c *CachedMpeg4Gif) HTML() *CachedMpeg4Gif {
-	c.inline.ParseMode = "HTML"
+	c.inline.ParseMode = gotgbot.ParseModeHTML
 	return c
 }
 
 // Markdown sets parse mode to MarkdownV2 for the caption.
 func (c *CachedMpeg4Gif) Markdown() *CachedMpeg4Gif {
-	c.inline.ParseMode = "MarkdownV2"
+	c.inline.ParseMode = gotgbot.ParseModeMarkdownV2
 	return c
 }
 

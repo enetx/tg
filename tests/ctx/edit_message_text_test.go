@@ -630,3 +630,29 @@ func TestEditMessageText_Send(t *testing.T) {
 		t.Error("Send with all features should return a result")
 	}
 }
+
+func TestEditMessageText_RichMessage(t *testing.T) {
+	bot := &mockBot{}
+	rawCtx := &ext.Context{
+		EffectiveChat:    &gotgbot.Chat{Id: 456, Type: "private"},
+		EffectiveMessage: &gotgbot.Message{MessageId: 789},
+		Update:           &gotgbot.Update{UpdateId: 1},
+	}
+
+	testCtx := ctx.New(bot, rawCtx)
+
+	builder := testCtx.EditMessageText(g.String("Updated"))
+
+	if builder.RichMessage(richTestMessage()) != builder {
+		t.Error("RichMessage should return the same EditMessageText instance for chaining")
+	}
+
+	if builder.RichMessage(nil) != builder {
+		t.Error("RichMessage should tolerate nil messages")
+	}
+
+	result := builder.Send()
+	if !result.IsErr() && !result.IsOk() {
+		t.Error("Send with a rich message should return a result")
+	}
+}

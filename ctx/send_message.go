@@ -48,13 +48,13 @@ func (sm *SendMessage) To(chatID int64) *SendMessage {
 
 // HTML sets the message parse mode to HTML.
 func (sm *SendMessage) HTML() *SendMessage {
-	sm.opts.ParseMode = "HTML"
+	sm.opts.ParseMode = gotgbot.ParseModeHTML
 	return sm
 }
 
 // Markdown sets the message parse mode to MarkdownV2.
 func (sm *SendMessage) Markdown() *SendMessage {
-	sm.opts.ParseMode = "MarkdownV2"
+	sm.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return sm
 }
 
@@ -159,6 +159,20 @@ func (sm *SendMessage) APIURL(url g.String) *SendMessage {
 // DirectMessagesTopic sets the direct messages topic ID for the message.
 func (sm *SendMessage) DirectMessagesTopic(topicID int64) *SendMessage {
 	sm.opts.DirectMessagesTopicId = topicID
+	return sm
+}
+
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (sm *SendMessage) ReceiverUser(id int64) *SendMessage {
+	sm.opts.ReceiverUserId = id
+	return sm
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (sm *SendMessage) CallbackQuery(id g.String) *SendMessage {
+	sm.opts.CallbackQueryId = id.Std()
 	return sm
 }
 

@@ -151,6 +151,20 @@ func (sv *SendVenue) DirectMessagesTopic(topicID int64) *SendVenue {
 	return sv
 }
 
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (sv *SendVenue) ReceiverUser(id int64) *SendVenue {
+	sv.opts.ReceiverUserId = id
+	return sv
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (sv *SendVenue) CallbackQuery(id g.String) *SendVenue {
+	sv.opts.CallbackQueryId = id.Std()
+	return sv
+}
+
 // Send sends the venue message to Telegram and returns the result.
 func (sv *SendVenue) Send() g.Result[*gotgbot.Message] {
 	return sv.ctx.timers(sv.after, sv.deleteAfter, func() g.Result[*gotgbot.Message] {

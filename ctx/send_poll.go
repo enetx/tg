@@ -26,13 +26,13 @@ type SendPoll struct {
 
 // QuestionHTML sets the question parse mode to HTML.
 func (sp *SendPoll) QuestionHTML() *SendPoll {
-	sp.opts.QuestionParseMode = "HTML"
+	sp.opts.QuestionParseMode = gotgbot.ParseModeHTML
 	return sp
 }
 
 // QuestionMarkdown sets the question parse mode to MarkdownV2.
 func (sp *SendPoll) QuestionMarkdown() *SendPoll {
-	sp.opts.QuestionParseMode = "MarkdownV2"
+	sp.opts.QuestionParseMode = gotgbot.ParseModeMarkdownV2
 	return sp
 }
 
@@ -57,13 +57,13 @@ func (sp *SendPoll) Description(text g.String) *SendPoll {
 
 // DescriptionHTML sets the description parse mode to HTML.
 func (sp *SendPoll) DescriptionHTML() *SendPoll {
-	sp.opts.DescriptionParseMode = "HTML"
+	sp.opts.DescriptionParseMode = gotgbot.ParseModeHTML
 	return sp
 }
 
 // DescriptionMarkdown sets the description parse mode to MarkdownV2.
 func (sp *SendPoll) DescriptionMarkdown() *SendPoll {
-	sp.opts.DescriptionParseMode = "MarkdownV2"
+	sp.opts.DescriptionParseMode = gotgbot.ParseModeMarkdownV2
 	return sp
 }
 
@@ -198,13 +198,13 @@ func (sp *SendPoll) Explanation(text g.String) *SendPoll {
 
 // ExplanationHTML sets the explanation parse mode to HTML.
 func (sp *SendPoll) ExplanationHTML() *SendPoll {
-	sp.opts.ExplanationParseMode = "HTML"
+	sp.opts.ExplanationParseMode = gotgbot.ParseModeHTML
 	return sp
 }
 
 // ExplanationMarkdown sets the explanation parse mode to MarkdownV2.
 func (sp *SendPoll) ExplanationMarkdown() *SendPoll {
-	sp.opts.ExplanationParseMode = "MarkdownV2"
+	sp.opts.ExplanationParseMode = gotgbot.ParseModeMarkdownV2
 	return sp
 }
 

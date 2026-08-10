@@ -37,13 +37,13 @@ func (smd *SendMessageDraft) Thread(id int64) *SendMessageDraft {
 
 // HTML sets the message parse mode to HTML.
 func (smd *SendMessageDraft) HTML() *SendMessageDraft {
-	smd.opts.ParseMode = "HTML"
+	smd.opts.ParseMode = gotgbot.ParseModeHTML
 	return smd
 }
 
 // Markdown sets the message parse mode to MarkdownV2.
 func (smd *SendMessageDraft) Markdown() *SendMessageDraft {
-	smd.opts.ParseMode = "MarkdownV2"
+	smd.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return smd
 }
 

@@ -337,3 +337,22 @@ func TestSendVoice_SendWithAllOptions(t *testing.T) {
 		t.Logf("SendVoice Send with all options failed as expected: %v", sendResult.Err())
 	}
 }
+
+func TestSendVoice_Ephemeral(t *testing.T) {
+	testCtx := ephemeralContext(&mockBot{})
+
+	builder := testCtx.SendVoice(g.String("https://example.com/voice.ogg"))
+
+	if builder.ReceiverUser(123) != builder {
+		t.Error("ReceiverUser should return the same SendVoice instance for chaining")
+	}
+
+	if builder.CallbackQuery(g.String("callback_123")) != builder {
+		t.Error("CallbackQuery should return the same SendVoice instance for chaining")
+	}
+
+	result := builder.Send()
+	if !result.IsErr() && !result.IsOk() {
+		t.Error("Send with ephemeral options should return a result")
+	}
+}

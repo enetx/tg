@@ -49,13 +49,13 @@ func (c *CopyMessage) Caption(caption g.String) *CopyMessage {
 
 // HTML sets the caption parse mode to HTML.
 func (c *CopyMessage) HTML() *CopyMessage {
-	c.opts.ParseMode = "HTML"
+	c.opts.ParseMode = gotgbot.ParseModeHTML
 	return c
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
 func (c *CopyMessage) Markdown() *CopyMessage {
-	c.opts.ParseMode = "MarkdownV2"
+	c.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return c
 }
 

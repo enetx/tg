@@ -6,6 +6,7 @@ import (
 	"os/exec"
 
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 )
 
 // VideoMetadata holds structured information about a video file.
@@ -68,7 +69,7 @@ func GetVideoMetadata(videoPath g.String) g.Result[*VideoMetadata] {
 }
 
 // GenerateThumbnail creates a thumbnail for a video and returns the path to the new file.
-func GenerateThumbnail(videoPath g.String, seek ...g.String) g.Result[*g.File] {
+func GenerateThumbnail(videoPath g.String, seek ...g.String) g.Result[*fs.File] {
 	thumbPath := videoPath + ".jpg"
 
 	seekTime := "00:00:01.000"
@@ -88,9 +89,9 @@ func GenerateThumbnail(videoPath g.String, seek ...g.String) g.Result[*g.File] {
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		return g.Err[*g.File](
+		return g.Err[*fs.File](
 			g.Errorf("failed to generate thumbnail with ffmpeg: {}, details: {}", err, stderr.String()))
 	}
 
-	return g.Ok(g.NewFile(thumbPath))
+	return g.Ok(fs.NewFile(thumbPath))
 }

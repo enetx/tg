@@ -379,3 +379,22 @@ func TestSendContact_APIURLWithExistingRequestOpts(t *testing.T) {
 		t.Error("APIURL with existing RequestOpts should return builder")
 	}
 }
+
+func TestSendContact_Ephemeral(t *testing.T) {
+	testCtx := ephemeralContext(&mockBot{})
+
+	builder := testCtx.SendContact(g.String("+1234567890"), g.String("John"))
+
+	if builder.ReceiverUser(123) != builder {
+		t.Error("ReceiverUser should return the same SendContact instance for chaining")
+	}
+
+	if builder.CallbackQuery(g.String("callback_123")) != builder {
+		t.Error("CallbackQuery should return the same SendContact instance for chaining")
+	}
+
+	result := builder.Send()
+	if !result.IsErr() && !result.IsOk() {
+		t.Error("Send with ephemeral options should return a result")
+	}
+}

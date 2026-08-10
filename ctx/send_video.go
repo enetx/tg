@@ -6,6 +6,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/fs"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/internal/pkg/ffmpeg"
 	"github.com/enetx/tg/keyboard"
@@ -18,9 +19,9 @@ type SendVideo struct {
 	ctx         *Context
 	doc         gotgbot.InputFileOrString
 	opts        *gotgbot.SendVideoOpts
-	file        *g.File
-	files       g.Slice[*g.File]
-	thumb       *g.File
+	file        *fs.File
+	files       g.Slice[*fs.File]
+	thumb       *fs.File
 	removethumb bool
 	duration    g.Float
 	chatID      g.Option[int64]
@@ -67,7 +68,7 @@ func (sv *SendVideo) Duration(duration time.Duration) *SendVideo {
 
 // Thumbnail sets a custom thumbnail for the video.
 func (sv *SendVideo) Thumbnail(file g.String) *SendVideo {
-	thumb := g.NewFile(file)
+	thumb := fs.NewFile(file)
 
 	reader := thumb.Open()
 	if reader.IsErr() {
@@ -101,13 +102,13 @@ func (sv *SendVideo) Caption(caption g.String) *SendVideo {
 
 // HTML sets the caption parse mode to HTML.
 func (sv *SendVideo) HTML() *SendVideo {
-	sv.opts.ParseMode = "HTML"
+	sv.opts.ParseMode = gotgbot.ParseModeHTML
 	return sv
 }
 
 // Markdown sets the caption parse mode to MarkdownV2.
 func (sv *SendVideo) Markdown() *SendVideo {
-	sv.opts.ParseMode = "MarkdownV2"
+	sv.opts.ParseMode = gotgbot.ParseModeMarkdownV2
 	return sv
 }
 
@@ -199,7 +200,7 @@ func (sv *SendVideo) SuggestedPost(params *suggested.PostParameters) *SendVideo 
 
 // Cover sets a cover image for the video.
 func (sv *SendVideo) Cover(filename g.String) *SendVideo {
-	cover := g.NewFile(filename)
+	cover := fs.NewFile(filename)
 
 	reader := cover.Open()
 	if reader.IsErr() {
@@ -307,6 +308,20 @@ func (sv *SendVideo) DirectMessagesTopic(topicID int64) *SendVideo {
 	return sv
 }
 
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (sv *SendVideo) ReceiverUser(id int64) *SendVideo {
+	sv.opts.ReceiverUserId = id
+	return sv
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (sv *SendVideo) CallbackQuery(id g.String) *SendVideo {
+	sv.opts.CallbackQueryId = id.Std()
+	return sv
+}
+
 // Send sends the video message to Telegram and returns the result.
 func (sv *SendVideo) Send() g.Result[*gotgbot.Message] {
 	if sv.err != nil {
@@ -325,7 +340,7 @@ func (sv *SendVideo) Send() g.Result[*gotgbot.Message] {
 	}
 
 	defer func() {
-		sv.files.Iter().ForEach(func(file *g.File) {
+		sv.files.Iter().ForEach(func(file *fs.File) {
 			file.Close()
 		})
 	}()

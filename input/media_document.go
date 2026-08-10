@@ -35,13 +35,13 @@ func (md *MediaDocument) Caption(caption g.String) *MediaDocument {
 
 // HTML sets parse mode to HTML for the caption.
 func (md *MediaDocument) HTML() *MediaDocument {
-	md.input.ParseMode = "HTML"
+	md.input.ParseMode = gotgbot.ParseModeHTML
 	return md
 }
 
 // Markdown sets parse mode to MarkdownV2 for the caption.
 func (md *MediaDocument) Markdown() *MediaDocument {
-	md.input.ParseMode = "MarkdownV2"
+	md.input.ParseMode = gotgbot.ParseModeMarkdownV2
 	return md
 }
 
