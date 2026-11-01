@@ -53,6 +53,18 @@ func (smd *SendMessageDraft) Entities(e *entities.Entities) *SendMessageDraft {
 	return smd
 }
 
+// CanStop shows a button that allows the user to stop further drafts.
+func (smd *SendMessageDraft) CanStop() *SendMessageDraft {
+	smd.opts.CanStop = true
+	return smd
+}
+
+// KeepOnStop keeps the draft visible for a short time after the user stops generation.
+func (smd *SendMessageDraft) KeepOnStop() *SendMessageDraft {
+	smd.opts.KeepOnStop = true
+	return smd
+}
+
 // Timeout sets a custom timeout for this request.
 func (smd *SendMessageDraft) Timeout(duration time.Duration) *SendMessageDraft {
 	if smd.opts.RequestOpts == nil {

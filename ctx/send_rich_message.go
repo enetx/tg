@@ -128,10 +128,46 @@ func (srm *SendRichMessage) APIURL(url g.String) *SendRichMessage {
 	return srm
 }
 
+// ReceiverUser sets the identifier of the user who will receive the outgoing
+// ephemeral message; for group and supergroup chats only.
+func (srm *SendRichMessage) ReceiverUser(id int64) *SendRichMessage {
+	if srm.opts.EphemeralMessageParameters == nil {
+		srm.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	srm.opts.EphemeralMessageParameters.ReceiverUserId = id
+	return srm
+}
+
+// CallbackQuery sets the identifier of the callback query which triggered the
+// outgoing ephemeral message.
+func (srm *SendRichMessage) CallbackQuery(id g.String) *SendRichMessage {
+	if srm.opts.EphemeralMessageParameters == nil {
+		srm.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	srm.opts.EphemeralMessageParameters.CallbackQueryId = id.Std()
+	return srm
+}
+
+// ReplaceCallbackQueryMessage shows the ephemeral message in place of the message
+// that triggered the callback query. Not supported for callbacks from ephemeral messages.
+func (srm *SendRichMessage) ReplaceCallbackQueryMessage() *SendRichMessage {
+	if srm.opts.EphemeralMessageParameters == nil {
+		srm.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	srm.opts.EphemeralMessageParameters.ReplaceCallbackQueryMessage = true
+	return srm
+}
+
 // Send sends the rich message to Telegram and returns the result.
 func (srm *SendRichMessage) Send() g.Result[*gotgbot.Message] {
 	return srm.ctx.timers(srm.after, srm.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := srm.chatID.UnwrapOr(srm.ctx.EffectiveChat.Id)
-		return g.ResultOf(srm.ctx.Bot.Raw().SendRichMessage(chatID, srm.message.Std(), srm.opts))
+		message := srm.message.Std()
+		srm.opts.RequestOpts = richMessageRequestOpts(srm.opts.RequestOpts, message)
+
+		return g.ResultOf(srm.ctx.Bot.Raw().SendRichMessage(chatID, message, srm.opts))
 	})
 }

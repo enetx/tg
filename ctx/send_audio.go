@@ -188,14 +188,33 @@ func (sa *SendAudio) DirectMessagesTopic(topicID int64) *SendAudio {
 // ReceiverUser sets the identifier of the user who will receive the outgoing
 // ephemeral message; for group and supergroup chats only.
 func (sa *SendAudio) ReceiverUser(id int64) *SendAudio {
-	sa.opts.ReceiverUserId = id
+	if sa.opts.EphemeralMessageParameters == nil {
+		sa.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	sa.opts.EphemeralMessageParameters.ReceiverUserId = id
 	return sa
 }
 
 // CallbackQuery sets the identifier of the callback query which triggered the
 // outgoing ephemeral message.
 func (sa *SendAudio) CallbackQuery(id g.String) *SendAudio {
-	sa.opts.CallbackQueryId = id.Std()
+	if sa.opts.EphemeralMessageParameters == nil {
+		sa.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	sa.opts.EphemeralMessageParameters.CallbackQueryId = id.Std()
+	return sa
+}
+
+// ReplaceCallbackQueryMessage shows the ephemeral message in place of the message
+// that triggered the callback query. Not supported for callbacks from ephemeral messages.
+func (sa *SendAudio) ReplaceCallbackQueryMessage() *SendAudio {
+	if sa.opts.EphemeralMessageParameters == nil {
+		sa.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	sa.opts.EphemeralMessageParameters.ReplaceCallbackQueryMessage = true
 	return sa
 }
 

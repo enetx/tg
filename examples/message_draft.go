@@ -27,12 +27,22 @@ func main() {
 		if err := ctx.SendMessageDraft(draftID).
 			Text(g.String("Generating your answer")).
 			HTML().
+			CanStop().
+			KeepOnStop().
 			Send().Err(); err != nil {
 			return err
 		}
 
 		// Persist the final message.
 		return ctx.SendMessage(g.String("Here is your complete answer!")).Send().Err()
+	})
+
+	// Stop requests include the chat, thread and draft identifiers.
+	b.On.StoppedMessageGeneration.Any(func(ctx *ctx.Context) error {
+		stopped := ctx.Update.StoppedMessageGeneration
+		return ctx.SendMessage(g.Format("Stopped draft {}", stopped.DraftId)).
+			Thread(stopped.MessageThreadId).
+			Send().Err()
 	})
 
 	b.Polling().Start()

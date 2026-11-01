@@ -36,6 +36,18 @@ func (srmd *SendRichMessageDraft) Thread(id int64) *SendRichMessageDraft {
 	return srmd
 }
 
+// CanStop shows a button that allows the user to stop further drafts.
+func (srmd *SendRichMessageDraft) CanStop() *SendRichMessageDraft {
+	srmd.opts.CanStop = true
+	return srmd
+}
+
+// KeepOnStop keeps the draft visible for a short time after the user stops generation.
+func (srmd *SendRichMessageDraft) KeepOnStop() *SendRichMessageDraft {
+	srmd.opts.KeepOnStop = true
+	return srmd
+}
+
 // Timeout sets a custom timeout for this request.
 func (srmd *SendRichMessageDraft) Timeout(duration time.Duration) *SendRichMessageDraft {
 	if srmd.opts.RequestOpts == nil {

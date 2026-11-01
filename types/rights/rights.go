@@ -1,10 +1,7 @@
 // Package rights defines Telegram chat administrator rights types and utilities.
 package rights
 
-import (
-	"github.com/PaulSonOfLars/gotgbot/v2"
-	"github.com/enetx/g/ref"
-)
+import "github.com/PaulSonOfLars/gotgbot/v2"
 
 // Right enumerates all supported Telegram chat administrator rights.
 type Right int
@@ -27,6 +24,7 @@ const (
 	ManageTopics                      // Manage topics in forum supergroups
 	ManageDirectMessages              // Manage direct messages of the channel
 	ManageTags                        // Edit tags of regular members; for groups and supergroups only
+	SendWelcomeMessages               // Manage chat welcome messages or send them as a bot
 )
 
 // Rights creates a ChatAdministratorRights object with the specified administrator rights enabled.
@@ -67,7 +65,9 @@ func Rights(list ...Right) *gotgbot.ChatAdministratorRights {
 		case ManageDirectMessages:
 			rights.CanManageDirectMessages = true
 		case ManageTags:
-			rights.CanManageTags = ref.Of(true)
+			rights.CanManageTags = true
+		case SendWelcomeMessages:
+			rights.CanSendWelcomeMessages = true
 		}
 	}
 

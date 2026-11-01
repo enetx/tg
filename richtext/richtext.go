@@ -55,6 +55,11 @@ func Anchor(name g.String) *Text {
 	return &Text{node: gotgbot.RichTextAnchor{Name: name.Std()}}
 }
 
+// Button creates a new Text builder holding a rich message button node.
+func Button(button gotgbot.RichMessageButton) *Text {
+	return &Text{node: gotgbot.RichTextButton{Button: button}}
+}
+
 // Bold wraps the current node in bold formatting.
 func (t *Text) Bold() *Text {
 	t.node = gotgbot.RichTextBold{Text: t.node}

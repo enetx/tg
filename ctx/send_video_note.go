@@ -157,14 +157,33 @@ func (svn *SendVideoNote) DirectMessagesTopic(topicID int64) *SendVideoNote {
 // ReceiverUser sets the identifier of the user who will receive the outgoing
 // ephemeral message; for group and supergroup chats only.
 func (svn *SendVideoNote) ReceiverUser(id int64) *SendVideoNote {
-	svn.opts.ReceiverUserId = id
+	if svn.opts.EphemeralMessageParameters == nil {
+		svn.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	svn.opts.EphemeralMessageParameters.ReceiverUserId = id
 	return svn
 }
 
 // CallbackQuery sets the identifier of the callback query which triggered the
 // outgoing ephemeral message.
 func (svn *SendVideoNote) CallbackQuery(id g.String) *SendVideoNote {
-	svn.opts.CallbackQueryId = id.Std()
+	if svn.opts.EphemeralMessageParameters == nil {
+		svn.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	svn.opts.EphemeralMessageParameters.CallbackQueryId = id.Std()
+	return svn
+}
+
+// ReplaceCallbackQueryMessage shows the ephemeral message in place of the message
+// that triggered the callback query. Not supported for callbacks from ephemeral messages.
+func (svn *SendVideoNote) ReplaceCallbackQueryMessage() *SendVideoNote {
+	if svn.opts.EphemeralMessageParameters == nil {
+		svn.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	svn.opts.EphemeralMessageParameters.ReplaceCallbackQueryMessage = true
 	return svn
 }
 

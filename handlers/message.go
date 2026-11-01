@@ -267,6 +267,11 @@ func (h *MessageHandlers) ChatOwnerChanged(fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.ChatOwnerChanged != nil }, fn)
 }
 
+// CommunityChatJoined handles service messages about a user joining a chat from a community.
+func (h *MessageHandlers) CommunityChatJoined(fn Handler) *MessageHandler {
+	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.CommunityChatJoined != nil }, fn)
+}
+
 // FromUser handles messages from a specific user ID.
 func (h *MessageHandlers) FromUser(id int64, fn Handler) *MessageHandler {
 	return h.handleMessage(func(msg *gotgbot.Message) bool { return msg.From != nil && msg.From.Id == id }, fn)

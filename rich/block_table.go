@@ -45,6 +45,12 @@ func (bt *BlockTable) Striped() *BlockTable {
 	return bt
 }
 
+// Compact reduces the padding around the table cells.
+func (bt *BlockTable) Compact() *BlockTable {
+	bt.block.IsCompact = true
+	return bt
+}
+
 // Caption sets the table caption.
 func (bt *BlockTable) Caption(caption *richtext.Text) *BlockTable {
 	bt.block.Caption = caption.Std()

@@ -11,32 +11,33 @@ import (
 type UpdateType int
 
 const (
-	Message                 UpdateType = iota // Incoming message
-	EditedMessage                             // Edited incoming message
-	ChannelPost                               // New channel post
-	EditedChannelPost                         // Edited channel post
-	InlineQuery                               // Inline query (e.g. @your_bot query)
-	ChosenInlineResult                        // Result chosen from inline query
-	CallbackQuery                             // Button callback with callback_data
-	ShippingQuery                             // Shipping address query for payments
-	PreCheckoutQuery                          // Pre-checkout query before confirming a payment
-	PurchasedPaidMedia                        // Paid media purchased by a user
-	Poll                                      // Poll creation
-	PollAnswer                                // User’s answer to a non-anonymous poll
-	MyChatMember                              // Bot's status updated in a chat
-	ChatMember                                // Chat member's status updated
-	ChatJoinRequest                           // Incoming join request to a chat
-	ChatBoost                                 // Chat boost added or changed
-	RemovedChatBoost                          // Chat boost removed
-	MessageReaction                           // New or removed reaction to a message
-	MessageReactionCount                      // Updated reaction count on a message
-	BusinessConnection                        // Bot connected/disconnected from business account
-	BusinessMessage                           // New message from connected business account
-	EditedBusinessMessage                     // Edited message from connected business account
-	DeletedBusinessMessages                   // Messages deleted from connected business account
-	GuestMessage                              // Message from a guest bot user
-	ManagedBot                                // Managed bot state updated
-	Subscription                              // Bot subscription of a user created or changed
+	Message                  UpdateType = iota // Incoming message
+	EditedMessage                              // Edited incoming message
+	ChannelPost                                // New channel post
+	EditedChannelPost                          // Edited channel post
+	InlineQuery                                // Inline query (e.g. @your_bot query)
+	ChosenInlineResult                         // Result chosen from inline query
+	CallbackQuery                              // Button callback with callback_data
+	ShippingQuery                              // Shipping address query for payments
+	PreCheckoutQuery                           // Pre-checkout query before confirming a payment
+	PurchasedPaidMedia                         // Paid media purchased by a user
+	Poll                                       // Poll creation
+	PollAnswer                                 // User’s answer to a non-anonymous poll
+	MyChatMember                               // Bot's status updated in a chat
+	ChatMember                                 // Chat member's status updated
+	ChatJoinRequest                            // Incoming join request to a chat
+	ChatBoost                                  // Chat boost added or changed
+	RemovedChatBoost                           // Chat boost removed
+	MessageReaction                            // New or removed reaction to a message
+	MessageReactionCount                       // Updated reaction count on a message
+	BusinessConnection                         // Bot connected/disconnected from business account
+	BusinessMessage                            // New message from connected business account
+	EditedBusinessMessage                      // Edited message from connected business account
+	DeletedBusinessMessages                    // Messages deleted from connected business account
+	GuestMessage                               // Message from a guest bot user
+	ManagedBot                                 // Managed bot state updated
+	Subscription                               // Bot subscription of a user created or changed
+	StoppedMessageGeneration                   // User stopped the generation of a message draft
 )
 
 // String returns the raw string name for UpdateType, as used in Telegram Bot API updates.
@@ -94,6 +95,8 @@ func (u UpdateType) String() string {
 		return gotgbot.UpdateTypeManagedBot
 	case Subscription:
 		return gotgbot.UpdateTypeSubscription
+	case StoppedMessageGeneration:
+		return gotgbot.UpdateTypeStoppedMessageGeneration
 	default:
 		return "unknown"
 	}
@@ -126,4 +129,5 @@ var All = g.Slice[UpdateType]{
 	GuestMessage,
 	ManagedBot,
 	Subscription,
+	StoppedMessageGeneration,
 }

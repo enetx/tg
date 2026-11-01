@@ -9,7 +9,8 @@ import (
 
 // ReplyKeyboard helps build Telegram reply keyboard markup using a fluent API.
 type ReplyKeyboard struct {
-	rows g.Slice[g.Slice[gotgbot.KeyboardButton]]
+	rows       g.Slice[g.Slice[gotgbot.KeyboardButton]]
+	forceReply bool
 }
 
 // Row starts a new row for subsequent buttons.
@@ -92,11 +93,18 @@ func (rb *ReplyKeyboard) ManagedBot(text g.String) *ReplyKeyboard {
 	})
 }
 
+// ForceReply forces users to reply while keeping the custom keyboard.
+func (rb *ReplyKeyboard) ForceReply() *ReplyKeyboard {
+	rb.forceReply = true
+	return rb
+}
+
 // Markup returns the final ReplyKeyboardMarkup structure.
 func (rb *ReplyKeyboard) Markup() gotgbot.ReplyMarkup {
 	keyboard := *(*([][]gotgbot.KeyboardButton))(unsafe.Pointer(&rb.rows))
 	return gotgbot.ReplyKeyboardMarkup{
 		Keyboard:       keyboard,
 		ResizeKeyboard: true,
+		ForceReply:     rb.forceReply,
 	}
 }

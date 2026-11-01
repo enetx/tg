@@ -26,6 +26,7 @@ const (
 	ManageTopics                     // Manage topics in forum supergroups
 	ManageDirectMessages             // Manage direct messages of the channel
 	ManageTags                       // Edit tags of regular members; for groups and supergroups only
+	SendWelcomeMessages              // Manage chat welcome messages or send them as a bot
 )
 
 // Roles creates a PromoteChatMemberOpts object with the specified administrator roles enabled.
@@ -65,6 +66,8 @@ func Roles(list ...Role) *gotgbot.PromoteChatMemberOpts {
 			opts.CanManageDirectMessages = true
 		case ManageTags:
 			opts.CanManageTags = true
+		case SendWelcomeMessages:
+			opts.CanSendWelcomeMessages = true
 		}
 	}
 

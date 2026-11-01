@@ -3,7 +3,6 @@
 # TG - Telegram Bot Framework for Go
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/enetx/tg.svg)](https://pkg.go.dev/github.com/enetx/tg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/enetx/tg)](https://goreportcard.com/report/github.com/enetx/tg)
 [![Coverage Status](https://coveralls.io/repos/github/enetx/tg/badge.svg?branch=main&service=github)](https://coveralls.io/github/enetx/tg?branch=main)
 [![Go](https://github.com/enetx/tg/actions/workflows/go.yml/badge.svg)](https://github.com/enetx/tg/actions/workflows/go.yml)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/enetx/tg)
@@ -11,6 +10,8 @@
 [![Telegram Bot API Version][TelegramVersionBadge]][TelegramLastVersion]
 
 Modern and elegant wrapper around [gotgbot](https://github.com/PaulSonOfLars/gotgbot) with convenient API and functional programming style support.
+
+Supports [Telegram Bot API 10.3][TelegramLastVersion]. Requires Go 1.27 or later.
 
 ## Video Demo
 
@@ -37,7 +38,7 @@ Modern and elegant wrapper around [gotgbot](https://github.com/PaulSonOfLars/got
 
 ```bash
 go mod init your-bot
-go get github.com/enetx/tg
+go get github.com/enetx/tg@latest
 ```
 
 ### Simple Echo Bot
@@ -121,6 +122,10 @@ b.On.Message.GuestMessage(func(ctx *ctx.Context) error {
 // Community service messages
 b.On.Message.CommunityChatAdded(func(ctx *ctx.Context) error {
     return ctx.Reply("A chat joined the community").Send().Err()
+})
+
+b.On.Message.CommunityChatJoined(func(ctx *ctx.Context) error {
+    return ctx.Reply("A user joined the chat from a community").Send().Err()
 })
 ```
 
@@ -465,7 +470,7 @@ Add middleware for request processing:
 // Global middleware
 b.Use(func(ctx *ctx.Context) error {
     // Log all updates
-    fmt.Println("Update from user:", ctx.EffectiveUser.Id)
+    fmt.Println("Update:", ctx.Update.UpdateId)
     return nil // Continue processing
 })
 
@@ -755,6 +760,7 @@ b.Command("article", func(ctx *ctx.Context) error {
         Block(rich.Table().
             Bordered().
             Striped().
+            Compact().
             Row(rich.Cell(richtext.New("Block")).Header(), rich.Cell(richtext.New("Purpose")).Header()).
             Row(rich.Cell(richtext.New("heading")), rich.Cell(richtext.New("section title"))).
             Caption(richtext.New("Supported blocks"))).
@@ -770,7 +776,27 @@ b.Command("article", func(ctx *ctx.Context) error {
 
 Every block builder is available: `Paragraph`, `Heading`, `Pre`, `Footer`, `Divider`, `Math`,
 `Anchor`, `List`/`ListItem`, `Quotation`, `PullQuotation`, `Collage`, `Slideshow`, `Table`/`Cell`,
-`Details`, `Map`, `Animation`, `Audio`, `Photo`, `Video`, `VoiceNote` and `Thinking`.
+`Details`, `Map`, `Animation`, `Audio`, `Photo`, `Video`, `VoiceNote`, `Thinking`,
+`Buttons`, `ExpandableQuotation` and `Document`.
+
+Buttons can appear in a row or inside rich text. They support URLs, callbacks,
+Web Apps, login URLs, inline queries, copying text and disabled buttons:
+
+```go
+button := rich.NewButton(richtext.New("Open")).URL("https://example.com")
+
+message := rich.New().
+    Block(rich.Buttons(button, rich.NewButton(richtext.New("Unavailable")).Disabled()).
+        Align(rich.AlignCenter)).
+    Block(rich.Paragraph(richtext.Button(button.Std()))).
+    Block(rich.ExpandableQuotation(richtext.New("Expandable quote")).
+        Credit(richtext.New("Source"))).
+    Block(rich.Document(input.Document(file.Input("https://example.com/report.pdf").Ok())))
+```
+
+Use `Style(keyboard.ButtonStylePrimary)` for a colored rich button or `Link()` for
+a callback button shown as a link. Documents can also be referenced from HTML or
+Markdown with `tg://document?id=...` and registered with `rich.Message.Media`.
 
 Inline nodes wrap each other by chaining — `richtext.New("text").Bold().URL("https://example.com")` —
 and cover the full node set: styles (`Bold`, `Italic`, `Underline`, `Strikethrough`, `Spoiler`,
@@ -799,7 +825,7 @@ b.Command("stream", func(ctx *ctx.Context) error {
     draftID := int64(1)
 
     partial := rich.New().Block(rich.Paragraph(richtext.New("Writing the article")))
-    if err := ctx.SendRichMessageDraft(draftID, partial).Send().Err(); err != nil {
+    if err := ctx.SendRichMessageDraft(draftID, partial).CanStop().KeepOnStop().Send().Err(); err != nil {
         return err
     }
 
@@ -813,6 +839,18 @@ b.Command("upgrade", func(ctx *ctx.Context) error {
     message := rich.New().Block(rich.Paragraph(richtext.New("Now formatted").Bold()))
 
     return ctx.EditMessageText("fallback text").RichMessage(message).Send().Err()
+})
+```
+
+`SendMessageDraft` and `SendRichMessageDraft` both support `CanStop()` and
+`KeepOnStop()`. Handle the stop request through `b.On.StoppedMessageGeneration`:
+
+```go
+b.On.StoppedMessageGeneration.Any(func(ctx *ctx.Context) error {
+    stopped := ctx.Update.StoppedMessageGeneration
+    return ctx.SendMessage(g.Format("Stopped draft {}", stopped.DraftId)).
+        Thread(stopped.MessageThreadId).
+        Send().Err()
 })
 ```
 
@@ -836,7 +874,10 @@ b.Command("secret", func(ctx *ctx.Context) error {
 `ReceiverUser` and `CallbackQuery` are available on every send builder — `SendMessage`,
 `SendPhoto`, `SendVideo`, `SendAudio`, `SendDocument`, `SendAnimation`, `SendVoice`,
 `SendVideoNote`, `SendSticker`, `SendContact`, `SendLocation`, `SendVenue`,
-`SendLivePhoto` and `Reply`.
+`SendLivePhoto`, `SendRichMessage` and `Reply`. These methods populate Telegram's
+`ephemeral_message_parameters` object. `ReplaceCallbackQueryMessage()` shows the
+ephemeral response in place of the original callback message; use it only for
+callbacks from regular messages.
 
 Editing and deleting reuse the receiver and ephemeral message id of the effective
 message, so a callback coming from the message itself needs no extra identifiers:
@@ -865,6 +906,16 @@ b.Command("patch", func(ctx *ctx.Context) error {
 ```
 
 `EditEphemeralMessageMedia` and `EditEphemeralMessageReplyMarkup` work the same way.
+Media edits support new file uploads. Caption edits support
+`ShowCaptionAboveMedia()`, and text edits accept `RichMessage(message)`:
+
+```go
+ctx.EditEphemeralMessageText("").RichMessage(message).Send()
+```
+
+Inline and reply keyboards support `ForceReply()` while retaining their buttons.
+Use `keyboard.NewButton().Text("Unavailable").Disabled()` or
+`keyboard.Inline().Disabled("Unavailable")` for disabled inline buttons.
 
 Commands can be marked as ephemeral so their answer is visible only to the sender,
 and replies can target an ephemeral message directly:
@@ -985,6 +1036,33 @@ if result.IsErr() {
 ## API Documentation
 
 Full API documentation is available at [GoDoc](https://pkg.go.dev/github.com/enetx/tg).
+The supported API changes are listed in the [Telegram Bot API 10.3 changelog][TelegramLastVersion].
+
+Administrator welcome message permissions are available through
+`rights.SendWelcomeMessages` and `roles.SendWelcomeMessages`. Telegram response
+types come from gotgbot, including `ChatMemberAdministrator.CanSendWelcomeMessages`
+and the `Text`, `Entities` and `IsPrivate` fields of `UniqueGiftInfo`.
+
+## Development
+
+Run the test suite with the same race and coverage checks as CI:
+
+```bash
+go test -race -coverprofile=profile.cov -coverpkg=./... ./tests/...
+```
+
+Each file in `examples/` is a standalone program. Run an example individually:
+
+```bash
+cd examples
+go run rich_message.go
+```
+
+This example reads the bot token from `../.env`. Several example directories contain
+multiple `main` functions, so test the library with `./tests/...` from the repository root.
+
+Version tags trigger GitHub Actions to verify dependencies, build all examples, run
+the tests and publish a GitHub release using the annotated tag's release notes.
 
 ## License
 
@@ -998,6 +1076,6 @@ MIT License. See `LICENSE` file for details.
 
 [TelegramBotAPI]: https://core.telegram.org/bots/api
 
-[TelegramVersionBadge]: https://img.shields.io/static/v1?label=Supported%20Telegram%20Bot%20API&color=29a1d4&logo=telegram&message=v10.2
+[TelegramVersionBadge]: https://img.shields.io/static/v1?label=Supported%20Telegram%20Bot%20API&color=29a1d4&logo=telegram&message=v10.3
 
-[TelegramLastVersion]: https://core.telegram.org/bots/api#july-14-2026
+[TelegramLastVersion]: https://core.telegram.org/bots/api#august-24-2026

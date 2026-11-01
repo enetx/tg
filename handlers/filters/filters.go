@@ -7,3 +7,6 @@ type BusinessMessagesDeleted func(*gotgbot.BusinessMessagesDeleted) bool
 
 // Subscription is a filter function that determines whether to handle a user payment subscription change.
 type Subscription func(*gotgbot.BotSubscriptionUpdated) bool
+
+// StoppedMessageGeneration determines whether to handle a user stopping message generation.
+type StoppedMessageGeneration func(*gotgbot.MessageGenerationStopped) bool

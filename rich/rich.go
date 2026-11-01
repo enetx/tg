@@ -40,6 +40,9 @@ var (
 	_ Block = (*BlockVideo)(nil)
 	_ Block = (*BlockVoiceNote)(nil)
 	_ Block = (*BlockThinking)(nil)
+	_ Block = (*BlockButtons)(nil)
+	_ Block = (*BlockExpandableQuotation)(nil)
+	_ Block = (*BlockDocument)(nil)
 
 	// MessageContent checks
 	_ input.MessageContent = (*Content)(nil)

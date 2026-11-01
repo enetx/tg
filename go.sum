@@ -1,8 +1,8 @@
-github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.36 h1:OCI373QkuzXNOoaUBNEwh4uxaaPOfSFYn3ck7WlrqMI=
-github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.36/go.mod h1:yrKnA/812p/Vh84TYQMz36/8SNLF7OOdTmKFr5i7W7g=
+github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.37 h1:0e60L8uN4WXzTP/FpkVzbVpEkhp8EW/l7ilZ80qJQ2s=
+github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.37/go.mod h1:yrKnA/812p/Vh84TYQMz36/8SNLF7OOdTmKFr5i7W7g=
 github.com/enetx/fsm v1.0.2 h1:EnAshLxBLh9Ih6l43of5ofGwFf6dVXpuAd9niyfHRl0=
 github.com/enetx/fsm v1.0.2/go.mod h1:pNd8HCtPif/Qoo7Q98j+VwqhMTfvvL6KKen0uwoNsSY=
 github.com/enetx/g v1.1.1 h1:Lu3l3/Vy51cd52o1V37iCDmE5jAympCWQYHcb7AKlpI=
 github.com/enetx/g v1.1.1/go.mod h1:nVdbiRFOVdOb/TDVPB3gMaMd8161Wv6dQZYdqvg9IHE=
-golang.org/x/text v0.40.0 h1:Ub2Z6/xjgF1WrYQz2nuITOEegKFtiIy+rieRJ5lHZKs=
-golang.org/x/text v0.40.0/go.mod h1:hpnzDAfGV753zIKo+wk3u1bVKCGPbrnF7+7LBF/UHVY=
+golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=

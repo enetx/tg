@@ -165,14 +165,33 @@ func (sm *SendMessage) DirectMessagesTopic(topicID int64) *SendMessage {
 // ReceiverUser sets the identifier of the user who will receive the outgoing
 // ephemeral message; for group and supergroup chats only.
 func (sm *SendMessage) ReceiverUser(id int64) *SendMessage {
-	sm.opts.ReceiverUserId = id
+	if sm.opts.EphemeralMessageParameters == nil {
+		sm.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	sm.opts.EphemeralMessageParameters.ReceiverUserId = id
 	return sm
 }
 
 // CallbackQuery sets the identifier of the callback query which triggered the
 // outgoing ephemeral message.
 func (sm *SendMessage) CallbackQuery(id g.String) *SendMessage {
-	sm.opts.CallbackQueryId = id.Std()
+	if sm.opts.EphemeralMessageParameters == nil {
+		sm.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	sm.opts.EphemeralMessageParameters.CallbackQueryId = id.Std()
+	return sm
+}
+
+// ReplaceCallbackQueryMessage shows the ephemeral message in place of the message
+// that triggered the callback query. Not supported for callbacks from ephemeral messages.
+func (sm *SendMessage) ReplaceCallbackQueryMessage() *SendMessage {
+	if sm.opts.EphemeralMessageParameters == nil {
+		sm.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	sm.opts.EphemeralMessageParameters.ReplaceCallbackQueryMessage = true
 	return sm
 }
 

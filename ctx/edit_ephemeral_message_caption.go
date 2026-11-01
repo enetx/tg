@@ -54,6 +54,12 @@ func (eemc *EditEphemeralMessageCaption) Entities(e *entities.Entities) *EditEph
 	return eemc
 }
 
+// ShowCaptionAboveMedia displays the caption above the media.
+func (eemc *EditEphemeralMessageCaption) ShowCaptionAboveMedia() *EditEphemeralMessageCaption {
+	eemc.opts.ShowCaptionAboveMedia = true
+	return eemc
+}
+
 // Markup sets the inline keyboard markup for the message.
 func (eemc *EditEphemeralMessageCaption) Markup(kb keyboard.Keyboard) *EditEphemeralMessageCaption {
 	if markup, ok := kb.Markup().(gotgbot.InlineKeyboardMarkup); ok {

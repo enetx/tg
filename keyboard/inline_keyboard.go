@@ -10,7 +10,8 @@ import (
 
 // InlineKeyboard helps build Telegram inline keyboard markup using a fluent API.
 type InlineKeyboard struct {
-	rows g.Slice[g.Slice[gotgbot.InlineKeyboardButton]]
+	rows       g.Slice[g.Slice[gotgbot.InlineKeyboardButton]]
+	forceReply bool
 }
 
 // Row starts a new row for subsequent buttons.
@@ -36,7 +37,7 @@ func (b *InlineKeyboard) Button(btn *Button) *InlineKeyboard {
 		return b
 	}
 
-	if btn.raw.Pay {
+	if btn.raw.Pay || btn.raw.Disabled != nil {
 		btn.attach(b)
 		return b.addToLastRow(btn.Build())
 	}
@@ -151,10 +152,24 @@ func (b *InlineKeyboard) SwitchInlineQueryCurrentChat(text, query g.String) *Inl
 	})
 }
 
+// Disabled adds a button that does nothing when pressed.
+func (b *InlineKeyboard) Disabled(text g.String) *InlineKeyboard {
+	return b.addToLastRow(gotgbot.InlineKeyboardButton{
+		Text:     text.Std(),
+		Disabled: new(gotgbot.DisabledButton),
+	})
+}
+
+// ForceReply forces users to reply while keeping the inline keyboard.
+func (b *InlineKeyboard) ForceReply() *InlineKeyboard {
+	b.forceReply = true
+	return b
+}
+
 // Markup returns the final InlineKeyboardMarkup structure.
 func (b *InlineKeyboard) Markup() gotgbot.ReplyMarkup {
 	keyboard := *(*([][]gotgbot.InlineKeyboardButton))(unsafe.Pointer(&b.rows))
-	return gotgbot.InlineKeyboardMarkup{InlineKeyboard: keyboard}
+	return gotgbot.InlineKeyboardMarkup{InlineKeyboard: keyboard, ForceReply: b.forceReply}
 }
 
 // fromMarkup directly copies the raw InlineKeyboardMarkup into the builder.
@@ -163,8 +178,10 @@ func (b *InlineKeyboard) fromMarkup(markup gotgbot.ReplyMarkup) *InlineKeyboard 
 	switch m := markup.(type) {
 	case *gotgbot.InlineKeyboardMarkup:
 		b.rows = *(*g.Slice[g.Slice[gotgbot.InlineKeyboardButton]])(unsafe.Pointer(&m.InlineKeyboard))
+		b.forceReply = m.ForceReply
 	case gotgbot.InlineKeyboardMarkup:
 		b.rows = *(*g.Slice[g.Slice[gotgbot.InlineKeyboardButton]])(unsafe.Pointer(&m.InlineKeyboard))
+		b.forceReply = m.ForceReply
 	}
 
 	return b

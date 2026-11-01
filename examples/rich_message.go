@@ -7,6 +7,7 @@ import (
 	"github.com/enetx/tg/ctx"
 	"github.com/enetx/tg/file"
 	"github.com/enetx/tg/input"
+	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/rich"
 	"github.com/enetx/tg/richtext"
 )
@@ -17,9 +18,11 @@ func main() {
 	token := g.Slice[g.String](fs.NewFile("../.env").Read().Ok().Trim().Split("=")).Last().Some()
 	b := bot.New(token).Build().Unwrap()
 
-	// /article — send a rich message assembled from blocks.
+	// /article — send a rich message assembled from blocks, including Bot API 10.3 blocks.
 	b.Command("article", func(ctx *ctx.Context) error {
 		photo := input.Photo(file.Input(g.String("https://picsum.photos/800/400")).Ok())
+		button := rich.NewButton(richtext.New("Open website")).
+			URL(g.String("https://example.com")).Style(keyboard.ButtonStylePrimary)
 
 		message := rich.New().
 			Block(rich.Heading(richtext.New("Rich messages")).Size(1)).
@@ -40,6 +43,7 @@ func main() {
 			Block(rich.Table().
 				Bordered().
 				Striped().
+				Compact().
 				Row(rich.Cell(richtext.New("Block")).Header(), rich.Cell(richtext.New("Purpose")).Header()).
 				Row(rich.Cell(richtext.New("heading")), rich.Cell(richtext.New("section title"))).
 				Caption(richtext.New("Supported blocks"))).
@@ -47,6 +51,11 @@ func main() {
 				Caption(rich.NewCaption(richtext.New("A random photo")).Credit(richtext.New("picsum.photos")))).
 			Block(rich.Quotation(rich.Paragraph(richtext.New("Blocks nest freely."))).
 				Credit(richtext.New("the docs"))).
+			Block(rich.ExpandableQuotation(richtext.New("This quotation can be expanded.")).
+				Credit(richtext.New("the docs"))).
+			Block(rich.Buttons(button, rich.NewButton(richtext.New("Unavailable")).Disabled()).
+				Align(rich.AlignCenter)).
+			Block(rich.Paragraph(richtext.Button(button.Std()))).
 			Block(rich.Details(richtext.New("Show more")).
 				Block(rich.Paragraph(richtext.New("Collapsed by default.")))).
 			Block(rich.Footer(richtext.New("Sent with enetx/tg")))
@@ -68,7 +77,7 @@ func main() {
 		draftID := int64(1)
 
 		partial := rich.New().Block(rich.Paragraph(richtext.New("Writing the article")))
-		if err := ctx.SendRichMessageDraft(draftID, partial).Send().Err(); err != nil {
+		if err := ctx.SendRichMessageDraft(draftID, partial).CanStop().KeepOnStop().Send().Err(); err != nil {
 			return err
 		}
 

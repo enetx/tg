@@ -179,6 +179,7 @@ func TestRoles_AllRoles(t *testing.T) {
 		roles.ManageTopics,
 		roles.ManageDirectMessages,
 		roles.ManageTags,
+		roles.SendWelcomeMessages,
 	)
 
 	if !result.CanManageChat {
@@ -228,5 +229,8 @@ func TestRoles_AllRoles(t *testing.T) {
 	}
 	if !result.CanManageTags {
 		t.Error("Expected CanManageTags to be true")
+	}
+	if !result.CanSendWelcomeMessages {
+		t.Error("Expected CanSendWelcomeMessages to be true")
 	}
 }

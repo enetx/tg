@@ -36,6 +36,10 @@ type Context struct {
 // New creates a new Context instance from a bot and raw gotgbot context.
 // This is typically called automatically by the framework when handling updates.
 func New(bot core.BotAPI, raw *ext.Context) *Context {
+	if raw.EffectiveChat == nil && raw.StoppedMessageGeneration != nil {
+		raw.EffectiveChat = &raw.StoppedMessageGeneration.Chat
+	}
+
 	return &Context{
 		Bot:              bot,
 		Callback:         raw.CallbackQuery,

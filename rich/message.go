@@ -47,7 +47,8 @@ func (m *Message) Markdown(markdown g.String) *Message {
 }
 
 // Media registers media referenced from the HTML or Markdown content by the
-// given identifier, as used in tg://photo?id=, tg://video?id= and tg://audio?id= links.
+// given identifier, as used in tg://photo?id=, tg://video?id=, tg://audio?id= and
+// tg://document?id= links.
 func (m *Message) Media(id g.String, media input.Media) *Message {
 	if media != nil {
 		m.media.Push(gotgbot.InputRichMessageMedia{Id: id.Std(), Media: media.Build()})

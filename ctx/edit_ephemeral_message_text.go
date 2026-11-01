@@ -5,9 +5,11 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/g/ref"
 	"github.com/enetx/tg/entities"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
+	"github.com/enetx/tg/rich"
 )
 
 // EditEphemeralMessageText represents a request to edit the text of an ephemeral message.
@@ -56,6 +58,15 @@ func (eemt *EditEphemeralMessageText) Entities(e *entities.Entities) *EditEpheme
 	return eemt
 }
 
+// RichMessage sets the rich formatted content of the edited message.
+func (eemt *EditEphemeralMessageText) RichMessage(message *rich.Message) *EditEphemeralMessageText {
+	if message != nil {
+		eemt.opts.RichMessage = ref.Of(message.Std())
+	}
+
+	return eemt
+}
+
 // Preview sets link preview options for the edited text.
 func (eemt *EditEphemeralMessageText) Preview(p *preview.Preview) *EditEphemeralMessageText {
 	eemt.opts.LinkPreviewOptions = p.Std()
@@ -95,11 +106,15 @@ func (eemt *EditEphemeralMessageText) APIURL(url g.String) *EditEphemeralMessage
 
 // Send edits the ephemeral message text and returns the result.
 func (eemt *EditEphemeralMessageText) Send() g.Result[bool] {
+	eemt.opts.Text = eemt.text.Std()
+	if eemt.opts.RichMessage != nil {
+		eemt.opts.RequestOpts = richMessageRequestOpts(eemt.opts.RequestOpts, *eemt.opts.RichMessage)
+	}
+
 	return g.ResultOf(eemt.ctx.Bot.Raw().EditEphemeralMessageText(
 		eemt.chatID.UnwrapOr(eemt.ctx.EffectiveChat.Id),
 		eemt.receiverID.UnwrapOr(eemt.ctx.ephemeralReceiverID()),
 		eemt.messageID.UnwrapOr(eemt.ctx.ephemeralMessageID()),
-		eemt.text.Std(),
 		eemt.opts,
 	))
 }

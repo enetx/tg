@@ -311,14 +311,33 @@ func (sv *SendVideo) DirectMessagesTopic(topicID int64) *SendVideo {
 // ReceiverUser sets the identifier of the user who will receive the outgoing
 // ephemeral message; for group and supergroup chats only.
 func (sv *SendVideo) ReceiverUser(id int64) *SendVideo {
-	sv.opts.ReceiverUserId = id
+	if sv.opts.EphemeralMessageParameters == nil {
+		sv.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	sv.opts.EphemeralMessageParameters.ReceiverUserId = id
 	return sv
 }
 
 // CallbackQuery sets the identifier of the callback query which triggered the
 // outgoing ephemeral message.
 func (sv *SendVideo) CallbackQuery(id g.String) *SendVideo {
-	sv.opts.CallbackQueryId = id.Std()
+	if sv.opts.EphemeralMessageParameters == nil {
+		sv.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	sv.opts.EphemeralMessageParameters.CallbackQueryId = id.Std()
+	return sv
+}
+
+// ReplaceCallbackQueryMessage shows the ephemeral message in place of the message
+// that triggered the callback query. Not supported for callbacks from ephemeral messages.
+func (sv *SendVideo) ReplaceCallbackQueryMessage() *SendVideo {
+	if sv.opts.EphemeralMessageParameters == nil {
+		sv.opts.EphemeralMessageParameters = new(gotgbot.EphemeralMessageParameters)
+	}
+
+	sv.opts.EphemeralMessageParameters.ReplaceCallbackQueryMessage = true
 	return sv
 }
 

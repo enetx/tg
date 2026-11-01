@@ -7,6 +7,14 @@ import (
 	"github.com/enetx/tg/rich"
 )
 
+func TestBlockTable_Compact(t *testing.T) {
+	block := rich.Table().Compact().Row(rich.Cell(testText("compact")))
+	built := block.Build().(gotgbot.InputRichBlockTable)
+	if !built.IsCompact || len(built.Cells) != 1 {
+		t.Error("Expected compact table cells")
+	}
+}
+
 func TestTable(t *testing.T) {
 	block := rich.Table()
 	if block == nil {

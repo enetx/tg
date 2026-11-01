@@ -38,6 +38,7 @@ func TestUpdateType_String(t *testing.T) {
 		{"GuestMessage", updates.GuestMessage, "guest_message"},
 		{"ManagedBot", updates.ManagedBot, "managed_bot"},
 		{"Subscription", updates.Subscription, "subscription"},
+		{"StoppedMessageGeneration", updates.StoppedMessageGeneration, "stopped_message_generation"},
 		{"Unknown", updates.UpdateType(999), "unknown"},
 	}
 
@@ -52,8 +53,8 @@ func TestUpdateType_String(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-	if updates.All.Len() != 26 {
-		t.Errorf("Expected All to list 26 update types, got %d", updates.All.Len())
+	if updates.All.Len() != 27 {
+		t.Errorf("Expected All to list 27 update types, got %d", updates.All.Len())
 	}
 
 	seen := make(map[string]bool, updates.All.Len())

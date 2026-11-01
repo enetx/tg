@@ -4,47 +4,49 @@ import "github.com/enetx/tg/core"
 
 // Handlers provides a collection of all available event handlers for the bot.
 type Handlers struct {
-	bot                     core.BotAPI
-	Message                 *MessageHandlers
-	Callback                *CallbackHandlers
-	Inline                  *InlineQueryHandlers
-	Poll                    *PollHandlers
-	PollAnswer              *PollAnswerHandlers
-	ChatMember              *ChatMemberHandlers
-	MyChatMember            *MyChatMemberHandlers
-	ChatJoinRequest         *ChatJoinRequestHandlers
-	ChosenInlineResult      *ChosenInlineResultHandlers
-	Shipping                *ShippingHandlers
-	PreCheckout             *PreCheckoutHandlers
-	Reaction                *ReactionHandlers
-	PaidMedia               *PaidMediaHandlers
-	BusinessConnection      *BusinessConnection
-	BusinessMessagesDeleted *BusinessMessagesDeleted
-	ManagedBot              *ManagedBot
-	Subscription            *Subscription
+	bot                      core.BotAPI
+	Message                  *MessageHandlers
+	Callback                 *CallbackHandlers
+	Inline                   *InlineQueryHandlers
+	Poll                     *PollHandlers
+	PollAnswer               *PollAnswerHandlers
+	ChatMember               *ChatMemberHandlers
+	MyChatMember             *MyChatMemberHandlers
+	ChatJoinRequest          *ChatJoinRequestHandlers
+	ChosenInlineResult       *ChosenInlineResultHandlers
+	Shipping                 *ShippingHandlers
+	PreCheckout              *PreCheckoutHandlers
+	Reaction                 *ReactionHandlers
+	PaidMedia                *PaidMediaHandlers
+	BusinessConnection       *BusinessConnection
+	BusinessMessagesDeleted  *BusinessMessagesDeleted
+	ManagedBot               *ManagedBot
+	Subscription             *Subscription
+	StoppedMessageGeneration *StoppedMessageGeneration
 }
 
 // NewHandlers creates a new instance of Handlers with all handler types initialized.
 func NewHandlers(bot core.BotAPI) *Handlers {
 	return &Handlers{
-		bot:                     bot,
-		Message:                 &MessageHandlers{bot},
-		Callback:                &CallbackHandlers{bot},
-		Inline:                  &InlineQueryHandlers{bot},
-		Poll:                    &PollHandlers{bot},
-		PollAnswer:              &PollAnswerHandlers{bot},
-		ChatMember:              &ChatMemberHandlers{bot},
-		MyChatMember:            &MyChatMemberHandlers{bot},
-		ChatJoinRequest:         &ChatJoinRequestHandlers{bot},
-		ChosenInlineResult:      &ChosenInlineResultHandlers{bot},
-		Shipping:                &ShippingHandlers{bot},
-		PreCheckout:             &PreCheckoutHandlers{bot},
-		Reaction:                &ReactionHandlers{bot},
-		PaidMedia:               &PaidMediaHandlers{bot},
-		BusinessConnection:      &BusinessConnection{bot},
-		BusinessMessagesDeleted: &BusinessMessagesDeleted{bot},
-		ManagedBot:              &ManagedBot{bot},
-		Subscription:            &Subscription{bot},
+		bot:                      bot,
+		Message:                  &MessageHandlers{bot},
+		Callback:                 &CallbackHandlers{bot},
+		Inline:                   &InlineQueryHandlers{bot},
+		Poll:                     &PollHandlers{bot},
+		PollAnswer:               &PollAnswerHandlers{bot},
+		ChatMember:               &ChatMemberHandlers{bot},
+		MyChatMember:             &MyChatMemberHandlers{bot},
+		ChatJoinRequest:          &ChatJoinRequestHandlers{bot},
+		ChosenInlineResult:       &ChosenInlineResultHandlers{bot},
+		Shipping:                 &ShippingHandlers{bot},
+		PreCheckout:              &PreCheckoutHandlers{bot},
+		Reaction:                 &ReactionHandlers{bot},
+		PaidMedia:                &PaidMediaHandlers{bot},
+		BusinessConnection:       &BusinessConnection{bot},
+		BusinessMessagesDeleted:  &BusinessMessagesDeleted{bot},
+		ManagedBot:               &ManagedBot{bot},
+		Subscription:             &Subscription{bot},
+		StoppedMessageGeneration: &StoppedMessageGeneration{bot},
 	}
 }
 
@@ -67,6 +69,7 @@ func (h *Handlers) Any(fn Handler) core.BotAPI {
 	h.BusinessMessagesDeleted.Any(fn)
 	h.ManagedBot.Any(fn)
 	h.Subscription.Any(fn)
+	h.StoppedMessageGeneration.Any(fn)
 
 	return h.bot
 }

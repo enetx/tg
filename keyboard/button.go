@@ -106,6 +106,12 @@ func (b *Button) Style(style ButtonStyle) *Button {
 	return b
 }
 
+// Disabled makes the button do nothing when pressed.
+func (b *Button) Disabled() *Button {
+	b.raw.Disabled = new(gotgbot.DisabledButton)
+	return b
+}
+
 // Delete marks the button for deletion from the keyboard.
 func (b *Button) Delete() {
 	b.deleted = true
