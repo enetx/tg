@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/enetx/g"
+	"github.com/enetx/tg/internal/pkg/richmessage"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/reply"
 	"github.com/enetx/tg/rich"
@@ -166,7 +167,7 @@ func (srm *SendRichMessage) Send() g.Result[*gotgbot.Message] {
 	return srm.ctx.timers(srm.after, srm.deleteAfter, func() g.Result[*gotgbot.Message] {
 		chatID := srm.chatID.UnwrapOr(srm.ctx.EffectiveChat.Id)
 		message := srm.message.Std()
-		srm.opts.RequestOpts = richMessageRequestOpts(srm.opts.RequestOpts, message)
+		srm.opts.RequestOpts = richmessage.RequestOpts(srm.opts.RequestOpts, message)
 
 		return g.ResultOf(srm.ctx.Bot.Raw().SendRichMessage(chatID, message, srm.opts))
 	})

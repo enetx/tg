@@ -1,4 +1,4 @@
-package ctx
+package richmessage
 
 import (
 	"fmt"
@@ -67,7 +67,8 @@ func attachRichBlock(block gotgbot.InputRichBlock, name string, w *multipart.Wri
 	return nil
 }
 
-func richMessageRequestOpts(opts *gotgbot.RequestOpts, message gotgbot.InputRichMessage) *gotgbot.RequestOpts {
+// RequestOpts adds multipart attachment support for a rich message to the request options.
+func RequestOpts(opts *gotgbot.RequestOpts, message gotgbot.InputRichMessage) *gotgbot.RequestOpts {
 	if opts == nil {
 		opts = new(gotgbot.RequestOpts)
 	}

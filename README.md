@@ -5,7 +5,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/enetx/tg.svg)](https://pkg.go.dev/github.com/enetx/tg)
 [![Coverage Status](https://coveralls.io/repos/github/enetx/tg/badge.svg?branch=main&service=github)](https://coveralls.io/github/enetx/tg?branch=main)
 [![Go](https://github.com/enetx/tg/actions/workflows/go.yml/badge.svg)](https://github.com/enetx/tg/actions/workflows/go.yml)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/enetx/tg)
+[![Ask DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-blue)](https://deepwiki.com/enetx/tg)
 [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 [![Telegram Bot API Version][TelegramVersionBadge]][TelegramLastVersion]
 
@@ -1061,7 +1061,7 @@ go run rich_message.go
 This example reads the bot token from `../.env`. Several example directories contain
 multiple `main` functions, so test the library with `./tests/...` from the repository root.
 
-Version tags trigger GitHub Actions to verify dependencies, build all examples, run
+Version tags trigger GitHub Actions to verify dependencies, build the library, run
 the tests and publish a GitHub release using the annotated tag's release notes.
 
 ## License

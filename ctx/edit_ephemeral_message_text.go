@@ -7,6 +7,7 @@ import (
 	"github.com/enetx/g"
 	"github.com/enetx/g/ref"
 	"github.com/enetx/tg/entities"
+	"github.com/enetx/tg/internal/pkg/richmessage"
 	"github.com/enetx/tg/keyboard"
 	"github.com/enetx/tg/preview"
 	"github.com/enetx/tg/rich"
@@ -108,7 +109,7 @@ func (eemt *EditEphemeralMessageText) APIURL(url g.String) *EditEphemeralMessage
 func (eemt *EditEphemeralMessageText) Send() g.Result[bool] {
 	eemt.opts.Text = eemt.text.Std()
 	if eemt.opts.RichMessage != nil {
-		eemt.opts.RequestOpts = richMessageRequestOpts(eemt.opts.RequestOpts, *eemt.opts.RichMessage)
+		eemt.opts.RequestOpts = richmessage.RequestOpts(eemt.opts.RequestOpts, *eemt.opts.RichMessage)
 	}
 
 	return g.ResultOf(eemt.ctx.Bot.Raw().EditEphemeralMessageText(
